@@ -83,7 +83,7 @@ KtWhenExpression(168,206): 'when (f) {'
   null
 
 KtNameReferenceExpression(174,175): 'f'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -106,7 +106,7 @@ KtWhenConditionWithExpression(183,186): 'ONE'
   null
 
 KtNameReferenceExpression(183,186): 'ONE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -132,7 +132,7 @@ KtWhenConditionWithExpression(196,199): 'TWO'
   null
 
 KtNameReferenceExpression(196,199): 'TWO'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: TWO>
 
@@ -161,7 +161,7 @@ KtWhenExpression(229,270): 'when (s) {'
   null
 
 KtNameReferenceExpression(235,236): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -184,7 +184,7 @@ KtWhenConditionWithExpression(244,249): 'THREE'
   null
 
 KtNameReferenceExpression(244,249): 'THREE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -210,7 +210,7 @@ KtWhenConditionWithExpression(259,263): 'FOUR'
   null
 
 KtNameReferenceExpression(259,263): 'FOUR'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FOUR>
 

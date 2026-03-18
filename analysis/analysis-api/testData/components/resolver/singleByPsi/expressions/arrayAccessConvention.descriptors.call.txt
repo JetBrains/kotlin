@@ -1,5 +1,5 @@
 KtBinaryExpression(128,139): 'm["a"] += 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN

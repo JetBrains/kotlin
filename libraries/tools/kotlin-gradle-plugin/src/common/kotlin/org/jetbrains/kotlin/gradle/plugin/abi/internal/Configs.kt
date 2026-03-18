@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout
-import org.gradle.api.provider.Property
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
@@ -20,26 +24,21 @@ import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
  * Configures the extension for Kotlin/JVM or Kotlin Android Gradle plugins.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationExtension.configure(project: Project) {
-    this as AbiValidationExtensionImpl
-
+internal fun AbiValidationExtensionImpl.configure(project: Project) {
     referenceDumpDir.convention(project.layout.projectDirectory.dir(AbiValidationPaths.LEGACY_DEFAULT_REFERENCE_DUMP_DIR))
     keepLocallyUnsupportedTargets.convention(true)
-
-    configureTasks(project.name, project.tasks, project.layout, enabled)
 }
 
 /**
- * Creates and preconfigures legacy tasks for [this] report variant.
+ * Registers and preconfigures ABI validation's tasks.
  */
 @ExperimentalAbiValidation
-private fun AbiValidationExtension.configureTasks(
+internal fun AbiValidationExtension.registerTasks(
     projectName: String,
     tasks: TaskContainer,
-    layout: ProjectLayout,
-    isEnabled: Property<Boolean>,
+    layout: ProjectLayout
 ) {
-    val klibFileName = "$projectName${AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION}"
+    val klibFileName = "$projectName$LEGACY_KLIB_DUMP_EXTENSION"
 
     val referenceDir = referenceDumpDir
     val filters = filters
@@ -51,9 +50,6 @@ private fun AbiValidationExtension.configureTasks(
             it.dumpDir.convention(dumpDir)
             it.referenceKlibDump.convention(referenceDir.map { dir -> dir.file(klibFileName) })
             it.keepLocallyUnsupportedTargets.convention(true)
-            it.klibIsEnabled.convention(true)
-
-            it.klib.convention(it.klibInput.map { targets -> if (it.klibIsEnabled.get()) targets else emptyList() })
 
             it.includedClasses.convention(filters.include.byNames)
             it.includedAnnotatedWith.convention(filters.include.annotatedWith)
@@ -63,29 +59,27 @@ private fun AbiValidationExtension.configureTasks(
             it.description = "Dumps the public Application Binary Interface (ABI) into files in the build directory."
             // task should be hidden from the task list
             it.group = null
-
-            it.onlyIf { isEnabled.get() }
         }
+
+    val referenceFiles = dumpTaskProvider.map { task -> task.referenceDumps(referenceDir, projectName) }
 
     val checkTaskProvider = tasks.register(KotlinAbiCheckTaskImpl.NAME, KotlinAbiCheckTaskImpl::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
+        it.referenceDumps.from(referenceFiles)
 
         it.description = "Checks that the public Application Binary Interface (ABI) of the current project code matches" +
                 "the reference dump file"
         it.group = LifecycleBasePlugin.VERIFICATION_GROUP
-
-        it.onlyIf { isEnabled.get() }
     }
 
     val updateTaskProvider = tasks.register(KotlinAbiUpdateTask.NAME, KotlinAbiUpdateTask::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
+        it.referenceDumps.from(referenceFiles)
 
         it.description = "Writes the public Application Binary Interface (ABI) of the current code to the reference dump file."
         it.group = LifecycleBasePlugin.VERIFICATION_GROUP
-
-        it.onlyIf { isEnabled.get() }
     }
 
     /**
@@ -115,5 +109,28 @@ private fun AbiValidationExtension.configureTasks(
             val projectPath = it.path.substringBeforeLast(":")
             it.logger.warn("Task ${it.path} is deprecated, use $projectPath:$updateTaskName instead")
         }
+    }
+}
+
+private fun KotlinAbiDumpTaskImpl.referenceDumps(
+    referenceDir: Provider<Directory>,
+    projectName: String,
+): Provider<List<RegularFile>> {
+    val jvmDumpName = projectName + LEGACY_JVM_DUMP_EXTENSION
+    val klibDumpName = projectName + LEGACY_KLIB_DUMP_EXTENSION
+
+    return jvm.zip(referenceDir) { items, dir ->
+        val result = items.fold(mutableListOf<RegularFile>()) { acc, jvmTargetInfo ->
+            if (jvmTargetInfo.subdirectoryName.isEmpty()) {
+                acc.add(dir.file(jvmDumpName))
+            } else {
+                acc.add(dir.dir(jvmTargetInfo.subdirectoryName).file(jvmDumpName))
+            }
+            acc
+        }
+        // always include klib dump file. Because klib dump can be inferred even if there are no any available Klib targets.
+        // It can be skipped during check if this file does not exist
+        result.add(dir.file(klibDumpName))
+        result.toList()
     }
 }

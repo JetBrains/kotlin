@@ -17,7 +17,7 @@ fun f(): Any {
 
 fun g() = f()
 
-// CHECK-LABEL: define {{(noundef )?}}ptr @"kfun:#h(kotlin.Boolean){}kotlin.Any"
+// CHECK-LABEL: define {{(noundef )?}}{{(nonnull )?}}ptr @"kfun:#h(kotlin.Boolean){}kotlin.Any"
 @Retain
 fun h(cond: Boolean): Any {
     // We have to check actual _call_ to a function, not just callee mention.

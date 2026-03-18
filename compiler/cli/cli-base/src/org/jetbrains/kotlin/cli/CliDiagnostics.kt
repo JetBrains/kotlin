@@ -5,16 +5,48 @@
 
 package org.jetbrains.kotlin.cli
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
-import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.warningWithoutSource
+import org.jetbrains.kotlin.diagnostics.strongWarningWithoutSource
 
 object CliDiagnostics : KtDiagnosticsContainer() {
-    val COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL: KtSourcelessDiagnosticFactory by warningWithoutSource()
-    val REDUNDANT_CLI_ARG: KtSourcelessDiagnosticFactory by warningWithoutSource()
+    val COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val REDUNDANT_CLI_ARG: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val CLASSPATH_RESOLUTION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val CLASSPATH_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val JAVA_MODULE_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val ROOTS_RESOLUTION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val ROOTS_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val UNSUPPORTED_LANGUAGE_VERSION: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val DEPRECATED_LANGUAGE_VERSION: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val EXPERIMENTAL_LANGUAGE_VERSION: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+
+    val COMPILER_PLUGIN_INITIALIZATION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val COMPILER_PLUGIN_INITIALIZATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val INITIALIZATION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+
+    val COMPILER_ARGUMENTS_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val COMPILER_ARGUMENTS_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val JAVAC_INTEGRATION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val JAVAC_INTEGRATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val KOTLIN_PACKAGE_USAGE: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val IO_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val COMPILER_EXCEPTION: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val SCRIPTING_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val SCRIPTING_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val WEB_ARGUMENT_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val WEB_ARGUMENT_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val JS_IC_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val KONAN_ARGUMENT_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val KONAN_ARGUMENT_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Messages
 
@@ -22,6 +54,40 @@ object CliDiagnostics : KtDiagnosticsContainer() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("CLI") { map ->
             map.put(COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, MESSAGE_PLACEHOLDER)
             map.put(REDUNDANT_CLI_ARG, MESSAGE_PLACEHOLDER)
+            map.put(CLASSPATH_RESOLUTION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(CLASSPATH_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(JAVA_MODULE_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(ROOTS_RESOLUTION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(ROOTS_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(UNSUPPORTED_LANGUAGE_VERSION, MESSAGE_PLACEHOLDER)
+            map.put(DEPRECATED_LANGUAGE_VERSION, MESSAGE_PLACEHOLDER)
+            map.put(EXPERIMENTAL_LANGUAGE_VERSION, MESSAGE_PLACEHOLDER)
+
+            map.put(COMPILER_PLUGIN_INITIALIZATION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(COMPILER_PLUGIN_INITIALIZATION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(INITIALIZATION_WARNING, MESSAGE_PLACEHOLDER)
+
+            map.put(COMPILER_ARGUMENTS_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(COMPILER_ARGUMENTS_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(JAVAC_INTEGRATION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(JAVAC_INTEGRATION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(KOTLIN_PACKAGE_USAGE, MESSAGE_PLACEHOLDER)
+            map.put(IO_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(COMPILER_EXCEPTION, MESSAGE_PLACEHOLDER)
+
+            map.put(SCRIPTING_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(SCRIPTING_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(WEB_ARGUMENT_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(WEB_ARGUMENT_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(JS_IC_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(KONAN_ARGUMENT_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(KONAN_ARGUMENT_ERROR, MESSAGE_PLACEHOLDER)
         }
     }
 }

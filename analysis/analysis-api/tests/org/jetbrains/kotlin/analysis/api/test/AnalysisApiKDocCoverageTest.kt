@@ -11,16 +11,8 @@ import org.junit.jupiter.api.Test
 class AnalysisApiKDocCoverageTest : AbstractKDocCoverageTest() {
     override val sourceDirectories: List<SourceDirectory.ForDumpFileComparison> = listOf(
         SourceDirectory.ForDumpFileComparison(
-            listOf("analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api"),
-            "analysis/analysis-api/api/analysis-api.undocumented",
-        ),
-        SourceDirectory.ForDumpFileComparison(
-            listOf("analysis/analysis-api-platform-interface/src/org/jetbrains/kotlin/analysis/api/platform"),
-            "analysis/analysis-api-platform-interface/api/analysis-api-platform-interface.undocumented",
-        ),
-        SourceDirectory.ForDumpFileComparison(
-            listOf("analysis/analysis-api-standalone/src/org/jetbrains/kotlin/analysis"),
-            "analysis/analysis-api-standalone/api/analysis-api-standalone.undocumented",
+            listOf("src/org/jetbrains/kotlin/analysis/api"),
+            "api/analysis-api.undocumented",
         ),
     )
 

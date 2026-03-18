@@ -35,7 +35,9 @@ KtNameReferenceExpression(36,39): 'Foo'
   null
 
 KtNameReferenceExpression(40,43): 'Bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
 
 KtNamedFunction(48,93): 'fun testFun() {'
   null
@@ -65,7 +67,9 @@ KtNameReferenceExpression(83,86): 'Foo'
   null
 
 KtNameReferenceExpression(87,90): 'Bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
 
 KtNamedFunction(95,131): 'fun <T> take(action: (T) -> Unit) {}'
   null
@@ -126,7 +130,11 @@ KtCallExpression(144,181): 'take {'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
 
 KtNameReferenceExpression(144,148): 'take'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
 
 KtLambdaArgument(149,181): '{'
   null
@@ -159,7 +167,9 @@ KtNameReferenceExpression(168,171): 'Foo'
   null
 
 KtNameReferenceExpression(172,175): 'Bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
 
 KtBlockExpression(180,180): ''
   null

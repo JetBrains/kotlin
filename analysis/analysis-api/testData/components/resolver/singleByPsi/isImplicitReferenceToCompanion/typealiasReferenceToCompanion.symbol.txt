@@ -1,2 +1,5 @@
 KtNameReferenceExpression(71,73): 'TA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /TA
+    ]

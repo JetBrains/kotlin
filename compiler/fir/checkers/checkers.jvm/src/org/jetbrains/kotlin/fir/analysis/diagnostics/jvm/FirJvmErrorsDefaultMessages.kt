@@ -310,7 +310,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JVM_STATIC_ON_CONST_OR_JVM_FIELD,
-            "'@JvmStatic' annotation is useless for const or '@JvmField' properties.",
+            "'@JvmStatic' annotation is redundant for const or '@JvmField' properties.",
         )
         map.put(
             JVM_STATIC_ON_EXTERNAL_IN_INTERFACE,
@@ -328,7 +328,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME, "'@JvmExposeBoxed' with name is applicable only to functions, getters and setters.")
         map.put(
             USELESS_JVM_EXPOSE_BOXED,
-            "Useless '@JvmExposeBoxed', it is a callable declaration with no inline value class in its signature."
+            "'@JvmExposeBoxed' has no effect when applied to a callable declaration with no inline value class in its signature."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND,

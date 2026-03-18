@@ -6,7 +6,7 @@ FILE: DerivedEnum.kt
 
         public final static enum entry x: R|DerivedEnum|
         public final fun foo(): R|kotlin/Unit| {
-            R|/bar|(R|/DerivedEnum.x|)
+            R|/bar|(Q|DerivedEnum|.R|/DerivedEnum.x|)
             R|/baz|(<Unresolved name: y>#)
             R|/baz|(Q|BaseJava|.R|/BaseJava.y*s|)
         }
@@ -18,7 +18,7 @@ FILE: DerivedEnum.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<DerivedEnum>|
-            public get(): R|kotlin/enums/EnumEntries<DerivedEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<DerivedEnum>|
 
     }
     public final fun bar(e: R|DerivedEnum|): R|kotlin/Unit| {

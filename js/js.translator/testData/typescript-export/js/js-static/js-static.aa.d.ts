@@ -3,6 +3,19 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
 
     namespace foo {
-        /* ErrorDeclaration: Class declarations are not implemented yet */
+        class Test {
+            constructor();
+            static bar(): string;
+            static get foo(): string;
+            static get baz(): string;
+            static get mutable(): string;
+            static set mutable(value: string);
+        }
+        namespace Test {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Test;
+            }
+        }
     }
 }

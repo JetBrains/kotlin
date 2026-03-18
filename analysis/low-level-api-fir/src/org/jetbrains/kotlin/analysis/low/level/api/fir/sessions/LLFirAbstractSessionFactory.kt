@@ -179,7 +179,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val commandLineProcessors = listOf(AssignmentCommandLineProcessor())
         val compilerConfiguration = CompilerConfiguration.create()
         processCompilerPluginsOptions(
-            compilerConfiguration, compilerArguments.pluginOptions?.asIterable() ?: emptyList(), commandLineProcessors
+            compilerConfiguration, compilerArguments.pluginOptions.asIterable(), commandLineProcessors
         )
 
         val extensionRegistrar = FirScriptingCompilerExtensionIdeRegistrar(

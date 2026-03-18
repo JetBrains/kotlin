@@ -1,2 +1,4 @@
 KtBinaryExpression(76,82): 'x /= x'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'divAssign'.>

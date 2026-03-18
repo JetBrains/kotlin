@@ -22,11 +22,7 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
+import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -325,10 +321,10 @@ private fun createInitialCompilerConfiguration(
             ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
         )
 
-        val pluginClasspaths = baseArguments.pluginClasspaths?.asList().orEmpty()
-        val pluginOptions = baseArguments.pluginOptions?.asList().orEmpty()
-        val pluginConfigurations = baseArguments.pluginConfigurations?.asList().orEmpty()
-        val pluginOrderConstraints = baseArguments.pluginOrderConstraints?.asList().orEmpty()
+        val pluginClasspaths = baseArguments.pluginClasspaths.asList()
+        val pluginOptions = baseArguments.pluginOptions.asList()
+        val pluginConfigurations = baseArguments.pluginConfigurations.asList()
+        val pluginOrderConstraints = baseArguments.pluginOrderConstraints.asList()
 
         checkPluginsArguments(this, false, pluginClasspaths, pluginOptions, pluginConfigurations)
         if (pluginClasspaths.isNotEmpty() || pluginConfigurations.isNotEmpty()) {

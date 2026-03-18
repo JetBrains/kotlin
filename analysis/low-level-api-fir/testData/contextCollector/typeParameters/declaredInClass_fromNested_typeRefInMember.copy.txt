@@ -15,11 +15,14 @@ Tower Data Context:
         Scope: FirNestedClassifierScopeImpl
             Classifiers:
                 FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class Outer<MyParam> : R|kotlin/Any|
     Element 7
+        Static scope owner symbol: FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+    Element 8
         Implicit receiver:
             FirRegularClassSymbol public final class Nested : R|kotlin/Any|
                 Type: test.Outer.Nested
-    Element 8
+    Element 9
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol p: <ERROR TYPE REF: Symbol not found for MyParam>

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 object ReplOverloadCallConflictResolver : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateAbstracts: Boolean
     ): Set<Candidate> {
         // Candidates are (somehow?) naturally sorted from the most recent snippet to the least recent snippet.
         // Only candidates from *previous* snippets will have a non-null `originalReplSnippetSymbol`.

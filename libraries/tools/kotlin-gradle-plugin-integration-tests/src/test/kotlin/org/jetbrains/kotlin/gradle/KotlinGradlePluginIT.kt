@@ -492,7 +492,7 @@ class KotlinGradleIT : KGPBaseTest() {
     }
 
     @DisplayName("KGP dependencies in buildSrc module")
-    @GradleTestVersions
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_3)
     @GradleTest
     fun testKotlinPluginDependenciesInBuildSrc(gradleVersion: GradleVersion) {
         project("kotlinPluginDepsInBuildSrc", gradleVersion) {
@@ -850,6 +850,7 @@ class KotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("KT-73090: BTA does not break Gradle convention plugins compilation")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_3)
     fun testConventionPlugins(gradleVersion: GradleVersion) {
         project("convention-plugin", gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = true)) {
             build("help") {

@@ -34,7 +34,7 @@ FILE: delegates.kt
         }
     public final? interface Base : R|kotlin/Any| {
     }
-    public final? [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : Base {
         public? [ContainingClassKey=Derived] constructor(b: Base): R|Derived| {
             super<<implicit>>()
         }

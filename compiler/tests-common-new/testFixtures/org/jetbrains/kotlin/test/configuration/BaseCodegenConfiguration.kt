@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
-import org.jetbrains.kotlin.test.HandlersStepBuilder
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.TestStepBuilder
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKE
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -33,7 +31,10 @@ import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
-import org.jetbrains.kotlin.test.services.configuration.*
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
+import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
@@ -175,7 +176,7 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest(includeK1Handlers: Boo
 /**
  * Adds a handler which checks that there are no compilation errors reported at the K1 frontend step
  */
-fun HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.commonClassicFrontendHandlersForCodegenTest() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.commonClassicFrontendHandlersForCodegenTest() {
     useHandlers(
         ::NoCompilationErrorsHandler,
     )
@@ -184,7 +185,7 @@ fun HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFron
 /**
  * Adds a handler which checks that there are no compilation errors reported at the K2 frontend step
  */
-fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
     useHandlers(
         ::NoFirCompilationErrorsHandler,
     )
@@ -193,7 +194,7 @@ fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersF
 /**
  * Add JVM artifact handlers usually used in codegen tests
  */
-fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest(includeNoCompilationErrorsHandler: Boolean = true) {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest(includeNoCompilationErrorsHandler: Boolean = true) {
     useHandlers(
         ::JvmBackendDiagnosticsHandler,
         ::DxCheckerHandler,
@@ -223,16 +224,11 @@ fun TestConfigurationBuilder.configureBlackBoxTestSettings() {
  * Setups additional services and directives used in JVM box tests
  */
 fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration() {
+    commonCodegenConfiguration()
+
     forTestsMatching("*WithStdLib/*") {
         defaultDirectives {
             +WITH_STDLIB
-        }
-    }
-
-    forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
-        defaultDirectives {
-            +FIR_DUMP
-            +RENDER_FIR_DECLARATION_ATTRIBUTES
         }
     }
 }
@@ -257,6 +253,7 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
 
     forTestsNotMatching(
         "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or
+                "compiler/testData/codegen/boxJvm/diagnostics/functions/tailRecursion/*" or
                 "compiler/testData/diagnostics/*" or
                 "compiler/fir/analysis-tests/testData/*"
     ) {
@@ -267,13 +264,13 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
 
     configureModernJavaWhenNeeded()
 
-    forTestsMatching("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/*") {
+    forTestsMatching("compiler/testData/codegen/box(?:Jvm)?/coroutines/varSpilling/debugMode/*") {
         defaultDirectives {
             +ENABLE_DEBUG_MODE
         }
     }
 
-    forTestsMatching("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/*") {
+    forTestsMatching("compiler/testData/codegen/box(?:Jvm)?/javaInterop/foreignAnnotationsTests/tests/*") {
         defaultDirectives {
             +ENABLE_FOREIGN_ANNOTATIONS
             ForeignAnnotationsDirectives.ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations

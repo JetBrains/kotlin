@@ -2,11 +2,13 @@ KtNameReferenceExpression(83,94): 'setListener'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaTest.SomeJavaClass) open fun setListener(listener: JavaTest.SAMInterface!)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

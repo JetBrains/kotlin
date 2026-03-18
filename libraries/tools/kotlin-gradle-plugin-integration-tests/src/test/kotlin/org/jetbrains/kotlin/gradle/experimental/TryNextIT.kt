@@ -259,14 +259,14 @@ class TryNextIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 |
-                |kotlin.compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+                |kotlin.compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
                 """.trimMargin()
             )
 
             build("compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
 
-                assertCompilerArgument(":compileKotlin", "-language-version 1.9")
+                assertCompilerArgument(":compileKotlin", "-language-version 2.1")
             }
         }
     }

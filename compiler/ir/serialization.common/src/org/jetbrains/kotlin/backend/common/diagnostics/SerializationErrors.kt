@@ -14,12 +14,17 @@ import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.DeclarationSymbolOwner
+import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
 
@@ -46,8 +51,10 @@ internal object SerializationDiagnosticRenderers {
         CommonRenderers.renderConflictingSignatureData<DeclarationDescriptor, ConflictingKlibSignaturesData>(
             signatureKind = "IR",
             sortUsing = MemberComparator.INSTANCE,
-            declarationRenderer = Renderer {
-                DescriptorRenderer.WITHOUT_MODIFIERS.render(it)
+            declarationRenderer = Renderer { descriptor ->
+                getDeclarationSymbol(descriptor)?.let {
+                    FirDiagnosticRenderers.SYMBOL_WITH_LOCATION.render(it).ifEmpty { null }
+                } ?: DescriptorRenderer.WITHOUT_MODIFIERS.render(descriptor)
             },
             renderSignature = { append(it.signature.render()) },
             declarations = { it.declarations.map(IrDeclaration::toIrBasedDescriptor) },
@@ -60,4 +67,10 @@ internal object SerializationDiagnosticRenderers {
                 }
             },
         )
+
+    private fun getDeclarationSymbol(descriptor: DeclarationDescriptor): DeclarationSymbolMarker? {
+        val irDeclaration = (descriptor as? IrBasedDeclarationDescriptor<*>)?.owner
+        val metadata = (irDeclaration as? IrMetadataSourceOwner)?.metadata
+        return (metadata as? DeclarationSymbolOwner)?.symbol
+    }
 }

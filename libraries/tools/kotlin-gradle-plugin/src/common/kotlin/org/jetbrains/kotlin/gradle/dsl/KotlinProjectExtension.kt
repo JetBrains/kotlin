@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationExtensionImpl
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.isCalledOutsideKotlinOrAndroidPlugins
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
@@ -29,9 +32,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.CompletableFuture
-import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -109,6 +109,7 @@ abstract class KotlinProjectExtension @Inject constructor(
         // Required for Gradle to generate accessors to source sets or 'sourceSets {}' DSL
         extensions.add("sourceSets", kotlinSourceSets)
     }
+
     override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
         get() = sourceSetsContainer
         @Deprecated("Assigning new value to 'sourceSets' is deprecated", level = DeprecationLevel.ERROR)
@@ -172,12 +173,24 @@ abstract class KotlinProjectExtension @Inject constructor(
     override val compilerVersion: Property<String> =
         project.objects.propertyWithConvention(project.getKotlinPluginVersion()).chainedFinalizeValueOnRead()
 
+    internal val abiValidationInternal: AbiValidationExtensionImpl = project.AbiValidationExtensionImpl()
+
     @ExperimentalAbiValidation
-    override val abiValidation: AbiValidationExtension = project.AbiValidationExtensionImpl()
+    override val abiValidation: AbiValidationExtension
+        get() {
+            abiValidationInternal.activate()
+            return abiValidationInternal
+        }
 
     @ExperimentalAbiValidation
     override fun abiValidation(action: Action<AbiValidationExtension>) {
-        action.execute(abiValidation)
+        abiValidationInternal.activate()
+        action.execute(abiValidationInternal)
+    }
+
+    @ExperimentalAbiValidation
+    override fun abiValidation() {
+        abiValidationInternal.activate()
     }
 }
 
@@ -232,12 +245,6 @@ abstract class KotlinJsProjectExtension(project: Project) :
     @Deprecated("Use js() instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("js()"), level = DeprecationLevel.ERROR)
     override val target: KotlinJsTargetDsl
         get() = targetFuture.lenient.getOrNull() ?: js()
-
-    @Deprecated(
-        "Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    override val compilerTypeFromProperties: KotlinJsCompilerType? = null
 
     override val targetFuture = CompletableFuture<KotlinJsTargetDsl>()
 
@@ -299,9 +306,6 @@ abstract class KotlinJsProjectExtension(project: Project) :
         configure.execute(this)
     }
 
-    @Deprecated("Use js instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("js(body)"), level = DeprecationLevel.ERROR)
-    open fun target(body: KotlinJsTargetDsl.() -> Unit) = js(body)
-
     @Deprecated(
         "Needed for IDE import using the MPP import mechanism",
         level = DeprecationLevel.HIDDEN
@@ -333,6 +337,23 @@ abstract class KotlinAndroidProjectExtension @Inject constructor(
     override fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
+
+    override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
+        @Deprecated("Use source sets provided by Android Gradle Plugin instead.")
+        get() {
+            /**
+             * Android Gradle Plugin calls it for configuration purposes
+             * Also, this method can be called in KGP code where generic "KotlinExtension" is expected.
+             */
+            if (isCalledOutsideKotlinOrAndroidPlugins) {
+                project.reportDiagnosticOncePerProject(
+                    KotlinToolingDiagnostics.SourceSetsAccessInAndroidExtension(Throwable())
+                )
+            }
+            return super.sourceSets
+        }
+        @Deprecated("Assigning new value to 'sourceSets' is deprecated", level = DeprecationLevel.ERROR)
+        set(_) {}
 }
 
 enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputKind?) {

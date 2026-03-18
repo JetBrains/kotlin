@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCo
 internal object ExperimentalTryNextUsageChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         if (project.kotlinPropertiesProvider.kotlinExperimentalTryNext.get()) {
-            collector.reportOncePerGradleBuild(project, KotlinToolingDiagnostics.ExperimentalTryNextWarning())
+            collector.reportOncePerGradleBuild(diagnosticsContext, KotlinToolingDiagnostics.ExperimentalTryNextWarning())
         }
     }
 }

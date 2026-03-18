@@ -1,0 +1,9 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+fun foo(s: String): Int = s.length
+
+fun cref(
+    x: String = "a",
+    @IntroducedAt("1") f: (String) -> Int = ::foo,
+    @IntroducedAt("2") y: Int = f(x),
+): Int = y

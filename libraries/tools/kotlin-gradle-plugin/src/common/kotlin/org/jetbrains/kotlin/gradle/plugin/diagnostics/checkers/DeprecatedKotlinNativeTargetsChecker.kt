@@ -21,6 +21,8 @@ internal object DeprecatedKotlinNativeTargetsChecker : KotlinGradleProjectChecke
             .map { it.name }
         if (usedDeprecatedTargets.isEmpty()) return
 
-        collector.report(project, KotlinToolingDiagnostics.DeprecatedKotlinNativeTargetsDiagnostic(usedDeprecatedTargets))
+        collector.report(diagnosticsContext,
+            KotlinToolingDiagnostics.DeprecatedKotlinNativeTargetsDiagnostic(usedDeprecatedTargets),
+        )
     }
 }

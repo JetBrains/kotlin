@@ -602,6 +602,13 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * When resolving a collection literal, this is used as a source for the generated callee reference.
      */
     object CalleeReferenceForOperatorOfCall : KtFakeSourceElementKind()
+
+    /**
+     * NB: IDE-only
+     * For the property access expression used as a context-sensitive alternative.
+     */
+    object ContextSensitiveAlternative : KtFakeSourceElementKind()
+    object ReferenceForContextSensitiveAlternative : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

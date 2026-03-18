@@ -19,7 +19,6 @@ class KotlinClassHeader(
     private val extraString: String?,
     val extraInt: Int,
     val packageName: String?,
-    val serializedIr: ByteArray?,
 ) {
     // See kotlin.Metadata
     enum class Kind(val id: Int) {

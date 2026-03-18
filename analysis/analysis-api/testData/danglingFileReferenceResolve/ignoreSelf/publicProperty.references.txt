@@ -2,5 +2,6 @@ KtNameReferenceExpression(62,66): 'name'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo) val name: kotlin.String [publicProperty.kt]

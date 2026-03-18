@@ -14,7 +14,10 @@ import kotlin.io.path.nameWithoutExtension
  *
  * The [writeTargetFile] is always the first (most specific) file in [readableFiles].
  */
-internal class TestDataFiles private constructor(val readableFiles: List<Path>) {
+internal class TestDataFiles private constructor(
+    val testDataPath: Path,
+    val readableFiles: List<Path>,
+) {
     val writeTargetFile: Path
         get() = readableFiles.first()
 
@@ -35,7 +38,7 @@ internal class TestDataFiles private constructor(val readableFiles: List<Path>) 
                 add(directory.resolve("$baseName$ext"))
             }
 
-            return TestDataFiles(readableFiles)
+            return TestDataFiles(testDataPath, readableFiles)
         }
     }
 }

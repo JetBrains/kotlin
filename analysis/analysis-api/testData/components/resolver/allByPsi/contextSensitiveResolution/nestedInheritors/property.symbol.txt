@@ -50,7 +50,10 @@ KtSuperTypeCallEntry(165,174): 'MyClass()'
     ]
 
 KtConstructorCalleeExpression(165,172): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtTypeReference(165,172): 'MyClass'
   null
@@ -86,7 +89,10 @@ KtNameReferenceExpression(224,231): 'MyClass'
   null
 
 KtNameReferenceExpression(234,249): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtProperty(258,285): 'val stringProp: String = ""'
   null
@@ -110,10 +116,16 @@ KtDotQualifiedExpression(318,341): 'MyClass.NestedInheritor'
   null
 
 KtNameReferenceExpression(318,325): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(326,341): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtNamedFunction(343,534): 'fun testIfElse(i: Int) {'
   null
@@ -143,7 +155,10 @@ KtCallExpression(372,532): 'receiveMyClass('
     ]
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(m: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(386,532): '('
   null
@@ -158,13 +173,22 @@ KtContainerNode(400,406): 'i == 0'
   null
 
 KtBinaryExpression(400,406): 'i == 0'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(400,401): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(402,404): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtConstantExpression(405,406): '0'
   null
@@ -173,7 +197,10 @@ KtContainerNodeForControlStructureBody(408,423): 'NestedInheritor'
   null
 
 KtNameReferenceExpression(408,423): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtContainerNodeForControlStructureBody(437,526): 'if (i == 1) myClassProp'
   null
@@ -185,13 +212,22 @@ KtContainerNode(441,447): 'i == 1'
   null
 
 KtBinaryExpression(441,447): 'i == 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(441,442): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(443,445): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtConstantExpression(446,447): '1'
   null
@@ -200,7 +236,10 @@ KtContainerNodeForControlStructureBody(449,460): 'myClassProp'
   null
 
 KtNameReferenceExpression(449,460): 'myClassProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val myClassProp: MyClass
+    ]
 
 KtContainerNodeForControlStructureBody(474,526): 'if (i == 2) stringProp'
   null
@@ -212,13 +251,22 @@ KtContainerNode(478,484): 'i == 2'
   null
 
 KtBinaryExpression(478,484): 'i == 2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(478,479): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(480,482): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtConstantExpression(483,484): '2'
   null
@@ -227,10 +275,16 @@ KtContainerNodeForControlStructureBody(486,496): 'stringProp'
   null
 
 KtNameReferenceExpression(486,496): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtContainerNodeForControlStructureBody(510,526): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(510,526): 'ClassMemberAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ClassMemberAlias: MyClass.NestedInheritor
+    ]

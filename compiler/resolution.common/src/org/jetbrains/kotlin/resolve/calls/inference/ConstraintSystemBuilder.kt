@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -52,6 +53,7 @@ interface ConstraintSystemOperation {
     fun isTypeVariable(type: KotlinTypeMarker): Boolean
     fun isPostponedTypeVariable(typeVariable: TypeVariableMarker): Boolean
 
+    @K1Deprecation
     fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker>
 
     fun addOtherSystem(otherSystem: ConstraintStorage)

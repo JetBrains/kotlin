@@ -22,6 +22,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -31,8 +32,10 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -100,6 +103,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         val configuration = CompilerConfiguration.create()
 
         configuration.put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
+        configuration.treatWarningsAsErrors = arguments.allWarningsAsErrors
 
         val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors, arguments.reportAllWarnings).also {
             configuration.messageCollector = it
@@ -109,8 +113,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         try {
             setupCommonArguments(configuration, arguments)
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
-            val paths = computeKotlinPaths(collector, arguments)
-            if (collector.hasErrors()) {
+            val paths = computeKotlinPaths(configuration, arguments)
+            if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
                 return COMPILATION_ERROR
             }
 
@@ -135,7 +139,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                     performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
                 }
 
-                return if (collector.hasErrors()) COMPILATION_ERROR else code
+                return if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) COMPILATION_ERROR else code
             } catch (e: CompilationCanceledException) {
                 collector.reportCompilationCancelled(e)
                 return OK
@@ -455,21 +459,19 @@ fun checkPluginsArguments(
 ): Boolean {
     var hasErrors = false
 
-    val messageCollector = configuration.messageCollector
-
     for (classpath in pluginClasspaths) {
         if (!File(classpath).exists()) {
-            messageCollector.report(ERROR, "Plugin classpath entry points to a non-existent location: $classpath")
+            configuration.report(COMPILER_ARGUMENTS_ERROR, "Plugin classpath entry points to a non-existent location: $classpath")
         }
     }
 
     if (pluginConfigurations.isNotEmpty()) {
-        configuration.reportDiagnostic(CliDiagnostics.COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, "Argument -Xcompiler-plugin is experimental")
+        configuration.report(CliDiagnostics.COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, "Argument -Xcompiler-plugin is experimental")
 
         if (!useK2) {
             hasErrors = true
-            messageCollector.report(
-                ERROR,
+            configuration.report(
+                COMPILER_ARGUMENTS_ERROR,
                 "-Xcompiler-plugin argument is allowed only for language version 2.0. Please use -Xplugin argument for language version 1.9 and below"
             )
         }
@@ -489,7 +491,7 @@ fun checkPluginsArguments(
                     appendLine("  -Xcompiler-plugin=$it")
                 }
             }
-            messageCollector.report(ERROR, message)
+            configuration.report(COMPILER_ARGUMENTS_ERROR, message)
         }
     }
     return !hasErrors

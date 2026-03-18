@@ -14,14 +14,14 @@ FILE: localAnnotations.kt
 
         }
 
-        @Anno() local final? [DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+        @Anno() local final? [DelegateFieldsMapKey={2=<local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
             public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                 super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
             }
 
             private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
 
-            @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+            @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=<local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
                 public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested| {
                     super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
                 }
@@ -46,14 +46,14 @@ FILE: localAnnotations.kt
 
                 }
 
-                @Anno() local final? [ContainingClassKey=LocalNested, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                @Anno() local final? [ContainingClassKey=LocalNested, DelegateFieldsMapKey={2=<local>/Local.LocalNested.Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
                     public? [ContainingClassKey=Local] constructor(): R|<local>/Local.LocalNested.Local| {
                         super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
                     }
 
                     private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
 
-                    @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                    @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=<local>/Local.LocalNested.Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
                         public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested.Local.LocalNested| {
                             super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
                         }
@@ -77,14 +77,14 @@ FILE: localAnnotations.kt
 
                         }
 
-                        @Anno() local final? [DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                        @Anno() local final? [DelegateFieldsMapKey={2=<local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
                             public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                                 super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
                             }
 
                             private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
 
-                            @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                            @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=<local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
                                 public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested| {
                                     super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
                                 }
@@ -127,14 +127,14 @@ FILE: localAnnotations.kt
 
                 }
 
-                @Anno() local final? [DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                @Anno() local final? [DelegateFieldsMapKey={2=<local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
                     public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                         super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
                     }
 
                     private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
 
-                    @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                    @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=<local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
                         public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested| {
                             super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
                         }
@@ -162,14 +162,14 @@ FILE: localAnnotations.kt
 
                             }
 
-                            @Anno() local final? [DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                            @Anno() local final? [DelegateFieldsMapKey={2=<local>/Local.$$delegate_0}] class Local : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
                                 public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                                     super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
                                 }
 
                                 private final field $$delegate_0: @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> = Component#
 
-                                @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=FirFieldSymbol <local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
+                                @Anno() local final? [ContainingClassKey=Local, DelegateFieldsMapKey={2=<local>/Local.LocalNested.$$delegate_0}] class LocalNested : @SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>, @SuperInterfaceType() SuperInterface<@NestedSuperInterfaceType() A<@NestedNestedSuperInterfaceType() B>>, @SuperDelegateType() SuperInterface<@NestedSuperDelegateType() A<@NestedNestedSuperDelegateType() B>> {
                                     public? [ContainingClassKey=LocalNested] constructor(): R|<local>/Local.LocalNested| {
                                         super<@SuperType() SuperClass<@NestedSuperType() A<@NestedNestedSuperType() B>>>()
                                     }

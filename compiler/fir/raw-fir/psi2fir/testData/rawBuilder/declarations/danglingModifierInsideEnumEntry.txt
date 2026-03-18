@@ -30,6 +30,6 @@ FILE: danglingModifierInsideEnumEntry.kt
         }
 
         public final static [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
-            public get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+            public static get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
 
     }

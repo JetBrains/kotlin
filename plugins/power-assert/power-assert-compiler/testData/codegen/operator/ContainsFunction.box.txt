@@ -1,0 +1,25 @@
+test1: ---
+assert(listOf("Hello", "World").contains("Name"))
+       |                        |
+       [Hello, World]           false
+---
+test2: ---
+assert("Hello".contains(str))
+               |        |
+               false    a
+---
+test3: ---
+assert("Hello".contains(str, ignoreCase = true))
+               |        |
+               false    a
+---
+test4: ---
+assert("Hello".contains(char))
+               |        |
+               false    a
+---
+test5: ---
+assert("Hello".contains(char, ignoreCase = true))
+               |        |
+               false    a
+---

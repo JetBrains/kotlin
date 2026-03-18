@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt.cli.test
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import org.jetbrains.kotlin.cli.common.arguments.readArgumentsFromArgFile
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.BeforeEach
@@ -40,7 +39,7 @@ abstract class AbstractKaptToolIntegrationTest {
         doTestInTempDirectory(testFile, File(tmpdir, testFile.name))
     }
 
-    private class GotResult(val actual: String): RuntimeException()
+    private class GotResult(val actual: String) : RuntimeException()
 
     private fun doTestInTempDirectory(originalTestFile: File, testFile: File) {
         val sections = Section.parse(testFile)
@@ -88,14 +87,14 @@ abstract class AbstractKaptToolIntegrationTest {
     }
 
     private fun runKotlinDistBinary(name: String, args: List<String>) {
-        val executableName = if (SystemInfo.isWindows) name + ".bat" else name
-        val executablePath = File("dist/kotlinc/bin/" + executableName).absolutePath
+        val executableName = if (SystemInfo.isWindows) "$name.bat" else name
+        val executablePath = File("dist/kotlinc/bin/$executableName").absolutePath
         runProcess(executablePath, args)
     }
 
     private fun runJavac(args: List<String>) {
         val executableName = if (SystemInfo.isWindows) "javac.exe" else "javac"
-        val executablePath = File(KtTestUtil.getJdk8Home(), "bin/" + executableName).absolutePath
+        val executablePath = File(KtTestUtil.getJdk8Home(), "bin/$executableName").absolutePath
         runProcess(executablePath, args)
     }
 
@@ -103,7 +102,7 @@ abstract class AbstractKaptToolIntegrationTest {
         val outputFile = File(tmpdir, "javaOutput.txt")
 
         val executableName = if (SystemInfo.isWindows) "java.exe" else "java"
-        val executablePath = File(KtTestUtil.getJdk8Home(), "bin/" + executableName).absolutePath
+        val executablePath = File(KtTestUtil.getJdk8Home(), "bin/$executableName").absolutePath
         runProcess(executablePath, args, outputFile)
 
         throw GotResult(outputFile.takeIf { it.isFile }?.readText() ?: "")

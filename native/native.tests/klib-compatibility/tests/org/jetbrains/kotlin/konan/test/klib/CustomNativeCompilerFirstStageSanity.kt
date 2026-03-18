@@ -14,7 +14,7 @@ private const val testDataRoot = "compiler/testData/klib/klib-compatibility/sani
 @Tag("sanity")
 @UseDummyTestCaseGroupProvider()
 @TestMetadata(testDataRoot)
-@Tag("aggregate")
+@Tag("aggregate-first-stage")
 class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstStageTest() {
     @Test
     fun checkPassed() {

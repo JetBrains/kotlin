@@ -1,0 +1,155 @@
+KtFile: 'nonCallBinary.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,247): 'fun test() {'
+  null
+
+KtParameterList(8,10): '()'
+  null
+
+KtBlockExpression(11,247): '{'
+  null
+
+KtProperty(17,35): 'val a: Any? = null'
+  null
+
+KtTypeReference(24,28): 'Any?'
+  null
+
+KtNullableType(24,28): 'Any?'
+  null
+
+KtUserType(24,27): 'Any'
+  null
+
+KtNameReferenceExpression(24,27): 'Any'
+  null
+
+KtConstantExpression(31,35): 'null'
+  null
+
+KtProperty(40,55): 'val b: Any = ""'
+  null
+
+KtTypeReference(47,50): 'Any'
+  null
+
+KtUserType(47,50): 'Any'
+  null
+
+KtNameReferenceExpression(47,50): 'Any'
+  null
+
+KtStringTemplateExpression(53,55): '""'
+  null
+
+KtBinaryExpression(74,80): 'a ?: b'
+  null
+
+KtNameReferenceExpression(74,75): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.Any?
+    ]
+
+KtOperationReferenceExpression(76,78): '?:'
+  null
+
+KtNameReferenceExpression(79,80): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Any
+    ]
+
+KtBinaryExpression(115,128): 'true && false'
+  null
+
+KtConstantExpression(115,119): 'true'
+  null
+
+KtOperationReferenceExpression(120,122): '&&'
+  null
+
+KtConstantExpression(123,128): 'false'
+  null
+
+KtBinaryExpression(133,146): 'true || false'
+  null
+
+KtConstantExpression(133,137): 'true'
+  null
+
+KtOperationReferenceExpression(138,140): '||'
+  null
+
+KtConstantExpression(141,146): 'false'
+  null
+
+KtBinaryExpression(177,184): 'a === b'
+  null
+
+KtNameReferenceExpression(177,178): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.Any?
+    ]
+
+KtOperationReferenceExpression(179,182): '==='
+  null
+
+KtNameReferenceExpression(183,184): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Any
+    ]
+
+KtBinaryExpression(189,196): 'a !== b'
+  null
+
+KtNameReferenceExpression(189,190): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.Any?
+    ]
+
+KtOperationReferenceExpression(191,194): '!=='
+  null
+
+KtNameReferenceExpression(195,196): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Any
+    ]
+
+KtProperty(226,235): 'var x = 1'
+  null
+
+KtConstantExpression(234,235): '1'
+  null
+
+KtBinaryExpression(240,245): 'x = 2'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var x: kotlin.Int
+    ]
+
+KtNameReferenceExpression(240,241): 'x'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var x: kotlin.Int
+    ]
+
+KtOperationReferenceExpression(242,243): '='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var x: kotlin.Int
+    ]
+
+KtConstantExpression(244,245): '2'
+  null

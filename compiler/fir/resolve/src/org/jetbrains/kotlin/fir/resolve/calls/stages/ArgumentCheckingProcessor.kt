@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.fir.resolve.calls.stages
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
@@ -25,8 +24,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.inference.model.ConeRegularLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeRegularLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
@@ -123,7 +123,17 @@ internal object ArgumentCheckingProcessor {
             is ConeResolutionAtomWithPostponedChild -> when (atom.expression) {
                 is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
-                is FirPropertyAccessExpression -> preprocessSimpleNameReferenceForContextSensitiveResolution(atom)
+                is FirPropertyAccessExpression ->
+                    when {
+                        atom.expression.explicitReceiver == null ->
+                            preprocessSimpleNameReferenceForContextSensitiveResolution(atom, atom.expression)
+                        AnalysisFlags.ideMode.isSet() ->
+                            preprocessQualifierWithContextSensitiveAlternative(atom, atom.expression)
+                        else ->
+                            error("Unknown kind of atom with postponed child: ${atom.expression::class}")
+                    }
+                is FirResolvedQualifier if AnalysisFlags.ideMode.isSet() ->
+                    preprocessQualifierWithContextSensitiveAlternative(atom, atom.expression)
                 is FirCollectionLiteral -> preprocessCollectionLiteral(atom)
                 else -> error("Unknown kind of atom with postponed child: ${atom.expression::class}")
             }
@@ -240,51 +250,6 @@ internal object ArgumentCheckingProcessor {
         if (expectedType == null) return
 
         val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, session)
-        val expression = atom.expression
-
-        fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
-            if (expression.isNullLiteral && !actualExpectedType.isMarkedOrFlexiblyNullable) {
-                return NullForNotNullType(expression, actualExpectedType)
-            }
-
-            fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType {
-                if (type is ConeTypeVariableType) {
-                    val lookupTag = type.typeConstructor
-
-                    val constraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]?.constraints
-                    val constraintTypes = constraints?.mapNotNull { it.type as? ConeKotlinType }
-                    if (!constraintTypes.isNullOrEmpty()) {
-                        return ConeTypeIntersector.intersectTypes(session.typeContext, constraintTypes).applyIf(type.isMarkedNullable) {
-                            withNullability(type.isMarkedNullable, session.typeContext)
-                        }
-                    }
-
-                    val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
-                    if (originalTypeParameter != null) {
-                        return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
-                    }
-                } else if (type is ConeIntegerLiteralType) {
-                    return type.possibleTypes.firstOrNull() ?: type
-                }
-
-                return type
-            }
-
-            if (argumentType is ConeErrorType || actualExpectedType is ConeErrorType) return ErrorTypeInArguments
-
-            val preparedExpectedType = tryGetConeTypeThatCompatibleWithKtType(actualExpectedType)
-            val preparedActualType = tryGetConeTypeThatCompatibleWithKtType(argumentType)
-            return ArgumentTypeMismatch(
-                preparedExpectedType,
-                preparedActualType,
-                expression,
-                // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
-                // relation with nullable expected type.
-                session.typeContext.isTypeMismatchDueToNullability(argumentType, actualExpectedType),
-                anonymousFunctionIfReturnExpression,
-                csBuilder.hasContradiction,
-            )
-        }
 
         when {
             isReceiver && isDispatch -> {
@@ -300,7 +265,7 @@ internal object ArgumentCheckingProcessor {
             else -> {
                 if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) return // no errors
 
-                val smartcastExpression = expression as? FirSmartCastExpression
+                val smartcastExpression = atom.expression as? FirSmartCastExpression
                 if (smartcastExpression != null && !smartcastExpression.isStable) {
                     val unstableType = smartcastExpression.smartcastType.coneType
                     if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
@@ -317,7 +282,7 @@ internal object ArgumentCheckingProcessor {
                 }
 
                 if (!isReceiver) {
-                    reportDiagnostic(subtypeError(expectedType))
+                    reportDiagnostic(subtypeError(atom.expression, argumentType))
                     return
                 }
 
@@ -333,6 +298,72 @@ internal object ArgumentCheckingProcessor {
         }
     }
 
+    private fun ArgumentContext.subtypeError(
+        expression: FirExpression,
+        argumentType: ConeKotlinType,
+    ): ResolutionDiagnostic {
+        require(expectedType != null) { "Expected type mustn't be null" }
+
+        if (expression.isNullLiteral && !expectedType.isMarkedOrFlexiblyNullable) {
+            return NullForNotNullType(expression, expectedType)
+        }
+
+        if (argumentType is ConeErrorType || expectedType is ConeErrorType) return ErrorTypeInArguments
+
+        val preparedExpectedType = prepareTypeForArgumentTypeMismatch(expectedType)
+        val preparedActualType = prepareTypeForArgumentTypeMismatch(argumentType)
+        return ArgumentTypeMismatch(
+            preparedExpectedType,
+            preparedActualType,
+            expression,
+            // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
+            // relation with nullable expected type.
+            session.typeContext.isTypeMismatchDueToNullability(argumentType, expectedType),
+            anonymousFunctionIfReturnExpression,
+            csBuilder.hasContradiction,
+        )
+    }
+
+    private fun ArgumentContext.prepareTypeForArgumentTypeMismatch(type: ConeKotlinType): ConeKotlinType {
+        if (type is ConeTypeVariableType) {
+            val lookupTag = type.typeConstructor
+            val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]
+
+            if (variableWithConstraints != null) {
+                // Retrieve type using proper logic in ResultTypeResolver.
+                // Might return null in case of PCLA when all constraints are non-proper.
+                context(candidate.system) {
+                    (context.inferenceComponents.resultTypeResolver
+                        .findResultTypeOrNull(variableWithConstraints, UNKNOWN) as ConeKotlinType?)
+                        ?.applyIf(type.isMarkedNullable) {
+                            withNullability(type.isMarkedNullable, session.typeContext)
+                        }?.let {
+                            return it
+                        }
+                }
+            }
+
+            // Fallback to just intersecting all constraint types, including non-proper ones.
+            val constraintTypes = variableWithConstraints?.constraints?.mapNotNull { it.type as? ConeKotlinType }
+            if (!constraintTypes.isNullOrEmpty()) {
+                return ConeTypeIntersector.intersectTypes(session.typeContext, constraintTypes).applyIf(type.isMarkedNullable) {
+                    withNullability(type.isMarkedNullable, session.typeContext)
+                }
+            }
+
+            // In case of no constraints, just return the corresponding type parameter type
+            val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
+            if (originalTypeParameter != null) {
+                return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
+            }
+        } else if (type is ConeIntegerLiteralType) {
+            return type.possibleTypes.firstOrNull() ?: type
+        }
+
+        return type
+    }
+
+
     private fun ArgumentContext.preprocessCallableReference(atom: ConeResolutionAtomWithPostponedChild) {
         val expression = atom.callableReferenceExpression
         val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(expression)
@@ -344,16 +375,50 @@ internal object ArgumentCheckingProcessor {
         candidate.addPostponedAtom(postponedAtom)
     }
 
-    private fun ArgumentContext.preprocessSimpleNameReferenceForContextSensitiveResolution(atom: ConeResolutionAtomWithPostponedChild) {
-        val expression = atom.expression as FirPropertyAccessExpression
-
+    private fun ArgumentContext.preprocessSimpleNameReferenceForContextSensitiveResolution(
+        atom: ConeResolutionAtomWithPostponedChild,
+        expression: FirPropertyAccessExpression,
+    ) {
         if (expectedType == null || !LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) {
             atom.useFallbackSubAtom()
             resolveArgumentExpression(atom.subAtom!!)
             return
         }
 
-        val postponedAtom = ConeSimpleNameForContextSensitiveResolution(expression, expectedType, candidate, atom.fallbackSubAtom!!)
+        val postponedAtom = ConeSimpleNameForContextSensitiveResolution(
+            expression, expectedType, candidate, atom.fallbackSubAtom!!,
+        )
+
+        atom.setPostponedSubAtom(postponedAtom)
+        candidate.addPostponedAtom(postponedAtom)
+    }
+
+    private fun ArgumentContext.preprocessQualifierWithContextSensitiveAlternative(
+        atom: ConeResolutionAtomWithPostponedChild,
+        expression: FirQualifierWithContextSensitiveAlternative,
+    ) {
+        @OptIn(FirIdeOnly::class)
+        val alternative = expression.contextSensitiveAlternative
+        // See org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom.Companion.createRawAtom
+        // [Sorry for the comment formatting (KTIJ-31545)]
+            ?: error("Should not create atom with postponed child for expression without CSR alternative ${expression.render()}")
+
+        if (expectedType == null) {
+            atom.useFallbackSubAtom()
+            resolveArgumentExpression(atom.subAtom!!)
+            return
+        }
+
+        @OptIn(FirIdeOnly::class)
+        val postponedAtom = ConeContextSensitiveAlternativeForQualifierAtom(
+            expression,
+            alternative,
+            expectedType,
+        )
+
+        // NB: We apply the original expression immediately just the same way we would do without the alternative
+        resolveArgumentExpression(atom.fallbackSubAtom!!)
+
         atom.setPostponedSubAtom(postponedAtom)
         candidate.addPostponedAtom(postponedAtom)
     }
@@ -365,7 +430,7 @@ internal object ArgumentCheckingProcessor {
     private fun ArgumentContext.preprocessCollectionLiteral(atom: ConeResolutionAtomWithPostponedChild) {
         val expression = atom.collectionLiteralExpression
 
-        val insideAnnotation = context.bodyResolveComponents.callCompleter.isInsideAnnotationContext()
+        val insideAnnotation = context.bodyResolveContext.isInsideAnnotationContext
         if (insideAnnotation || !LanguageFeature.CollectionLiterals.isEnabled()) {
             atom.useFallbackForDisabledCollectionLiterals()
             resolveArgumentExpression(atom.subAtom!!)

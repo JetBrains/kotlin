@@ -1,0 +1,1 @@
+/B.kt:(87,99): warning: Called function 'describe' was not compiled with the power-assert compiler-plugin.

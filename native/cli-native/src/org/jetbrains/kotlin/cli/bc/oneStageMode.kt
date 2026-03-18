@@ -30,8 +30,6 @@ internal fun prepareKlibArgumentsForOneStage(
     // Override produce and output as we should produce an intermediate KLib
     klibArgs.produce = "library"
     klibArgs.outputName = intermediateKlibPath
-    // partial linkage is not supported for klib compilation.
-    klibArgs.partialLinkageMode = null
     return klibArgs
 }
 

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
@@ -34,6 +33,7 @@ private object CompilerPluginMetadata : FirDeclarationDataKey()
 private object OriginalReplSnippet : FirDeclarationDataKey()
 private object ScriptTopLevelDeclaration : FirDeclarationDataKey()
 private object ReplSnippetTopLevelDeclaration : FirDeclarationDataKey()
+private object ReplPropertyCopy : FirDeclarationDataKey()
 private object HasBackingFieldKey : FirDeclarationDataKey()
 private object IsDeserializedPropertyFromAnnotation : FirDeclarationDataKey()
 private object IsDelegatedProperty : FirDeclarationDataKey()
@@ -61,6 +61,22 @@ var FirDeclaration.isScriptTopLevelDeclaration: Boolean? by FirDeclarationDataRe
 var FirDeclaration.isReplSnippetDeclaration: Boolean? by FirDeclarationDataRegistry.data(ReplSnippetTopLevelDeclaration)
 val FirBasedSymbol<*>.isReplSnippetDeclaration: Boolean?
     get() = fir.isReplSnippetDeclaration
+
+/**
+ * REPL-level delegated properties have a complete FIR copy of the original property stored as an attribute.
+ * This is because the getter and setters of the property need to be resolved as part of resolving the delegate expression.
+ * Constraints from the getValue/setValue functions may apply to the delegate expression, and without resolving the accessors,
+ * the delegate expression may be left with unresolved type arguments.
+ *
+ * Why the copy and not just resolve the property?
+ * During resolution of a member declaration, Analysis API forbids resolving of other member declarations.
+ * This means we cannot **actually** resolve the member property of this delegate expression.
+ * But if we resolve a disposable copy of the property instead, we can replace the delegate expression
+ * and resolve the member property accessors "again" when appropriate.
+ */
+@FirImplementationDetail
+var FirFunction.replSnippetDelegatedPropertyCopies: MutableMap<FirPropertySymbol, FirProperty>?
+        by FirDeclarationDataRegistry.data(ReplPropertyCopy)
 
 /**
  * This is an implementation detail attribute to provide proper [hasBackingField]
@@ -140,12 +156,6 @@ fun FirProperty.getExplicitBackingField(): FirBackingField? {
         null
     }
 }
-
-val FirProperty.canNarrowDownGetterType: Boolean
-    get() = backingField != null && getter is FirDefaultPropertyGetter
-
-val FirPropertySymbol.canNarrowDownGetterType: Boolean
-    get() = fir.canNarrowDownGetterType
 
 val FirProperty.isDelegatedProperty: Boolean
     @OptIn(FirImplementationDetail::class)

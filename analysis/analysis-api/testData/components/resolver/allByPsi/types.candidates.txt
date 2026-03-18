@@ -159,7 +159,7 @@ KtCallExpression(251,263): 'InnerClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(251,261): 'InnerClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

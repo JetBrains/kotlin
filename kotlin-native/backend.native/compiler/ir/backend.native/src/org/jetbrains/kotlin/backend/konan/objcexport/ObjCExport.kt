@@ -129,10 +129,10 @@ private class ObjCExportCompilerProblemCollector(val context: NativeBackendPhase
  * Populate framework directory with headers, module and info.plist.
  */
 internal fun createObjCFramework(
-    config: KonanConfig,
-    moduleDescriptor: ModuleDescriptor,
-    exportedInterface: ObjCExportedInterface,
-    frameworkDirectory: File
+        config: NativeSecondStageCompilationConfig,
+        moduleDescriptor: ModuleDescriptor,
+        exportedInterface: ObjCExportedInterface,
+        frameworkDirectory: File
 ) {
     val frameworkName = frameworkDirectory.name.removeSuffix(CompilerOutputKind.FRAMEWORK.suffix())
     val frameworkBuilder = FrameworkBuilder(
@@ -152,7 +152,7 @@ internal fun createObjCFramework(
 }
 
 internal fun createTestBundle(
-        config: KonanConfig,
+        config: NativeSecondStageCompilationConfig,
         moduleDescriptor: ModuleDescriptor,
         bundleDirectory: File
 ) {

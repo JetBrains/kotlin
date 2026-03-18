@@ -14,14 +14,16 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBui
 
 internal object GradleCompatibilityCheck {
     internal const val minSupportedGradleVersionString = "7.6.3"
+    internal const val nextMinimumSupportedGradleVersionString = "8.14.4"
 
     private val minSupportedGradleVersion = GradleVersion.version(minSupportedGradleVersionString)
+    private val nextMinimumSupportedGradleVersion = GradleVersion.version(nextMinimumSupportedGradleVersionString)
 
     fun Project.runGradleCompatibilityCheck(
         gradleVersionProvider: CurrentGradleVersionProvider = DefaultCurrentGradleVersionProvider
     ) {
         val currentVersion = gradleVersionProvider.get()
-        if (gradleVersionProvider.get() < minSupportedGradleVersion) {
+        if (currentVersion < minSupportedGradleVersion) {
             val diagnostic = KotlinToolingDiagnostics.IncompatibleGradleVersionTooLowFatalError(
                 currentVersion,
                 minSupportedGradleVersion,
@@ -35,6 +37,13 @@ internal object GradleCompatibilityCheck {
                 logger.error("Failed to report Gradle version incompatibility diagnostic properly. Throwing it straight away.", e)
                 throw KotlinDiagnosticsException(diagnostic.toString())
             }
+        } else if (currentVersion < nextMinimumSupportedGradleVersion) {
+            reportDiagnosticOncePerBuild(
+                KotlinToolingDiagnostics.DeprecatedGradleVersionWarning(
+                    currentVersion,
+                    nextMinimumSupportedGradleVersion,
+                )
+            )
         }
     }
 

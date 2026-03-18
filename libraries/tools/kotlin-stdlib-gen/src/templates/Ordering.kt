@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -577,6 +577,283 @@ object Ordering : TemplateGroupBase() {
                 }
                 """
             }
+        }
+    }
+
+    private fun MemberBuilder.isSortedSampleRef(methodName: String): String = "samples.generated.issorted." + when (f) {
+        ArraysOfObjects -> "IsSortedArraySamples.$methodName"
+        ArraysOfPrimitives, ArraysOfUnsigned -> "IsSorted${primitive!!.name}ArraySamples.$methodName"
+        else -> "IsSorted${f}Samples.$methodName"
+    }
+
+    private fun MemberBuilder.appendIterationOrderNote() {
+        if (f == Iterables || f == Sequences) {
+            doc {
+                doc + """
+                Note that the result depends on the iteration order of the ${f.collection}.
+                The iteration order of some [${f.toString().dropLast(1)}] implementations may be unstable
+                (change from one invocation to the next),
+                in which case this function may return inconsistent results.
+                """
+            }
+        }
+    }
+
+    private fun MemberBuilder.comparedUsingPhrase(): String = when (f) {
+        ArraysOfPrimitives if primitive?.isFloatingPoint() == true -> " using [${primitive!!.name}.compareTo]"
+        ArraysOfPrimitives, ArraysOfUnsigned -> ""
+        else -> " using [Comparable.compareTo]"
+    }
+
+    private fun MemberBuilder.appendFloatingPointNote() {
+        if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true) {
+            doc {
+                doc + """
+                For floating-point arrays, `NaN` is considered greater than any other value
+                (including positive infinity), and `-0.0` is considered less than `0.0`,
+                consistent with [${primitive!!.name}.compareTo].
+                """
+            }
+        }
+        if (f == Iterables || f == Sequences || f == ArraysOfObjects) {
+            doc {
+                doc + """
+                For elements of floating-point types (`Double`, `Float`), `NaN` is considered greater
+                than any other value (including positive infinity), and `-0.0` is considered less than `0.0`,
+                consistent with [Double.compareTo] and [Float.compareTo].
+                """
+            }
+        }
+    }
+
+    val f_isSortedWith = fn("isSortedWith(comparator: Comparator<in T>)") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        returns("Boolean")
+        specialFor(Sequences) { sequenceClassification(terminal) }
+        doc {
+            """
+            Returns `true` if each element in the ${f.collection} is less than or equal
+            to the following element according to the specified [comparator].
+
+            Returns `true` if the ${f.collection} has fewer than two elements.
+
+            The elements are compared sequentially using [Comparator.compare],
+            and the ${f.collection} is considered sorted if for each pair of adjacent elements
+            the preceding element is not greater than the following one.
+            """
+        }
+        appendIterationOrderNote()
+        sample(isSortedSampleRef("isSortedWith"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            var current = iterator.next()
+            while (iterator.hasNext()) {
+                val next = iterator.next()
+                if (comparator.compare(current, next) > 0) return false
+                current = next
+            }
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            for (i in 1..lastIndex) {
+                if (comparator.compare(this[i - 1], this[i]) > 0) return false
+            }
+            return true
+            """
+        }
+    }
+
+    val f_isSorted = fn("isSorted()") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        returns("Boolean")
+        typeParam("T : Comparable<T>")
+        specialFor(Sequences) { sequenceClassification(terminal) }
+        doc {
+            """
+            Returns `true` if each element in the ${f.collection} is less than or equal
+            to the following element according to their natural sort order.
+
+            Returns `true` if the ${f.collection} has fewer than two elements.
+
+            The elements are compared sequentially${comparedUsingPhrase()},
+            and the ${f.collection} is considered sorted if for each pair of adjacent elements
+            the preceding element is not greater than the following one.
+            """
+        }
+        appendIterationOrderNote()
+        appendFloatingPointNote()
+        sample(isSortedSampleRef("isSorted"))
+        body { "return isSortedWith(naturalOrder())" }
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
+            val condition = if (primitive?.isFloatingPoint() == true)
+                "this[i - 1].compareTo(this[i]) > 0"
+            else
+                "this[i - 1] > this[i]"
+            """
+            for (i in 1..lastIndex) {
+                if ($condition) return false
+            }
+            return true
+            """
+        }
+    }
+
+    val f_isSortedDescending = fn("isSortedDescending()") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        returns("Boolean")
+        typeParam("T : Comparable<T>")
+        specialFor(Sequences) { sequenceClassification(terminal) }
+        doc {
+            """
+            Returns `true` if each element in the ${f.collection} is greater than or equal
+            to the following element according to their natural sort order.
+
+            Returns `true` if the ${f.collection} has fewer than two elements.
+
+            The elements are compared sequentially${comparedUsingPhrase()},
+            and the ${f.collection} is considered sorted in descending order if for each
+            pair of adjacent elements the preceding element is not less than the following one.
+            """
+        }
+        appendIterationOrderNote()
+        appendFloatingPointNote()
+        sample(isSortedSampleRef("isSortedDescending"))
+        body { "return isSortedWith(reverseOrder())" }
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
+            val condition = if (primitive?.isFloatingPoint() == true)
+                "this[i - 1].compareTo(this[i]) < 0"
+            else
+                "this[i - 1] < this[i]"
+            """
+            for (i in 1..lastIndex) {
+                if ($condition) return false
+            }
+            return true
+            """
+        }
+    }
+
+    val f_isSortedBy = fn("isSortedBy(selector: (T) -> R?)") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        inline()
+        returns("Boolean")
+        typeParam("R : Comparable<R>")
+        specialFor(Sequences) { sequenceClassification(terminal) }
+        doc {
+            """
+            Returns `true` if each element in the ${f.collection} yields a [selector] value
+            that is less than or equal to the [selector] value of the following element
+            according to the natural sort order of the selector values.
+
+            Returns `true` if the ${f.collection} has fewer than two elements.
+
+            The [selector] values of adjacent elements are compared sequentially using [compareValues],
+            and the ${f.collection} is considered sorted if for each pair of adjacent elements
+            the [selector] value of the preceding element is not greater than that of the following one.
+
+            If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+            """
+        }
+        appendIterationOrderNote()
+        sample(isSortedSampleRef("isSortedBy"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val previous = iterator.next()
+            if (!iterator.hasNext()) return true
+            var previousValue = selector(previous)
+            while (iterator.hasNext()) {
+                val currentValue = selector(iterator.next())
+                if (compareValues(previousValue, currentValue) > 0) return false
+                previousValue = currentValue
+            }
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            if (size < 2) return true
+            var previousValue = selector(this[0])
+            for (i in 1..lastIndex) {
+                val currentValue = selector(this[i])
+                if (compareValues(previousValue, currentValue) > 0) return false
+                previousValue = currentValue
+            }
+            return true
+            """
+        }
+    }
+
+    val f_isSortedByDescending = fn("isSortedByDescending(selector: (T) -> R?)") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        inline()
+        returns("Boolean")
+        typeParam("R : Comparable<R>")
+        specialFor(Sequences) { sequenceClassification(terminal) }
+        doc {
+            """
+            Returns `true` if each element in the ${f.collection} yields a [selector] value
+            that is greater than or equal to the [selector] value of the following element
+            according to the natural sort order of the selector values.
+
+            Returns `true` if the ${f.collection} has fewer than two elements.
+
+            The [selector] values of adjacent elements are compared sequentially using [compareValues],
+            and the ${f.collection} is considered sorted in descending order if for each pair
+            of adjacent elements the [selector] value of the preceding element is not less
+            than that of the following one.
+
+            If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+            """
+        }
+        appendIterationOrderNote()
+        sample(isSortedSampleRef("isSortedByDescending"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val previous = iterator.next()
+            if (!iterator.hasNext()) return true
+            var previousValue = selector(previous)
+            while (iterator.hasNext()) {
+                val currentValue = selector(iterator.next())
+                if (compareValues(previousValue, currentValue) < 0) return false
+                previousValue = currentValue
+            }
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            if (size < 2) return true
+            var previousValue = selector(this[0])
+            for (i in 1..lastIndex) {
+                val currentValue = selector(this[i])
+                if (compareValues(previousValue, currentValue) < 0) return false
+                previousValue = currentValue
+            }
+            return true
+            """
         }
     }
 }

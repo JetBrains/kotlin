@@ -40,6 +40,6 @@ FILE: [ResolvedTo(IMPORTS)] danglingModifierInsideEnumEntry.kt
         }
 
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+            public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
 
     }

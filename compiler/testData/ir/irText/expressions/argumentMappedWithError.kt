@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// IGNORE_BACKEND: JKLIB
 
 fun <R : Number> Number.convert(): R = TODO()
 

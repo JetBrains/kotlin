@@ -2,12 +2,15 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // LANGUAGE: +JsStaticInInterface +JsAllowExportingSuspendFunctions +JsExportInterfacesInImplementableWay
+// OPT_IN: kotlin.js.ExperimentalJsNoRuntime
 // INFER_MAIN_MODULE
 // WITH_STDLIB
 // MODULE: JS_TESTS
 // FILE: implementable-interfaces.kt
 
 package foo
+
+import kotlin.js.JsNoRuntime
 
 @JsExport
 fun interface FunIFace {
@@ -24,17 +27,17 @@ interface ExportedParent {
     @set:JsName("setGetterAndSetterWithJsName")
     var getterAndSetterWithJsName: String
 
-    fun withDefaultImplementation() = "KOTLIN IMPLEMENTATION: ${anotherParentMethod[0]}"
+    fun withDefaultImplementation() = "KOTLIN IMPLEMENTATION: ${anotherParentMethod()[0]}"
     fun anotherDefaultImplementation() = "FROM ExportedParent"
 
     var propertyWithDefaultSetter: String
-        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod[0]}"
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod()[0]}"
         set(value) {}
 
     @get:JsName("getDefaultGetterAndSetterWithJsName")
     @set:JsName("setDefaultGetterAndSetterWithJsName")
     var defaultGetterAndSetterWithJsName: String
-        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod[0]}"
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod()[0]}"
         set(value) {}
 }
 
@@ -64,7 +67,13 @@ interface IFoo<T : Comparable<T>> : ExportedParent {
 fun makeFunInterfaceWithSam(): FunIFace = FunIFace { x -> "SAM ${x}" }
 
 @JsExport
+fun makeNoRuntimeFunInterfaceWithSam(): NoRuntimeFunIface = NoRuntimeFunIface { arrayOf("SAM from Kotlin") }
+
+@JsExport
 fun callFunInterface(f: FunIFace, x: String): String = f.apply(x)
+
+@JsExport
+fun callNoRuntimeFunInterface(f: NoRuntimeFunIface): Array<String> = f.run()
 
 @JsExport
 fun callingExportedParentMethod(foo: IFoo<*>): String =
@@ -150,4 +159,83 @@ class KotlinFooImpl : IFoo<String> {
 
      override fun delegatingToSuperDefaultImplementation(): String =
          super.delegatingToSuperDefaultImplementation()
+}
+
+@JsExport
+@JsNoRuntime
+interface NoRuntimeIface {
+    val a: String
+}
+
+@JsExport
+@JsNoRuntime
+fun interface NoRuntimeFunIface {
+    fun run(): Array<String>
+}
+
+@JsExport
+@JsNoRuntime
+interface ChildOfNoRuntime : NoRuntimeIface {
+    fun child(): String
+}
+
+// Implementation of @JsNoRuntime interfaces should be possible and must not introduce any brand properties
+@JsExport
+class KotlinNoRuntimeImpl(override val a: String) : NoRuntimeIface
+
+@JsExport
+class KotlinChildNoRuntimeImpl(override val a: String) : ChildOfNoRuntime {
+    override fun child(): String = "child-$a"
+}
+
+// "Sandwich" hierarchy: JsNoRuntime -> normal -> JsNoRuntime
+@JsExport
+@JsNoRuntime
+interface NoRuntimeBase {
+    fun base(): String
+}
+
+@JsExport
+interface MidNormal : NoRuntimeBase {
+    fun mid(): String
+}
+
+@JsExport
+interface WithSuspendOnly {
+    suspend fun mid(): String
+}
+
+
+@JsExport
+interface WithSuspendOnlyButIgnored {
+    @JsExport.Ignore
+    open suspend fun mid(): String
+}
+
+@JsExport
+interface ImplementableChildOfSuspendOnlyButIgnored : WithSuspendOnlyButIgnored {
+    override suspend fun mid(): String
+    suspend fun another(): Int
+}
+
+@JsExport
+interface NotImplementableChildOfSuspendOnlyButIgnored : WithSuspendOnlyButIgnored {
+    override suspend fun mid(): String
+    @JsExport.Ignore
+    suspend fun another(): Int
+}
+
+@JsExport
+@JsNoRuntime
+interface NoRuntimeLeaf : MidNormal {
+    fun leaf(): String
+}
+
+@JsExport
+@JsNoRuntime
+interface ShouldBeNotImplementable {
+    fun leaf(): String
+
+    @JsExport.Ignore
+    val ignored: Boolean
 }

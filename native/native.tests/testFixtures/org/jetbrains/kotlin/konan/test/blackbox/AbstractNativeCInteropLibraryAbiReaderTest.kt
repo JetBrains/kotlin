@@ -50,7 +50,13 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
             produceCustomDependencies(sourceFile, klibAbiLevel).map(TestCompilationArtifact.KLIB::asLibraryDependency)
 
         val compilerArgs = klibAbiLevel?.let { abiLevel ->
-            TestCompilerArgs(listOf("-XXLanguage:+ExportKlibToOlderAbiVersion", "-language-version", abiLevel.toString()))
+            TestCompilerArgs(
+                compilerArgs = listOf(
+                    "-XXLanguage:+ExportKlibToOlderAbiVersion",
+                    "-language-version", abiLevel.toString(),
+                    "-Xskip-library-special-compatibility-checks",
+                )
+            )
         } ?: TestCompilerArgs.EMPTY
 
         val library = compileToLibrary(
@@ -81,7 +87,13 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
         assertTrue(defFile.isFile) { "Def file does not exist: $defFile" }
 
         val compilerArgs = klibAbiLevel?.let { abiLevel ->
-            TestCompilerArgs(compilerArgs = emptyList(), cinteropArgs = listOf("-Xklib-abi-compatibility-level", abiLevel.toString()))
+            TestCompilerArgs(
+                compilerArgs = emptyList(),
+                cinteropArgs = listOf(
+                    "-Xklib-abi-compatibility-level", abiLevel.toString(),
+                    "-Xccall-mode", "direct",
+                )
+            )
         } ?: TestCompilerArgs.EMPTY
 
         return listOf(

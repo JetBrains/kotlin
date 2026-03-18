@@ -104,7 +104,7 @@ KtSuperTypeCallEntry(86,93): 'Base(x)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(86,90): 'Base'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -155,7 +155,7 @@ KtValueArgument(91,92): 'x'
   NO_CANDIDATES
 
 KtNameReferenceExpression(91,92): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

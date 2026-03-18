@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
@@ -64,10 +65,6 @@ class CoroutineTransformerMethodVisitor(
     private val containingClassInternalName: String,
     obtainClassBuilderForCoroutineState: () -> ClassBuilder,
     private val isForNamedFunction: Boolean,
-    // Since tail-call optimization of functions with Unit return type relies on ability of call-site to recognize them,
-    // in order to ignore return value and push Unit, when we cannot ensure this ability, for example, when the function overrides function,
-    // returning Any, we need to disable tail-call optimization for these functions.
-    private val disableTailCallOptimizationForFunctionReturningUnit: Boolean,
     private val reportSuspensionPointInsideMonitor: (String) -> Unit,
     private val lineNumber: Int,
     private val sourceFile: String,
@@ -122,7 +119,7 @@ class CoroutineTransformerMethodVisitor(
         var actualCoroutineStart = methodNode.instructions.first
 
         if (isForNamedFunction) {
-            if (methodNode.allSuspensionPointsAreTailCalls(suspensionPoints, !disableTailCallOptimizationForFunctionReturningUnit)) {
+            if (methodNode.allSuspensionPointsAreTailCalls(suspensionPoints)) {
                 methodNode.addCoroutineSuspendedChecks(suspensionPoints)
                 methodNode.insertAsyncStackTraceEntriesForTailCallFunction(suspensionPoints)
                 dropSuspensionMarkers(methodNode)
@@ -790,7 +787,6 @@ class CoroutineTransformerMethodVisitor(
         if (suspensionPoints.isEmpty()) return emptyList()
 
         val frames: Array<out Frame<BasicValue>?> = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
-        val afterResumeFrames = performUninitializedAfterResumeVariablesAnalysis(suspensionPoints, methodNode, containingClassInternalName)
 
         val suspendLambdaParameters =
             if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) methodNode.collectSuspendLambdaParameterSlots()
@@ -855,8 +851,12 @@ class CoroutineTransformerMethodVisitor(
 
         // for each suspension point, check if there are some dead non-spilled variables that will be spilled on further points
         // but could be unitialized there if resumed on this point
-        val varilablesForReinitializationBySuspensionPointIndex =
-            calculateVariablesToReinitialize(suspensionPoints, afterResumeFrames, methodNode, variablesToSpillBySuspensionPointIndex)
+        val varilablesForReinitializationBySuspensionPointIndex = calculateVariablesToReinitializeBySuspensionPoint(
+            suspensionPoints,
+            methodNode,
+            containingClassInternalName,
+            variablesToSpillBySuspensionPointIndex
+        )
 
         // Mutate method node
         for (suspensionPointIndex in suspensionPoints.indices) {
@@ -896,37 +896,6 @@ class CoroutineTransformerMethodVisitor(
         }
 
         return spilledToVariableMapping
-    }
-
-    private fun calculateVariablesToReinitialize(
-        suspensionPoints: List<SuspensionPoint>,
-        afterResumeFrames: Array<out Frame<ResumeDependentValue>?>,
-        methodNode: MethodNode,
-        variablesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>>,
-    ): Array<MutableList<SpillableVariable>> {
-        val varilablesForReinitializationBySuspensionPointIndex = Array(suspensionPoints.size) { mutableListOf<SpillableVariable>() }
-        for ((spIndex, suspensionPoint) in suspensionPoints.withIndex()) {
-            val resumeDependentFrame = afterResumeFrames[methodNode.instructions.indexOf(suspensionPoint.suspensionCallEnd)]
-                ?: error(
-                    "Missing 'after resume' analysis data for ${suspensionPoint.suspensionCallEnd} " +
-                            "at ${containingClassInternalName}::${methodNode.name}"
-                )
-            for (variable in variablesToSpillBySuspensionPointIndex[spIndex]) {
-                val resumeDependentValue = resumeDependentFrame.getLocal(variable.slot)
-                    ?: error("Missing 'after resume' analysis data for slot ${variable.slot}")
-                resumeDependentValue.states.withIndex().filter { it.value.isUnitialized() }.forEach {
-                    val otherSpIndex = it.index
-                    // it was deduced by analysis that there is a path between suspension points (otherSpIndex -> spIndex) with no
-                    // STOREs to the variable's slot
-                    if (variablesToSpillBySuspensionPointIndex[otherSpIndex].all { it.slot != variable.slot }) {
-                        // .. and the variable is not spilled on preceding (other) SP, so we need to additionally initialize it
-                        // with some value (e.g. default one) on unspill block
-                        varilablesForReinitializationBySuspensionPointIndex[otherSpIndex].add(variable)
-                    }
-                }
-            }
-        }
-        return varilablesForReinitializationBySuspensionPointIndex
     }
 
     private fun generateSpillAndUnspill(
@@ -1544,7 +1513,7 @@ private fun MethodNode.extendSuspendLambdaParameterRanges() {
     }
 }
 
-private class SpillableVariable(
+internal class SpillableVariable(
     val value: BasicValue,
     val type: Type,
     val normalizedType: Type,

@@ -3,6 +3,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -31,11 +32,24 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
-        workingDir = rootDir
-    }
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0))
+
+    testGenerator("org.jetbrains.kotlin.analysis.stubs.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
+    withJsRuntime()
+    withStdlibCommon()
+    withTestJar()
+    withAnnotations()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withScriptRuntime()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
+
+    testData(project.isolated, "testData")
+    testData(project(":compiler").isolated, "testData/psi")
 }
 
 testsJar()

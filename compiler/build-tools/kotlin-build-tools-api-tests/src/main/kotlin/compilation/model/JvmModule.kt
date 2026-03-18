@@ -58,8 +58,8 @@ class JvmModule(
      */
     private val dependencyFiles: List<Path>
         get() = dependencies.map { it.location }.plus(stdlibLocation)
-    val compileClasspath: String
-        get() = dependencyFiles.joinToString(File.pathSeparator)
+    val compileClasspath: List<Path>
+        get() = dependencyFiles
 
     override fun compileImpl(
         strategyConfig: ExecutionPolicy,
@@ -143,7 +143,7 @@ class JvmModule(
     override fun prepareExecutionProcessBuilder(
         mainClassFqn: String
     ): ProcessBuilder {
-        val executionClasspath = "$compileClasspath${File.pathSeparator}${outputDirectory}"
+        val executionClasspath = "${compileClasspath.joinToString(File.pathSeparator)}${File.pathSeparator}${outputDirectory}"
 
         val builder = ProcessBuilder(
             javaExe.absolutePath, // it is possible to support jdk selection, but we don't need it yet

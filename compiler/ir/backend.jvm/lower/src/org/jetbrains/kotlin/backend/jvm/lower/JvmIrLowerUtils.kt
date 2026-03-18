@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
+import org.jetbrains.kotlin.ir.util.isSuspendFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.shallowCopyOrNull
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.org.objectweb.asm.Handle
@@ -115,3 +116,6 @@ internal val IrRichPropertyReference.singleBoundValueOrNull: IrExpression?
         1 -> boundValues.first()
         else -> error("Property reference can not have more than one bound value, but got: ${boundValues.size}")
     }
+
+internal fun IrRichFunctionReference.isSamConversion(): Boolean =
+    !type.isFunctionOrKFunction() && !type.isSuspendFunctionOrKFunction()

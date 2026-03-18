@@ -122,12 +122,16 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = if (kotlinBuildProperties.isTeamcityBuild.get()) {
+    /**
+     * "versions.kotlin-native" is the version of K/N dist that will be baked into KGP and that KGP will try to resolve to run K/N
+     * compilations (including in KGP tests).
+     */
+    extra["versions.kotlin-native"] = if (kotlinBuildProperties.alignKotlinNativeVersionInTCBuilds) {
         kotlinVersion
     } else if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         kotlinBuildProperties.defaultSnapshotVersion.get()
     } else {
-        "2.4.0-dev-1942"
+        "2.4.0-dev-3656"
     }
 }
 
@@ -215,7 +219,6 @@ val commonCompilerModules = arrayOf(
     ":native:binary-options",
     ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-statistics",
-    ":compiler:build-tools:kotlin-build-tools-api",
     ":js:js.config",
     ":js:js.frontend.common",
     ":wasm:wasm.config",
@@ -242,6 +245,7 @@ val firCompilerCoreModules = arrayOf(
     ":compiler:fir:checkers:checkers.native",
     ":compiler:fir:checkers:checkers.wasm",
     ":compiler:fir:checkers:checkers.web.common",
+    ":compiler:fir:diagnostic-renderers",
     ":compiler:fir:entrypoint", // TODO should not be in core modules but FIR IDE uses DependencyListForCliModule from this module
     ":compiler:fir:fir2ir:jvm-backend",  // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
     ":compiler:fir:fir2ir" // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
@@ -390,6 +394,7 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":kotlin-scripting-compiler",
                 ":kotlin-gradle-statistics",
                 ":jps:jps-common",
+                ":compiler:build-tools:kotlin-build-tools-api",
             ) +
             arrayOf(
                 ":compiler:ir.serialization.native",
@@ -770,6 +775,7 @@ tasks {
             ":native",
             ":libraries:tools:analysis-api-based-klib-reader:testProject",
             ":plugins:plugin-sandbox:plugin-annotations",
+            ":kotlin-power-assert-runtime",
         )
         allprojects
             .filter {
@@ -879,7 +885,6 @@ tasks {
         dependsOn(":native:native.tests:driver:check")
         dependsOn(":native:native.tests:gc-fuzzing-tests:engine:check")
         dependsOn(":native:native.tests:stress:check")
-        dependsOn(":native:native.tests:klib-compatibility:check")
         dependsOn(":native:native.tests:litmus-tests:check")
     }
 
@@ -943,19 +948,8 @@ tasks {
         dependsOn(":kotlin-main-kts-test:test")
     }
 
-    register("scriptingK1JvmTest") {
-        dependsOn(":kotlin-scripting-compiler:testWithK1")
-        dependsOn(":kotlin-scripting-jvm-host-test:testWithK1")
-        dependsOn(":kotlin-main-kts-test:testWithK1")
-        dependsOn(":kotlin-scripting-jsr223-test:test")
-        dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
-        dependsOn(":kotlin-scripting-ide-services-test:test")
-        dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
-    }
-
     register("scriptingTest") {
         dependsOn("scriptingJvmTest")
-        dependsOn("scriptingK1JvmTest")
     }
 
     register("compilerTest") {
@@ -972,9 +966,10 @@ tasks {
         dependsOn("jvmCompilerIntegrationTest")
         dependsOn("compilerPluginTest")
         dependsOn(":kotlin-daemon-tests:test")
-        dependsOn(":compiler:arguments:test")
+        dependsOn(":compiler:arguments:check")
         dependsOn(":compiler:multiplatform-parsing:jvmTest")
         dependsOn(":compiler:fir:modularized-tests:test")
+        dependsOn(":compiler:util:test")
     }
 
     register("miscTest") {
@@ -1023,6 +1018,7 @@ tasks {
         dependsOn(":kotlin-tooling-metadata:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests:check")
         dependsOn(":tools:ide-plugin-dependencies-validator:test")
         dependsOn(":tools:stats-analyser:test")
         dependsOn(":libraries:tools:abi-validation:abi-tools:check")
@@ -1255,19 +1251,6 @@ configure<IdeaModel> {
     }
 }
 
-val disableVerificationTasks = providers.gradleProperty("kotlin.build.disable.verification.tasks")
-    .orNull?.toBoolean() ?: false
-if (disableVerificationTasks) {
-    logger.info("Verification tasks are disabled because `kotlin.build.disable.verification.tasks` is true")
-    gradle.taskGraph.whenReady {
-        allTasks.forEach {
-            if (it is VerificationTask) {
-                logger.info("Task ${it.path} is disabled because `kotlin.build.disable.verification.tasks` is true")
-                it.enabled = false
-            }
-        }
-    }
-}
 
 gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 

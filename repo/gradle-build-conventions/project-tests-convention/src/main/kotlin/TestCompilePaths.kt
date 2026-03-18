@@ -6,6 +6,7 @@
 // This file is duplicated at compiler/test-infrastructure-utils/tests/org/jetbrains/kotlin/codegen/forTestCompile/TestCompilePaths.kt
 object TestCompilePaths {
     const val KOTLIN_FULL_STDLIB_PATH: String = "kotlin.full.stdlib.path"
+    const val KOTLIN_FULL_STDLIB_SOURCES_PATH: String = "kotlin.full.stdlib.sources.path"
     const val KOTLIN_MINIMAL_STDLIB_PATH: String = "kotlin.minimal.stdlib.path"
     const val KOTLIN_TEST_JAR_PATH: String = "kotlin.test.jar.path"
     const val KOTLIN_REFLECT_JAR_PATH: String = "kotlin.reflect.jar.path"
@@ -26,6 +27,8 @@ object TestCompilePaths {
     const val PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH: String = "firPluginAnnotations.js.path"
 
     const val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH = "kotlin.scriptingPlugin.classpath"
+    const val KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH = "kotlin.script.test.script.definition.classpath"
+    const val KOTLIN_DIST_PATH = "kotlin.dist.path"
     const val KOTLIN_MOCKJDK_RUNTIME_PATH = "kotlin.mockJDK.runtime.path"
     const val KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH = "kotlin.mockJDKModified.runtime.path"
     const val KOTLIN_MOCKJDK_ANNOTATIONS_PATH = "kotlin.mockJDK.annotations.path"

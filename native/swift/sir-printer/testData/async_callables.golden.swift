@@ -1,4 +1,4 @@
-public typealias AsyncClosure = () async throws -> Swift.Void
+public typealias AsyncClosure = () async -> Swift.Void
 public class AsyncMethods {
     public func asyncMethodEmptyArgs() async -> Swift.Bool {
         stub()
@@ -28,18 +28,18 @@ public func throwingAsyncFunction(
     stub()
 }
 public func functionWithAsyncClosure(
-    asyncEmptyClosure: () async throws -> Swift.Void
+    asyncEmptyClosure: () async -> Swift.Void
 ) -> Swift.Void {
     stub()
 }
 public func functionWithAsyncReturnClosure(
-    asyncReturnClosure: (Swift.Int32) async throws -> Swift.Bool
+    asyncReturnClosure: (Swift.Int32) async -> Swift.Bool
 ) -> Swift.Void {
     stub()
 }
 public func functionConsumingClosureConsumingClosure(
-    asyncReturnClosure: @escaping (@escaping (Swift.Int32) async throws -> Swift.Bool) async throws -> Swift.Bool,
+    asyncReturnClosure: @escaping (@escaping (Swift.Int32) async -> Swift.Bool) async -> Swift.Bool,
     typealiasedClosure: @escaping Test.AsyncClosure
-) -> (@escaping (Swift.Int32) async throws -> Swift.Bool) async throws -> Swift.Bool {
+) -> (@escaping (Swift.Int32) async -> Swift.Bool) async -> Swift.Bool {
     stub()
 }

@@ -1,0 +1,40 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
+  facadeFqName: CompanionExtensionKt
+  partSimpleName: "CompanionExtensionKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo1]
+    MODIFIER_LIST[companion]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo2]
+    MODIFIER_LIST[private companion]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo3]
+    MODIFIER_LIST[companion inline]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+    VALUE_PARAMETER_LIST
+  PROPERTY[fqName=bar1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=bar1]
+    MODIFIER_LIST[companion]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+  PROPERTY[fqName=bar2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=bar2]
+    MODIFIER_LIST[private companion]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+  PROPERTY[fqName=bar3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=bar3]
+    MODIFIER_LIST[companion inline]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+      VALUE_PARAMETER_LIST

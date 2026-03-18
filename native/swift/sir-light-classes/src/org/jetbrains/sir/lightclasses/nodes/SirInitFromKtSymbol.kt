@@ -191,7 +191,7 @@ internal class SirRegularInitFromKtSymbol(
                     "let ${obj.name} = $it"
                 })
 
-                add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge)")
+                add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge);")
 
                 addAll(initDescriptor.createSwiftInvocation(resultTransformer = null))
             })
@@ -213,6 +213,7 @@ internal class SirRegularInitFromKtSymbol(
             returnType = obj.type,
             kotlinFqName = fqName,
             selfParameter = null,
+            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = null,
             isAsync = false,
@@ -235,6 +236,7 @@ internal class SirRegularInitFromKtSymbol(
             returnType = returnType,
             kotlinFqName = fqName,
             selfParameter = null,
+            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "__error", it)

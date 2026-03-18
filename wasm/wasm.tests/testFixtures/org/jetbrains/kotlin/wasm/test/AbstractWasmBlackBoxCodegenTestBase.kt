@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonClassicFrontendHandlersForCodegenTest
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmIrHandler
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
+import org.jetbrains.kotlin.wasm.test.handlers.WasmTypeScriptCompilationHandler
 
 abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
     private val targetFrontend: FrontendKind<R>,
@@ -59,6 +58,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         customIgnoreDirective: ValueDirective<TargetBackend>? = null,
         additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
     ) {
+        commonCodegenConfiguration()
         commonConfigurationForWasmFirstStageTest(
             targetFrontend,
             targetPlatform,
@@ -80,6 +80,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         facadeStep(afterBackendFacade)
 
         wasmArtifactsHandlersStep {
+            useHandlers(::WasmTypeScriptCompilationHandler)
             useHandlers(wasmBoxTestRunner)
             useHandlers(::WasmIrHandler)
             useHandlers(::WasmDtsHandler)
@@ -99,13 +100,6 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         }
 
         enableMetaInfoHandler()
-        forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
-            enableMetaInfoHandler()
-            defaultDirectives {
-                +FIR_DUMP
-                +RENDER_FIR_DECLARATION_ATTRIBUTES
-            }
-        }
     }
 }
 

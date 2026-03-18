@@ -2,5 +2,6 @@ KtNameReferenceExpression(51,56): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) var <T : kotlin.Int> CInt32VarX<T>.value: T

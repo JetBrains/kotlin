@@ -18,23 +18,20 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * Symbols for builtins that are available without any context and are not specific to any backend
  * (but specific to the frontend)
  */
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class IrBuiltIns {
-    abstract val symbolFinder: SymbolFinder
-    abstract val languageVersionSettings: LanguageVersionSettings
-
+abstract class IrBuiltIns : SymbolFinderHolder {
     abstract val irFactory: IrFactory
 
     abstract val anyType: IrType
@@ -229,15 +226,4 @@ object BuiltInOperatorNames {
     const val ANDAND = "ANDAND"
     const val OROR = "OROR"
     const val CHECK_NOT_NULL = "CHECK_NOT_NULL"
-}
-
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-@Target(AnnotationTarget.CLASS)
-annotation class InternalSymbolFinderAPI
-
-@InternalSymbolFinderAPI
-abstract class SymbolFinder {
-    abstract fun findFunctions(callableId: CallableId): Iterable<IrSimpleFunctionSymbol>
-    abstract fun findProperties(callableId: CallableId): Iterable<IrPropertySymbol>
-    abstract fun findClass(classId: ClassId): IrClassSymbol?
 }

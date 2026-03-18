@@ -26,8 +26,8 @@ class IncrementalKaptTest {
     ) {
         val sourcesDir = baseSourcesDir.resolve("test").also { base ->
             base.mkdir()
-            listOf("User.java", "Address.java", "Observable.java").map {
-                TEST_DATA_DIR.resolve(it).copyTo(base.resolve(it))
+            for (file in listOf("User.java", "Address.java", "Observable.java")) {
+                TEST_DATA_DIR.resolve(file).copyTo(base.resolve(file))
             }
         }
 
@@ -103,8 +103,8 @@ class IncrementalKaptTest {
     ) {
         val sourcesDir = baseSourcesDir.resolve("test").also { base ->
             base.mkdir()
-            listOf("User.java", "Address.java", "Observable.java").map {
-                TEST_DATA_DIR.resolve(it).copyTo(base.resolve(it))
+            for (file in listOf("User.java", "Address.java", "Observable.java")) {
+                TEST_DATA_DIR.resolve(file).copyTo(base.resolve(file))
             }
         }
 
@@ -170,8 +170,8 @@ class IncrementalKaptTest {
     ) {
         val sourcesDir = baseSourcesDir.resolve("test").also { base ->
             base.mkdir()
-            listOf("User.java", "Address.java", "Observable.java").map {
-                TEST_DATA_DIR.resolve(it).copyTo(base.resolve(it))
+            for (file in listOf("User.java", "Address.java", "Observable.java")) {
+                TEST_DATA_DIR.resolve(file).copyTo(base.resolve(file))
             }
         }
 

@@ -241,6 +241,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val IGNORE_IR_EXPECT_FLAG by directive(
+        description = "Ignore the [expect] flag in IR text dumps"
+    )
+
     // TODO: Drop this directive and make the offset validation enabled by default when KT-81475 is fixed.
     val ENABLE_IR_NESTED_OFFSETS_CHECKS by stringDirective(
         description = "Enables validation of the nested IR elements offsets"

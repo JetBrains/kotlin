@@ -33,13 +33,13 @@ extension ExportedKotlinPackages.kotlin {
         public func _get(
             index: Swift.Int32
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-            return { switch kotlin_Array_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+            return { switch kotlin_Array_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
         public func _set(
             index: Swift.Int32,
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void {
-            return kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil)
+            return { kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_Array_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
@@ -54,7 +54,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public subscript(
             index: Swift.Int32
@@ -82,7 +82,7 @@ extension ExportedKotlinPackages.kotlin {
             index: Swift.Int32,
             value: Swift.Int32
         ) -> Swift.Void {
-            return kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value)
+            return { kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value); return () }()
         }
         public func iterator() -> ExportedKotlinPackages.kotlin.collections.IntIterator {
             return ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: kotlin_IntArray_iterator(self.__externalRCRef()))
@@ -102,7 +102,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public subscript(
             index: Swift.Int32
@@ -126,7 +126,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -205,7 +205,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Char: KotlinRuntime.KotlinBase {
@@ -296,7 +296,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -428,23 +428,23 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class Exception: ExportedKotlinPackages.kotlin.Throwable {
         public override init() {
             if Self.self != ExportedKotlinPackages.kotlin.Exception.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ") }
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Exception.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ") }
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         public override init(
             message: Swift.String?,
@@ -452,38 +452,38 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Exception.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ") }
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Exception.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ") }
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class RuntimeException: ExportedKotlinPackages.kotlin.Exception {
         public override init() {
             if Self.self != ExportedKotlinPackages.kotlin.RuntimeException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ") }
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.RuntimeException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ") }
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         public override init(
             message: Swift.String?,
@@ -491,38 +491,38 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.RuntimeException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ") }
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.RuntimeException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ") }
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class IllegalArgumentException: ExportedKotlinPackages.kotlin.RuntimeException {
         public override init() {
             if Self.self != ExportedKotlinPackages.kotlin.IllegalArgumentException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ") }
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.IllegalArgumentException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ") }
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         public override init(
             message: Swift.String?,
@@ -530,22 +530,22 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.IllegalArgumentException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ") }
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.IllegalArgumentException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ") }
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Byte: ExportedKotlinPackages.kotlin.Number {
@@ -579,7 +579,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -1202,7 +1202,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Short: ExportedKotlinPackages.kotlin.Number {
@@ -1236,7 +1236,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -1859,7 +1859,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Int: ExportedKotlinPackages.kotlin.Number {
@@ -1893,7 +1893,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -2548,7 +2548,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Long: ExportedKotlinPackages.kotlin.Number {
@@ -2582,7 +2582,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -3238,7 +3238,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Float: ExportedKotlinPackages.kotlin.Number {
@@ -3287,7 +3287,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -3864,7 +3864,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Double: ExportedKotlinPackages.kotlin.Number {
@@ -3913,7 +3913,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -4490,7 +4490,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class String: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence {
@@ -4504,7 +4504,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -4586,14 +4586,14 @@ extension ExportedKotlinPackages.kotlin {
         public init() {
             if Self.self != ExportedKotlinPackages.kotlin.String.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.String ") }
             let __kt = kotlin_String_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_String_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_String_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public subscript(
             index: Swift.Int32
@@ -4618,7 +4618,7 @@ extension ExportedKotlinPackages.kotlin {
             return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: kotlin_Throwable_getStackTrace(self.__externalRCRef()))
         }
         public final func printStackTrace() -> Swift.Void {
-            return kotlin_Throwable_printStackTrace(self.__externalRCRef())
+            return { kotlin_Throwable_printStackTrace(self.__externalRCRef()); return () }()
         }
         open func toString() -> Swift.String {
             return kotlin_Throwable_toString(self.__externalRCRef())
@@ -4629,40 +4629,74 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Throwable.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ") }
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public init(
             message: Swift.String?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Throwable.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ") }
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         public init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Throwable.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ") }
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public init() {
             if Self.self != ExportedKotlinPackages.kotlin.Throwable.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ") }
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class UByte: KotlinRuntime.KotlinBase {
         public final class Companion: KotlinRuntime.KotlinBase {
+            public var MIN_VALUE: Swift.UInt8 {
+                get {
+                    return kotlin_UByte_Companion_MIN_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var MAX_VALUE: Swift.UInt8 {
+                get {
+                    return kotlin_UByte_Companion_MAX_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BYTES: Swift.Int32 {
+                get {
+                    return kotlin_UByte_Companion_SIZE_BYTES_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BITS: Swift.Int32 {
+                get {
+                    return kotlin_UByte_Companion_SIZE_BITS_get(self.__externalRCRef())
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.UByte.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.UByte.Companion.__createClassWrapper(externalRCRef: kotlin_UByte_Companion_get())
+                }
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
         }
         public func _compareTo(
             other: Swift.UInt8
@@ -5125,11 +5159,45 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class UInt: KotlinRuntime.KotlinBase {
         public final class Companion: KotlinRuntime.KotlinBase {
+            public var MIN_VALUE: Swift.UInt32 {
+                get {
+                    return kotlin_UInt_Companion_MIN_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var MAX_VALUE: Swift.UInt32 {
+                get {
+                    return kotlin_UInt_Companion_MAX_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BYTES: Swift.Int32 {
+                get {
+                    return kotlin_UInt_Companion_SIZE_BYTES_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BITS: Swift.Int32 {
+                get {
+                    return kotlin_UInt_Companion_SIZE_BITS_get(self.__externalRCRef())
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.UInt.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.UInt.Companion.__createClassWrapper(externalRCRef: kotlin_UInt_Companion_get())
+                }
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
         }
         public func _compareTo(
             other: Swift.UInt8
@@ -5602,11 +5670,45 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class ULong: KotlinRuntime.KotlinBase {
         public final class Companion: KotlinRuntime.KotlinBase {
+            public var MIN_VALUE: Swift.UInt64 {
+                get {
+                    return kotlin_ULong_Companion_MIN_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var MAX_VALUE: Swift.UInt64 {
+                get {
+                    return kotlin_ULong_Companion_MAX_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BYTES: Swift.Int32 {
+                get {
+                    return kotlin_ULong_Companion_SIZE_BYTES_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BITS: Swift.Int32 {
+                get {
+                    return kotlin_ULong_Companion_SIZE_BITS_get(self.__externalRCRef())
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.ULong.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.ULong.Companion.__createClassWrapper(externalRCRef: kotlin_ULong_Companion_get())
+                }
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
         }
         public func _compareTo(
             other: Swift.UInt8
@@ -6079,11 +6181,45 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class UShort: KotlinRuntime.KotlinBase {
         public final class Companion: KotlinRuntime.KotlinBase {
+            public var MIN_VALUE: Swift.UInt16 {
+                get {
+                    return kotlin_UShort_Companion_MIN_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var MAX_VALUE: Swift.UInt16 {
+                get {
+                    return kotlin_UShort_Companion_MAX_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BYTES: Swift.Int32 {
+                get {
+                    return kotlin_UShort_Companion_SIZE_BYTES_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BITS: Swift.Int32 {
+                get {
+                    return kotlin_UShort_Companion_SIZE_BITS_get(self.__externalRCRef())
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.UShort.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.UShort.Companion.__createClassWrapper(externalRCRef: kotlin_UShort_Companion_get())
+                }
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
         }
         public func _compareTo(
             other: Swift.UInt8
@@ -6546,7 +6682,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class Number: KotlinRuntime.KotlinBase {
@@ -6583,7 +6719,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
 }
@@ -6615,7 +6751,7 @@ extension ExportedKotlinPackages.kotlin.collections {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class CharIterator: KotlinRuntime.KotlinBase {
@@ -6632,7 +6768,498 @@ extension ExportedKotlinPackages.kotlin.collections {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+}
+extension ExportedKotlinPackages.kotlin.time {
+    public enum DurationUnit: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
+        case NANOSECONDS
+        case MICROSECONDS
+        case MILLISECONDS
+        case SECONDS
+        case MINUTES
+        case HOURS
+        case DAYS
+        public var description: Swift.String {
+            get {
+                switch self {
+                case .NANOSECONDS: "NANOSECONDS"
+                case .MICROSECONDS: "MICROSECONDS"
+                case .MILLISECONDS: "MILLISECONDS"
+                case .SECONDS: "SECONDS"
+                case .MINUTES: "MINUTES"
+                case .HOURS: "HOURS"
+                case .DAYS: "DAYS"
+                default: fatalError()
+                }
+            }
+        }
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                case .NANOSECONDS: 0
+                case .MICROSECONDS: 1
+                case .MILLISECONDS: 2
+                case .SECONDS: 3
+                case .MINUTES: 4
+                case .HOURS: 5
+                case .DAYS: 6
+                default: fatalError()
+                }
+            }
+        }
+        public init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            switch __externalRCRefUnsafe {
+            case kotlin_time_DurationUnit_NANOSECONDS(): self = .NANOSECONDS
+            case kotlin_time_DurationUnit_MICROSECONDS(): self = .MICROSECONDS
+            case kotlin_time_DurationUnit_MILLISECONDS(): self = .MILLISECONDS
+            case kotlin_time_DurationUnit_SECONDS(): self = .SECONDS
+            case kotlin_time_DurationUnit_MINUTES(): self = .MINUTES
+            case kotlin_time_DurationUnit_HOURS(): self = .HOURS
+            case kotlin_time_DurationUnit_DAYS(): self = .DAYS
+            default: fatalError()
+            }
+        }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+            return switch self {
+            case .NANOSECONDS: kotlin_time_DurationUnit_NANOSECONDS()
+            case .MICROSECONDS: kotlin_time_DurationUnit_MICROSECONDS()
+            case .MILLISECONDS: kotlin_time_DurationUnit_MILLISECONDS()
+            case .SECONDS: kotlin_time_DurationUnit_SECONDS()
+            case .MINUTES: kotlin_time_DurationUnit_MINUTES()
+            case .HOURS: kotlin_time_DurationUnit_HOURS()
+            case .DAYS: kotlin_time_DurationUnit_DAYS()
+            default: fatalError()
+            }
+        }
+        public init?(
+            _ description: Swift.String
+        ) {
+            switch description {
+            case "NANOSECONDS": self = .NANOSECONDS
+            case "MICROSECONDS": self = .MICROSECONDS
+            case "MILLISECONDS": self = .MILLISECONDS
+            case "SECONDS": self = .SECONDS
+            case "MINUTES": self = .MINUTES
+            case "HOURS": self = .HOURS
+            case "DAYS": self = .DAYS
+            default: return nil
+            }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            guard 0..<7 ~= rawValue else { return nil }
+            self = DurationUnit.allCases[Int(rawValue)]
+        }
+    }
+    public final class Duration: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+            public var ZERO: ExportedKotlinPackages.kotlin.time.Duration {
+                get {
+                    return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_ZERO_get(self.__externalRCRef()))
+                }
+            }
+            public var INFINITE: ExportedKotlinPackages.kotlin.time.Duration {
+                get {
+                    return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_INFINITE_get(self.__externalRCRef()))
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.time.Duration.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.time.Duration.Companion.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_get())
+                }
+            }
+            public func convert(
+                value: Swift.Double,
+                sourceUnit: ExportedKotlinPackages.kotlin.time.DurationUnit,
+                targetUnit: ExportedKotlinPackages.kotlin.time.DurationUnit
+            ) -> Swift.Double {
+                return kotlin_time_Duration_Companion_convert__TypesOfArguments__Swift_Double_ExportedKotlinPackages_kotlin_time_DurationUnit_ExportedKotlinPackages_kotlin_time_DurationUnit__(self.__externalRCRef(), value, sourceUnit.__externalRCRef(), targetUnit.__externalRCRef())
+            }
+            public func parse(
+                value: Swift.String
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_parse__TypesOfArguments__Swift_String__(self.__externalRCRef(), value))
+            }
+            public func parseIsoString(
+                value: Swift.String
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_parseIsoString__TypesOfArguments__Swift_String__(self.__externalRCRef(), value))
+            }
+            public func parseOrNull(
+                value: Swift.String
+            ) -> ExportedKotlinPackages.kotlin.time.Duration? {
+                return { switch kotlin_time_Duration_Companion_parseOrNull__TypesOfArguments__Swift_String__(self.__externalRCRef(), value) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: res); } }()
+            }
+            public func parseIsoStringOrNull(
+                value: Swift.String
+            ) -> ExportedKotlinPackages.kotlin.time.Duration? {
+                return { switch kotlin_time_Duration_Companion_parseIsoStringOrNull__TypesOfArguments__Swift_String__(self.__externalRCRef(), value) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: res); } }()
+            }
+            public func getNanoseconds(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getNanoseconds(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getNanoseconds(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getMicroseconds(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getMicroseconds(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getMicroseconds(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getMilliseconds(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getMilliseconds(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getMilliseconds(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getSeconds(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getSeconds(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getSeconds(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getMinutes(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getMinutes(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getMinutes(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getHours(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getHours(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getHours(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getDays(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getDays(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getDays(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
+        }
+        public var absoluteValue: ExportedKotlinPackages.kotlin.time.Duration {
+            get {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_absoluteValue_get(self.__externalRCRef()))
+            }
+        }
+        public var inWholeDays: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeDays_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeHours: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeHours_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeMinutes: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeMinutes_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeSeconds: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeSeconds_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeMilliseconds: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeMilliseconds_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeMicroseconds: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeMicroseconds_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeNanoseconds: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeNanoseconds_get(self.__externalRCRef())
+            }
+        }
+        public func _unaryMinus() -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_unaryMinus(self.__externalRCRef()))
+        }
+        public static prefix func -(
+            this: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._unaryMinus()
+        }
+        public func _plus(
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_plus__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_minus__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._minus(other: other)
+        }
+        public func _times(
+            scale: Swift.Int32
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_times__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), scale))
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            scale: Swift.Int32
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._times(scale: scale)
+        }
+        public func _times(
+            scale: Swift.Double
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_times__TypesOfArguments__Swift_Double__(self.__externalRCRef(), scale))
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            scale: Swift.Double
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._times(scale: scale)
+        }
+        public func _div(
+            scale: Swift.Int32
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_div__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), scale))
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            scale: Swift.Int32
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._div(scale: scale)
+        }
+        public func _div(
+            scale: Swift.Double
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_div__TypesOfArguments__Swift_Double__(self.__externalRCRef(), scale))
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            scale: Swift.Double
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._div(scale: scale)
+        }
+        public func _div(
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Double {
+            return kotlin_time_Duration_div__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func isNegative() -> Swift.Bool {
+            return kotlin_time_Duration_isNegative(self.__externalRCRef())
+        }
+        public func isPositive() -> Swift.Bool {
+            return kotlin_time_Duration_isPositive(self.__externalRCRef())
+        }
+        public func isInfinite() -> Swift.Bool {
+            return kotlin_time_Duration_isInfinite(self.__externalRCRef())
+        }
+        public func isFinite() -> Swift.Bool {
+            return kotlin_time_Duration_isFinite(self.__externalRCRef())
+        }
+        public func _compareTo(
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Int32 {
+            return kotlin_time_Duration_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func toComponents(
+            action: @escaping (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
+                let originalBlock = action
+                return { arg0, arg1, arg2, arg3, arg4 in return originalBlock(arg0, arg1, arg2, arg3, arg4).map { it in it.__externalRCRef() } ?? nil }
+            }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        public func toComponents(
+            action: @escaping (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
+                let originalBlock = action
+                return { arg0, arg1, arg2, arg3 in return originalBlock(arg0, arg1, arg2, arg3).map { it in it.__externalRCRef() } ?? nil }
+            }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        public func toComponents(
+            action: @escaping (Swift.Int64, Swift.Int32, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
+                let originalBlock = action
+                return { arg0, arg1, arg2 in return originalBlock(arg0, arg1, arg2).map { it in it.__externalRCRef() } ?? nil }
+            }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        public func toComponents(
+            action: @escaping (Swift.Int64, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
+                let originalBlock = action
+                return { arg0, arg1 in return originalBlock(arg0, arg1).map { it in it.__externalRCRef() } ?? nil }
+            }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        public func toDouble(
+            unit: ExportedKotlinPackages.kotlin.time.DurationUnit
+        ) -> Swift.Double {
+            return kotlin_time_Duration_toDouble__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(self.__externalRCRef(), unit.__externalRCRef())
+        }
+        public func toLong(
+            unit: ExportedKotlinPackages.kotlin.time.DurationUnit
+        ) -> Swift.Int64 {
+            return kotlin_time_Duration_toLong__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(self.__externalRCRef(), unit.__externalRCRef())
+        }
+        public func toInt(
+            unit: ExportedKotlinPackages.kotlin.time.DurationUnit
+        ) -> Swift.Int32 {
+            return kotlin_time_Duration_toInt__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(self.__externalRCRef(), unit.__externalRCRef())
+        }
+        public func toString() -> Swift.String {
+            return kotlin_time_Duration_toString(self.__externalRCRef())
+        }
+        public func toString(
+            unit: ExportedKotlinPackages.kotlin.time.DurationUnit,
+            decimals: Swift.Int32
+        ) -> Swift.String {
+            return kotlin_time_Duration_toString__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit_Swift_Int32__(self.__externalRCRef(), unit.__externalRCRef(), decimals)
+        }
+        public func toIsoString() -> Swift.String {
+            return kotlin_time_Duration_toIsoString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_time_Duration_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_time_Duration_hashCode(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
 }
@@ -6668,7 +7295,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -6727,14 +7354,14 @@ extension ExportedKotlinPackages.kotlin.ranges {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.ranges.CharRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.CharRange ") }
             let __kt = kotlin_ranges_CharRange_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_ranges_CharRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Unicode_UTF16_CodeUnit_Swift_Unicode_UTF16_CodeUnit__(__kt, start, endInclusive)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_ranges_CharRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Unicode_UTF16_CodeUnit_Swift_Unicode_UTF16_CodeUnit__(__kt, start, endInclusive); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class UIntRange: ExportedKotlinPackages.kotlin.ranges.UIntProgression {
@@ -6753,7 +7380,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -6812,14 +7439,14 @@ extension ExportedKotlinPackages.kotlin.ranges {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.ranges.UIntRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.UIntRange ") }
             let __kt = kotlin_ranges_UIntRange_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_ranges_UIntRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32_Swift_UInt32__(__kt, start, endInclusive)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_ranges_UIntRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32_Swift_UInt32__(__kt, start, endInclusive); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class ULongRange: ExportedKotlinPackages.kotlin.ranges.ULongProgression {
@@ -6838,7 +7465,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -6897,14 +7524,14 @@ extension ExportedKotlinPackages.kotlin.ranges {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.ranges.ULongRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.ULongRange ") }
             let __kt = kotlin_ranges_ULongRange_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_ranges_ULongRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt64_Swift_UInt64__(__kt, start, endInclusive)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_ranges_ULongRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt64_Swift_UInt64__(__kt, start, endInclusive); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class CharProgression: KotlinRuntime.KotlinBase {
@@ -6925,7 +7552,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -6973,7 +7600,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class UIntProgression: KotlinRuntime.KotlinBase {
@@ -6994,7 +7621,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -7042,7 +7669,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class ULongProgression: KotlinRuntime.KotlinBase {
@@ -7063,7 +7690,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -7111,7 +7738,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
 }
@@ -7146,7 +7773,7 @@ extension ExportedKotlinPackages.kotlin.CharSequence {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())

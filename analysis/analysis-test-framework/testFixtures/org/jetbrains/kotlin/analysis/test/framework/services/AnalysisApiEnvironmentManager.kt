@@ -1,13 +1,15 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.test.framework.services
 
+import com.intellij.diagnostic.LoadingState
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
@@ -62,6 +64,19 @@ class AnalysisApiEnvironmentManagerImpl(
                     registerService(BuiltinsVirtualFileProvider::class.java, BuiltinsVirtualFileProviderTestImpl())
                 }
             }
+        }
+
+        /**
+         * This loading state modification is required to ensure that
+         * application components (e.g., Registry service) can be fully used in AA.
+         *
+         * This must be run right after the environment is initialized since the registry might
+         * be accessed during the model construction
+         */
+        @Suppress("UnstableApiUsage")
+        run {
+            Registry.markAsLoaded()
+            LoadingState.setCurrentState(LoadingState.COMPONENTS_LOADED)
         }
     }
 

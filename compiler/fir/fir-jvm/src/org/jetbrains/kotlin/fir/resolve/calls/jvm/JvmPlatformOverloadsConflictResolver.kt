@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 class JvmPlatformOverloadsConflictResolver(private val session: FirSession) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateAbstracts: Boolean
     ): Set<Candidate> {
         if (!session.languageVersionSettings.supportsFeature(LanguageFeature.PreferJavaFieldOverload)) {
             return candidates

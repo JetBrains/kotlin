@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
@@ -40,6 +41,8 @@ fun TestConfigurationBuilder.commonConfigurationForNativeFirstStageUpToSerializa
     irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
+    commonCodegenConfiguration()
+
     globalDefaults {
         frontend = targetFrontend
         targetPlatform = NativePlatforms.unspecifiedNativePlatform

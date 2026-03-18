@@ -42,13 +42,15 @@ tasks.register<TestDataManagerModuleTask>(manageTestDataTaskName) {
     testDataPath.convention(rootConfig.testDataPath)
     testClassPattern.convention(rootConfig.testClassPattern)
     goldenOnly.convention(rootConfig.goldenOnly)
+    incremental.convention(rootConfig.incremental)
 
     // Capture test task configuration eagerly during configuration (configuration-cache compatible)
     // Note: taskProvider.map creates a task dependency, so we capture the value directly
     val testTask = tasks.named<Test>("test").get()
 
-    // Copy all test task dependencies - more robust than manually listing them
+    // Copy all test task dependencies and inputs, so tests run the same way in the manager as they run normally
     dependsOn(testTask.dependsOn)
+    dependsOn(testTask.inputs)
 
     // Inherit ordering from test task, but convert :test references to :manageTestData
     // This ensures proper ordering when running manageTestDataGlobally
@@ -65,9 +67,28 @@ tasks.register<TestDataManagerModuleTask>(manageTestDataTaskName) {
     // Use testTask.classpath to include both compiled test classes AND dependencies
     classpath = testTask.classpath
     workingDir = testTask.workingDir
+    environment = testTask.environment
     jvmArgs = testTask.jvmArgs
+    enableAssertions = testTask.enableAssertions
+    minHeapSize = testTask.minHeapSize
+    maxHeapSize = testTask.maxHeapSize
     jvmArgumentProviders += testTask.jvmArgumentProviders
-    systemProperties = testTask.systemProperties
+    javaLauncher = testTask.javaLauncher
+
+    /**
+     * This disables `KotlinSecurityManager` in the Test Data Manager.
+     * Currently, the policy file is only generated in 'test' tasks (see `test-inputs-check.gradle.kts`), so the policy will be non-existent
+     * until the corresponding test task runs. However, the following properties are still carried on from the 'test' task – unless they're
+     * filtered, the Test Data Manager process will crash:
+     *
+     * ```
+     * -Djava.security.manager=org.jetbrains.kotlin.security.KotlinSecurityManager
+     * -Djava.security.policy=some/subproject/path/build/permissions-for-test.policy
+     * ```
+     *
+     * Also see KT-84278.
+     * */
+    systemProperties = testTask.systemProperties.filterKeys { !it.startsWith("java.security.") }
 
     // Forward idea.active to enable IDE integration in TestDataManagerRunner
     if (project.providers.systemProperty("idea.active").isPresent) {

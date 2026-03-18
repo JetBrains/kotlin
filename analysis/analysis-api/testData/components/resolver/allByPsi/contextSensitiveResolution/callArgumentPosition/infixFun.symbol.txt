@@ -41,7 +41,10 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
     ]
 
 KtConstructorCalleeExpression(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtTypeReference(166,173): 'MyClass'
   null
@@ -137,43 +140,69 @@ KtProperty(301,340): 'val r1 = 1 infixEnumConsumer EnumValue1'
   null
 
 KtBinaryExpression(310,340): '1 infixEnumConsumer EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+    ]
 
 KtConstantExpression(310,311): '1'
   null
 
 KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(330,340): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtProperty(345,389): 'val r2 = 1 infixEnumConsumer InheritorObject'
   null
 
 KtBinaryExpression(354,389): '1 infixEnumConsumer InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+    ]
 
 KtConstantExpression(354,355): '1'
   null
 
 KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(374,389): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtProperty(394,434): 'val r3 = 1 infixConsumer InheritorObject'
   null
 
 KtBinaryExpression(403,434): '1 infixConsumer InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixConsumer(<extension receiver>: kotlin.Int, arg: MyClass): kotlin.Unit
+    ]
 
 KtConstantExpression(403,404): '1'
   null
 
 KtOperationReferenceExpression(405,418): 'infixConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixConsumer(<extension receiver>: kotlin.Int, arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(419,434): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]

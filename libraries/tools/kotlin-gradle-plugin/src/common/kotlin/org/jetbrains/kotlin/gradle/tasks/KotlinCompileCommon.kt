@@ -113,12 +113,12 @@ abstract class KotlinCompileCommon @Inject constructor(
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
-            }
+            } ?: emptyArray()
         }
 
         dependencyClasspath { args ->
             args.classpath = runSafe { libraries.files.filter { it.exists() }.joinToString(File.pathSeparator) }
-            args.friendPaths = runSafe { this@KotlinCompileCommon.friendPaths.files.toPathsArray() }
+            args.friendPaths = runSafe { this@KotlinCompileCommon.friendPaths.files.toPathsArray() } ?: emptyArray()
             args.refinesPaths = refinesMetadataPaths.toPathsArray()
         }
 

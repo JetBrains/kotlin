@@ -278,7 +278,7 @@ val sourcesJar = tasks.named<Jar>("sourcesJar") {
     from("$core/reflection.jvm/src")
 }
 
-addArtifact("archives", sourcesJar)
+tasks.named("assemble").configure { dependsOn(sourcesJar) }
 addArtifact("sources", sourcesJar)
 
 val intermediate = when {
@@ -311,8 +311,7 @@ dexMethodCount {
     ownPackages.set(listOf("kotlin.reflect"))
 }
 
+tasks.named("assemble").configure { dependsOn(result) }
 artifacts {
-    listOf("archives", "runtimeElements").forEach { configurationName ->
-        add(configurationName, result.map { it.outputs.files.singleFile })
-    }
+    add("runtimeElements", result.map { it.outputs.files.singleFile })
 }

@@ -50,10 +50,56 @@ KtNameReferenceExpression(44,48): 'Test'
   null
 
 KtThisExpression(51,55): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/plus)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(51,55): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/plus)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(56,101): 'operator fun Test.plusAssign(i: Int): Unit {}'
   null
@@ -137,10 +183,56 @@ KtNameReferenceExpression(136,140): 'Test'
   null
 
 KtThisExpression(143,147): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/minus)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(143,147): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/minus)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(148,194): 'operator fun Test.minusAssign(i: Int): Unit {}'
   null
@@ -224,10 +316,56 @@ KtNameReferenceExpression(227,231): 'Test'
   null
 
 KtThisExpression(234,238): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/div)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(234,238): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/div)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(239,283): 'operator fun Test.divAssign(i: Int): Unit {}'
   null
@@ -311,10 +449,56 @@ KtNameReferenceExpression(318,322): 'Test'
   null
 
 KtThisExpression(325,329): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/times)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(325,329): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/times)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(330,376): 'operator fun Test.timesAssign(i: Int): Unit {}'
   null
@@ -398,10 +582,56 @@ KtNameReferenceExpression(409,413): 'Test'
   null
 
 KtThisExpression(416,420): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/rem)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(416,420): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/rem)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(421,465): 'operator fun Test.remAssign(i: Int): Unit {}'
   null
@@ -464,67 +694,175 @@ KtCallExpression(494,500): 'Test()'
     ]
 
 KtNameReferenceExpression(494,498): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Test
+    ]
 
 KtValueArgumentList(498,500): '()'
   null
 
 KtBinaryExpression(505,513): 'foo += 1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /plus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /plusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.plus(i: Int): Test
+    fun Test.plusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(505,508): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /plus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /plusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.plus(i: Int): Test
+    fun Test.plusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(509,511): '+='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /plus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /plusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.plus(i: Int): Test
+    fun Test.plusAssign(i: Int): Unit>
 
 KtConstantExpression(512,513): '1'
   null
 
 KtBinaryExpression(518,526): 'foo -= 1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /minus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /minusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.minus(i: Int): Test
+    fun Test.minusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(518,521): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /minus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /minusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.minus(i: Int): Test
+    fun Test.minusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(522,524): '-='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /minus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /minusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.minus(i: Int): Test
+    fun Test.minusAssign(i: Int): Unit>
 
 KtConstantExpression(525,526): '1'
   null
 
 KtBinaryExpression(531,539): 'foo /= 1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /div(<extension receiver>: Test, i: kotlin.Int): Test,
+      /divAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.div(i: Int): Test
+    fun Test.divAssign(i: Int): Unit>
 
 KtNameReferenceExpression(531,534): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /div(<extension receiver>: Test, i: kotlin.Int): Test,
+      /divAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.div(i: Int): Test
+    fun Test.divAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(535,537): '/='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /div(<extension receiver>: Test, i: kotlin.Int): Test,
+      /divAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.div(i: Int): Test
+    fun Test.divAssign(i: Int): Unit>
 
 KtConstantExpression(538,539): '1'
   null
 
 KtBinaryExpression(544,552): 'foo *= 1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /times(<extension receiver>: Test, i: kotlin.Int): Test,
+      /timesAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.times(i: Int): Test
+    fun Test.timesAssign(i: Int): Unit>
 
 KtNameReferenceExpression(544,547): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /times(<extension receiver>: Test, i: kotlin.Int): Test,
+      /timesAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.times(i: Int): Test
+    fun Test.timesAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(548,550): '*='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /times(<extension receiver>: Test, i: kotlin.Int): Test,
+      /timesAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.times(i: Int): Test
+    fun Test.timesAssign(i: Int): Unit>
 
 KtConstantExpression(551,552): '1'
   null
 
 KtBinaryExpression(557,565): 'foo %= 1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /rem(<extension receiver>: Test, i: kotlin.Int): Test,
+      /remAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.rem(i: Int): Test
+    fun Test.remAssign(i: Int): Unit>
 
 KtNameReferenceExpression(557,560): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /rem(<extension receiver>: Test, i: kotlin.Int): Test,
+      /remAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.rem(i: Int): Test
+    fun Test.remAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(561,563): '%='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /rem(<extension receiver>: Test, i: kotlin.Int): Test,
+      /remAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.rem(i: Int): Test
+    fun Test.remAssign(i: Int): Unit>
 
 KtConstantExpression(564,565): '1'
   null

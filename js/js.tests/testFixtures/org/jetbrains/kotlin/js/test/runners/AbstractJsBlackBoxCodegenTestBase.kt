@@ -22,10 +22,9 @@ import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentC
 import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.bind
 import java.lang.Boolean.getBoolean
 
@@ -104,6 +104,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
     }
 
     protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest() {
+        commonCodegenConfiguration()
         commonConfigurationForJsBackendFirstStageTest(
             customIgnoreDirective = customIgnoreDirective,
             additionalIgnoreDirectives = additionalIgnoreDirectives,
@@ -120,13 +121,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
         ) {
             defaultDirectives {
                 DIAGNOSTICS with "-warnings"
-            }
-        }
-
-        forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
-            defaultDirectives {
-                +FIR_DUMP
-                +RENDER_FIR_DECLARATION_ATTRIBUTES
             }
         }
     }
@@ -191,14 +185,16 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
 /**
  * Configures handlers for JS box testing
  */
-fun TestConfigurationBuilder.configureJsBoxHandlers() {
+fun TestConfigurationBuilder.configureJsBoxHandlers(verifyJsAst: Boolean = true) {
     configureJsArtifactsHandlersStep {
         useHandlers(
             ::JsTypeScriptCompilationHandler,
             ::NodeJsGeneratorHandler,
             ::JsBoxRunner,
-            ::JsAstHandler
         )
+        runIf(verifyJsAst) {
+            useHandlers(::JsAstHandler)
+        }
     }
 }
 

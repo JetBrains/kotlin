@@ -11,12 +11,17 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -25,10 +30,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import java.io.File
-
-fun CompilerConfiguration.report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation? = null) {
-    messageCollector.report(severity, message, location)
-}
 
 class SourceFileWithModule<T>(val sourceFiles: Iterable<T>, val isCommon: Boolean, val moduleName: String?)
 
@@ -63,8 +64,9 @@ fun List<KotlinSourceRoot>.forAllFiles(
             if (virtualFile.extension != KotlinFileType.EXTENSION)
                 ensurePluginsConfigured()
             val isKotlin = virtualFile.extension == KotlinFileType.EXTENSION || virtualFile.fileType == KotlinFileType.INSTANCE
-            if (isExplicit && !isKotlin)
-                configuration.report(CompilerMessageSeverity.ERROR, "Source entry is not a Kotlin file: ${virtualFile.path}", reportLocation)
+            if (isExplicit && !isKotlin) {
+                configuration.report(ROOTS_RESOLUTION_ERROR, "Source entry is not a Kotlin file: ${virtualFile.path}", reportLocation)
+            }
             isKotlin
         },
         convertToSourceFiles = { listOf(virtualFileCreator.create(it)) }
@@ -86,7 +88,6 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
     filter: ValidSourceFilesFilter<VirtualFile>,
     convertToSourceFiles: (VirtualFile) -> Iterable<Source>,
 ) : Sequence<SourceFileWithModule<Source>> = sequence {
-
     val processedFiles = hashSetOf<VirtualFile>()
 
     for ((sourceRootPath, isCommon, hmppModuleName) in this@allSourceFilesSequence) {
@@ -101,7 +102,7 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
                     .warn("$message\n\nbuild file path: $buildFilePath\ncontent:\n${buildFilePath.readText()}")
             }
 
-            configuration.report(CompilerMessageSeverity.ERROR, message, reportLocation)
+            configuration.report(ROOTS_RESOLUTION_ERROR, message, reportLocation)
             continue
         }
 
@@ -162,13 +163,12 @@ fun CompilerConfiguration.applyModuleProperties(module: Module, buildFile: File?
     put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
 }
 
-fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration, messageCollector: MessageCollector?): List<KotlinSourceRoot> {
+fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration): List<KotlinSourceRoot> {
     val uniqueSourceRoots = hashSetOf<String>()
     val result = mutableListOf<KotlinSourceRoot>()
-
     for (root in configuration.kotlinSourceRoots) {
         if (!uniqueSourceRoots.add(root.path)) {
-            messageCollector?.report(CompilerMessageSeverity.STRONG_WARNING, "Duplicate source root: ${root.path}")
+            configuration.report(ROOTS_RESOLUTION_WARNING, "Duplicate source root: ${root.path}")
         }
         result.add(root)
     }

@@ -23,6 +23,11 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -41,9 +46,6 @@
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <jvm>${jdk_1_8}/bin/java</jvm>
-                </configuration>
             </plugin>
         </plugins>
 

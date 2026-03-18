@@ -7,6 +7,6 @@ void * flattenedPackage_FlattenedPackageClass__TypesOfArguments__Swift_Int32__(i
 
 void * flattenedPackage_FlattenedPackageClass_init_allocate();
 
-void flattenedPackage_FlattenedPackageClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool flattenedPackage_FlattenedPackageClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 NS_ASSUME_NONNULL_END

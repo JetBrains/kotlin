@@ -17,5 +17,8 @@ fun box(): String {
 
     val df3 = dataFrameOf("a")(123, null).convert { a }.toStr()
     df3.compareSchemas(strict = true)
+
+    val df4 = dataFrameOf("a" to columnOf(1, 2), "b" to columnOf(1.0, null)).convert { a and b }.toDouble()
+    df4.compareSchemas(strict = true)
     return "OK"
 }

@@ -67,24 +67,3 @@ inline fun buildEnumEntry(init: FirEnumEntryBuilder.() -> Unit): FirEnumEntry {
     }
     return FirEnumEntryBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildEnumEntryCopy(original: FirEnumEntry, init: FirEnumEntryBuilder.() -> Unit): FirEnumEntry {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirEnumEntryBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.status = original.status
-    copyBuilder.isLocal = original.isLocal
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.name = original.name
-    copyBuilder.initializer = original.initializer
-    copyBuilder.annotations.addAll(original.annotations)
-    return copyBuilder.apply(init).build()
-}

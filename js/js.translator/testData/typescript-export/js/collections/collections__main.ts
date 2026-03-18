@@ -30,6 +30,12 @@ function assertThrow(fn: () => void, message: string) {
     } catch (e) {}
 }
 
+function hasIteratorHelpers(): boolean {
+    return typeof Iterator !== 'undefined' && 
+           typeof Iterator.prototype !== 'undefined' &&
+           typeof Iterator.prototype.map === 'function';
+}
+
 function box(): string {
     testImmutableList()
     testImmutableSet()
@@ -59,6 +65,20 @@ function testImmutableList() {
     assert(consumeList(KtList.fromJsArray([1, 2, 3])), "Problem with array to list conversion for Kotlin list")
 
     assert(Array.isArray(listReadonlyArrayView), "Problem with the readonly array view of immutable list in Array.isArray check")
+
+    if (hasIteratorHelpers()) {
+        const mapped = listReadonlyArrayView[Symbol.iterator]().map((x: number) => x * 2)
+        assert(Array.from(mapped).toString() == "2,4,6", "Problem with iterator.map() on immutable list readonly array view")
+
+        const filtered = listReadonlyArrayView[Symbol.iterator]().filter((x: number) => x > 1)
+        assert(Array.from(filtered).toString() == "2,3", "Problem with iterator.filter() on immutable list readonly array view")
+
+        const taken = listReadonlyArrayView[Symbol.iterator]().take(2)
+        assert(Array.from(taken).toString() == "1,2", "Problem with iterator.take() on immutable list readonly array view")
+
+        const dropped = listReadonlyArrayView[Symbol.iterator]().drop(1)
+        assert(Array.from(dropped).toString() == "2,3", "Problem with iterator.drop() on immutable list readonly array view")
+    }
 }
 
 function testMutableList() {
@@ -79,6 +99,11 @@ function testMutableList() {
 
     assert(Array.isArray(mutableListReadonlyArrayView), "Problem with the readonly array view of mutable list in Array.isArray check")
 
+    if (hasIteratorHelpers()) {
+        const mapped = mutableListReadonlyArrayView[Symbol.iterator]().map((x: number) => x * 2)
+        assert(Array.from(mapped).toString() == "8,10,12,14", "Problem with iterator.map() on mutable list readonly array view")
+    }
+
     const mutableListArrayView = mutableList.asJsArrayView()
     mutableListArrayView.pop()
 
@@ -91,6 +116,17 @@ function testMutableList() {
     assertThrow(() => { mutableListArrayView["foo"] = 4 }, "Mutable list setting a random index in its array view")
 
     assert(Array.isArray(mutableListArrayView), "Problem with the array view of mutable list in Array.isArray check")
+
+    if (hasIteratorHelpers()) {
+        const filtered = mutableListArrayView[Symbol.iterator]().filter((x: number) => x > 5)
+        assert(Array.from(filtered).toString() == "6,7", "Problem with iterator.filter() on mutable list array view")
+
+        const taken = mutableListArrayView[Symbol.iterator]().take(2)
+        assert(Array.from(taken).toString() == "4,5", "Problem with iterator.take() on mutable list array view")
+
+        const dropped = mutableListArrayView[Symbol.iterator]().drop(2)
+        assert(Array.from(dropped).toString() == "6,7", "Problem with iterator.drop() on mutable list array view")
+    }
 
     mutableListArrayView.shift()
     mutableListArrayView.unshift(9)
@@ -142,6 +178,21 @@ function testImmutableSet() {
     assertThrow(() => { (setReadonlyView as Set<number>).clear() }, "Set readonly view have ability to mutate the set by 'clear'")
 
     assert(consumeSet(KtSet.fromJsSet(new Set([1, 2, 3]))), "Problem with set to set conversion for Kotlin set")
+
+    if (hasIteratorHelpers()) {
+        const mappedKeys = setReadonlyView.keys().map((x: number) => x * 2)
+        assert(Array.from(mappedKeys).toString() == "2,4,6", "Problem with iterator.map() on immutable set readonly view keys()")
+
+        const filteredValues = setReadonlyView.values().filter((x: number) => x > 1)
+        assert(Array.from(filteredValues).toString() == "2,3", "Problem with iterator.filter() on immutable set readonly view values()")
+
+        const takenEntries = setReadonlyView.entries().take(2)
+        const entriesArray = Array.from(takenEntries)
+        assert(entriesArray.length == 2 && entriesArray[0][0] == 1 && entriesArray[1][0] == 2, "Problem with iterator.take() on immutable set readonly view entries()")
+
+        const dropped = setReadonlyView[Symbol.iterator]().drop(1)
+        assert(Array.from(dropped).toString() == "2,3", "Problem with iterator.drop() on immutable set readonly view iterator")
+    }
 }
 
 function testMutableSet() {
@@ -163,6 +214,11 @@ function testMutableSet() {
     assertThrow(() => { (mutableSetReadonlyView as Set<number>).delete(4) }, "Mutable set readonly view have ability to mutate the set by 'delete'")
     assertThrow(() => { (mutableSetReadonlyView as Set<number>).clear() }, "Mutable set readonly view have ability to mutate the set by 'clear'")
 
+    if (hasIteratorHelpers()) {
+        const mappedKeys = mutableSetReadonlyView.keys().map((x: number) => x * 2)
+        assert(Array.from(mappedKeys).toString() == "8,10,12,14", "Problem with iterator.map() on mutable set readonly view keys()")
+    }
+
     const mutableSetView = mutableSet.asJsSetView()
 
     mutableSetView.delete(7)
@@ -177,6 +233,18 @@ function testMutableSet() {
     assert(joinSetOrMap(mutableSetView) == "456", "Problem with mutable set view")
     assert(consumeMutableSet(mutableSet), "Problem with consumption of a Kotlin mutable set as a mutable set")
     assert(joinSetOrMap(mutableSetView) == "4567", "Problem with mutable set view after original set is mutated")
+
+    if (hasIteratorHelpers()) {
+        const filteredValues = mutableSetView.values().filter((x: number) => x > 5)
+        assert(Array.from(filteredValues).toString() == "6,7", "Problem with iterator.filter() on mutable set view values()")
+
+        const takenEntries = mutableSetView.entries().take(2)
+        const entriesArray = Array.from(takenEntries)
+        assert(entriesArray.length == 2 && entriesArray[0][0] == 4 && entriesArray[1][0] == 5, "Problem with iterator.take() on mutable set view entries()")
+
+        const dropped = mutableSetView[Symbol.iterator]().drop(2)
+        assert(Array.from(dropped).toString() == "6,7", "Problem with iterator.drop() on mutable set view iterator")
+    }
 
     mutableSetView.add(8)
 
@@ -209,6 +277,22 @@ function testImmutableMap() {
     assertThrow(() => { (mapReadonlyView as Map<string, number>).clear() }, "Map readonly view have ability to mutate the map by 'clear'")
 
     assert(consumeMap(KtMap.fromJsMap(new Map([["a", 1], ["b", 2], ["c", 3]]))), "Problem with map to map conversion for Kotlin map")
+
+    if (hasIteratorHelpers()) {
+        const mappedKeys = mapReadonlyView.keys().map((x: string) => x + x)
+        assert(Array.from(mappedKeys).toString() == "aa,bb,cc", "Problem with iterator.map() on immutable map readonly view keys()")
+
+        const filteredValues = mapReadonlyView.values().filter((x: number) => x > 1)
+        assert(Array.from(filteredValues).toString() == "2,3", "Problem with iterator.filter() on immutable map readonly view values()")
+
+        const takenEntries = mapReadonlyView.entries().take(2)
+        const entriesArray = Array.from(takenEntries)
+        assert(entriesArray.length == 2 && entriesArray[0][0] == "a" && entriesArray[1][0] == "b", "Problem with iterator.take() on immutable map readonly view entries()")
+
+        const dropped = mapReadonlyView[Symbol.iterator]().drop(1)
+        const droppedArray = Array.from(dropped)
+        assert(droppedArray.length == 2 && droppedArray[0][0] == "b" && droppedArray[1][0] == "c", "Problem with iterator.drop() on immutable map readonly view iterator")
+    }
 }
 
 function testMutableMap() {
@@ -231,6 +315,11 @@ function testMutableMap() {
     assertThrow(() => { (mutableMapReadonlyView as Map<string, number>).delete("a") }, "Mutable map readonly view have ability to mutate the map by 'delete'")
     assertThrow(() => { (mutableMapReadonlyView as Map<string, number>).clear() }, "Mutable map readonly view have ability to mutate the map by 'clear'")
 
+    if (hasIteratorHelpers()) {
+        const mappedKeys = mutableMapReadonlyView.keys().map((x: string) => x + x)
+        assert(Array.from(mappedKeys).toString() == "dd,ee,ff,gg", "Problem with iterator.map() on mutable map readonly view keys()")
+    }
+
     const mutableMapView = mutableMap.asJsMapView()
 
     mutableMapView.delete("g")
@@ -246,6 +335,19 @@ function testMutableMap() {
     assert(joinSetOrMap(mutableMapView) == "[d:4][e:5][f:6]", "Problem with mutable map view")
     assert(consumeMutableMap(mutableMap), "Problem with consumption of a Kotlin mutable map as a mutable map")
     assert(joinSetOrMap(mutableMapView) == "[d:4][e:5][f:6][g:7]", "Problem with mutable map view after original map is mutated")
+
+    if (hasIteratorHelpers()) {
+        const filteredValues = mutableMapView.values().filter((x: number) => x > 5)
+        assert(Array.from(filteredValues).toString() == "6,7", "Problem with iterator.filter() on mutable map view values()")
+
+        const takenEntries = mutableMapView.entries().take(2)
+        const entriesArray = Array.from(takenEntries)
+        assert(entriesArray.length == 2 && entriesArray[0][0] == "d" && entriesArray[1][0] == "e", "Problem with iterator.take() on mutable map view entries()")
+
+        const dropped = mutableMapView[Symbol.iterator]().drop(2)
+        const droppedArray = Array.from(dropped)
+        assert(droppedArray.length == 2 && droppedArray[0][0] == "f" && droppedArray[1][0] == "g", "Problem with iterator.drop() on mutable map view iterator")
+    }
 
     mutableMapView.set("h", 8)
 

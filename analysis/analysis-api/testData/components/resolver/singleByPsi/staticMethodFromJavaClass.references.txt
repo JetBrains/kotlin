@@ -2,5 +2,6 @@ KtNameReferenceExpression(80,83): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in BaseClass) open fun foo()

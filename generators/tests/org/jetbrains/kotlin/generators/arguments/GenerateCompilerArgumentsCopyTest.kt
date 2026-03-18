@@ -41,8 +41,8 @@ class GenerateCompilerArgumentsCopyTest : TestCase() {
         assertContentEquals(a.additionalJavaModules, b.additionalJavaModules)
         assertNotSame(a.additionalJavaModules, b.additionalJavaModules)
 
-        b.additionalJavaModules!![0] = "yyy"
-        assertEquals("xxx", a.additionalJavaModules!![0])
+        b.additionalJavaModules[0] = "yyy"
+        assertEquals("xxx", a.additionalJavaModules[0])
     }
 
     fun testCollectPropertiesDoesNotReturnTransient() {

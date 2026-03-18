@@ -1,5 +1,5 @@
 KtNameReferenceExpression(51,60): 'JavaClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

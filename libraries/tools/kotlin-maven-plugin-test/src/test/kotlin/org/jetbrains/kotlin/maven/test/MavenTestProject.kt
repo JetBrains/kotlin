@@ -39,8 +39,9 @@ class MavenTestProject(
             false,
         )
 
-        val javaHome = context.javaHomeProvider(buildOptions.javaVersion).absolutePathString()
-        verifier.setEnvironmentVariable("JAVA_HOME", javaHome)
+        val javaHome = context.jdkProvider.getJavaHome(buildOptions.javaVersion) ?:
+            throw RuntimeException("Can't find JDK ${buildOptions.javaVersion}")
+        verifier.setEnvironmentVariable("JAVA_HOME", javaHome.absolutePathString())
 
         for ((key, value) in environmentVariables) {
             verifier.setEnvironmentVariable(key, value)

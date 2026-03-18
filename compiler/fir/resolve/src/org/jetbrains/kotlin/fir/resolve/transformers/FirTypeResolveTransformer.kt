@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -229,11 +232,18 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformReceiverParameter(receiverParameter: FirReceiverParameter, data: Any?): FirReceiverParameter {
-        return receiverParameter.transformAnnotations(this, data).transformTypeRef(this, data)
+        val transformedAnnotations = receiverParameter.transformAnnotations(this, data)
+        return typeResolverTransformer.withBareTypes(receiverParameter.containingDeclarationSymbol.let { it is FirCallableSymbol && it.isCompanionExtension }) {
+            transformedAnnotations.transformTypeRef(this, data)
+        }
     }
 
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty = whileAnalysing(session, property) {
         withScopeCleanup {
+            if (property.isStatic) {
+                scopes = staticScopes
+            }
+
             withDeclaration(property) {
                 addTypeParametersScope(property)
                 property.transformTypeParameters(this, data)
@@ -302,6 +312,10 @@ open class FirTypeResolveTransformer(
         data: Any?,
     ): FirNamedFunction = whileAnalysing(session, namedFunction) {
         withScopeCleanup {
+            if (namedFunction.isStatic) {
+                scopes = staticScopes
+            }
+
             withDeclaration(namedFunction) {
                 addTypeParametersScope(namedFunction)
                 val result = transformDeclaration(namedFunction, data).also {

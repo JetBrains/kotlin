@@ -1,2 +1,5 @@
 KtOperationReferenceExpression(177,180): '!in'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+    ]

@@ -104,7 +104,7 @@ KtProperty(133,166): 'var current = this@iterator.start'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(147,166): 'this@iterator.start'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -137,7 +137,7 @@ KtLabelReferenceExpression(151,160): '@iterator'
   NO_CANDIDATES
 
 KtNameReferenceExpression(161,166): 'start'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -167,7 +167,7 @@ KtParameterList(191,193): '()'
   NO_CANDIDATES
 
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -204,7 +204,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -241,7 +241,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -278,7 +278,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -314,7 +314,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -351,7 +351,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -389,7 +389,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
     isInBestCandidates = false
 
 KtNameReferenceExpression(196,203): 'current'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -631,7 +631,7 @@ KtOperationReferenceExpression(204,206): '<='
     isInBestCandidates = false
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -664,7 +664,7 @@ KtLabelReferenceExpression(211,220): '@iterator'
   NO_CANDIDATES
 
 KtNameReferenceExpression(221,224): 'end'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -703,7 +703,7 @@ KtNameReferenceExpression(250,253): 'Int'
   NO_CANDIDATES
 
 KtPostfixExpression(256,265): 'current++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -744,7 +744,7 @@ KtPostfixExpression(256,265): 'current++'
     isInBestCandidates = true
 
 KtNameReferenceExpression(256,263): 'current'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -814,7 +814,60 @@ KtBlockExpression(281,330): '{'
   NO_CANDIDATES
 
 KtForExpression(287,328): 'for (i in IntProgression(1, 10)) {'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = IntProgression(1, 10)
+          isSafeNavigation = false
+          type = kotlin.collections.Iterator<kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = IntProgression(1, 10)
+          isSafeNavigation = false
+          type = f.IntProgression
+        signature = KaFunctionSignature:
+          receiverType = f.IntProgression
+          returnType = kotlin.collections.Iterator<kotlin.Int>
+          symbol = f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+          valueParameters = []
+          contextParameters = []
+          callableId = f/iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = IntProgression(1, 10)
+          isSafeNavigation = false
+          type = kotlin.collections.Iterator<kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtParameter(292,293): 'i'
   NO_CANDIDATES
@@ -926,7 +979,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(297,311): 'IntProgression'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -973,7 +1026,7 @@ KtNameReferenceExpression(297,311): 'IntProgression'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

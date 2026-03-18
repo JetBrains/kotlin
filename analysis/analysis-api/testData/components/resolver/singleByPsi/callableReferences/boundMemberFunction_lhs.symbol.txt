@@ -1,2 +1,5 @@
 KtNameReferenceExpression(72,75): 'obj'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      obj: Foo
+    ]

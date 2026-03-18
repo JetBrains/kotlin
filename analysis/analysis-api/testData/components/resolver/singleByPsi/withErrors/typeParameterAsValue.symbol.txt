@@ -1,2 +1,4 @@
 KtNameReferenceExpression(35,36): 'T'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<OTHER_ERROR: Type parameter T in qualified access>

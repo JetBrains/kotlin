@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class FirDelegatedPropertyInferenceSession(
     private val resolutionContext: ResolutionContext,
     private val callCompleter: FirCallCompleter,
-    private val delegateExpression: FirExpression,
+    private val delegateExpression: FirExpression?,
 ) : FirInferenceSession() {
 
     private val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()

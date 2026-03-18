@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
+import org.jetbrains.kotlin.cli.CliDiagnostics.JS_IC_ERROR
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.IcCachesConfigurationData
 import org.jetbrains.kotlin.cli.js.platformChecker
@@ -16,15 +16,18 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportInfo
+import org.jetbrains.kotlin.cli.reportLog
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.backend.js.ic.acquireAndRelease
 import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInProductionPipeline
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -39,19 +42,18 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): Output? {
         val configuration = input.configuration
-        val messageCollector = configuration.messageCollector
 
         val cacheDirectory = configuration.icCacheDirectory
         val outputDirPath = configuration.outputDir
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Produce executable: $outputDirPath")
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Cache directory: $cacheDirectory")
+
+        configuration.reportLog("Produce executable: $outputDirPath")
+        configuration.reportLog("Cache directory: $cacheDirectory")
 
         val mainCallArguments = if (configuration.callMainMode == K2JsArgumentConstants.NO_CALL) null else emptyList<String>()
 
         if (cacheDirectory != null) {
-            val icCacheReadOnly = configuration.wasmCompilation && configuration.icCacheReadOnly
-            val cacheGuard = IncrementalCacheGuard(cacheDirectory, icCacheReadOnly)
-            val backendIr = compileToBackendIrIncrementally(cacheDirectory, cacheGuard, icCacheReadOnly, configuration, mainCallArguments)
+            val cacheGuard = IncrementalCacheGuard(cacheDirectory)
+            val backendIr = compileToBackendIrIncrementally(cacheDirectory, cacheGuard, configuration, mainCallArguments)
             return cacheGuard.tryAcquireAndRelease {
                 backendIr?.let { compileIntermediate(it, configuration) }
             }
@@ -64,23 +66,17 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
     private fun compileToBackendIrIncrementally(
         cacheDirectory: String,
         cacheGuard: IncrementalCacheGuard,
-        icCacheReadOnly: Boolean,
         configuration: CompilerConfiguration,
         mainCallArguments: List<String>?,
     ): IntermediateOutput? {
-        val messageCollector = configuration.messageCollector
-
         val icCaches = cacheGuard.acquireAndRelease { status ->
             when (status) {
                 IncrementalCacheGuard.AcquireStatus.CACHE_CLEARED -> {
-                    messageCollector.report(
-                        CompilerMessageSeverity.INFO,
-                        "Cache guard file detected, cache directory '$cacheDirectory' cleared"
-                    )
+                    configuration.reportInfo("Cache guard file detected, cache directory '$cacheDirectory' cleared")
                 }
                 IncrementalCacheGuard.AcquireStatus.INVALID_CACHE -> {
-                    messageCollector.report(
-                        CompilerMessageSeverity.ERROR,
+                    configuration.report(
+                        JS_IC_ERROR,
                         "Cache guard file detected in readonly mode, cache directory '$cacheDirectory' should be cleared"
                     )
                     return null
@@ -90,22 +86,22 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
             prepareIcCaches(
                 cacheDirectory = cacheDirectory,
                 icConfigurationData = when {
-                    configuration.wasmCompilation -> IcCachesConfigurationData.Wasm(
-                        wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
-                        preserveIcOrder = configuration.preserveIcOrder,
-                        generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
-                        generateDebugInformation =
-                            configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF) || configuration.sourceMap,
-                    )
+                    configuration.wasmCompilation -> {
+                        IcCachesConfigurationData.Wasm(
+                            wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
+                            generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
+                            generateDebugInformation =
+                                configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF) || configuration.sourceMap,
+                            mode = configuration.wasmCompilationMode()
+                        )
+                    }
                     else -> IcCachesConfigurationData.Js(
                         granularity = configuration.artifactConfiguration!!.granularity
                     )
                 },
-                messageCollector = messageCollector,
                 outputDir = configuration.outputDir!!,
                 targetConfiguration = configuration,
                 mainCallArguments = mainCallArguments,
-                icCacheReadOnly = icCacheReadOnly,
             )
         }
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
@@ -138,7 +134,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
             configFiles
         )
 
-        val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
+        val klibs = loadWebKlibs(configuration, configuration.platformChecker)
 
         val module = ModulesStructure(
             project = environment.project,

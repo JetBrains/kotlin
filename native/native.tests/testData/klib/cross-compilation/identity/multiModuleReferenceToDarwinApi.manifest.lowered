@@ -1,0 +1,22 @@
+// MODULE: lib
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = org.jetbrains.kotlin.native.platform.Foundation org.jetbrains.kotlin.native.platform.darwin stdlib
+ir_signature_versions = <value sanitized for test data stability>
+language_features = +IrCrossModuleInlinerBeforeKlibSerialization
+metadata_version = <value sanitized for test data stability>
+native_targets = macos_arm64
+poisoning_language_features = +IrCrossModuleInlinerBeforeKlibSerialization
+unique_name = lib
+// MODULE: app
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = lib org.jetbrains.kotlin.native.platform.Foundation org.jetbrains.kotlin.native.platform.darwin stdlib
+ir_signature_versions = <value sanitized for test data stability>
+language_features = +IrCrossModuleInlinerBeforeKlibSerialization
+metadata_version = <value sanitized for test data stability>
+native_targets = macos_arm64
+poisoning_language_features = +IrCrossModuleInlinerBeforeKlibSerialization
+unique_name = app

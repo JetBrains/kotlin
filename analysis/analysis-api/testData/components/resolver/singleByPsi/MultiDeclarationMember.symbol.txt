@@ -1,2 +1,5 @@
 KtDestructuringDeclarationEntry(162,163): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a/MyPair.component2(<dispatch receiver>: a.MyPair): kotlin.Int
+    ]

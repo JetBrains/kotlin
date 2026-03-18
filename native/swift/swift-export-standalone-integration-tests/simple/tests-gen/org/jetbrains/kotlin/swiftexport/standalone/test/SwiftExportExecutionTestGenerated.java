@@ -20,6 +20,10 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @UseExtTestCaseGroupProvider()
 public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecutionTest {
+  private void run(String fileName) {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInExecution() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone-integration-tests/simple/testData/execution"), Pattern.compile("^([^_](.+))$"), null, false);

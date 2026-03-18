@@ -43,7 +43,6 @@ class KotlinAndroidTargetHierarchyDsl {
     @Test
     fun `test - module - is respected in default refines edges`() {
         val project = buildProject {
-            setMultiplatformAndroidSourceSetLayoutVersion(2)
             applyMultiplatformPlugin()
             androidLibrary { compileSdk = 33 }
         }
@@ -66,7 +65,6 @@ class KotlinAndroidTargetHierarchyDsl {
     @Test
     fun `test - module - is respected in targetHierarchy`() {
         val project = buildProject {
-            setMultiplatformAndroidSourceSetLayoutVersion(2)
             applyMultiplatformPlugin()
             androidLibrary { compileSdk = 33 }
         }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.services.jvm.PureJvmCodegenBoxTestChecker
 
 abstract class AbstractFirBlackBoxCodegenTestBase(
     val parser: FirParser
@@ -60,6 +61,10 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
                     ::IrDiagnosticsHandler,
                     ::IrConstCheckerHandler
                 )
+            }
+
+            forTestsMatching("compiler/testData/codegen/*") {
+                useAfterAnalysisCheckers(::PureJvmCodegenBoxTestChecker)
             }
 
             configureBlackBoxTestSettings()

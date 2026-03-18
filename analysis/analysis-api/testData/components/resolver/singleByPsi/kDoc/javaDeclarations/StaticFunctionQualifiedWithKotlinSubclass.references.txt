@@ -2,5 +2,6 @@ KDocName(85,106): 'KotlinChild.staticFun'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

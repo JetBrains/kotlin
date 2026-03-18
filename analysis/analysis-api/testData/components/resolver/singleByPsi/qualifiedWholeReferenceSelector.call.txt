@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(42,45): 'A.y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.config.MavenComparableVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -106,12 +107,24 @@ val modulesWithRequiredExplicitTypes = rootProject.extra["firAllCompilerModules"
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
-        val commonCompilerArgs = listOfNotNull(
-            "-opt-in=kotlin.RequiresOptIn",
-            "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
-            "-Xdont-warn-on-error-suppression",
-            "-Xcontext-parameters", // KT-72222
-        )
+        val commonCompilerArgs = provider {
+            listOfNotNull(
+                "-opt-in=kotlin.RequiresOptIn",
+                "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
+                "-Xdont-warn-on-error-suppression",
+                "-Xcontext-parameters", // KT-72222
+                "-Xexplicit-backing-fields", // KT-14663
+                // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
+                // But this produces a warning
+                // "The argument ... is redundant for the current language version ..."
+                // in the bootstrap test and fails because of -Werror.
+                // To work around it, we suppress the warning.
+                @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
+                "-Xwarning-level=REDUNDANT_CLI_ARG:disabled".takeIf {
+                    project.kotlinExtension.compilerVersion.get() == project.kotlinToolingVersion.toString()
+                },
+            )
+        }
 
         val kotlinLanguageVersion: String by rootProject.extra
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
@@ -143,7 +156,8 @@ fun Project.configureKotlinCompilationOptions() {
                 !project.path.startsWith(":native:objcexport-header-generator") &&
                 !project.path.startsWith(":libraries:tools:analysis-api-based-klib-reader") &&
                 !project.path.startsWith(":native:external-projects-test-utils") &&
-                !project.path.startsWith(":plugins:plugin-sandbox:plugin-annotations")
+                !project.path.startsWith(":plugins:plugin-sandbox:plugin-annotations") &&
+                !project.path.startsWith(":kotlin-power-assert-runtime")
             ) {
                 doFirst {
                     if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {
@@ -295,20 +309,12 @@ fun Project.configureTests() {
 
     tasks.withType<Test>().configureEach {
         val notCacheableTestProjects: List<String> = listOf(
-            ":analysis:analysis-api",
-            ":analysis:analysis-api-fe10",
-            ":analysis:analysis-api-fir",
-            ":analysis:analysis-api-standalone",
             ":analysis:analysis-api-standalone:analysis-api-standalone-native",
-            ":analysis:low-level-api-fir",
-            ":analysis:low-level-api-fir:low-level-api-fir-native",
-            ":analysis:stubs",
-            ":analysis:symbol-light-classes",
+            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
             ":compiler",
             ":compiler:android-tests",
             ":compiler:arguments",
             ":compiler:build-tools:kotlin-build-tools-api",
-            ":compiler:build-tools:kotlin-build-tools-api-tests",
             ":compiler:build-tools:kotlin-build-tools-compat",
             ":compiler:build-tools:kotlin-build-tools-options-generator",
             ":compiler:fir:modularized-tests",
@@ -317,16 +323,13 @@ fun Project.configureTests() {
             ":compiler:incremental-compilation-impl",
             ":compiler:ir.backend.common",
             ":compiler:multiplatform-parsing",
-            ":compiler:psi:psi-api",
             ":compiler:test-infrastructure-utils",
-            ":compiler:tests-different-jdk",
             ":compiler:tests-integration",
             ":compose-compiler-gradle-plugin",
             ":examples:scripting-jvm-embeddable-host",
             ":examples:scripting-jvm-maven-deps-host",
             ":examples:scripting-jvm-simple-script-host",
             ":generators",
-            ":generators:analysis-api-generator:generator-kotlin-native",
             ":jps:jps-common",
             ":jps:jps-plugin",
             ":kotlin-annotation-processing",
@@ -356,6 +359,7 @@ fun Project.configureTests() {
             ":kotlin-native:libclangInterop",
             ":kotlin-native:llvmInterop",
             ":kotlin-native:tools:kdumputil",
+            ":kotlin-power-assert-runtime", // TODO(KTI-3056): 'test-inputs-check' cannot be combined with 'multiplatform' projects
             ":kotlin-scripting-common",
             ":kotlin-scripting-compiler",
             ":kotlin-scripting-dependencies",
@@ -408,6 +412,7 @@ fun Project.configureTests() {
             ":tools:ide-plugin-dependencies-validator",
             ":tools:jdk-api-validator",
             ":wasm:wasm.ir",
+            ":compiler:test-engine-sandbox",
         )
         val projectPath = project.path
         val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")
@@ -433,8 +438,34 @@ fun Project.configureTests() {
         if (project.kotlinBuildProperties.limitTestTasksConcurrency) {
             usesService(concurrencyLimitService)
         }
+
+        /*
+        We're disabling test reports on teamcity for Gradle 9.4 as we experienced failures like
+        'File name too long' when upgrading to Gradle 9.4 while generating those reports.
+        https://github.com/gradle/gradle/issues/36996
+         */
+        reports {
+            configureEach {
+                if (GradleVersion.current() == GradleVersion.version("9.4.0")) {
+                    this.required = false
+                }
+            }
+        }
+
     }
 
+    tasks.withType<AbstractTestTask>().configureEach {
+        val disableVerificationTasks: Provider<Boolean> = providers.gradleProperty("kotlin.build.disable.verification.tasks")
+            .map { it.toBoolean() }
+            .orElse(false)
+        inputs.property("kotlin.build.disable.verification.tasks", disableVerificationTasks)
+        doFirst {
+            if (disableVerificationTasks.get()) {
+                logger.warn("Task $path is disabled because `kotlin.build.disable.verification.tasks` is true")
+                throw StopExecutionException("Verification tasks are disabled.")
+            }
+        }
+    }
     // Aggregate task for build related checks
     tasks.register("checkBuild")
     val mppProjects: List<String> by rootProject.extra

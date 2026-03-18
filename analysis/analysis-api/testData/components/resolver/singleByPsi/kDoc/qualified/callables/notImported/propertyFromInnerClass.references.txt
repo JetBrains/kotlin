@@ -2,5 +2,6 @@ KDocName(48,65): 'foo.Foo.Inner.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.Foo.Inner) val foo: kotlin.Int

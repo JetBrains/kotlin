@@ -109,6 +109,9 @@ class FirNameAwareCompositeScope(val scopes: Iterable<FirContainingNamesAwareSco
         return scopes.flatMapTo(linkedSetOf()) { it.getClassifierNames() }
     }
 
+    override val hasDefinitelyNoStaticMembers: Boolean
+        get() = scopes.all { it.hasDefinitelyNoStaticMembers }
+
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirNameAwareCompositeScope? {
         val newScopes = scopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: return null

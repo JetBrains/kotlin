@@ -159,5 +159,21 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => ImplementorOfInterfaceWithDefaultArguments;
             }
         }
+        interface NoRuntimeSimpleInterface {
+            readonly x: string;
+        }
+        interface NRBase {
+            readonly b: string;
+        }
+        interface MidClassic extends foo.NRBase {
+            mid(): void;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.MidClassic": unique symbol;
+            };
+        }
+        interface NRLeaf extends foo.MidClassic {
+            leaf(): void;
+            readonly __doNotUseOrImplementIt: foo.MidClassic["__doNotUseOrImplementIt"];
+        }
     }
 }

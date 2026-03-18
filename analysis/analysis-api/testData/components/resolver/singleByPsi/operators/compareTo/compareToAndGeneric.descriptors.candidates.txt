@@ -1,5 +1,5 @@
 KtNameReferenceExpression(114,123): 'compareTo'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -36,7 +36,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

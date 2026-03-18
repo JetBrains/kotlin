@@ -9,9 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformParameters
-import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
@@ -21,7 +20,7 @@ internal interface UsesKotlinToolingDiagnosticsParameters {
     val toolingDiagnosticsCollector: Property<KotlinToolingDiagnosticsCollector>
 
     @get:Internal
-    val diagnosticRenderingOptions: Property<ToolingDiagnosticRenderingOptions>
+    val toolingDiagnosticsContext: Property<ToolingDiagnosticsContext>
 }
 
 internal interface UsesKotlinToolingDiagnostics : UsesKotlinToolingDiagnosticsParameters, Task {
@@ -56,7 +55,23 @@ internal interface BuildServiceUsingKotlinToolingDiagnostics<P : BuildServiceUsi
     }
 }
 
+/**
+ * Initializes diagnostics parameters without passing a [Project] reference.
+ */
+internal fun UsesKotlinToolingDiagnosticsParameters.setupKotlinToolingDiagnosticsParameters(
+    collectorProvider: Provider<KotlinToolingDiagnosticsCollector>,
+    context: ToolingDiagnosticsContext,
+) {
+    toolingDiagnosticsCollector.set(collectorProvider)
+    toolingDiagnosticsContext.set(context)
+}
+
+/**
+ * Initializes diagnostics parameters from [project].
+ */
 internal fun UsesKotlinToolingDiagnosticsParameters.setupKotlinToolingDiagnosticsParameters(project: Project) {
-    toolingDiagnosticsCollector.set(project.kotlinToolingDiagnosticsCollectorProvider)
-    diagnosticRenderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(project))
+    setupKotlinToolingDiagnosticsParameters(
+        project.kotlinToolingDiagnosticsCollectorProvider,
+        project.toolingDiagnosticsContext,
+    )
 }

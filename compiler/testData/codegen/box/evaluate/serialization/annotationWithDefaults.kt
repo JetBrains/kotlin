@@ -1,5 +1,3 @@
-// WASM_FAILS_IN_SINGLE_MODULE_MODE
-
 // MODULE: lib
 // FILE: lib.kt
 

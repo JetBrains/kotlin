@@ -1,0 +1,44 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] companionBlocks.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirstCompanionBlockKey=KtSourceElement] class C : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun member1(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] init { LAZY_BLOCK }
+
+        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] val bar: <implicit> = LAZY_EXPRESSION
+            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit>
+
+        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] val baz: <implicit>
+            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+        public final [ResolvedTo(CONTRACTS)] val member2: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit>
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun qux(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|C.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|C.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] typealias TA = R|kotlin/Int|
+
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] constructor(): R|C| { LAZY_BLOCK }
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] init { LAZY_BLOCK }
+
+    }

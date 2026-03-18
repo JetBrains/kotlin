@@ -13,13 +13,13 @@
     <!-- No parent to avoid accidentally inheriting parent's dependencyManagement section -->
 
     <name>Kotlin Libraries bill-of-materials</name>
-    <description>Kotlin is a statically typed programming language that compiles to JVM byte codes and JavaScript</description>
+    <description>Kotlin is a modern language that's concise, multiplatform, and interoperable with Java and other languages.</description>
     <url>https://kotlinlang.org/</url>
 
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
             <comments>A business-friendly OSS license</comments>
         </license>

@@ -55,7 +55,7 @@ internal class AbiValidationTaskSet(project: Project) {
      */
     fun addKlibTarget(klibTarget: KlibTarget, klibFiles: FileCollection) {
         legacyDumpTaskProvider.configure {
-            it.klibInput.add(KotlinAbiDumpTaskImpl.KlibTargetInfo(klibTarget.configurableName, klibTarget.targetName, klibFiles))
+            it.klib.add(KotlinAbiDumpTaskImpl.KlibTargetInfo(klibTarget.configurableName, klibTarget.targetName, klibFiles))
         }
     }
 
@@ -65,15 +65,6 @@ internal class AbiValidationTaskSet(project: Project) {
     fun keepLocallyUnsupportedTargets(keep: Provider<Boolean>) {
         legacyDumpTaskProvider.configure {
             it.keepLocallyUnsupportedTargets.set(keep)
-        }
-    }
-
-    /**
-     * Enables generation of ABI dump files for klib targets.
-     */
-    fun klibEnabled(isEnabled: Provider<Boolean>) {
-        legacyDumpTaskProvider.configure {
-            it.klibIsEnabled.set(isEnabled)
         }
     }
 

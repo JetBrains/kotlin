@@ -1,0 +1,16 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+data class C(
+    val a: Int = 1,
+    @IntroducedAt("1") val b: String = "B",
+    @IntroducedAt("1") private val b1: String = "B1",
+    @IntroducedAt("2") val c: Int = 42,
+)
+
+@Suppress("NON_ASCENDING_VERSION_ANNOTATION")
+data class D(
+    val a: Int = 1,
+    @IntroducedAt("2") val a1: String = "A1",
+    @IntroducedAt("1") private val b: String = "B2",
+    @IntroducedAt("1") val c: Int = 24,
+)

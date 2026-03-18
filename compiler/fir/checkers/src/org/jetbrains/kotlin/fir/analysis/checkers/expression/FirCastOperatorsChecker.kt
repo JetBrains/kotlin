@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
+import org.jetbrains.kotlin.diagnostics.chooseFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.createOn
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.firPlatformSpecificCastChecker
 import org.jetbrains.kotlin.fir.isEnabled
@@ -67,7 +70,6 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 l, r, expression,
                 Applicability.IMPOSSIBLE_IS_CHECK,
                 Applicability.USELESS_IS_CHECK,
-                isForIsApplicability = true,
             )
         }
 
@@ -90,7 +92,6 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 l, r, expression,
                 Applicability.IMPOSSIBLE_CAST,
                 Applicability.USELESS_CAST,
-                isForIsApplicability = false,
             ).orIfApplicable { checkCastErased(l, r) }
         }
     }
@@ -111,18 +112,10 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         expression: FirTypeOperatorCall,
         impossible: Applicability,
         useless: Applicability,
-        isForIsApplicability: Boolean,
-    ): Applicability {
-        val oneIsNotNull = !l.type.isMarkedOrFlexiblyNullable || !r.type.isMarkedOrFlexiblyNullable
-
-        return when {
-            isRefinementUseless(l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
-            shouldReportAsPerRules1(l, r) -> when {
-                isForIsApplicability || oneIsNotNull -> impossible
-                else -> useless
-            }
-            else -> Applicability.APPLICABLE
-        }
+    ): Applicability = when {
+        isRefinementUseless(l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
+        shouldReportAsPerRules1(l, r) -> impossible
+        else -> Applicability.APPLICABLE
     }
 
     /**
@@ -160,19 +153,21 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         rUserType: ConeKotlinType,
         forceWarning: Boolean = false,
     ) {
+        val areBothTypesNullable = l.smartCastType.canBeNull(context.session) && r.canBeNull(context.session)
+
         when (applicability) {
-            Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l.originalTypeInfo, r)?.let {
+            Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l.originalTypeInfo, r, areBothTypesNullable, expression)?.let {
                 reportOn(expression.source, it)
             }
             Applicability.USELESS_CAST -> getUselessCastDiagnostic()?.let {
                 reportOn(expression.source, it)
             }
-            Applicability.IMPOSSIBLE_IS_CHECK -> when {
-                forceWarning -> reportOn(expression.source, FirErrors.USELESS_IS_CHECK, expression.operation != FirOperation.IS)
-                else -> reportOn(expression.source, FirErrors.IMPOSSIBLE_IS_CHECK, expression.operation != FirOperation.IS)
-            }
+            Applicability.IMPOSSIBLE_IS_CHECK -> report(
+                getImpossibleIsCheckDiagnostic(forceWarning, areBothTypesNullable, expression),
+                context,
+            )
             Applicability.USELESS_IS_CHECK -> when {
-                !isLastBranchOfExhaustiveWhen(l, r) -> reportOn(
+                !isLastBranchOfExhaustiveWhen(l) -> reportOn(
                     expression.source,
                     FirErrors.USELESS_IS_CHECK,
                     expression.operation == FirOperation.IS
@@ -189,7 +184,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     }
 
     context(context: CheckerContext)
-    private fun isLastBranchOfExhaustiveWhen(l: ArgumentInfo, r: ConeKotlinType): Boolean {
+    private fun isLastBranchOfExhaustiveWhen(l: ArgumentInfo): Boolean {
         if (context.containingElements.size < 2) {
             return false
         }
@@ -205,9 +200,18 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     }
 
     context(context: CheckerContext)
-    private fun getImpossibilityDiagnostic(l: TypeInfo, rType: ConeKotlinType) = when {
+    private fun getImpossibilityDiagnostic(
+        l: TypeInfo,
+        rType: ConeKotlinType,
+        areBothTypesNullable: Boolean,
+        expression: FirTypeOperatorCall,
+    ) = when {
         !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
         context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleCast(context.session, l.type, rType) -> null
+        areBothTypesNullable -> when (expression.operation) {
+            FirOperation.SAFE_AS -> FirErrors.SAFE_CAST_RELYING_ON_NULL
+            else -> FirErrors.UNSAFE_CAST_RELYING_ON_NULL
+        }
         else -> FirErrors.CAST_NEVER_SUCCEEDS
     }
 
@@ -215,5 +219,26 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     private fun getUselessCastDiagnostic() = when {
         !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
         else -> FirErrors.USELESS_CAST
+    }
+
+    context(context: CheckerContext)
+    private fun getImpossibleIsCheckDiagnostic(
+        forceWarning: Boolean,
+        areBothTypesNullable: Boolean,
+        expression: FirTypeOperatorCall,
+    ): KtDiagnosticWithSource? {
+        val isAlwaysTrue = expression.operation != FirOperation.IS
+
+        val (factoryForDeprecation, valueToWarnAbout) = when {
+            areBothTypesNullable -> FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL to !isAlwaysTrue
+            else -> FirErrors.IMPOSSIBLE_IS_CHECK to isAlwaysTrue
+        }
+
+        val factory = when {
+            forceWarning -> factoryForDeprecation.warningFactory
+            else -> factoryForDeprecation.chooseFactory(context)
+        }
+
+        return factory.createOn(expression.source, valueToWarnAbout, context.session)
     }
 }

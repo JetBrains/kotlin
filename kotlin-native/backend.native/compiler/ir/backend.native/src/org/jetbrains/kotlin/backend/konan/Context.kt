@@ -20,9 +20,10 @@ import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionDeserializ
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -37,7 +38,7 @@ private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefa
 
 // TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(
-        config: KonanConfig,
+        config: NativeSecondStageCompilationConfig,
         val sourcesModules: Set<ModuleDescriptor>,
         override val builtIns: KonanBuiltIns,
         override val irBuiltIns: IrBuiltIns,
@@ -105,7 +106,10 @@ internal class Context(
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
             config.partialLinkageConfig,
             irBuiltIns,
-            configuration.messageCollector
+            KtDiagnosticReporterWithImplicitIrBasedContext(
+                    configuration.diagnosticsCollector,
+                    config.languageVersionSettings,
+            )
     )
 }
 

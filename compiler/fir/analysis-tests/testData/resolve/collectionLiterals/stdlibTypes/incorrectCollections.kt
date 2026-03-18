@@ -5,14 +5,14 @@
 
 @OptIn(ExperimentalUnsignedTypes::class)
 fun test() {
-    val a: List<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, null, 3]
-    val b: MutableList<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> [null]
-    val c: Set<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1]
-    val d: MutableSet<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> ["" as CharSequence]
-    val e: Sequence<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1L, 2L, 3L]
+    val a: List<Int> = [1, <!NULL_FOR_NONNULL_TYPE!>null<!>, 3]
+    val b: MutableList<Any> = [<!NULL_FOR_NONNULL_TYPE!>null<!>]
+    val c: Set<String> = [<!ARGUMENT_TYPE_MISMATCH!>1<!>]
+    val d: MutableSet<String> = [<!ARGUMENT_TYPE_MISMATCH!>"" as CharSequence<!>]
+    val e: Sequence<Int> = [<!ARGUMENT_TYPE_MISMATCH!>1L<!>, <!ARGUMENT_TYPE_MISMATCH!>2L<!>, <!ARGUMENT_TYPE_MISMATCH!>3L<!>]
 
-    val f: Array<Array<Int>> = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]]
-    val g: IntArray = [<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]
+    val f: Array<Array<Int>> = [[<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>]]
+    val g: IntArray = [<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>]
     val h: LongArray = [<!ARGUMENT_TYPE_MISMATCH!>0.0<!>]
     val i: ShortArray = [<!ARGUMENT_TYPE_MISMATCH!>1_000_000_000<!>]
     val j: ByteArray = [if (true) 42.toByte() else 42]

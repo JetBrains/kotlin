@@ -36,10 +36,10 @@ fun nullableClassifiers() {
 }
 
 fun classifiersWithTA() {
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A.B<Int>.C<!>::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>A.B<Int>.C<!>::class<!>
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A.B<Int>.C<!>::foo
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A.B<Int>.InnerC<!>::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A.B<Int>.InnerC::class<!>
     // A.B<Int>.InnerC::foo // correct
 
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A.B.ParametricC<Int>::class<!>
@@ -65,8 +65,8 @@ fun rain() {
     <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>a.maybeB?.c<!>::class
     a.maybeB?.c::<!UNSAFE_CALLABLE_REFERENCE!>foo<!>
 
-    a.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><Int>.c::class
-    a.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><Int>.c::foo
+    a.b<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>.c::class
+    a.b<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>.c::foo
 
     <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>a.b.maybeC<!>::class
     a.b.maybeC::<!UNSAFE_CALLABLE_REFERENCE!>foo<!>

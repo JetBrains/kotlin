@@ -1019,24 +1019,6 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     }
   }
 
-  @TestMetadata("compiler/testData/loadJava/compiledKotlin/contextReceivers")
-  @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class ContextReceivers extends AbstractLoadKotlinWithTypeTableTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-    }
-
-    public void testAllFilesPresentInContextReceivers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
-    @TestMetadata("SimpleContextReceivers.kt")
-    public void testSimpleContextReceivers() {
-      runTest("compiler/testData/loadJava/compiledKotlin/contextReceivers/SimpleContextReceivers.kt");
-    }
-  }
-
   @TestMetadata("compiler/testData/loadJava/compiledKotlin/coroutines")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)

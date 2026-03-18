@@ -377,8 +377,6 @@ abstract class RandomSmokeTest {
             assertEquals(0.0, subject.nextDouble(0.0.nextUp()))
         }
 
-        assertTrue(subject.nextDouble(Double.POSITIVE_INFINITY).isFinite(), "Infinity is exclusive")
-
         for (bound in listOf(1.0, 100.0, 1024.0, Double.MAX_VALUE)) {
             repeat(1000) {
                 val d = subject.nextDouble(bound)

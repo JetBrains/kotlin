@@ -18,6 +18,6 @@ fun kotlin_ranges_intRange_getStart_int_another(nativePtr: kotlin.native.interna
 
 @ExportedBridge("some_foo")
 public fun some_foo(): kotlin.native.internal.NativePtr {
-    val _result = some.foo()
+    val _result = run { some.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

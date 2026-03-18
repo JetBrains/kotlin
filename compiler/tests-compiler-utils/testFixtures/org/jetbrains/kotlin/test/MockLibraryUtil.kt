@@ -27,7 +27,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.lang.ref.SoftReference
+import java.net.URLClassLoader
+import java.util.jar.Attributes
+import java.util.jar.JarFile
+import java.util.jar.Manifest
 import java.util.regex.Pattern
+import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import kotlin.reflect.KClass
 
@@ -36,10 +41,72 @@ val kotlinPathsForDistDirectoryForTestsOrNull: KotlinPaths?
 val PathUtil.kotlinPathsForDistDirectoryForTests: KotlinPaths
     get() = kotlinPathsForDistDirectoryForTestsOrNull ?: kotlinPathsForDistDirectory
 
-object MockLibraryUtil {
+object MockLibraryUtil : AbstractMockLibraryUtil() {
+    @Synchronized
+    override fun createCompilerClassLoader(): ClassLoader {
+        return ClassPreloadingUtils.preloadClasses(
+            listOf(PathUtil.kotlinPathsForDistDirectoryForTests.compilerPath),
+            Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
+        )
+    }
+
+    /**
+     * The method is left for compatibility with the old JPS artifacts.
+     * Don't use it anywhere other than in the JPS tests – use [compileKotlinSources] instead.
+     *
+     * JPS tests are run in the IDE with mixed classpath. The Kotlin JPS plugin itself and its tests come from artifacts of the stable
+     * Kotlin version (the "default" compiler bundled in the Kotlin IDE plugin), while common compiler components are taken from a more
+     * later 'kt-master'. Such an inconsistency makes it easy to introduce occasional ABI breakages that are only discovered during the
+     * consequent 'kt-master' merge.
+     *
+     * As a long-term solution, there should appear a binary checker (KT-84534), or, alternatively, JPS tests themselves should be run
+     * in the Kotlin repository (KT-84535).
+     */
+    @JvmStatic
+    @JvmOverloads
+    @Deprecated("Use 'compileKotlinSources()' instead", level = DeprecationLevel.HIDDEN)
+    fun compileKotlin(
+        sourcesPath: String,
+        outDir: File,
+        extraOptions: List<String> = emptyList(),
+        vararg extraClasspath: String,
+    ) {
+        super.compileKotlinSources(sourcesPath, outDir, extraOptions, *extraClasspath)
+    }
+}
+
+object NoPreloadingMockLibraryUtil : AbstractMockLibraryUtil() {
+    override fun createCompilerClassLoader(): ClassLoader {
+        val compilerJarFile = KotlinPathsFromHomeDir(ForTestCompileRuntime.distKotlincForTests()).compilerPath
+        val compilerJarFolder = compilerJarFile.parentFile
+
+        val additionalCompilerClasspath = ZipFile(compilerJarFile).use { zipFile ->
+            val manifestEntry = zipFile.getEntry(JarFile.MANIFEST_NAME) ?: error("Manifest not found in Kotlin compiler JAR")
+            val manifest = zipFile.getInputStream(manifestEntry).use { inputStream -> Manifest(inputStream) }
+            manifest.mainAttributes.getValue(Attributes.Name.CLASS_PATH).orEmpty().split(" ")
+                .filter { it.endsWith(".jar") }
+                .map { File(compilerJarFolder, it) }
+                .filter { it.exists() }
+        }
+
+        val compilerClasspath = listOf(compilerJarFile) + additionalCompilerClasspath
+        val compilerClasspathUrls = compilerClasspath.map { it.toURI().toURL() }.toTypedArray()
+
+        // Enforce there are no traces of Kotlin in the classpath
+        val bootstrapClassLoader = ClassLoader.getSystemClassLoader().parent
+        if (bootstrapClassLoader != null) {
+            require(bootstrapClassLoader.getResource(Unit::class.java.name.replace('.', '/') + ".class") == null) {
+                "Kotlin is found in the classpath of the isolated ClassLoader"
+            }
+        }
+
+        return URLClassLoader(compilerClasspathUrls, bootstrapClassLoader)
+    }
+}
+
+abstract class AbstractMockLibraryUtil {
     private var compilerClassLoader = SoftReference<ClassLoader>(null)
 
-    @JvmStatic
     fun compileJvmLibraryToJar(
         sourcesPath: String,
         jarName: String,
@@ -64,7 +131,6 @@ object MockLibraryUtil {
         )
     }
 
-    @JvmStatic
     fun compileJavaFilesLibraryToJar(
         sourcesPath: String,
         jarName: String,
@@ -87,7 +153,6 @@ object MockLibraryUtil {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    @JvmStatic
     fun compileLibraryToJar(
         sourcesPath: String,
         contentDir: File,
@@ -107,7 +172,7 @@ object MockLibraryUtil {
         val kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile)
         if (srcFile.isFile || kotlinFiles.isNotEmpty()) {
             assertTrue("Only java files are expected", allowKotlinSources)
-            compileKotlin(sourcesPath, classesDir, extraOptions, *extraClasspath.toTypedArray())
+            compileKotlinSources(sourcesPath, classesDir, extraOptions, *extraClasspath.toTypedArray())
         }
 
         val javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile)
@@ -145,7 +210,6 @@ object MockLibraryUtil {
         return createJarFile(contentDir, classesDir, jarName, sourcesPath.takeIf { addSources })
     }
 
-    @JvmStatic
     fun createJarFile(contentDir: File, dirToAdd: File, jarName: String, sourcesPath: String? = null): File {
         val jarFile = File(contentDir, "$jarName.jar")
 
@@ -180,9 +244,7 @@ object MockLibraryUtil {
         KtAssert.assertEquals(String(outStream.toByteArray()), ExitCode.OK.name, invocationResult.name)
     }
 
-    @JvmStatic
-    @JvmOverloads
-    fun compileKotlin(
+    fun compileKotlinSources(
         sourcesPath: String,
         outDir: File,
         extraOptions: List<String> = emptyList(),
@@ -224,11 +286,5 @@ object MockLibraryUtil {
         return classLoader.loadClass(compilerClass.java.name)
     }
 
-    @Synchronized
-    private fun createCompilerClassLoader(): ClassLoader {
-        return ClassPreloadingUtils.preloadClasses(
-            listOf(PathUtil.kotlinPathsForDistDirectoryForTests.compilerPath),
-            Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
-        )
-    }
+    protected abstract fun createCompilerClassLoader(): ClassLoader
 }

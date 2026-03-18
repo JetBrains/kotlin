@@ -5,14 +5,23 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
+import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import java.lang.reflect.*
 import kotlin.reflect.*
+import kotlin.reflect.full.createType
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
 import kotlin.reflect.jvm.javaConstructor
+import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.jvmErasure
 
 internal fun Type.toKType(
@@ -22,6 +31,8 @@ internal fun Type.toKType(
     replaceNonArrayArgumentsWithStarProjections: Boolean = false,
     howThisTypeIsUsed: TypeUsage = TypeUsage.COMMON,
 ): KType {
+    if (this == Void.TYPE) return StandardKTypes.UNIT_RETURN_TYPE
+
     val base: SimpleKType = when (this) {
         is Class<*> -> {
             if (allTypeParameters().isNotEmpty() && !replaceNonArrayArgumentsWithStarProjections) {
@@ -59,16 +70,7 @@ internal fun Type.toKType(
 
     // We cannot read `@kotlin.annotations.jvm.Mutable/ReadOnly` annotations in kotlin-reflect because they have CLASS retention.
     // Therefore, collection types in Java are considered mutability-flexible by default. The few exceptions are listed a bit below.
-    val mutableType = run {
-        val klass = base.classifier as? KClass<*>
-        val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(klass?.qualifiedName?.let(::FqNameUnsafe))
-        if (mutableFqName != null && klass != null) {
-            createJavaSimpleType(
-                this, base.classifier, base.arguments, base.isMarkedNullable,
-                mutableCollectionClass = getMutableCollectionKClass(mutableFqName, klass),
-            )
-        } else null
-    }
+    val mutableType = base.createMutableCollectionType(this)
 
     // Java collection type is loaded as mutable (as opposed to mutability-flexible) in the following cases:
     // 1) If it's the top-level type in the supertype position.
@@ -127,26 +129,37 @@ private fun createRawJavaType(
     jClass: Class<*>, knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>, isForAnnotationParameter: Boolean,
 ): KType {
     val kClass = jClass.convertJavaClass(isForAnnotationParameter)
-    return FlexibleKType.create(
-        createJavaSimpleType(
-            jClass, kClass,
-            jClass.allTypeParameters().map { typeParameter ->
-                // When creating a lower bound for a raw type, we must take the corresponding bound of each type parameter, but erase their
-                // type arguments to star projections. E.g. `T : Comparable<String>` becomes `Comparable<*>`. We have to be very careful not
-                // to translate the bound's own type parameters because it will lead to stack overflow in cases like `class A<T extends A>`.
-                // Since a type parameter's upper bound may be another type parameter, we need to unwrap it until we end up with anything
-                // but the type parameter (`Class` or `ParameterizedType`).
-                // Note that this is still not exactly how the compiler translates raw types
-                // (see `JavaClassifierType.toConeKotlinTypeForFlexibleBound` in K2, or `JavaTypeResolver.computeRawTypeArguments` in K1),
-                // but it's a good enough approximation.
-                val upperBound = generateSequence(typeParameter) { it.bounds.first() as? TypeVariable<*> }.last().bounds.first()
-                KTypeProjection.invariant(upperBound.toKType(knownTypeParameters, replaceNonArrayArgumentsWithStarProjections = true))
-            },
-            isMarkedNullable = false,
-        ),
-        createJavaSimpleType(jClass, kClass, jClass.allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = true),
-        isRawType = true,
-    ) { jClass }
+    val lowerBound = createJavaSimpleType(
+        jClass, kClass,
+        jClass.allTypeParameters().map { typeParameter ->
+            // When creating a lower bound for a raw type, we must take the corresponding bound of each type parameter, but erase their
+            // type arguments to star projections. E.g. `T : Comparable<String>` becomes `Comparable<*>`. We have to be very careful not
+            // to translate the bound's own type parameters because it will lead to stack overflow in cases like `class A<T extends A>`.
+            // Since a type parameter's upper bound may be another type parameter, we need to unwrap it until we end up with anything
+            // but the type parameter (`Class` or `ParameterizedType`).
+            // Note that this is still not exactly how the compiler translates raw types
+            // (see `JavaClassifierType.toConeKotlinTypeForFlexibleBound` in K2, or `JavaTypeResolver.computeRawTypeArguments` in K1),
+            // but it's a good enough approximation.
+            val upperBound = generateSequence(typeParameter) { it.bounds.first() as? TypeVariable<*> }.last().bounds.first()
+            KTypeProjection.invariant(upperBound.toKType(knownTypeParameters, replaceNonArrayArgumentsWithStarProjections = true))
+        },
+        isMarkedNullable = false,
+    ).let {
+        it.createMutableCollectionType(jClass) ?: it
+    }
+    val upperBound = createJavaSimpleType(
+        jClass, kClass, jClass.allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = true,
+    )
+    return FlexibleKType.create(lowerBound, upperBound, isRawType = true) { jClass }
+}
+
+private fun SimpleKType.createMutableCollectionType(javaType: Type): SimpleKType? {
+    val klass = classifier as? KClass<*> ?: return null
+    val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(klass.qualifiedName?.let(::FqNameUnsafe)) ?: return null
+    return createJavaSimpleType(
+        javaType, classifier, arguments, isMarkedNullable,
+        mutableCollectionClass = getMutableCollectionKClass(mutableFqName, klass),
+    )
 }
 
 private fun Class<*>.convertJavaClass(isForAnnotationParameter: Boolean): KClass<*> =
@@ -198,6 +211,17 @@ private val TypeVariable<*>.kotlinContainer: KTypeParameterOwnerImpl
                             constructedClass.constructors.joinToString("\n") { "  - $it (${it.javaConstructor})" }
                 )
         }
+        is Method -> {
+            require(Modifier.isStatic(container.modifiers)) {
+                "Only static methods are supported for now: $container"
+            }
+            val containingClass = container.declaringClass.kotlin as KClassImpl<*>
+            containingClass.functions.singleOrNull { it.javaMethod == container } as JavaKFunction?
+                ?: throw KotlinReflectionInternalError(
+                    "Method $container is not found in $containingClass:\n" +
+                            containingClass.functions.joinToString("\n") { "  - $it (${it.javaMethod})" }
+                )
+        }
         else -> throw KotlinReflectionInternalError("Unsupported container of a type parameter: $container ($this)")
     }
 
@@ -208,9 +232,9 @@ private fun TypeVariable<*>.findKTypeParameterInContainer(knownTypeParameters: M
         ?: kotlinContainer.typeParameters.singleOrNull { it.name == name }
         ?: throw KotlinReflectionInternalError("Type parameter $name is not found in $kotlinContainer")
 
-internal fun Array<out TypeVariable<*>>.toKTypeParameters(): List<KTypeParameter> {
+internal fun Array<out TypeVariable<*>>.toKTypeParameters(container: KTypeParameterOwnerImpl): List<KTypeParameter> {
     val kTypeParameters = this.associateWith {
-        KTypeParameterImpl(it.kotlinContainer, it.name, KVariance.INVARIANT, isReified = false)
+        KTypeParameterImpl(container, it.name, KVariance.INVARIANT, isReified = false)
     }
     for ((typeVariable, kTypeParameter) in kTypeParameters) {
         kTypeParameter.upperBounds = typeVariable.bounds.map { it.toKType(kTypeParameters) }
@@ -244,4 +268,44 @@ internal fun Int.computeVisibilityForJavaModifiers(): KVisibility? = when {
     Modifier.isPrivate(this) -> KVisibility.PRIVATE
     // Java's protected also allows access in the same package, so it's not the same as Kotlin's protected.
     else -> null
+}
+
+internal fun Member.isEnumValuesValueOfMethod(): Boolean =
+    this is Method && declaringClass.isEnum && Modifier.isStatic(modifiers) && (
+            (name == "values" && parameterTypes.size == 0) ||
+                    (name == "valueOf" && parameterTypes.singleOrNull() == String::class.java)
+            )
+
+internal fun getPurelyImplementedSupertype(kClass: KClassImpl<*>): KType? {
+    val annotatedPurelyImplementedClassId =
+        kClass.findAnnotation<PurelyImplements>()?.value?.let(::FqName)?.takeIf { fqName ->
+            !fqName.isRoot && fqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+        }?.let(ClassId::topLevel)
+
+    val purelyImplementedClassId =
+        annotatedPurelyImplementedClassId
+            ?: FakePureImplementationsProvider.getPurelyImplementedInterface(kClass.classId)
+            ?: return null
+
+    val superClass = kClass.java.safeClassLoader.loadClass(purelyImplementedClassId) ?: return null
+
+    val supertypeParameterCount = superClass.allTypeParameters().size
+    val typeParameters = kClass.typeParameters
+    val typeParameterCount = typeParameters.size
+
+    @Suppress("IntroduceWhenSubject")
+    val typeArguments = when {
+        typeParameterCount == supertypeParameterCount ->
+            typeParameters.map { parameter ->
+                KTypeProjection.invariant(parameter.createType())
+            }
+        typeParameterCount == 1 && supertypeParameterCount > 1 && annotatedPurelyImplementedClassId == null -> {
+            val parameter = KTypeProjection.invariant(typeParameters.single().createType())
+            List(supertypeParameterCount) { parameter }
+        }
+        else -> return null
+    }
+
+    val result = createJavaSimpleType(superClass, superClass.kotlin, typeArguments, isMarkedNullable = false)
+    return result.createMutableCollectionType(superClass) ?: result
 }

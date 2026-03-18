@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.native.FirSerializerInput
@@ -22,18 +23,19 @@ import org.jetbrains.kotlin.native.writeKlib
  * Serializes IR to klib format and writes it to disk.
  * Also handles header klib generation if configured.
  */
-object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSerializationArtifact>(
+object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, NativeSerializationArtifact>(
     name = "NativeIrSerializationPhase",
     preActions = setOf(PerformanceNotifications.IrSerializationStarted),
     postActions = setOf(PerformanceNotifications.IrSerializationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFir2IrArtifact): NativeSerializationArtifact? {
-        val (fir2IrOutput, configuration, _, phaseContext) = input
+        val (fir2IrOutput, configuration, phaseContext) = input
         val headerKlibPath = configuration.konanGeneratedHeaderKlibPath?.removeSuffix(".klib")
         val outputKlibPath = phaseContext.config.outputPath
         if (!headerKlibPath.isNullOrEmpty()) {
             val headerKlib = phaseContext.fir2IrSerializer(
-                FirSerializerInput(fir2IrOutput, produceHeaderKlib = true)
+                configuration,
+                FirSerializerInput(fir2IrOutput, produceHeaderKlib = true),
             )
             val headerKlibInput = KlibWriterInput(headerKlib, headerKlibPath, produceHeaderKlib = true)
             phaseContext.writeKlib(headerKlibInput)
@@ -45,6 +47,7 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
             }
         }
         val serializerOutput = phaseContext.fir2IrSerializer(
+            configuration,
             FirSerializerInput(fir2IrOutput, produceHeaderKlib = false)
         )
         return NativeSerializationArtifact(
@@ -54,12 +57,17 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
         )
     }
 
-    private fun NativeFirstStagePhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
-        return firSerializerBase(input.firToIrOutput.frontendOutput, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
+    private fun NativeFirstStagePhaseContext.fir2IrSerializer(configuration: CompilerConfiguration, input: FirSerializerInput): SerializerOutput {
+        return firSerializerBase(
+            configuration,
+            input.firToIrOutput.frontendOutput,
+            input.firToIrOutput,
+            produceHeaderKlib = input.produceHeaderKlib,
+        )
     }
 }
 
-object NativeKlibWritingPhase : PipelinePhase<NativeSerializationArtifact, NativeKlibSerializedArtifact>(
+object NativeKlibWritingPipelinePhase : PipelinePhase<NativeSerializationArtifact, NativeKlibSerializedArtifact>(
     name = "NativeKlibWritingPhase",
     preActions = setOf(PerformanceNotifications.KlibWritingStarted),
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)

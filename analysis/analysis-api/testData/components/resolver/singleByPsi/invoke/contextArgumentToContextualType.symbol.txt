@@ -1,0 +1,5 @@
+KtCallExpression(70,77): 'block()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]

@@ -1,2 +1,4 @@
 KtForExpression(15,32): 'for (x in Y()) {}'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>

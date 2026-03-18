@@ -1,2 +1,4 @@
 KtNameReferenceExpression(36,39): 'jvm'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JvmName2'.>

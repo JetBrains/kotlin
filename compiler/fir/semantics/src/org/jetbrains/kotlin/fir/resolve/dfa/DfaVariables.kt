@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.isImplicitWhenSubjectVariable
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -140,7 +142,7 @@ class RealVariable(
                 fir.delegate != null -> PropertyStability.DELEGATED_PROPERTY
                 // Local vars are only *sometimes* unstable (when there are concurrent assignments). `FirDataFlowAnalyzer`
                 // will check that at each use site individually and mark the access as stable when possible.
-                fir.isEffectivelyLocal -> when {
+                fir.symbol is FirLocalPropertySymbol -> when {
                     fir.isVal -> PropertyStability.PRIVATE_OR_CONST_VAL
                     else -> PropertyStability.CAPTURED_VARIABLE
                 }
@@ -148,6 +150,9 @@ class RealVariable(
                 fir.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.getter !is FirDefaultPropertyAccessor? -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.visibility == Visibilities.Private -> PropertyStability.PRIVATE_OR_CONST_VAL
+                // REPL vals can be treated the same as local vals.
+                // TODO(???): allow REPL vars to be treated as local vars.
+                fir.isReplSnippetDeclaration == true -> PropertyStability.PRIVATE_OR_CONST_VAL
                 fir.isFinal -> PropertyStability.PUBLIC_FINAL_VAL
                 else -> PropertyStability.PUBLIC_OPEN_VAL
             }

@@ -48,6 +48,8 @@ interface Test<in I, out O, P> {
     fun neOk33(i: Inv<<!SYNTAX!><!>>)
     fun neOk34(i: Inv<<!UNRESOLVED_REFERENCE!>C<!>>)
     fun neOk35(i: Inv<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><P, P><!>)
+
+    fun neOk36(i: <!TYPE_VARIANCE_CONFLICT_ERROR!>O & Any<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, in, inProjection, interfaceDeclaration, nullableType, out, outProjection,

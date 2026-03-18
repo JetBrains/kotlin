@@ -2,6 +2,7 @@ KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKCl
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
@@ -9,5 +10,6 @@ KtValueArgument(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
-      a: kotlin.Array<kotlin.reflect.KClass<*>>
+      Nothing (Unresolved reference)

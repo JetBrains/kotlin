@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
+import java.util.*
+import kotlin.math.abs
 import kotlin.reflect.KType
 
 object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataClassRenderer() {
@@ -21,9 +23,21 @@ object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
     }
 
     private fun SmartPrinter.printDiagnosticConverter(diagnosticList: HLDiagnosticList) {
-        printBlock("internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConverter") {
-            for (diagnostic in diagnosticList.diagnostics) {
-                printConverter(diagnostic)
+        // Render diagnostics in chunks to help tooling to analyze the file faster
+        val diagnosticGroups = diagnosticList.diagnostics.groupByTo(TreeMap()) { abs(it.className.hashCode()) % 200 }.entries
+        val functionNameTemplate = "addConversions"
+        printBlock("internal val KT_DIAGNOSTIC_CONVERTER: KaDiagnosticConverter = KaDiagnosticConverterBuilder.buildConverter") {
+            for ((index, _) in diagnosticGroups) {
+                println("$functionNameTemplate$index()")
+            }
+        }
+
+        for ((index, diagnostics) in diagnosticGroups) {
+            println()
+            printBlock("private fun KaDiagnosticConverterBuilder.$functionNameTemplate$index()") {
+                for (diagnostic in diagnostics) {
+                    printConverter(diagnostic)
+                }
             }
         }
     }

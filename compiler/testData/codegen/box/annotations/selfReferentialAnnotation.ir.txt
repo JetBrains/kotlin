@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
         public open fun toString (): kotlin.String declared in kotlin.Annotation
   CLASS ANNOTATION_CLASS name:MyRequiresOptIn modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      MyRequiresOptIn(a = "", b = GET_ENUM 'ENUM_ENTRY name:ERROR' type=<root>.MyRequiresOptIn.MyLevel)
+      MyRequiresOptIn(a = "", b = MyLevel.ERROR)
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MyRequiresOptIn
     PROPERTY name:a visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private [final]
@@ -122,7 +122,7 @@ FILE fqName:<root> fileName:/selfReferentialAnnotation.kt
           CONST String type=kotlin.String value=""
       VALUE_PARAMETER kind:Regular name:b index:1 type:<root>.MyRequiresOptIn.MyLevel
         annotations:
-          MyRequiresOptIn(a = "", b = GET_ENUM 'ENUM_ENTRY name:WARNING' type=<root>.MyRequiresOptIn.MyLevel)
+          MyRequiresOptIn(a = "", b = MyLevel.WARNING)
         EXPRESSION_BODY
           GET_ENUM 'ENUM_ENTRY name:ERROR' type=<root>.MyRequiresOptIn.MyLevel
       BLOCK_BODY

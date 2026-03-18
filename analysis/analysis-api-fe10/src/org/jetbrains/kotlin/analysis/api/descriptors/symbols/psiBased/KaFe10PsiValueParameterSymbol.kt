@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -52,11 +55,6 @@ internal class KaFe10PsiValueParameterSymbol(
 
     override val hasDeclaredDefaultValue: Boolean
         get() = withValidityAssertion { psi.hasDefaultValue() }
-
-    override val hasSynthesizedName: Boolean
-        get() = withValidityAssertion {
-            (descriptor?.containingDeclaration as? FunctionDescriptor)?.hasSynthesizedParameterNames() == true
-        }
 
     override val isVararg: Boolean
         get() = withValidityAssertion { psi.isVarArg }

@@ -46,7 +46,7 @@ FILE: selfReferenceToCompanionObject.kt
             private constructor(): R|<anonymous>| {
                 super<R|Test|>(String(O), this@R|kotlin/Enum.Companion|.R|kotlin/run|<R|kotlin/Enum.Companion|, R|() -> kotlin/String|>(<L> = run@fun R|kotlin/Enum.Companion|.<anonymous>(): R|() -> kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                     ^ run@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-                        ^ R|/Test.FOO|.R|/Test.x|
+                        ^ Q|Test|.R|/Test.FOO|.R|/Test.x|
                     }
 
                 }
@@ -80,7 +80,7 @@ FILE: selfReferenceToCompanionObject.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Test>|
-            public get(): R|kotlin/enums/EnumEntries<Test>|
+            public static get(): R|kotlin/enums/EnumEntries<Test>|
 
     }
     public final fun box(): R|kotlin/String| {

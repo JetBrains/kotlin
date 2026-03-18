@@ -16,6 +16,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class ProcessorLoaderTest {
+    @Suppress("PropertyName")
     @JvmField
     @TempDir
     var _rootTempDirectory: File? = null
@@ -26,8 +27,8 @@ class ProcessorLoaderTest {
     @Test
     fun testProcessorClasspath() {
         val kaptOptions = with(KaptOptions.Builder()) {
-            val jar = rootTempDirectory.newFile("empty.jar").also {
-                ZipOutputStream(it.outputStream()).use {
+            val jar = rootTempDirectory.newFile("empty.jar").also { file ->
+                ZipOutputStream(file.outputStream()).use {
                     it.putNextEntry(ZipEntry("fake_entry"))
                     it.closeEntry()
                 }
@@ -45,8 +46,8 @@ class ProcessorLoaderTest {
     @Test
     fun testProcessorUpperCaseExtensionClasspath() {
         val kaptOptions = with(KaptOptions.Builder()) {
-            val jar = rootTempDirectory.newFile("empty.JAR").also {
-                ZipOutputStream(it.outputStream()).use {
+            val jar = rootTempDirectory.newFile("empty.JAR").also { file ->
+                ZipOutputStream(file.outputStream()).use {
                     it.putNextEntry(ZipEntry("fake_entry"))
                     it.closeEntry()
                 }

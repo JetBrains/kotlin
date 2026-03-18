@@ -120,7 +120,6 @@ KaValueParameterSymbol:
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
-        hasSynthesizedName: false
         isActual: false
         isCrossinline: false
         isExpect: false
@@ -159,7 +158,6 @@ KaValueParameterSymbol:
           generatedPrimaryConstructorProperty: null
           hasDeclaredDefaultValue: false
           hasDefaultValue: false
-          hasSynthesizedName: false
           isActual: false
           isCrossinline: false
           isExpect: false
@@ -211,7 +209,6 @@ KaValueParameterSymbol:
     importableFqName: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
-  hasSynthesizedName: false
   isActual: false
   isCrossinline: false
   isExpect: false

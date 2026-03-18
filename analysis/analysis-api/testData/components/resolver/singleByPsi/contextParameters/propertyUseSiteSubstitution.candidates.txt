@@ -1,5 +1,5 @@
 KtNameReferenceExpression(150,153): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = [
         KaImplicitReceiverValue:

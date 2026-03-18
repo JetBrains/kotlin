@@ -73,9 +73,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
         return if (kmProperty.isVar)
-            KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
+            KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty, KCallableOverriddenStorage.EMPTY)
         else
-            KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
+            KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty, KCallableOverriddenStorage.EMPTY)
     }
 
     fun findPropertyMetadata(name: String, signature: String): KmProperty {
@@ -178,6 +178,20 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
         return functions.single()
+    }
+
+    fun findJavaMethod(name: String, nameAndDesc: String): Method {
+        val desc = nameAndDesc.substring(nameAndDesc.indexOf('('), nameAndDesc.length)
+        val signature = classLoader.parseAndLoadDescriptor(desc, loadReturnType = true)
+        val parameterTypes = signature.parameters.toTypedArray()
+        val returnType = signature.returnType!!
+        return methodOwner.lookupMethod(name, parameterTypes, returnType, false) ?: run {
+            val allMembers = jClass.declaredMethods.joinToString("\n") { method -> method.jvmSignature }
+            throw KotlinReflectionInternalError(
+                "Method '$name' (JVM signature: $desc) not resolved in $this:" +
+                        if (allMembers.isEmpty()) " no methods found" else "\n$allMembers"
+            )
+        }
     }
 
     fun findConstructorMetadata(signature: String): KmConstructor =

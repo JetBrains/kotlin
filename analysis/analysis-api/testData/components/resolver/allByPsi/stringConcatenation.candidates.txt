@@ -20,7 +20,7 @@ KtProperty(18,45): 'val value = "1" + "2" + "3"'
   NO_CANDIDATES
 
 KtBinaryExpression(30,45): '"1" + "2" + "3"'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -57,7 +57,7 @@ KtBinaryExpression(30,45): '"1" + "2" + "3"'
     isInBestCandidates = true
 
 KtBinaryExpression(30,39): '"1" + "2"'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

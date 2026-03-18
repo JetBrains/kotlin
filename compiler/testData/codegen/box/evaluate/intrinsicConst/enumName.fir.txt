@@ -18,7 +18,7 @@ FILE: enumName.kt
         }
 
         public final static [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public get(): R|kotlin/enums/EnumEntries<EnumClass>|
+            public static get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
     }
     public final const [EvaluatedValue=String(OK)] val name1: R|kotlin/String| = Q|EnumClass|.R|/EnumClass.OK|.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>|

@@ -6,23 +6,20 @@
 package org.jetbrains.kotlin.cli.pipeline.metadata
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.getZipFileSystemAccessor
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.config.targetPlatform
-import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -67,13 +64,11 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
         arguments: K2MetadataCompilerArguments,
         rootDisposable: Disposable,
     ) {
-        val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
         val commonSources = arguments.commonSources?.toSet() ?: emptySet()
         val hmppCliModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         if (hmppCliModuleStructure != null) {
-            collector.report(
-                ERROR,
+            configuration.report(
+                COMPILER_ARGUMENTS_ERROR,
                 "HMPP module structure should not be passed during metadata compilation. Please remove `-Xfragments` and related flags"
             )
             return
@@ -98,25 +93,25 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
             targetDescription = moduleName
         }
 
-        configuration.targetPlatform = computeTargetPlatform(arguments.targetPlatform.orEmpty().toList(), collector)
+        configuration.targetPlatform = computeTargetPlatform(arguments.targetPlatform.orEmpty().toList(), configuration)
 
         val destination = arguments.destination
         if (destination != null) {
             if (destination.endsWith(".jar")) {
                 // TODO: support .jar destination
-                collector.report(
-                    STRONG_WARNING,
+                configuration.report(
+                    COMPILER_ARGUMENTS_WARNING,
                     ".jar destination is not yet supported, results will be written to the directory with the given name"
                 )
             }
             configuration.put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, File(destination))
         } else {
-            collector.report(ERROR, "Specify destination via -d")
+            configuration.report(COMPILER_ARGUMENTS_ERROR, "Specify destination via -d")
         }
 
         configuration.zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
             zipFileAccessorCacheLimitArgument = K2MetadataCompilerArguments::klibZipFileAccessorCacheLimit,
-            collector = collector,
+            configuration = configuration,
             rootDisposable = rootDisposable,
         )
     }
@@ -143,11 +138,15 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
         return TargetPlatform(platforms)
     }
 
-    private fun computeTargetPlatform(platformsFromArg: List<String>, collector: MessageCollector): TargetPlatform {
+    private fun computeTargetPlatform(platformsFromArg: List<String>, configuration: CompilerConfiguration): TargetPlatform {
         return computeTargetPlatform(
             platformsFromArg,
-            onUnknownPlatform = { collector.report(ERROR, "Unknown target platform: $it. Possible values are: ${platformMap.keys}") },
-            onEmptyPlatforms = { collector.report(WARNING, "No target platform specified, using default") },
+            onUnknownPlatform = {
+                configuration.report(COMPILER_ARGUMENTS_ERROR, "Unknown target platform: $it. Possible values are: ${platformMap.keys}")
+            },
+            onEmptyPlatforms = {
+                configuration.report(COMPILER_ARGUMENTS_WARNING, "No target platform specified, using default")
+            },
             defaultPlatform = CommonPlatforms.defaultCommonPlatform,
         )
     }

@@ -21,7 +21,7 @@ fun <I> expectThroughNullableTV(a: I, b: I?) {}
 fun test() {
     expectNullable([])
     expectNullable(["42"])
-    expectNullable(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
+    expectNullable([<!ARGUMENT_TYPE_MISMATCH!>42<!>])
 
     <!CANNOT_INFER_PARAMETER_TYPE!>expectNullableGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     expectNullableGeneric(["42"])
@@ -31,7 +31,7 @@ fun test() {
     expectThroughTypealias([42])
     expectThroughTypealias([42, "42"])
     expectThroughTypealias<String>([])
-    expectThroughTypealias<String>(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
+    expectThroughTypealias<String>([<!ARGUMENT_TYPE_MISMATCH!>42<!>])
 
     expectThroughTV(C.nullable(), [42])
     expectThroughTV(C.nullable<Int>(), [42])

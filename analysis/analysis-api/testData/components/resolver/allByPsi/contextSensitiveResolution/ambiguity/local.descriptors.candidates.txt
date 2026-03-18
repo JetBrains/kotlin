@@ -48,7 +48,7 @@ KtSuperTypeCallEntry(114,122): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(114,120): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -73,7 +73,7 @@ KtUserType(114,120): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(114,120): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -141,7 +141,7 @@ KtSuperTypeCallEntry(154,162): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(154,160): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -166,7 +166,7 @@ KtUserType(154,160): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(154,160): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -216,7 +216,7 @@ KtSuperTypeCallEntry(183,191): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(183,189): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -241,7 +241,7 @@ KtUserType(183,189): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(183,189): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -309,7 +309,7 @@ KtSuperTypeCallEntry(223,231): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(223,229): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -334,7 +334,7 @@ KtUserType(223,229): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(223,229): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -408,7 +408,7 @@ KtSuperTypeCallEntry(278,286): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(278,284): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -433,7 +433,7 @@ KtUserType(278,284): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(278,284): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -560,7 +560,7 @@ KtWhenExpression(483,617): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(489,490): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -650,7 +650,7 @@ KtWhenConditionWithExpression(576,586): 'CompanionB'
   NO_CANDIDATES
 
 KtNameReferenceExpression(576,586): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -731,7 +731,7 @@ KtWhenExpression(706,875): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(712,713): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -845,7 +845,7 @@ KtWhenConditionWithExpression(827,844): 'Sealed.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(827,844): 'Sealed.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -869,7 +869,7 @@ KtNameReferenceExpression(827,833): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(834,844): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -965,7 +965,7 @@ KtWhenExpression(1015,1224): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1021,1022): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1079,7 +1079,7 @@ KtWhenConditionWithExpression(1175,1185): 'CompanionB'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1175,1185): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -1144,7 +1144,7 @@ KtWhenExpression(1283,1533): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1289,1290): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1294,7 +1294,7 @@ KtWhenConditionWithExpression(1479,1494): 'this.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1479,1494): 'this.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1321,7 +1321,7 @@ KtNameReferenceExpression(1479,1483): 'this'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1484,1494): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1387,7 +1387,7 @@ KtWhenExpression(1593,1851): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1599,1600): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1519,7 +1519,7 @@ KtWhenConditionWithExpression(1760,1777): 'Sealed.CompanionA'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1760,1777): 'Sealed.CompanionA'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1543,7 +1543,7 @@ KtNameReferenceExpression(1760,1766): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1767,1777): 'CompanionA'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1573,7 +1573,7 @@ KtWhenConditionWithExpression(1795,1812): 'Sealed.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1795,1812): 'Sealed.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1597,7 +1597,7 @@ KtNameReferenceExpression(1795,1801): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1802,1812): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.fir.*
@@ -50,7 +51,8 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-internal object FirLazyBodiesCalculator {
+@LLFirInternals
+object FirLazyBodiesCalculator {
     fun calculateBodies(designation: FirDesignation) {
         designation.target.transformSingle(
             FirTargetLazyBodiesCalculatorTransformer,

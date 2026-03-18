@@ -25,6 +25,10 @@ import java.util.regex.Pattern;
 @EnforcedHostTarget()
 @UseExtTestCaseGroupProvider()
 public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
+  private void run(String fileName) {
+    runTest("plugins/atomicfu/atomicfu-compiler/testData/box/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -37,6 +41,10 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @EnforcedHostTarget()
   @UseExtTestCaseGroupProvider()
   public class Atomic_extensions {
+    private void run(String fileName) {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/" + fileName);
+    }
+
     @Test
     public void testAllFilesPresentInAtomic_extensions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -45,61 +53,67 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     @Test
     @TestMetadata("ArrayInlineExtensionTest.kt")
     public void testArrayInlineExtensionTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ArrayInlineExtensionTest.kt");
+      run("ArrayInlineExtensionTest.kt");
     }
 
     @Test
     @TestMetadata("ArrayLoopTest.kt")
     public void testArrayLoopTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ArrayLoopTest.kt");
+      run("ArrayLoopTest.kt");
     }
 
     @Test
     @TestMetadata("ComplexLoopTest.kt")
     public void testComplexLoopTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ComplexLoopTest.kt");
+      run("ComplexLoopTest.kt");
     }
 
     @Test
     @TestMetadata("ExtensionLoopTest.kt")
     public void testExtensionLoopTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ExtensionLoopTest.kt");
+      run("ExtensionLoopTest.kt");
     }
 
     @Test
     @TestMetadata("ExtensionsTest.kt")
     public void testExtensionsTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ExtensionsTest.kt");
+      run("ExtensionsTest.kt");
     }
 
     @Test
     @TestMetadata("InlineExtensionWithTypeParameterTest.kt")
     public void testInlineExtensionWithTypeParameterTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/InlineExtensionWithTypeParameterTest.kt");
+      run("InlineExtensionWithTypeParameterTest.kt");
+    }
+
+    @Test
+    @TestMetadata("KT67332.kt")
+    public void testKT67332() {
+      run("KT67332.kt");
     }
 
     @Test
     @TestMetadata("LambdaTest.kt")
     public void testLambdaTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/LambdaTest.kt");
+      run("LambdaTest.kt");
     }
 
     @Test
     @TestMetadata("LockFreeIntBitsTest.kt")
     public void testLockFreeIntBitsTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/LockFreeIntBitsTest.kt");
+      run("LockFreeIntBitsTest.kt");
     }
 
     @Test
     @TestMetadata("LockTest.kt")
     public void testLockTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/LockTest.kt");
+      run("LockTest.kt");
     }
 
     @Test
     @TestMetadata("ParameterizedInlineFunExtensionTest.kt")
     public void testParameterizedInlineFunExtensionTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/ParameterizedInlineFunExtensionTest.kt");
+      run("ParameterizedInlineFunExtensionTest.kt");
     }
   }
 
@@ -110,6 +124,10 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @EnforcedHostTarget()
   @UseExtTestCaseGroupProvider()
   public class Atomics_basic {
+    private void run(String fileName) {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/" + fileName);
+    }
+
     @Test
     public void testAllFilesPresentInAtomics_basic() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -118,97 +136,97 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     @Test
     @TestMetadata("ArithmeticTest.kt")
     public void testArithmeticTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/ArithmeticTest.kt");
+      run("ArithmeticTest.kt");
     }
 
     @Test
     @TestMetadata("AtomicArrayTest.kt")
     public void testAtomicArrayTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/AtomicArrayTest.kt");
+      run("AtomicArrayTest.kt");
     }
 
     @Test
     @TestMetadata("IndexArrayElementGetterTest.kt")
     public void testIndexArrayElementGetterTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/IndexArrayElementGetterTest.kt");
+      run("IndexArrayElementGetterTest.kt");
     }
 
     @Test
     @TestMetadata("InitializationOrderTest.kt")
     public void testInitializationOrderTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/InitializationOrderTest.kt");
+      run("InitializationOrderTest.kt");
     }
 
     @Test
     @TestMetadata("inliningAndSMAP.kt")
     public void testInliningAndSMAP() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/inliningAndSMAP.kt");
+      run("inliningAndSMAP.kt");
     }
 
     @Test
     @TestMetadata("KT83367.kt")
     public void testKT83367() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/KT83367.kt");
+      run("KT83367.kt");
     }
 
     @Test
     @TestMetadata("LateinitPropertiesTest.kt")
     public void testLateinitPropertiesTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LateinitPropertiesTest.kt");
+      run("LateinitPropertiesTest.kt");
     }
 
     @Test
     @TestMetadata("LockFreeLongCounterTest.kt")
     public void testLockFreeLongCounterTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LockFreeLongCounterTest.kt");
+      run("LockFreeLongCounterTest.kt");
     }
 
     @Test
     @TestMetadata("LockFreeQueueTest.kt")
     public void testLockFreeQueueTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LockFreeQueueTest.kt");
+      run("LockFreeQueueTest.kt");
     }
 
     @Test
     @TestMetadata("LockFreeStackTest.kt")
     public void testLockFreeStackTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LockFreeStackTest.kt");
+      run("LockFreeStackTest.kt");
     }
 
     @Test
     @TestMetadata("LongConcatenationTest.kt")
     public void testLongConcatenationTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LongConcatenationTest.kt");
+      run("LongConcatenationTest.kt");
     }
 
     @Test
     @TestMetadata("LoopTest.kt")
     public void testLoopTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LoopTest.kt");
+      run("LoopTest.kt");
     }
 
     @Test
     @TestMetadata("MultiInitTest.kt")
     public void testMultiInitTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/MultiInitTest.kt");
+      run("MultiInitTest.kt");
     }
 
     @Test
     @TestMetadata("ScopeTest.kt")
     public void testScopeTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/ScopeTest.kt");
+      run("ScopeTest.kt");
     }
 
     @Test
     @TestMetadata("SimpleLockTest.kt")
     public void testSimpleLockTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/SimpleLockTest.kt");
+      run("SimpleLockTest.kt");
     }
 
     @Test
     @TestMetadata("UncheckedCastTest.kt")
     public void testUncheckedCastTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/UncheckedCastTest.kt");
+      run("UncheckedCastTest.kt");
     }
   }
 
@@ -219,6 +237,10 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @EnforcedHostTarget()
   @UseExtTestCaseGroupProvider()
   public class Context_parameters {
+    private void run(String fileName) {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters/" + fileName);
+    }
+
     @Test
     public void testAllFilesPresentInContext_parameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -227,7 +249,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     @Test
     @TestMetadata("ContextReceiverParametersTest.kt")
     public void testContextReceiverParametersTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters/ContextReceiverParametersTest.kt");
+      run("ContextReceiverParametersTest.kt");
     }
   }
 
@@ -238,6 +260,10 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @EnforcedHostTarget()
   @UseExtTestCaseGroupProvider()
   public class Delegated {
+    private void run(String fileName) {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/delegated/" + fileName);
+    }
+
     @Test
     public void testAllFilesPresentInDelegated() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -246,7 +272,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     @Test
     @TestMetadata("DelegatedPropertiesTest.kt")
     public void testDelegatedPropertiesTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/delegated/DelegatedPropertiesTest.kt");
+      run("DelegatedPropertiesTest.kt");
     }
   }
 
@@ -257,6 +283,10 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @EnforcedHostTarget()
   @UseExtTestCaseGroupProvider()
   public class Locks {
+    private void run(String fileName) {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/locks/" + fileName);
+    }
+
     @Test
     public void testAllFilesPresentInLocks() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/locks"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -265,13 +295,13 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     @Test
     @TestMetadata("ReentrantLockTest.kt")
     public void testReentrantLockTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/locks/ReentrantLockTest.kt");
+      run("ReentrantLockTest.kt");
     }
 
     @Test
     @TestMetadata("SynchronizedObjectTest.kt")
     public void testSynchronizedObjectTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/locks/SynchronizedObjectTest.kt");
+      run("SynchronizedObjectTest.kt");
     }
   }
 
@@ -282,6 +312,10 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @EnforcedHostTarget()
   @UseExtTestCaseGroupProvider()
   public class Top_level {
+    private void run(String fileName) {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/top-level/" + fileName);
+    }
+
     @Test
     public void testAllFilesPresentInTop_level() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/top-level"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -290,13 +324,13 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     @Test
     @TestMetadata("FieldInObjectTest.kt")
     public void testFieldInObjectTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/top-level/FieldInObjectTest.kt");
+      run("FieldInObjectTest.kt");
     }
 
     @Test
     @TestMetadata("TopLevelTest.kt")
     public void testTopLevelTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/top-level/TopLevelTest.kt");
+      run("TopLevelTest.kt");
     }
   }
 
@@ -307,6 +341,10 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @EnforcedHostTarget()
   @UseExtTestCaseGroupProvider()
   public class Trace {
+    private void run(String fileName) {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/trace/" + fileName);
+    }
+
     @Test
     public void testAllFilesPresentInTrace() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/trace"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -315,7 +353,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     @Test
     @TestMetadata("TraceTest.kt")
     public void testTraceTest() {
-      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/trace/TraceTest.kt");
+      run("TraceTest.kt");
     }
   }
 }

@@ -37,19 +37,8 @@ internal constructor(
     execOps: ExecOperations,
 ) : KotlinTest(execOps) {
 
-    @Deprecated(
-        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR,
-    )
-    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
-    @Suppress("UNREACHABLE_CODE")
-    constructor() : this(
-        objects = throw UnsupportedOperationException(),
-        providers = throw UnsupportedOperationException(),
-        execOps = throw UnsupportedOperationException(),
-    )
-
-    private val processOptions: ProcessLaunchOptions = this.objects.processLaunchOptions {
+    @get:Internal
+    internal val processOptions: ProcessLaunchOptions = this.objects.processLaunchOptions {
         environment.putAll(this@KotlinNativeTest.providers.getAllEnvironmentVariables())
     }
 
@@ -234,15 +223,6 @@ internal constructor(
     execOps = execOps,
 ) {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
-    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
-    @Suppress("UNREACHABLE_CODE")
-    constructor() : this(
-        objects = throw UnsupportedOperationException(),
-        providers = throw UnsupportedOperationException(),
-        execOps = throw UnsupportedOperationException(),
-    )
-
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -273,15 +253,6 @@ internal constructor(
     providers = providers,
     execOps = execOps,
 ) {
-
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
-    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
-    @Suppress("UNREACHABLE_CODE")
-    constructor() : this(
-        objects = throw UnsupportedOperationException(),
-        providers = throw UnsupportedOperationException(),
-        execOps = throw UnsupportedOperationException(),
-    )
 
     @Deprecated("Use the property 'device' instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     @get:Internal

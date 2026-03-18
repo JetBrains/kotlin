@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSignificance
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
 import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.ir.builders.*
@@ -116,11 +117,11 @@ abstract class AbstractPropertyReferenceLowering<C : CommonBackendContext>(val c
         defaultValue: () -> IrExpression = ::irNull,
     ): IrExpression =
         reference.reflectionTargetLinkageError?.let {
-            this@AbstractPropertyReferenceLowering.context.partialLinkageSupport.prepareLinkageError(
-                doNotLog = true,
+            this@AbstractPropertyReferenceLowering.context.partialLinkageSupport.renderAndLogLinkageError(
                 it,
                 reference,
                 PartialLinkageSources.File.determineFileFor(reference.getterFunction),
+                PartialLinkageIssueSignificance.MINOR,
             )
         }?.let(::irString) ?: defaultValue()
 

@@ -39,17 +39,16 @@ fun interface Psi2IrPostprocessingStep {
     fun invoke(irModuleFragment: IrModuleFragment)
 }
 
+/**
+ * @property checkNoUnboundSymbols The checks that need to be performed to make sure that all symbols are bound.
+ *  Note: Some backends (like KLIB-based backends) actually support partial linkage. So, for such backends the value
+ *  of [checkNoUnboundSymbols] is `null`, which effectively means that the checks are postponed to the partial linkage phase.
+ */
 class Psi2IrTranslator(
     val languageVersionSettings: LanguageVersionSettings,
     val configuration: Psi2IrConfiguration,
-    private val checkNoUnboundSymbols: (SymbolTable, String) -> Unit
+    private val checkNoUnboundSymbols: ((SymbolTable, String) -> Unit)? = null,
 ) {
-    @Deprecated("Only for backward compatibility with older versions of IDE", level = DeprecationLevel.ERROR)
-    constructor(
-        languageVersionSettings: LanguageVersionSettings,
-        configuration: Psi2IrConfiguration
-    ) : this(languageVersionSettings, configuration, checkNoUnboundSymbols = { _, _ -> })
-
     private val postprocessingSteps = SmartList<Psi2IrPostprocessingStep>()
 
     fun addPostprocessingStep(step: Psi2IrPostprocessingStep) {
@@ -114,8 +113,7 @@ class Psi2IrTranslator(
         return irModule
     }
 
-    private fun GeneratorContext.checkNoUnboundSymbols(whenDetected: () -> String) {
-        if (!configuration.partialLinkageEnabled)
-            checkNoUnboundSymbols(symbolTable, whenDetected())
+    private inline fun GeneratorContext.checkNoUnboundSymbols(whenDetected: () -> String) {
+        checkNoUnboundSymbols?.invoke(symbolTable, whenDetected())
     }
 }

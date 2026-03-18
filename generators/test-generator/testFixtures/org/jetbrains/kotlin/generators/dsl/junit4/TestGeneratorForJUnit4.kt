@@ -41,7 +41,6 @@ private class TestGeneratorForJUnit4Instance(
     private val mainClassName: String?
 ) {
     companion object {
-        private val GENERATED_FILES = HashSet<String>()
         private val JUNIT3_RUNNER = Class.forName("org.jetbrains.kotlin.test.JUnit3RunnerWithInners")
 
         private fun generateMetadata(p: Printer, testDataSource: TestEntityModel) {
@@ -75,12 +74,6 @@ private class TestGeneratorForJUnit4Instance(
     private val suiteClassPackage: String = suiteTestClassFqName.substringBeforeLast('.', baseTestClassPackage)
     private val suiteClassName: String = suiteTestClassFqName.substringAfterLast('.', suiteTestClassFqName)
     private val testSourceFilePath: String = baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java"
-
-    init {
-        if (!GENERATED_FILES.add(testSourceFilePath)) {
-            throw IllegalArgumentException("Same test file already generated in current session: $testSourceFilePath")
-        }
-    }
 
     @Throws(IOException::class)
     fun generateAndSave(dryRun: Boolean, allowGenerationOnTeamCity: Boolean): AbstractTestGenerator.GenerationResult {

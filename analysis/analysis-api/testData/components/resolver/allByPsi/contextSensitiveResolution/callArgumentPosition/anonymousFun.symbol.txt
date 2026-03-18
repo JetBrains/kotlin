@@ -74,7 +74,10 @@ KtSuperTypeCallEntry(257,266): 'MyClass()'
     ]
 
 KtConstructorCalleeExpression(257,264): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtTypeReference(257,264): 'MyClass'
   null
@@ -119,7 +122,10 @@ KtSuperTypeCallEntry(332,341): 'MyClass()'
     ]
 
 KtConstructorCalleeExpression(332,339): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtTypeReference(332,339): 'MyClass'
   null
@@ -170,7 +176,10 @@ KtSuperTypeCallEntry(428,435): 'Super()'
     ]
 
 KtConstructorCalleeExpression(428,433): 'Super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Super
+    ]
 
 KtTypeReference(428,433): 'Super'
   null
@@ -206,7 +215,10 @@ KtCallExpression(473,479): 'TODO()'
     ]
 
 KtNameReferenceExpression(473,477): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(477,479): '()'
   null
@@ -230,7 +242,10 @@ KtCallExpression(529,545): 'InheritorClass()'
     ]
 
 KtNameReferenceExpression(529,543): 'InheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass.InheritorClass
+    ]
 
 KtValueArgumentList(543,545): '()'
   null
@@ -248,7 +263,10 @@ KtNameReferenceExpression(579,594): 'InheritorObject'
   null
 
 KtNameReferenceExpression(597,612): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(621,642): 'val prop: String = ""'
   null
@@ -296,7 +314,10 @@ KtNameReferenceExpression(706,712): 'String'
   null
 
 KtPropertyDelegate(713,725): 'by lazy {""}'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/getValue(<extension receiver>: kotlin.Lazy<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+    ]
 
 KtCallExpression(716,725): 'lazy {""}'
   KaSymbolResolutionSuccess:
@@ -305,7 +326,10 @@ KtCallExpression(716,725): 'lazy {""}'
     ]
 
 KtNameReferenceExpression(716,720): 'lazy'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
+    ]
 
 KtLambdaArgument(721,725): '{""}'
   null
@@ -335,7 +359,10 @@ KtBlockExpression(752,767): 'InheritorObject'
   null
 
 KtNameReferenceExpression(752,767): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(777,805): 'fun func(): MyClass = TODO()'
   null
@@ -359,7 +386,10 @@ KtCallExpression(799,805): 'TODO()'
     ]
 
 KtNameReferenceExpression(799,803): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(803,805): '()'
   null
@@ -428,7 +458,10 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
     ]
 
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousEnumConsumer: (MyEnum) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(954,966): '(EnumValue1)'
   null
@@ -437,7 +470,10 @@ KtValueArgument(955,965): 'EnumValue1'
   null
 
 KtNameReferenceExpression(955,965): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
   KaSymbolResolutionSuccess:
@@ -446,7 +482,10 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
     ]
 
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(989,1006): '(InheritorObject)'
   null
@@ -455,7 +494,10 @@ KtValueArgument(990,1005): 'InheritorObject'
   null
 
 KtNameReferenceExpression(990,1005): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
   KaSymbolResolutionSuccess:
@@ -464,7 +506,10 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
     ]
 
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(1028,1041): '(propMyClass)'
   null
@@ -473,7 +518,10 @@ KtValueArgument(1029,1040): 'propMyClass'
   null
 
 KtNameReferenceExpression(1029,1040): 'propMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val propMyClass: MyClass
+    ]
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
   KaSymbolResolutionError:
@@ -483,7 +531,10 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(1064,1070): '(prop)'
   null
@@ -492,7 +543,10 @@ KtValueArgument(1065,1069): 'prop'
   null
 
 KtNameReferenceExpression(1065,1069): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
   KaSymbolResolutionError:
@@ -502,7 +556,10 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(1092,1103): '(constProp)'
   null
@@ -511,7 +568,10 @@ KtValueArgument(1093,1102): 'constProp'
   null
 
 KtNameReferenceExpression(1093,1102): 'constProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constProp: kotlin.String
+    ]
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
   KaSymbolResolutionError:
@@ -521,7 +581,10 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(1125,1135): '(lazyProp)'
   null
@@ -530,7 +593,10 @@ KtValueArgument(1126,1134): 'lazyProp'
   null
 
 KtNameReferenceExpression(1126,1134): 'lazyProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val lazyProp: kotlin.String
+    ]
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
   KaSymbolResolutionError:
@@ -540,7 +606,10 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(1157,1169): '(lambdaProp)'
   null
@@ -549,7 +618,10 @@ KtValueArgument(1158,1168): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1158,1168): 'lambdaProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val lambdaProp: () -> MyClass.InheritorObject
+    ]
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
   KaSymbolResolutionError:
@@ -559,7 +631,10 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(1191,1202): '(superProp)'
   null
@@ -568,7 +643,10 @@ KtValueArgument(1192,1201): 'superProp'
   null
 
 KtNameReferenceExpression(1192,1201): 'superProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val superProp: kotlin.String
+    ]
 
 KtCallExpression(1208,1233): 'anonymousConsumer(func())'
   KaSymbolResolutionSuccess:
@@ -577,7 +655,10 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
     ]
 
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(1225,1233): '(func())'
   null
@@ -591,7 +672,9 @@ KtCallExpression(1226,1232): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1226,1230): 'func'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtValueArgumentList(1230,1232): '()'
   null
@@ -603,7 +686,10 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
     ]
 
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(1255,1268): '(superFunc())'
   null
@@ -617,7 +703,9 @@ KtCallExpression(1256,1267): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1256,1265): 'superFunc'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtValueArgumentList(1265,1267): '()'
   null
@@ -630,7 +718,10 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: (MyClass) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(1290,1302): '(lambdaProp)'
   null
@@ -639,4 +730,7 @@ KtValueArgument(1291,1301): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1291,1301): 'lambdaProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val lambdaProp: () -> MyClass.InheritorObject
+    ]

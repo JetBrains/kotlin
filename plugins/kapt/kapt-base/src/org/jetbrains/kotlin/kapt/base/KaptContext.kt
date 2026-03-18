@@ -38,12 +38,12 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
 
     private fun preregisterLog(context: Context) {
         val interceptorData = KaptJavaLogBase.DiagnosticInterceptorData()
-        context.put(Log.logKey, Context.Factory<Log> { newContext ->
+        context.put(Log.logKey) { newContext ->
             KaptJavaLog(
                 options.projectBaseDir, newContext, logger.errorWriter, logger.warnWriter, logger.infoWriter,
                 interceptorData, options[KaptFlag.MAP_DIAGNOSTIC_LOCATIONS]
             )
-        })
+        }
     }
 
     init {
@@ -72,7 +72,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
                         }
                     }
                 }
-            }?: SourcesToReprocess.FullRebuild
+            } ?: SourcesToReprocess.FullRebuild
 
             if (sourcesToReprocess == SourcesToReprocess.FullRebuild) {
                 // remove all generated sources and classes

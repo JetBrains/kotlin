@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 /**
  * Check if we should link static caches into an object file before running full linkage.
  */
-internal fun shouldPerformPreLink(config: KonanConfig, caches: ResolvedCacheBinaries, linkerOutputKind: LinkerOutputKind): Boolean {
+internal fun shouldPerformPreLink(config: NativeSecondStageCompilationConfig, caches: ResolvedCacheBinaries, linkerOutputKind: LinkerOutputKind): Boolean {
     // Pre-link is only useful when producing static library. Otherwise its just a waste of time.
     val isStaticLibrary = linkerOutputKind == LinkerOutputKind.STATIC_LIBRARY &&
             config.isFinalBinary

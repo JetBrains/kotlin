@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/scripting/scripting-tests/testData/codegen/repl")
 @TestDataPath("$PROJECT_ROOT")
 public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWithTestExtensionsCodegenTest {
+  private void run(String fileName) {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInRepl() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/repl"), Pattern.compile("^(.+)\\.kts$"), null, true);
@@ -26,210 +30,210 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   @Test
   @TestMetadata("class_calls_pure_function.repl.kts")
   public void testClass_calls_pure_function_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_calls_pure_function.repl.kts");
+    run("class_calls_pure_function.repl.kts");
   }
 
   @Test
   @TestMetadata("class_inheritor_captures_property.repl.kts")
   public void testClass_inheritor_captures_property_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_inheritor_captures_property.repl.kts");
+    run("class_inheritor_captures_property.repl.kts");
   }
 
   @Test
   @TestMetadata("class_mutates_top_level_properties.repl.kts")
   public void testClass_mutates_top_level_properties_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_mutates_top_level_properties.repl.kts");
+    run("class_mutates_top_level_properties.repl.kts");
   }
 
   @Test
   @TestMetadata("class_property_initializer_depends_on_expected_type.repl.kts")
   public void testClass_property_initializer_depends_on_expected_type_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_property_initializer_depends_on_expected_type.repl.kts");
+    run("class_property_initializer_depends_on_expected_type.repl.kts");
   }
 
   @Test
   @TestMetadata("class_references_top_level_mutating_properties.repl.kts")
   public void testClass_references_top_level_mutating_properties_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_references_top_level_mutating_properties.repl.kts");
+    run("class_references_top_level_mutating_properties.repl.kts");
   }
 
   @Test
   @TestMetadata("class_uses_top_level_mutating_properties.repl.kts")
   public void testClass_uses_top_level_mutating_properties_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_uses_top_level_mutating_properties.repl.kts");
+    run("class_uses_top_level_mutating_properties.repl.kts");
   }
 
   @Test
   @TestMetadata("class_with_companion.repl.kts")
   public void testClass_with_companion_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_with_companion.repl.kts");
+    run("class_with_companion.repl.kts");
   }
 
   @Test
   @TestMetadata("custom_delegate.repl.kts")
   public void testCustom_delegate_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/custom_delegate.repl.kts");
+    run("custom_delegate.repl.kts");
   }
 
   @Test
   @TestMetadata("delegated_extension_property_2.repl.kts")
   public void testDelegated_extension_property_2_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/delegated_extension_property_2.repl.kts");
+    run("delegated_extension_property_2.repl.kts");
   }
 
   @Test
   @TestMetadata("delegated_extension_property.repl.kts")
   public void testDelegated_extension_property_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/delegated_extension_property.repl.kts");
+    run("delegated_extension_property.repl.kts");
   }
 
   @Test
   @TestMetadata("extension_function.repl.kts")
   public void testExtension_function_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/extension_function.repl.kts");
+    run("extension_function.repl.kts");
   }
 
   @Test
   @TestMetadata("function_calls_class.repl.kts")
   public void testFunction_calls_class_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_calls_class.repl.kts");
+    run("function_calls_class.repl.kts");
   }
 
   @Test
   @TestMetadata("function_inline.kts")
   public void testFunction_inline() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_inline.kts");
+    run("function_inline.kts");
   }
 
   @Test
   @TestMetadata("function_override.kts")
   public void testFunction_override() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_override.kts");
+    run("function_override.kts");
   }
 
   @Test
   @TestMetadata("function_returns_anonymous_object.repl.kts")
   public void testFunction_returns_anonymous_object_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_returns_anonymous_object.repl.kts");
+    run("function_returns_anonymous_object.repl.kts");
   }
 
   @Test
   @TestMetadata("function_returns_class.repl.kts")
   public void testFunction_returns_class_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_returns_class.repl.kts");
+    run("function_returns_class.repl.kts");
   }
 
   @Test
   @TestMetadata("function_uses_local_mutating_property.repl.kts")
   public void testFunction_uses_local_mutating_property_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_uses_local_mutating_property.repl.kts");
+    run("function_uses_local_mutating_property.repl.kts");
   }
 
   @Test
   @TestMetadata("function_uses_mutating_property.repl.kts")
   public void testFunction_uses_mutating_property_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_uses_mutating_property.repl.kts");
+    run("function_uses_mutating_property.repl.kts");
   }
 
   @Test
   @TestMetadata("lazy_property.repl.kts")
   public void testLazy_property_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/lazy_property.repl.kts");
+    run("lazy_property.repl.kts");
   }
 
   @Test
   @TestMetadata("mutating_property.repl.kts")
   public void testMutating_property_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/mutating_property.repl.kts");
+    run("mutating_property.repl.kts");
   }
 
   @Test
   @TestMetadata("nested_class_calls_pure_function.repl.kts")
   public void testNested_class_calls_pure_function_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/nested_class_calls_pure_function.repl.kts");
+    run("nested_class_calls_pure_function.repl.kts");
   }
 
   @Test
   @TestMetadata("property_accessors.kts")
   public void testProperty_accessors() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_accessors.kts");
+    run("property_accessors.kts");
   }
 
   @Test
   @TestMetadata("property_destructuring.kts")
   public void testProperty_destructuring() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_destructuring.kts");
+    run("property_destructuring.kts");
   }
 
   @Test
   @TestMetadata("property_extension.kts")
   public void testProperty_extension() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_extension.kts");
+    run("property_extension.kts");
   }
 
   @Test
   @TestMetadata("property_override.kts")
   public void testProperty_override() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_override.kts");
+    run("property_override.kts");
   }
 
   @Test
   @TestMetadata("property_smartcast.kts")
   public void testProperty_smartcast() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_smartcast.kts");
+    run("property_smartcast.kts");
   }
 
   @Test
   @TestMetadata("property_uses_anonymous_object.repl.kts")
   public void testProperty_uses_anonymous_object_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_uses_anonymous_object.repl.kts");
+    run("property_uses_anonymous_object.repl.kts");
   }
 
   @Test
   @TestMetadata("property_with_lambda.repl.kts")
   public void testProperty_with_lambda_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_with_lambda.repl.kts");
+    run("property_with_lambda.repl.kts");
   }
 
   @Test
   @TestMetadata("resolve_annotations.repl.kts")
   public void testResolve_annotations_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/resolve_annotations.repl.kts");
+    run("resolve_annotations.repl.kts");
   }
 
   @Test
   @TestMetadata("simple_data_class.repl.kts")
   public void testSimple_data_class_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/simple_data_class.repl.kts");
+    run("simple_data_class.repl.kts");
   }
 
   @Test
   @TestMetadata("simple_property.repl.kts")
   public void testSimple_property_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/simple_property.repl.kts");
+    run("simple_property.repl.kts");
   }
 
   @Test
   @TestMetadata("simple_pure_class.repl.kts")
   public void testSimple_pure_class_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/simple_pure_class.repl.kts");
+    run("simple_pure_class.repl.kts");
   }
 
   @Test
   @TestMetadata("simple_pure_function.repl.kts")
   public void testSimple_pure_function_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/simple_pure_function.repl.kts");
+    run("simple_pure_function.repl.kts");
   }
 
   @Test
   @TestMetadata("single_snippet.repl.kts")
   public void testSingle_snippet_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/single_snippet.repl.kts");
+    run("single_snippet.repl.kts");
   }
 
   @Test
   @TestMetadata("type_aliases.repl.kts")
   public void testType_aliases_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/type_aliases.repl.kts");
+    run("type_aliases.repl.kts");
   }
 }

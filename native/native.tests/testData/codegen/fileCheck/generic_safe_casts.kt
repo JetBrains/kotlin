@@ -18,7 +18,7 @@ fun foo(x: Any) = x as Int
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
-// CHECK-OPT: getelementptr inbounds %"kclassbody:kotlin.Int#internal", ptr {{%[0-9]+}}, i32 0, i32 1
+// CHECK-OPT: getelementptr inbounds nuw %"kclassbody:kotlin.Int#internal", ptr {{%[0-9]+}}, i32 0, i32 1
 // CHECK-LABEL: epilogue:
 
 open class A(val x: Int)

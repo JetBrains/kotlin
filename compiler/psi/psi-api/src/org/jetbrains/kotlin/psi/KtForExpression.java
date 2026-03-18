@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 /**
  * Represents a {@code for} loop.
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
  * // The entire block from 'for' to the closing curly brace
  * }</pre>
  */
-public class KtForExpression extends KtLoopExpression {
+public class KtForExpression extends KtLoopExpression implements KtResolvableCall {
     public KtForExpression(@NotNull ASTNode node) {
         super(node);
     }

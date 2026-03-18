@@ -1,5 +1,5 @@
 KtNameReferenceExpression(192,200): 'variable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

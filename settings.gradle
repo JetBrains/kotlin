@@ -147,6 +147,7 @@ include ":benchmarks",
         ":compiler:ir.serialization.jvm",
         ":compiler:ir.serialization.js",
         ":compiler:ir.serialization.native",
+        ":compiler:ir.serialization.jklib",
         ":compiler:ir.interpreter",
         ":compiler:ir.inline",
         ":compiler:ir.validation",
@@ -166,6 +167,7 @@ include ":benchmarks",
         ":compiler:cli-jvm",
         ":compiler:cli-jvm:javac-integration",
         ":compiler:cli-js",
+        ":compiler:cli-jklib",
         ":compiler:cli-metadata",
         ":compiler:cli:cli-native-klib",
         ":compiler:incremental-compilation-impl",
@@ -176,6 +178,7 @@ include ":benchmarks",
         ":compiler:tests-mutes:mutes-junit4",
         ":compiler:tests-mutes:mutes-junit5",
         ":compiler:tests-against-klib",
+        ":compiler:jklib.tests",
         ":js:js.ast",
         ":js:js.sourcemap",
         ":js:js.serializer",
@@ -186,6 +189,7 @@ include ":benchmarks",
         ":js:js.translator",
         ":js:js.tests",
         ":js:js.tests:klib-compatibility",
+        ":native:unsafe-mem",
         ":native:kotlin-native-utils",
         ":native:frontend.native",
         ":native:kotlin-klib-commonizer",
@@ -258,8 +262,11 @@ include ":kotlin-noarg-compiler-plugin",
 
 include ":kotlin-power-assert-compiler-plugin",
         ":kotlin-power-assert-compiler-plugin.embeddable",
+        ":kotlin-power-assert-compiler-plugin.common",
+        ":kotlin-power-assert-compiler-plugin.frontend",
         ":kotlin-power-assert-compiler-plugin.backend",
-        ":kotlin-power-assert-compiler-plugin.cli"
+        ":kotlin-power-assert-compiler-plugin.cli",
+        ":kotlin-power-assert-runtime"
 
 include ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin.embeddable",
@@ -447,6 +454,7 @@ include ":compiler:fir",
         ":compiler:fir:checkers:checkers.wasm",
         ":compiler:fir:checkers:checkers.web.common",
         ":compiler:fir:checkers:checkers-component-generator",
+        ":compiler:fir:diagnostic-renderers",
         ":compiler:fir:entrypoint",
         ":compiler:fir:analysis-tests",
         ":compiler:fir:analysis-tests:legacy-fir-tests"
@@ -459,7 +467,8 @@ include ":kotlin-scripting-ide-services-unshaded",
 include ":compiler:test-infrastructure",
         ":compiler:test-infrastructure-utils",
         ":compiler:test-infrastructure-utils.common",
-        ":compiler:tests-common-new"
+        ":compiler:tests-common-new",
+        ":compiler:test-engine-sandbox"
 
 include ":plugins:parcelize:parcelize-compiler",
         ":plugins:parcelize:parcelize-compiler:parcelize.common",
@@ -542,6 +551,7 @@ include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-impl",
         ":compiler:build-tools:kotlin-build-tools-compat",
         ":compiler:build-tools:kotlin-build-tools-api-tests",
+        ":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests",
         ":compiler:build-tools:kotlin-build-tools-jdk-utils",
         ":compiler:build-tools:kotlin-build-tools-options-generator",
         ":compiler:build-tools:util-kotlinpoet",
@@ -731,12 +741,11 @@ include ":jps:jps-common",
         ":prepare:kotlin-jps-plugin",
         ":jps:jps-platform-api-signatures"
 
-include ":generators:analysis-api-generator",
-        ":generators:analysis-api-generator:generator-kotlin-native",
-        ":analysis",
+include ":analysis",
         ":analysis:low-level-api-fir",
         ":analysis:low-level-api-fir:tests-jdk11",
-        ":analysis:low-level-api-fir:low-level-api-fir-native",
+        ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests",
+        ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
         ":analysis:analysis-api-fir:analysis-api-fir-generator",
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api",
@@ -776,6 +785,7 @@ include ":kotlin-stdlib-common",
         ":kotlin-stdlib-jdk8",
         ":kotlin-stdlib:samples",
         ":kotlin-stdlib-jvm-minimal-for-test",
+        ":kotlin-stdlib-jklib-for-test",
         ":tools:binary-compatibility-validator",
         ":tools:jdk-api-validator",
         ":tools:kotlin-stdlib-gen",
@@ -800,6 +810,7 @@ project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as 
 project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
 project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
 project(":kotlin-stdlib-jvm-minimal-for-test").projectDir = "$rootDir/libraries/stdlib/jvm-minimal-for-test" as File
+project(":kotlin-stdlib-jklib-for-test").projectDir = "$rootDir/libraries/stdlib/jklib-for-test" as File
 
 project(':tools').projectDir = "$rootDir/libraries/tools" as File
 project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
@@ -829,6 +840,7 @@ project(':compiler:cli-jvm').projectDir = "$rootDir/compiler/cli/cli-jvm" as Fil
 project(':compiler:cli-jvm:javac-integration').projectDir = "$rootDir/compiler/cli/cli-jvm/javac-integration" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':compiler:cli-metadata').projectDir = "$rootDir/compiler/cli/cli-metadata" as File
+project(':compiler:cli-jklib').projectDir = "$rootDir/compiler/cli/cli-jklib" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
 project(':daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
@@ -855,6 +867,7 @@ project(':compiler:ir.serialization.common').projectDir = "$rootDir/compiler/ir/
 project(':compiler:ir.serialization.jvm').projectDir = "$rootDir/compiler/ir/serialization.jvm" as File
 project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/serialization.js" as File
 project(':compiler:ir.serialization.native').projectDir = "$rootDir/compiler/ir/serialization.native" as File
+project(':compiler:ir.serialization.jklib').projectDir = "$rootDir/compiler/ir/serialization.jklib" as File
 project(':compiler:ir.interpreter').projectDir = "$rootDir/compiler/ir/ir.interpreter" as File
 project(':kotlin-util-io').projectDir = "$rootDir/compiler/util-io" as File
 project(':kotlin-util-klib').projectDir = "$rootDir/compiler/util-klib" as File
@@ -896,10 +909,13 @@ project(':kotlin-noarg-compiler-plugin.k2').projectDir = "$rootDir/plugins/noarg
 project(':kotlin-noarg-compiler-plugin.backend').projectDir = "$rootDir/plugins/noarg/noarg.backend" as File
 project(':kotlin-noarg-compiler-plugin.cli').projectDir = "$rootDir/plugins/noarg/noarg.cli" as File
 
-project(':kotlin-power-assert-compiler-plugin').projectDir = "$rootDir/plugins/power-assert" as File
-project(':kotlin-power-assert-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/power-assert/power-assert.embeddable" as File
-project(':kotlin-power-assert-compiler-plugin.backend').projectDir = "$rootDir/plugins/power-assert/power-assert.backend" as File
-project(':kotlin-power-assert-compiler-plugin.cli').projectDir = "$rootDir/plugins/power-assert/power-assert.cli" as File
+project(':kotlin-power-assert-compiler-plugin').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler" as File
+project(':kotlin-power-assert-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.embeddable" as File
+project(':kotlin-power-assert-compiler-plugin.common').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.common" as File
+project(':kotlin-power-assert-compiler-plugin.frontend').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.frontend" as File
+project(':kotlin-power-assert-compiler-plugin.backend').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.backend" as File
+project(':kotlin-power-assert-compiler-plugin.cli').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.cli" as File
+project(':kotlin-power-assert-runtime').projectDir = "$rootDir/plugins/power-assert/power-assert-runtime" as File
 
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver" as File
 project(':kotlin-sam-with-receiver-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.embeddable" as File

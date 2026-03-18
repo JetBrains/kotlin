@@ -1,0 +1,213 @@
+public abstract class org/jetbrains/kotlin/idea/references/AbstractKtReference : com/intellij/psi/PsiPolyVariantReferenceBase, org/jetbrains/kotlin/idea/references/KtReference {
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtElement;)V
+	public fun bindToElement (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
+	protected fun canBeReferenceTo (Lcom/intellij/psi/PsiElement;)Z
+	public fun canRename ()Z
+	public fun getCanonicalText ()Ljava/lang/String;
+	public synthetic fun getElement ()Lorg/jetbrains/kotlin/psi/KtElement;
+	public final fun getExpression ()Lorg/jetbrains/kotlin/psi/KtElement;
+	protected final fun getKtReferenceMutateService ()Lorg/jetbrains/kotlin/idea/references/KtReferenceMutateService;
+	public fun getVariants ()[Ljava/lang/Object;
+	public fun handleElementRename (Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
+	public fun isReferenceTo (Lcom/intellij/psi/PsiElement;)Z
+	protected fun isReferenceToImportAlias (Lorg/jetbrains/kotlin/psi/KtImportAlias;)Z
+	public fun isSoft ()Z
+	public fun multiResolve (Z)[Lcom/intellij/psi/ResolveResult;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KDocReference : org/jetbrains/kotlin/idea/references/KtMultiReference {
+	public fun <init> (Lorg/jetbrains/kotlin/kdoc/psi/impl/KDocName;)V
+	public fun canRename ()Z
+	public fun getCanonicalText ()Ljava/lang/String;
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+	public fun resolve ()Lcom/intellij/psi/PsiElement;
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtArrayAccessReference : org/jetbrains/kotlin/idea/references/KtSimpleReference, com/intellij/psi/MultiRangeReference {
+	public static final field Companion Lorg/jetbrains/kotlin/idea/references/KtArrayAccessReference$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtArrayAccessExpression;)V
+	public fun canRename ()Z
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getRanges ()Ljava/util/List;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/idea/references/KtArrayAccessReference$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtCollectionLiteralReference : org/jetbrains/kotlin/idea/references/KtSimpleReference, com/intellij/psi/MultiRangeReference {
+	public static final field Companion Lorg/jetbrains/kotlin/idea/references/KtCollectionLiteralReference$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtCollectionLiteralExpression;)V
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getRanges ()Ljava/util/List;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/idea/references/KtCollectionLiteralReference$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtConstructorDelegationReference : org/jetbrains/kotlin/idea/references/KtSimpleReference {
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtConstructorDelegationReferenceExpression;)V
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+	public fun handleElementRename (Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtDefaultAnnotationArgumentReference : org/jetbrains/kotlin/idea/references/AbstractKtReference {
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtValueArgument;)V
+	public fun canRename ()Z
+	public fun getCanonicalText ()Ljava/lang/String;
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+	protected final fun isDefaultAnnotationMethod (Lcom/intellij/psi/PsiElement;)Z
+	public fun isReferenceTo (Lcom/intellij/psi/PsiElement;)Z
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtDestructuringDeclarationReference : org/jetbrains/kotlin/idea/references/KtMultiReference {
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry;)V
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+	public fun resolve ()Lcom/intellij/psi/PsiElement;
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtForLoopInReference : org/jetbrains/kotlin/idea/references/KtMultiReference {
+	public static final field Companion Lorg/jetbrains/kotlin/idea/references/KtForLoopInReference$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtForExpression;)V
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/idea/references/KtForLoopInReference$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtInvokeFunctionReference : org/jetbrains/kotlin/idea/references/KtSimpleReference, com/intellij/psi/MultiRangeReference {
+	public static final field Companion Lorg/jetbrains/kotlin/idea/references/KtInvokeFunctionReference$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtCallExpression;)V
+	public fun canRename ()Z
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getRanges ()Ljava/util/List;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/idea/references/KtInvokeFunctionReference$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtMultiReference : org/jetbrains/kotlin/idea/references/AbstractKtReference {
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtElement;)V
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtPropertyDelegationMethodsReference : org/jetbrains/kotlin/idea/references/KtMultiReference {
+	public static final field Companion Lorg/jetbrains/kotlin/idea/references/KtPropertyDelegationMethodsReference$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtPropertyDelegate;)V
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/idea/references/KtPropertyDelegationMethodsReference$Companion {
+}
+
+public abstract interface class org/jetbrains/kotlin/idea/references/KtReference : com/intellij/psi/PsiPolyVariantReference, org/jetbrains/kotlin/resolution/KtResolvable {
+	public synthetic fun getElement ()Lcom/intellij/psi/PsiElement;
+	public abstract fun getElement ()Lorg/jetbrains/kotlin/psi/KtElement;
+	public abstract fun getResolver ()Lcom/intellij/psi/impl/source/resolve/ResolveCache$PolyVariantResolver;
+	public abstract fun getResolvesByNames ()Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/idea/references/KtReferenceMutateService {
+	public abstract fun bindToElement (Lorg/jetbrains/kotlin/idea/references/KtReference;Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
+	public abstract fun bindToElement (Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference;Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;)Lcom/intellij/psi/PsiElement;
+	public abstract fun bindToFqName (Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
+	public static synthetic fun bindToFqName$default (Lorg/jetbrains/kotlin/idea/references/KtReferenceMutateService;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;Lcom/intellij/psi/PsiElement;ILjava/lang/Object;)Lcom/intellij/psi/PsiElement;
+	public abstract fun handleElementRename (Lorg/jetbrains/kotlin/idea/references/KtReference;Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtSimpleNameReference : org/jetbrains/kotlin/idea/references/KtSimpleReference {
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;)V
+	public final fun bindToElement (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;)Lcom/intellij/psi/PsiElement;
+	public static synthetic fun bindToElement$default (Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference;Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;ILjava/lang/Object;)Lcom/intellij/psi/PsiElement;
+	public final fun bindToFqName (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
+	public static synthetic fun bindToFqName$default (Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;Lcom/intellij/psi/PsiElement;ILjava/lang/Object;)Lcom/intellij/psi/PsiElement;
+	public fun canRename ()Z
+	public abstract fun getImportAlias ()Lorg/jetbrains/kotlin/psi/KtImportAlias;
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun isReferenceTo (Lcom/intellij/psi/PsiElement;)Z
+	public abstract fun isReferenceToViaExtension (Lcom/intellij/psi/PsiElement;)Z
+}
+
+public final class org/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode : java/lang/Enum {
+	public static final field DELAYED_SHORTENING Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;
+	public static final field FORCED_SHORTENING Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;
+	public static final field NO_SHORTENING Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/KtSimpleReference : org/jetbrains/kotlin/idea/references/AbstractKtReference {
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtReferenceExpression;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/idea/references/ReadWriteAccessChecker {
+	public static final field Companion Lorg/jetbrains/kotlin/idea/references/ReadWriteAccessChecker$Companion;
+	public fun readWriteAccessWithFullExpression (Lorg/jetbrains/kotlin/psi/KtExpression;Z)Lkotlin/Pair;
+	public abstract fun readWriteAccessWithFullExpressionByResolve (Lorg/jetbrains/kotlin/psi/KtBinaryExpression;)Lkotlin/Pair;
+}
+
+public final class org/jetbrains/kotlin/idea/references/ReadWriteAccessChecker$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/idea/references/ReadWriteAccessChecker;
+}
+
+public final class org/jetbrains/kotlin/idea/references/ReadWriteAccessCheckerKt {
+	public static final fun readWriteAccess (Lorg/jetbrains/kotlin/psi/KtExpression;Z)Lorg/jetbrains/kotlin/resolve/references/ReferenceAccess;
+	public static final fun readWriteAccessWithFullExpression (Lorg/jetbrains/kotlin/psi/KtExpression;Z)Lkotlin/Pair;
+}
+
+public final class org/jetbrains/kotlin/idea/references/ReferenceUtilsKt {
+	public static final fun getCalleeByLambdaArgument (Lorg/jetbrains/kotlin/psi/KtFunction;)Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;
+	public static final fun getMainReference (Lorg/jetbrains/kotlin/kdoc/psi/impl/KDocName;)Lorg/jetbrains/kotlin/idea/references/KDocReference;
+	public static final fun getMainReference (Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/idea/references/KtReference;
+	public static final fun getMainReference (Lorg/jetbrains/kotlin/psi/KtReferenceExpression;)Lorg/jetbrains/kotlin/idea/references/KtReference;
+	public static final fun getMainReference (Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;)Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference;
+	public static final fun getUnwrappedTargets (Lcom/intellij/psi/PsiReference;)Ljava/util/Set;
+	public static final fun isConstructorOf (Lcom/intellij/psi/PsiElement;Lcom/intellij/psi/PsiElement;)Z
+}
+
+public abstract class org/jetbrains/kotlin/idea/references/SyntheticPropertyAccessorReference : org/jetbrains/kotlin/idea/references/KtSimpleReference {
+	public fun <init> (Lorg/jetbrains/kotlin/psi/KtNameReferenceExpression;Z)V
+	protected fun canBeReferenceTo (Lcom/intellij/psi/PsiElement;)Z
+	public fun canRename ()Z
+	public final fun getGetter ()Z
+	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
+	public fun getResolvesByNames ()Ljava/util/Collection;
+	protected final fun isAccessorName (Ljava/lang/String;)Z
+}
+
+public abstract interface class org/jetbrains/kotlin/plugin/references/SimpleNameReferenceExtension {
+	public static final field Companion Lorg/jetbrains/kotlin/plugin/references/SimpleNameReferenceExtension$Companion;
+	public abstract fun handleElementRename (Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference;Lorg/jetbrains/kotlin/psi/KtPsiFactory;Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
+	public abstract fun isReferenceTo (Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference;Lcom/intellij/psi/PsiElement;)Z
+}
+
+public final class org/jetbrains/kotlin/plugin/references/SimpleNameReferenceExtension$Companion {
+	public final fun getEP_NAME ()Lcom/intellij/openapi/extensions/ExtensionPointName;
+}
+
+public abstract interface class org/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor {
+	public abstract fun getElementClass ()Ljava/lang/Class;
+	public abstract fun getReferenceProvider ()Lorg/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor$ReferenceProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor$ReferenceProvider : kotlin/jvm/functions/Function1 {
+}
+
+public abstract interface class org/jetbrains/kotlin/references/utils/KotlinKDocResolutionStrategyProviderService : com/intellij/openapi/Disposable {
+	public static final field Companion Lorg/jetbrains/kotlin/references/utils/KotlinKDocResolutionStrategyProviderService$Companion;
+	public abstract fun shouldUseExperimentalStrategy ()Z
+}
+
+public final class org/jetbrains/kotlin/references/utils/KotlinKDocResolutionStrategyProviderService$Companion {
+	public final fun getService (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/references/utils/KotlinKDocResolutionStrategyProviderService;
+}
+

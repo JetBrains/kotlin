@@ -1,0 +1,24 @@
+---
+                    assert(
+                text
+                |
+                Hello
+
+            == null || // Intentional blank line
+            |
+            false
+
+        (
+    text.length == 5 &&
+    |    |      |
+    |    5      true
+    Hello
+
+text.lowercase() == text
+|    |           |  |
+|    hello       |  Hello
+Hello            false
+
+    )
+                    )
+---

@@ -24,14 +24,16 @@ if __name__ == '__main__':
     version = sys.argv[1]
     properties = 'gradle.properties'
     kotlinc = '.idea/kotlinc.xml'
+    kotlin_maven_pom = 'libraries/pom.xml'
     update_content(properties, 'bootstrap.kotlin.default.version', f'bootstrap.kotlin.default.version={version}\n')
     update_content(kotlinc, '    <option name="version" value=', f'    <option name="version" value="{version}" />\n')
-    git_add(properties, kotlinc)
+    update_content(kotlin_maven_pom, '        <kotlin.bootstrap.version>', f'        <kotlin.bootstrap.version>{version}</kotlin.bootstrap.version>\n')
+    git_add(properties, kotlinc, kotlin_maven_pom)
     git_commit(f'Advance bootstrap to {version}')
 
     subprocess.run(['sed', '-i', '-e', r'/<components>/,/<\/components>/d', 'gradle/verification-metadata.xml'])
     subprocess.run(['./gradlew', '--stop'])
-    subprocess.run(['./gradlew', '-i', '--write-verification-metadata', 'sha256,md5', '-Pkotlin.native.enabled=true', 'resolveDependencies'])
+    subprocess.run(['./gradlew', '-i', '--write-verification-metadata', 'sha256', '-Pkotlin.native.enabled=true', 'resolveDependencies'])
     status_output = subprocess.run(['git', 'status', '--porcelain'], capture_output=True).stdout
     if len(status_output) != 0:
         verification_metadata = "verification-metadata.xml"

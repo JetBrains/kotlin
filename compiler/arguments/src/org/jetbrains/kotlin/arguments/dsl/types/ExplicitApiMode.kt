@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.arguments.serialization.json.KotlinExplicitApiModeAs
 enum class ExplicitApiMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
-) : WithKotlinReleaseVersionsMetadata {
+) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
     strict(
         modeName = "strict",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -34,4 +34,8 @@ enum class ExplicitApiMode(
             introducedVersion = KotlinReleaseVersion.v1_4_0
         )
     ),
+    ;
+
+    override val stringRepresentation: String
+        get() = modeName
 }

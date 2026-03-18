@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
+import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.isAnyOfDelegateOperators
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
@@ -50,6 +52,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -74,6 +77,12 @@ object CheckExtensionReceiver : ResolutionStage() {
         }
 
         val expectedReceiverType = candidate.getExpectedReceiverType() ?: return
+
+        if ((candidate.symbol as? FirCallableSymbol)?.isCompanionExtension == true) {
+            checkCompanionExtensionReceiver(candidate, expectedReceiverType)
+            return
+        }
+
         val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType)
 
         // Probably, we should add an assertion here since we check consistency on the level of scope tower levels
@@ -82,6 +91,33 @@ object CheckExtensionReceiver : ResolutionStage() {
         val preparedReceiver = prepareImplicitArgument(candidate.givenExtensionReceiver, expectedType, context.session)
 
         resolveExtensionReceiver(preparedReceiver, candidate, expectedType)
+    }
+
+    context(sink: CheckerSink, context: ResolutionContext)
+    private fun checkCompanionExtensionReceiver(
+        candidate: Candidate,
+        expectedReceiverType: ConeKotlinType,
+    ) {
+        val extensionReceiver = candidate.givenExtensionReceiver
+            ?: error("Candidate for companion extension without extension receiver.")
+        val resolvedQualifier = extensionReceiver.expression as? FirResolvedQualifier
+            ?: error("Candidate for companion extension has non-qualifier extension receiver")
+
+        val receiverClassSymbol = resolvedQualifier.symbol?.fullyExpandedClass()
+
+        if (receiverClassSymbol == null) {
+            sink.reportDiagnostic(ReceiverIsNotAClass)
+            return
+        }
+
+        if (receiverClassSymbol != expectedReceiverType.toClassSymbol()) {
+            sink.reportDiagnostic(
+                InapplicableWrongReceiver(
+                    expectedReceiverType,
+                    receiverClassSymbol.toLookupTag().constructClassType()
+                )
+            )
+        }
     }
 
     context(sink: CheckerSink, context: ResolutionContext)
@@ -824,6 +860,24 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
             }
         }
     }
+}
+
+internal object EagerResolveOfCollectionLiteral : ResolutionStage() {
+    context(sink: CheckerSink, context: ResolutionContext)
+    override suspend fun check(candidate: Candidate): Unit =
+        context(context.typeContext, CollectionLiteralOuterCandidateContext(candidate, sink)) {
+            if (candidate.postponedAtoms.isEmpty()) return
+            for (atom in candidate.postponedAtoms) {
+                if (atom !is ConeCollectionLiteralAtom || atom.analyzed) continue
+                val nonTvExpectedType =
+                    atom.expectedType?.takeUnless { it.typeConstructor() is TypeVariableTypeConstructorMarker } ?: continue
+                val clBounds =
+                    CollectionLiteralBounds.NonTvExpected(atom, nonTvExpectedType.getClassRepresentativeForCollectionLiteralResolution())
+
+                atom.analyzed = true
+                runCollectionLiteralResolution(atom, clBounds)
+            }
+        }
 }
 
 internal object DiscriminateSyntheticAndForbiddenProperties : ResolutionStage() {

@@ -1,0 +1,66 @@
+FILE: companionBlocks.kt
+    public final? [FirstCompanionBlockKey=KtSourceElement] class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? static [ContainingClassKey=C] fun foo(): R|kotlin/Unit| {
+        }
+
+        public? final? fun member1(): R|kotlin/Unit| {
+        }
+
+        init {
+        }
+
+        public? final? static [ContainingClassKey=C] val bar: <implicit> = IntegerLiteral(1)
+            public? static [ContainingClassKey=C] get(): <implicit>
+
+        public? final? static [ContainingClassKey=C] val baz: <implicit>
+            public? static [ContainingClassKey=C] get(): <implicit> {
+                ^ IntegerLiteral(2)
+            }
+
+        public? final? val member2: <implicit> = IntegerLiteral(1)
+            public? [ContainingClassKey=C] get(): <implicit>
+
+        public? final? static [ContainingClassKey=C] fun qux(): R|kotlin/Unit| {
+            local final? class Local : R|kotlin/Any| {
+                public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun insideLocal(): R|kotlin/Unit| {
+                }
+
+                public? final? val insideLocalVal: <implicit> = IntegerLiteral(1)
+                    public? [ContainingClassKey=Local] get(): <implicit>
+
+            }
+
+        }
+
+        public final? companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|C.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final? class Nested : R|kotlin/Any| {
+            public? [ContainingClassKey=Nested] constructor(): R|C.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final typealias TA = Int
+
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+        }
+
+    }

@@ -1,2 +1,4 @@
 KtNameReferenceExpression(65,74): 'Cloneable'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Cloneable'.>

@@ -131,7 +131,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
         visibility = SirVisibility.PACKAGE // Hide from users, but not from other Swift Export modules.
         isOverride = true
         body = SirFunctionBody(listOf(
-                "super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)"
+                "super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);"
             ))
     }.also { it.parent = this }
 

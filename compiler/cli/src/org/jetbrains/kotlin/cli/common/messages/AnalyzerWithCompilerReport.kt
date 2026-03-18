@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
@@ -36,21 +37,12 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 
-class AnalyzerWithCompilerReport(
-    private val messageCollector: MessageCollector,
-    private val languageVersionSettings: LanguageVersionSettings,
-    private val renderDiagnosticName: Boolean
-) : AbstractAnalyzerWithCompilerReport {
+class AnalyzerWithCompilerReport(private val configuration: CompilerConfiguration) : AbstractAnalyzerWithCompilerReport {
     override val targetEnvironment: TargetEnvironment
         get() = CompilerEnvironment
 
     override lateinit var analysisResult: AnalysisResult
-
-    constructor(configuration: CompilerConfiguration) : this(
-        configuration.messageCollector,
-        configuration.languageVersionSettings,
-        configuration.renderDiagnosticInternalName,
-    )
+    private val messageCollector = configuration.messageCollector
 
     private fun reportIncompleteHierarchies() {
         val bindingContext = analysisResult.bindingContext
@@ -105,20 +97,19 @@ class AnalyzerWithCompilerReport(
 
     class SyntaxErrorReport(val isHasErrors: Boolean, val isAllErrorsAtEof: Boolean)
 
-    override fun hasErrors(): Boolean =
-        messageCollector.hasErrors()
+    override fun hasErrors(): Boolean = CheckDiagnosticCollector.checkHasErrors(configuration)
 
     override fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
         analysisResult = analyze()
         if (!analysisResult.isError()) {
             OptInUsageChecker.checkCompilerArguments(
-                analysisResult.moduleDescriptor, languageVersionSettings,
+                analysisResult.moduleDescriptor, configuration.languageVersionSettings,
                 reportError = { message -> messageCollector.report(ERROR, message) },
                 reportWarning = { message -> messageCollector.report(WARNING, message) }
             )
         }
         reportSyntaxErrors(files)
-        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, renderDiagnosticName)
+        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, configuration.renderDiagnosticInternalName)
         reportIncompleteHierarchies()
         reportAlternativeSignatureErrors()
     }

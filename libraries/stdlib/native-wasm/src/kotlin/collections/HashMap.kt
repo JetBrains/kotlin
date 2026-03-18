@@ -801,7 +801,7 @@ internal class HashMapValues<V> internal constructor(
  * Changing type from [MutableMap.MutableEntry] to [E] makes the compiler generate barriers checking that
  * argument `is` [E] (so technically `is` [Map.Entry]) instead of `is` [MutableMap.MutableEntry].
  *
- * See also [KT-42248](https://youtrack.jetbrains.com/issue/KT-42428).
+ * See also [KT-42428](https://youtrack.jetbrains.com/issue/KT-42428).
  */
 internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal constructor(
         val backing: HashMap<K, V>

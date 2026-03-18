@@ -1,5 +1,5 @@
 KtSafeQualifiedExpression(51,58): 'a?.y(1)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

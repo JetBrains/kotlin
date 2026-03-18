@@ -9,6 +9,6 @@ int32_t SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferenc
 
 void * __root___ConcreteSelfReferencing_init_allocate();
 
-void __root___ConcreteSelfReferencing_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool __root___ConcreteSelfReferencing_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 NS_ASSUME_NONNULL_END

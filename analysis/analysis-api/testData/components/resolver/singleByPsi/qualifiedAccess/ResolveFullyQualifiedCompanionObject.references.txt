@@ -2,5 +2,6 @@ KtNameReferenceExpression(121,123): 'BB'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.bar.baz.AA.BB) companion object

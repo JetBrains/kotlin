@@ -6,22 +6,30 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
 
 /**
- * Returns [true] only when Gradle build is invoked during IDEA Project Sync
- * i.e. regular Task Execution via IDEA it will be [false].
+ * Returns `true` only when Gradle build is invoked during IDEA Project Sync
+ * i.e. regular Task Execution via IDEA it will be `false`.
  */
 internal val Project.isInIdeaSync
-    get() = providers.of(IsInIdeaSyncValueSource::class.java) {}
+    get() = providers.isInIdeaSync()
 
 /**
- * Returns [true] when Gradle build is invoked in any sort of IDEA environment: sync or task execution
+ * Returns `true` only when Gradle build is invoked during IDEA project sync.
  */
-internal val Project.isInIdeaEnvironment
-    get() = providers.of(IsInIdeaEnvironmentValueSource::class.java) {}.map { it.value }
+internal fun ProviderFactory.isInIdeaSync(): Provider<Boolean> =
+    of(IsInIdeaSyncValueSource::class.java) {}
+
+/**
+ * Returns `true` when Gradle build is invoked in any IDEA environment: sync or task execution.
+ */
+internal fun ProviderFactory.isInIdeaEnvironment(): Provider<Boolean> =
+    of(IsInIdeaEnvironmentValueSource::class.java) {}.map { it.value }
 
 private abstract class IsInIdeaSyncValueSource : ValueSource<Boolean, ValueSourceParameters.None> {
     override fun obtain(): Boolean {

@@ -26,14 +26,6 @@ abstract class PluginApiReferenceExtension @Inject constructor(
         project.dokkaExtension?.run(configuration)
     }
 
-
-    fun moduleName(name: String) {
-        if (!project.kotlinBuildProperties.publishGradlePluginsJavadoc) return
-        project.dokkaExtension?.apply {
-            this.moduleName.set(name)
-        }
-    }
-
     fun embeddedProject(embedProject: ProjectDependency) {
         if (!project.kotlinBuildProperties.publishGradlePluginsJavadoc) return
         project.consumeEmbeddedSources(embedProject)

@@ -351,14 +351,12 @@ private class FirConstCheckVisitor(
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): ConstantArgumentKind {
         val calleeReference = functionCall.calleeReference
-        if (calleeReference is FirErrorNamedReference || calleeReference is FirResolvedErrorReference) {
-            return ConstantArgumentKind.RESOLUTION_ERROR
-        }
+        if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
+
         if (functionCall.getExpandedType().classId == StandardClassIds.KClass) {
             return ConstantArgumentKind.NOT_KCLASS_LITERAL
         }
 
-        if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
         return when (val symbol = calleeReference.resolvedSymbol) {
             is FirNamedFunctionSymbol -> visitNamedFunction(functionCall, symbol)
             is FirConstructorSymbol -> visitConstructorCall(functionCall, symbol)

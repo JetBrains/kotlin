@@ -86,6 +86,28 @@ class Holder<T>(val xs: Array<T>) {
 // Make sure arrays appear in both public signatures and bodies.
 fun takeAndReturn(a: Array<String>): Array<String> = a
 
+typealias BoxFun<T> = () -> Box<T>
+
+fun returnBoxFun(): BoxFun<String> = TODO()
+
+typealias BoxFunIn<T> = (Box<T>) -> Int
+
+fun returnBoxFunIn(): BoxFunIn<String> = TODO() // unsupported input generic
+
+fun takeBox(box: Box<String>): Unit = TODO() // unsupported input generic
+
+fun takeBoxUpperBound(box: Box<Any?>): Unit = TODO()
+
+fun takeBoxStarProjection(box: Box<*>): Unit = TODO()
+
+fun takeBoxClosure(box: () -> Box<String>): Unit = TODO() // unsupported input generic
+
+fun takeBoxUpperBoundClosure(box: () -> Box<Any?>): Unit = TODO()
+
+fun produceBox(box: (Box<String>) -> Unit): Unit = TODO() // unsupported input generic
+
+fun produceBoxUpperBound(box: (Box<Any?>) -> Unit): Unit = TODO()
+
 // MODULE: f_bounded_type
 // EXPORT_TO_SWIFT
 // FILE: f_bounded_type.kt
@@ -99,4 +121,3 @@ open class SelfReferencing<T : SelfReferencing<T>>: MyComparable<T> {
 }
 
 class ConcreteSelfReferencing() : SelfReferencing<ConcreteSelfReferencing>()
-

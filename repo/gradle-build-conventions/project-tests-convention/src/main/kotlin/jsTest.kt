@@ -6,6 +6,7 @@
 import com.github.gradle.node.NodeExtension
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.build.d8.D8Extension
@@ -25,6 +26,10 @@ fun ProjectTestsExtension.jsTestTask(
     jUnitMode = JUnitMode.JUnit5,
     skipInLocalBuild = skipInLocalBuild,
 ) {
+    extensions.configure<TestInputsCheckExtension> {
+        allowFlightRecorder.set(true)
+    }
+
     val project = this@jsTestTask.project
 
     with(project.the<D8Extension>()) {

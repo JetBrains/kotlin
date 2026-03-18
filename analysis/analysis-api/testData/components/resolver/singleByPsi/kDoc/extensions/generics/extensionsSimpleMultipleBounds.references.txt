@@ -2,5 +2,6 @@ KDocName(230,243): 'SomeClass.ext'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T : A> GenericFooOut<T>.ext()

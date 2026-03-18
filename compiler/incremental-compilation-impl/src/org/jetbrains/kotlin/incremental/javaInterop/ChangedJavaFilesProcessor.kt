@@ -21,10 +21,9 @@ internal class ChangedJavaFilesProcessor(
     private val reporter: ICReporter,
     private val psiFileFactory: (File) -> PsiFile?
 ) {
-    private val allSymbols = HashSet<LookupSymbol>()
 
     val allChangedSymbols: Collection<LookupSymbol>
-        get() = allSymbols
+        field = HashSet<LookupSymbol>()
 
     fun process(filesDiff: ChangedFiles.DeterminableFiles.Known): ChangesEither {
         val modifiedJava = filesDiff.modified.filter(File::isJavaFile)
@@ -47,7 +46,7 @@ internal class ChangedJavaFilesProcessor(
 
             psiFile.classes.forEach { it.addLookupSymbols(symbols) }
         }
-        allSymbols.addAll(symbols)
+        allChangedSymbols.addAll(symbols)
         return ChangesEither.Known(lookupSymbols = symbols)
     }
 

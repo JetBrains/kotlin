@@ -83,7 +83,7 @@ class MarkdownRendererTests {
     @Test
     fun testTimeStampModeRendering() {
         assertEquals(
-            """# Stats for Aggregate
+            """# Stats for time_stamp
 
 * Platform: JVM
 * Has errors: false

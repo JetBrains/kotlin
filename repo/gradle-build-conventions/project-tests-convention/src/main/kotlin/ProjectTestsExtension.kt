@@ -32,12 +32,22 @@ import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import java.io.File
 
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message = "Unless your tests use the compiler distribution directly, consider depending on individual dist artifacts"
+)
+@Target(AnnotationTarget.FUNCTION)
+annotation class KotlinCompilerDistUsage
+
 abstract class ProjectTestsExtension(val project: Project) {
     abstract val allowFlaky: Property<Boolean>
 
     // -------------------- dependencies for runtime of tests --------------------
 
     val stdlibRuntimeForTests: Configuration = project.configurations.create("stdlibRuntimeForTests") {
+        isTransitive = false
+    }
+    val stdlibRuntimeSourcesForTests: Configuration = project.configurations.create("stdlibRuntimeSourcesForTests") {
         isTransitive = false
     }
     val stdlibMinimalRuntimeForTests: Configuration = project.configurations.create("stdlibMinimalRuntimeForTests") {
@@ -61,7 +71,13 @@ abstract class ProjectTestsExtension(val project: Project) {
     val scriptingPluginForTests: Configuration = project.configurations.create("scriptingPluginForTests") {
         isTransitive = false
     }
+    var testScriptDefinitionForTests: Configuration = project.configurations.create("testScriptDefinitionForTests") {
+        isTransitive = false
+    }
     val stdlibWebRuntimeForTests: Configuration = project.configurations.create("stdlibWebRuntimeForTests") {
+        isTransitive = false
+    }
+    val distForTests: Configuration = project.configurations.create("distForTests") {
         isTransitive = false
     }
     val stdlibJsRuntimeForTests: Configuration = project.configurations.create("stdlibJsRuntimeForTests") {
@@ -118,6 +134,10 @@ abstract class ProjectTestsExtension(val project: Project) {
         add(kotlinReflectJarForTests) { project(":kotlin-reflect") }
     }
 
+    fun withJvmStdlibSources() {
+        add(stdlibRuntimeSourcesForTests) { project(":kotlin-stdlib", "distSources") }
+    }
+
     fun withStdlibCommon() {
         add(stdlibCommonRuntimeForTests) { project(":kotlin-stdlib", "commonMainMetadataElements") }
     }
@@ -162,6 +182,22 @@ abstract class ProjectTestsExtension(val project: Project) {
         KOTLIN_SCRIPTING_COMMON_JAR
         KOTLIN_SCRIPTING_JVM_JAR
         */
+    }
+
+    fun withTestScriptDefinition() {
+        add(testScriptDefinitionForTests) { project(":plugins:scripting:test-script-definition", "testFixturesApiElements") }
+    }
+
+    @KotlinCompilerDistUsage
+    fun withDist() {
+        project.normalization {
+            runtimeClasspath {
+                ignore("**/build.txt")
+                ignore("*.spdx.json")
+            }
+        }
+
+        add(distForTests) { project(":kotlin-compiler", "distElements") }
     }
 
     abstract val mockJdkRuntime: RegularFileProperty
@@ -316,6 +352,7 @@ abstract class ProjectTestsExtension(val project: Project) {
                 add(generationPath.asFile.absolutePath)
                 if (generateTestsInBuildDirectory) {
                     add("allowGenerationOnTeamCity")
+                    add("skipTestAllFilesCheck")
                 }
             }
             if (generateTestsInBuildDirectory) {

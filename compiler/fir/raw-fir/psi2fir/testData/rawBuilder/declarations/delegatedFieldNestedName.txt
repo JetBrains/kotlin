@@ -19,7 +19,7 @@ FILE: delegatedFieldNestedName.kt
         public? get(): <implicit>
     public? final? const val inner: <implicit> = String()
         public? get(): <implicit>
-    public final? [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : @Anno(IntegerLiteral(0).plus#(outer#)) Base<@Anno(IntegerLiteral(1).plus#(outer#)) Base<@Anno(IntegerLiteral(2).plus#(outer#)) Int>>, @Anno(IntegerLiteral(4).plus#(outer#)) Second<@Anno(IntegerLiteral(5).plus#(outer#)) String> {
+    public final? [DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}] class MyClass : @Anno(IntegerLiteral(0).plus#(outer#)) Base<@Anno(IntegerLiteral(1).plus#(outer#)) Base<@Anno(IntegerLiteral(2).plus#(outer#)) Int>>, @Anno(IntegerLiteral(4).plus#(outer#)) Second<@Anno(IntegerLiteral(5).plus#(outer#)) String> {
         public? [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             super<<implicit>>()
         }

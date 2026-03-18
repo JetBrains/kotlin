@@ -155,7 +155,10 @@ KtCallExpression(246,258): 'MyDelegate()'
     ]
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): myPack.MyDelegate<T>
+    ]
 
 KtValueArgumentList(256,258): '()'
   null
@@ -299,7 +302,11 @@ KtProperty(422,463): 'val providedDelegate by ResourceID<Int>()'
   null
 
 KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/properties/ReadOnlyProperty.getValue(<dispatch receiver>: kotlin.properties.ReadOnlyProperty<T, V>, thisRef: T, property: kotlin.reflect.KProperty<*>): V,
+      myPack/ResourceID.provideDelegate(<dispatch receiver>: myPack.ResourceID<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
+    ]
 
 KtCallExpression(446,463): 'ResourceID<Int>()'
   KaSymbolResolutionSuccess:
@@ -308,7 +315,10 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
     ]
 
 KtNameReferenceExpression(446,456): 'ResourceID'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): myPack.ResourceID<T>
+    ]
 
 KtTypeArgumentList(456,461): '<Int>'
   null

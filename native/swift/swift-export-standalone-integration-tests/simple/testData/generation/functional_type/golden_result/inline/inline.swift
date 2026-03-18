@@ -6,19 +6,19 @@ public func bar(
     inlined: @escaping () -> Swift.Void,
     notInlined: @escaping () -> Swift.Void
 ) -> Swift.Void {
-    return __root___bar__TypesOfArguments__U2829202D_U20Swift_Void_U2829202D_U20Swift_Void__({
+    return { __root___bar__TypesOfArguments__U2829202D_U20Swift_Void_U2829202D_U20Swift_Void__({
         let originalBlock = inlined
-        return { return originalBlock() }
+        return { return { originalBlock(); return true }() }
     }(), {
         let originalBlock = notInlined
-        return { return originalBlock() }
-    }())
+        return { return { originalBlock(); return true }() }
+    }()); return () }()
 }
 public func foo(
     inlined: @escaping () -> Swift.Void
 ) -> Swift.Void {
-    return __root___foo__TypesOfArguments__U2829202D_U20Swift_Void__({
+    return { __root___foo__TypesOfArguments__U2829202D_U20Swift_Void__({
         let originalBlock = inlined
-        return { return originalBlock() }
-    }())
+        return { return { originalBlock(); return true }() }
+    }()); return () }()
 }

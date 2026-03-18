@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.tooling.parseJsonOrThrow
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import kotlin.io.path.appendText
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
@@ -99,29 +97,6 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
                 )
             }
 
-        }
-    }
-
-    @GradleTest
-    @DisplayName("KotlinToolingMetadata should be not published when disabled")
-    fun checkPublishingWithKotlinToolingMetadataArtifactDisabled(
-        gradleVersion: GradleVersion,
-        @TempDir localRepository: Path,
-    ) {
-        project(
-            projectName = "new-mpp-published",
-            gradleVersion = gradleVersion,
-            localRepoDir = localRepository
-        ) {
-            gradleProperties.appendText("\nkotlin.mpp.enableKotlinToolingMetadataArtifact=false")
-            build("publish") {
-                assertHasDiagnostic(
-                    KotlinToolingDiagnostics.DeprecatedWarningGradleProperties,
-                    "kotlin.mpp.enableKotlinToolingMetadataArtifact",
-                )
-                assertFileNotExists(defaultKotlinToolingMetadataJsonPath)
-                assertTasksAreNotInTaskGraph(":$buildKotlinToolingMetadataTaskName")
-            }
         }
     }
 

@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(48,54): 'A.y(1)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

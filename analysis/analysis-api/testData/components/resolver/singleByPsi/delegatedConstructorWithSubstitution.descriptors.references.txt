@@ -2,5 +2,6 @@ KtConstructorDelegationReferenceExpression(144,149): 'super'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ClassWithType) constructor(i: T)

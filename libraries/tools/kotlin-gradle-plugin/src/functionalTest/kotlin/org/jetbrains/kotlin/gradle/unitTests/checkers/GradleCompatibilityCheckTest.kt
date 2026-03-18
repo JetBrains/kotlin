@@ -23,8 +23,9 @@ class GradleCompatibilityCheckTest {
     }
 
     private val unsupportedGradleVersion = FixedAndroidGradlePluginVersionProvider("7.5.1")
+    private val deprecatedGradleVersion = FixedAndroidGradlePluginVersionProvider("8.13")
     private val supportedGradleVersion = FixedAndroidGradlePluginVersionProvider(
-        GradleCompatibilityCheck.minSupportedGradleVersionString
+        GradleCompatibilityCheck.nextMinimumSupportedGradleVersionString
     )
 
     @Test
@@ -35,6 +36,18 @@ class GradleCompatibilityCheckTest {
 
         assertTrue(error is InvalidUserCodeException)
         genericProject.checkDiagnostics("checkers/gradleCompatibilityCheck/versionTooLow")
+    }
+
+    @Test
+    fun testVersionIsDeprecated() {
+        genericProject.runGradleCompatibilityCheck(deprecatedGradleVersion)
+        genericProject.checkDiagnostics("checkers/gradleCompatibilityCheck/versionDeprecated")
+    }
+
+    @Test
+    fun testVersionAboveDeprecatedRange() {
+        genericProject.runGradleCompatibilityCheck(supportedGradleVersion)
+        genericProject.assertNoDiagnostics()
     }
 
     @Test

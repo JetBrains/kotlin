@@ -20,7 +20,7 @@ FILE: entriesPropertyAsExtensionClashOn.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<pckg/A>|
-            public get(): R|kotlin/enums/EnumEntries<pckg/A>|
+            public static get(): R|kotlin/enums/EnumEntries<pckg/A>|
 
     }
     public final val R|pckg/A.Companion|.entries: R|kotlin/Int|

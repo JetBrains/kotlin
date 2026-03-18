@@ -1,6 +1,6 @@
 // SKIP_KT_DUMP
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM_IR, JKLIB
 // LANGUAGE: +ExplicitBackingFields
 
 interface I

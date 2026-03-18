@@ -1,8 +1,6 @@
+// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // DUMP_EXTERNAL_CLASS: JavaEnum
-
-// Minor bug: some parameter types' flexibility mismatch
-// KOTLIN_REFLECT_DUMP_MISMATCH
 
 // FILE: test.kt
 fun foo() {

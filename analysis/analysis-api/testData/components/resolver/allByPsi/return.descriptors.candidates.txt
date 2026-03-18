@@ -188,7 +188,7 @@ KtCallExpression(180,749): 'foo1 {'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -196,7 +196,7 @@ KtCallExpression(180,749): 'foo1 {'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -213,7 +213,7 @@ KtCallExpression(180,749): 'foo1 {'
     isInBestCandidates = true
 
 KtNameReferenceExpression(180,184): 'foo1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -246,7 +246,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -254,7 +254,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -315,7 +315,7 @@ KtCallExpression(195,743): 'foo2 {'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -323,7 +323,7 @@ KtCallExpression(195,743): 'foo2 {'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -339,7 +339,7 @@ KtCallExpression(195,743): 'foo2 {'
     isInBestCandidates = true
 
 KtNameReferenceExpression(195,199): 'foo2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -371,7 +371,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -379,7 +379,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -438,7 +438,7 @@ KtCallExpression(214,733): 'foo3 {'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -446,7 +446,7 @@ KtCallExpression(214,733): 'foo3 {'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -461,7 +461,7 @@ KtCallExpression(214,733): 'foo3 {'
     isInBestCandidates = true
 
 KtNameReferenceExpression(214,218): 'foo3'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -492,7 +492,7 @@ KtNameReferenceExpression(214,218): 'foo3'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -500,7 +500,7 @@ KtNameReferenceExpression(214,218): 'foo3'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -565,7 +565,7 @@ KtCallExpression(237,413): 'foo1('
     isInBestCandidates = true
 
 KtNameReferenceExpression(237,241): 'foo1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -685,7 +685,7 @@ KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
     isInBestCandidates = true
 
 KtNameReferenceExpression(431,435): 'foo2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

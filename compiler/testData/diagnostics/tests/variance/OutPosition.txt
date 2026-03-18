@@ -12,6 +12,16 @@ public interface Inv</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ T : kotlin.Any!> identity(/*0*/ t: T!): T!
+}
+
 public interface Out</*0*/ out T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -38,6 +48,8 @@ public interface Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     public abstract fun neOk33(): Inv<[Error type: No type specified for unknown element]>
     public abstract fun neOk34(): Inv<[Error type: Unresolved type for C]>
     public abstract fun neOk35(): [Error type: Type for error type constructor (Inv)]<P, P>
+    public abstract fun neOk36(): I & Any
+    public open fun neOk37(/*0*/ i: I): I!
     public abstract fun neOk4(): Inv<I>
     public abstract fun neOk5(): Inv<O>
     public abstract fun neOk6(): Pair<In<O>, I>
@@ -58,3 +70,4 @@ public interface Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     public abstract fun ok9(): Pair<In<I>, O>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

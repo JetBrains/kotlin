@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.scriptMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.expressionToEvaluate
@@ -149,7 +150,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         @OptIn(K1Deprecation::class)
         val environment = createEnvironment(projectEnvironment, configuration)
 
-        if (messageCollector.hasErrors()) return ExitCode.COMPILATION_ERROR
+        if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) return ExitCode.COMPILATION_ERROR
 
         val definition = scriptDefinitionProvider.findDefinition(script) ?: scriptDefinitionProvider.getDefaultDefinition()
 

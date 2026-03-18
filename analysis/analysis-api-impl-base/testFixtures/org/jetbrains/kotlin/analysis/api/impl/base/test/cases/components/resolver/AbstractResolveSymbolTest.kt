@@ -38,7 +38,10 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         }
 
         // This call mustn't be suppressed as this is the API contracts
-        assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
+        if (mainElement is KtResolvable) {
+            assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
+        }
+
         stringRepresentation(symbolAttempt)
     }
 
@@ -47,29 +50,29 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
     } else {
         null
     }
+}
 
-    /**
-     * The function checks that all specific implementations of [KaResolver.resolveSymbol] are consistent.
-     */
-    context(session: KaSession)
-    private fun assertSpecificResolutionApi(
-        testServices: TestServices,
-        attempt: KaSymbolResolutionAttempt?,
-        element: KtElement,
-    ) {
-        if (element !is KtResolvable) return
-        val elementClass = element::class
+/**
+ * The function checks that all specific implementations of [KaResolver.resolveSymbol] are consistent.
+ */
+@OptIn(KtExperimentalApi::class)
+context(session: KaSession)
+internal fun assertSpecificResolutionApi(
+    testServices: TestServices,
+    attempt: KaSymbolResolutionAttempt?,
+    element: KtResolvable,
+) {
+    val elementClass = element::class
 
-        val assertions = testServices.assertions
-        for (kFunction in KaResolver::class.findSpecializedResolveFunctions("resolveSymbol", elementClass)) {
-            val specificCall = kFunction.call(session, element)
+    val assertions = testServices.assertions
+    for (kFunction in KaResolver::class.findSpecializedResolveFunctions("resolveSymbol", elementClass)) {
+        val specificCall = kFunction.call(session, element)
 
-            when (attempt) {
-                null, is KaSymbolResolutionError -> assertions.assertEquals(expected = null, actual = specificCall)
-                is KaSymbolResolutionSuccess -> {
-                    // Only non-compound cases can be checked
-                    assertions.assertEquals(expected = attempt.symbols.singleOrNull(), actual = specificCall)
-                }
+        when (attempt) {
+            null, is KaSymbolResolutionError -> assertions.assertEquals(expected = null, actual = specificCall)
+            is KaSymbolResolutionSuccess -> {
+                // Only non-compound cases can be checked
+                assertions.assertEquals(expected = attempt.symbols.singleOrNull(), actual = specificCall)
             }
         }
     }

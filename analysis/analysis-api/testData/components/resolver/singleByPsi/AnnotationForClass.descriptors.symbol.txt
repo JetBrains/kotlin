@@ -1,0 +1,5 @@
+KtNameReferenceExpression(44,54): 'Annotation'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): test.Annotation
+    ]

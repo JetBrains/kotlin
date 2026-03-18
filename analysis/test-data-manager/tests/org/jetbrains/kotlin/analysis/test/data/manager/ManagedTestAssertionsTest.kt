@@ -13,6 +13,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.opentest4j.AssertionFailedError
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -29,6 +30,8 @@ class ManagedTestAssertionsTest {
     @AfterEach
     fun tearDown() {
         TestDataManagerMode.isUnderTeamCityOverride = null
+        ManagedTestAssertions.trackUpdatedPaths = false
+        ManagedTestAssertions.drainUpdatedTestDataPaths()
     }
 
     /**
@@ -55,6 +58,20 @@ class ManagedTestAssertionsTest {
         assertEquals(expected.trimIndent(), actual)
     }
 
+    private fun assertTrackedPaths(expected: String) {
+        val actual = ManagedTestAssertions.drainUpdatedTestDataPaths()
+            .map { Path(it).fileName.toString() }
+            .sorted()
+            .joinToString("\n")
+
+        assertEquals(expected.trimIndent(), actual)
+    }
+
+    private fun assertTrackedPathsAndFileState(expectedTrackedPaths: String, expectedFileState: String) {
+        assertTrackedPaths(expectedTrackedPaths)
+        assertFileState(expectedFileState)
+    }
+
     private fun setupFiles(vararg files: Pair<String, String>) {
         tempDir.resolve("test.kt").writeText("// test")
         for ((name, content) in files) {
@@ -63,13 +80,14 @@ class ManagedTestAssertionsTest {
     }
 
     private fun runAssertion(
+        testDataFileName: String = "test.kt",
         variantChain: TestVariantChain,
         actual: String,
         mode: TestDataManagerMode = TestDataManagerMode.UPDATE,
         extension: String = ".txt",
     ) {
         ManagedTestAssertions.assertEqualsToTestDataFile(
-            testDataPath = tempDir.resolve("test.kt"),
+            testDataPath = tempDir.resolve(testDataFileName),
             actual = actual,
             variantChain = variantChain,
             extension = extension,
@@ -96,6 +114,19 @@ class ManagedTestAssertionsTest {
         runAssertion(variantChain = emptyList(), actual = "new", mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.txt: new")
+        // No exception thrown
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch deletes redundant write-target`() {
+        setupFiles(
+            "test.txt" to "golden",
+            "test.js.txt" to "old"
+        )
+
+        runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
+
+        assertFileState("test.txt: golden")  // js.txt deleted after update
         // No exception thrown
     }
 
@@ -485,5 +516,237 @@ class ManagedTestAssertionsTest {
                 test.pretty.txt: pretty
             """
         )
+    }
+
+    // ========== EOF newline preservation tests ==========
+
+    /**
+     * Sets up test.txt with [oldContent] (exact content, no extra newline),
+     * runs UPDATE assertion with [newContent], and checks that test.txt contains [expectedFileContent].
+     */
+    private fun assertEofPreservation(oldContent: String, newContent: String, expectedFileContent: String) {
+        tempDir.resolve("test.kt").writeText("// test")
+        tempDir.resolve("test.txt").writeText(oldContent)
+
+        runAssertion(variantChain = emptyList(), actual = newContent, mode = TestDataManagerMode.UPDATE)
+
+        assertEquals(expectedFileContent, tempDir.resolve("test.txt").readText())
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch preserves no-newline EOF from existing file`() {
+        assertEofPreservation(
+            oldContent = "old",
+            newContent = "new",
+            expectedFileContent = "new",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch preserves newline EOF from existing file`() {
+        assertEofPreservation(
+            oldContent = "old\n",
+            newContent = "new",
+            expectedFileContent = "new\n",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch preserves no-newline EOF with variant chain`() {
+        tempDir.resolve("test.kt").writeText("// test")
+        tempDir.resolve("test.js.txt").writeText("old js")  // No trailing newline
+
+        runAssertion(variantChain = listOf("js"), actual = "new js", mode = TestDataManagerMode.UPDATE)
+
+        assertEquals("new js", tempDir.resolve("test.js.txt").readText())
+    }
+
+    @Test
+    fun `UPDATE mode - golden creates file with newline EOF`() {
+        setupFiles()  // No expected files
+
+        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+
+        // New files should have trailing newline (no existing file to preserve from)
+        assertEquals("new content\n", tempDir.resolve("test.txt").readText())
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch preserves multiple trailing newlines as single newline`() {
+        assertEofPreservation(
+            oldContent = "old\n\n\n",
+            newContent = "new",
+            expectedFileContent = "new\n",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch without trailing newline preserves internal empty lines`() {
+        assertEofPreservation(
+            oldContent = "old",
+            newContent = "line1\n\nline2",
+            expectedFileContent = "line1\n\nline2",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch normalizes actual trailing newlines and preserves newline EOF`() {
+        assertEofPreservation(
+            oldContent = "old\n",
+            newContent = "new\n\n\n",
+            expectedFileContent = "new\n",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch normalizes actual trailing newlines and preserves no-newline EOF`() {
+        assertEofPreservation(
+            oldContent = "old",
+            newContent = "new\n\n\n",
+            expectedFileContent = "new",
+        )
+    }
+
+    // ========== Path tracking tests ==========
+
+    @Test
+    fun `UPDATE mode - tracking records path on file create`() {
+        setupFiles()  // No expected files
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "test.kt",
+            expectedFileState = "test.txt: new content",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - tracking records path on mismatch update`() {
+        setupFiles("test.txt" to "old")
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = emptyList(), actual = "new", mode = TestDataManagerMode.UPDATE)
+
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "test.kt",
+            expectedFileState = "test.txt: new",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - tracking records multiple test data paths`() {
+        setupFiles("other.kt" to "// other")
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(
+            testDataFileName = "test.kt",
+            variantChain = emptyList(),
+            actual = "first",
+            mode = TestDataManagerMode.UPDATE,
+        )
+
+        runAssertion(
+            testDataFileName = "test.kt",
+            variantChain = listOf("variant"),
+            actual = "first_variant",
+            mode = TestDataManagerMode.UPDATE,
+        )
+
+        runAssertion(
+            testDataFileName = "other.kt",
+            variantChain = emptyList(),
+            actual = "second",
+            mode = TestDataManagerMode.UPDATE,
+        )
+
+        assertTrackedPaths(
+            """
+                other.kt
+                test.kt
+            """
+        )
+
+        assertFileState(
+            fileNames = listOf("other.txt", "test.txt", "test.variant.txt"),
+            expected = """
+                other.txt: second
+                test.txt: first
+                test.variant.txt: first_variant
+            """,
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - tracking records path on redundant delete`() {
+        setupFiles(
+            "test.txt" to "same",
+            "test.js.txt" to "same"
+        )
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.UPDATE)
+
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "test.kt",
+            expectedFileState = "test.txt: same",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - tracking records path when mismatch deletes redundant write-target`() {
+        setupFiles(
+            "test.txt" to "golden",
+            "test.js.txt" to "old"
+        )
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
+
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "test.kt",
+            expectedFileState = "test.txt: golden",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - tracking does not record when disabled`() {
+        setupFiles()  // No expected files
+        ManagedTestAssertions.trackUpdatedPaths = false
+
+        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "",
+            expectedFileState = "test.txt: new content",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - tracking does not record when content matches`() {
+        setupFiles("test.txt" to "content")
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
+
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "",
+            expectedFileState = "test.txt: content",
+        )
+    }
+
+    @Test
+    fun `drainUpdatedTestDataPaths clears set after drain`() {
+        setupFiles()  // No expected files
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
+
+        assertTrackedPaths("test.kt")
+
+        // Second drain is expected to have nothing
+        assertTrackedPaths("")
+        assertFileState("test.txt: content")
     }
 }

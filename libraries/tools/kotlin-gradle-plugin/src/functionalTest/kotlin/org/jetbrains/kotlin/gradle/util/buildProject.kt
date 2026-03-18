@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
@@ -162,6 +163,10 @@ fun KotlinMultiplatformExtension.swiftExport(code: SwiftExportExtension.() -> Un
     requireNotNull(getExtension<SwiftExportExtension>("swiftExport")).apply(code)
 }
 
+fun KotlinMultiplatformExtension.swiftPMDependencies(code: SwiftPMImportExtension.() -> Unit) {
+    requireNotNull(getExtension<SwiftPMImportExtension>("swiftPMDependencies")).apply(code)
+}
+
 val Project.propertiesExtension: ExtraPropertiesExtension
     get() = extensions.getByType(ExtraPropertiesExtension::class.java)
 
@@ -193,9 +198,6 @@ fun Project.enableDefaultJsDomApiDependency(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JS_STDLIB_DOM_API_INCLUDED, enabled.toString())
 }
 
-fun Project.setMultiplatformAndroidSourceSetLayoutVersion(version: Int) {
-    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION, version.toString())
-}
 
 fun Project.enableDependencyVerification(enabled: Boolean = true) {
     gradle.startParameter.dependencyVerificationMode = if (enabled) DependencyVerificationMode.STRICT

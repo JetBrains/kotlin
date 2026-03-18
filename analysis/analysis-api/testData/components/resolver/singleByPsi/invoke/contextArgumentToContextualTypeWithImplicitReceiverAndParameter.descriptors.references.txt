@@ -1,0 +1,15 @@
+KtNameReferenceExpression(117,122): 'block'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'p2'>
+    symbols:
+      block: context(kotlin.String) kotlin.Int.(kotlin.Boolean) -> kotlin.Unit
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

@@ -1,0 +1,10 @@
+test1: ---
+assert(i-- == 4)
+       |   |
+       3   false
+---
+test2: ---
+assert(a--)
+       |
+       false
+---

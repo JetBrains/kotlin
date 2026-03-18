@@ -8,21 +8,22 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature.InferenceEnhancementsIn21
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractNullabilityChecker
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 
 abstract class TypeCheckerStateForConstraintSystem(
     val extensionTypeContext: TypeSystemInferenceExtensionContext,
-    kotlinTypePreparator: AbstractTypePreparator,
-    kotlinTypeRefiner: AbstractTypeRefiner
+    baseTypeCheckerState: TypeCheckerState,
 ) : TypeCheckerState(
     isErrorTypeEqualsToAnything = true,
     isStubTypeEqualsToAnything = true,
     isDnnTypesEqualToFlexible = false,
     allowedTypeVariable = false,
     typeSystemContext = extensionTypeContext,
-    kotlinTypePreparator,
-    kotlinTypeRefiner
+    baseTypeCheckerState.kotlinTypePreparator,
+    baseTypeCheckerState.kotlinTypeRefiner,
 ) {
     abstract val languageVersionSettings: LanguageVersionSettings
 
@@ -318,14 +319,16 @@ abstract class TypeCheckerStateForConstraintSystem(
                 when (subType) {
                     is RigidTypeMarker ->
                         when {
+                            // TODO: consider dropping this branch in 2.5 timeframe (KT-84664)
                             usePreciseSimplificationToFlexibleLowerConstraint() ->
                                 // Foo <: T! -- (Foo!! .. Foo) <: T
                                 // Foo? <: T! -- (Foo!! .. Foo?) <: T
                                 createTrivialFlexibleTypeOrSelf(
                                     subType.makeDefinitelyNotNullOrNotNull(),
                                 )
-                            // Obsolete behavior in 2.2 and earlier versions
+                            // Foo <: T! -- Foo! <: T
                             !subType.isMarkedNullable() -> createTrivialFlexibleTypeOrSelf(subType)
+                            // Foo? <: T! -- Foo? <: T
                             else -> subType
                         }
 

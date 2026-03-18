@@ -83,8 +83,13 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
 
         @Override
         public void run(TestResult result) {
-            result.startTest(this);
-            result.endTest(this);
+            // Intentionally no-op.
+            // This placeholder represents a class that itself has no JUnit3 test methods
+            // but contains inner classes with tests. Starting/ending a fake test here used
+            // to be tolerated, but with newer Gradle/JUnit Platform versions it causes
+            // the Vintage engine to treat the parent as a leaf test (not a container),
+            // then fail when children are reported under it. Leaving this as a no-op keeps
+            // the class as an empty container so inner tests can execute correctly.
         }
 
         @Override

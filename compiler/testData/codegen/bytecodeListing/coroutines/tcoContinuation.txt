@@ -79,32 +79,11 @@ public final class TcoContinuationKt$foo$$inlined$flow$1 {
 }
 
 @kotlin.Metadata
-@kotlin.coroutines.jvm.internal.DebugMetadata
-public final class TcoContinuationKt$foo$$inlined$map$1$2$1 {
-    enclosing method TcoContinuationKt$foo$$inlined$map$1$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field L$0: java.lang.Object
-    field L$1: java.lang.Object
-    field L$2: java.lang.Object
-    field L$3: java.lang.Object
-    field L$4: java.lang.Object
-    field L$5: java.lang.Object
-    field L$6: java.lang.Object
-    field label: int
-    synthetic field result: java.lang.Object
-    synthetic final field this$0: TcoContinuationKt$foo$$inlined$map$1$2
-    inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1$2
-    inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1$2$1
-    public method <init>(p0: TcoContinuationKt$foo$$inlined$map$1$2, p1: kotlin.coroutines.Continuation): void
-    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
-}
-
-@kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$map$1$2 {
     // source: 'tcoContinuation.kt'
     enclosing method TcoContinuationKt$foo$$inlined$map$1.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_flow$inlined: FlowCollector
     inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1$2
-    inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1$2$1
     public method <init>(p0: FlowCollector): void
     public method emit(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
 }

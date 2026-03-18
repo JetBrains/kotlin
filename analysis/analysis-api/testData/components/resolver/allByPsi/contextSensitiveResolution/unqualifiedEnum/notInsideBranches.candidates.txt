@@ -44,7 +44,7 @@ KtWhenExpression(121,173): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(127,128): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -68,7 +68,7 @@ KtWhenConditionWithExpression(136,141): 'FIRST'
   NO_CANDIDATES
 
 KtNameReferenceExpression(136,141): 'FIRST'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -98,7 +98,7 @@ KtWhenConditionWithExpression(156,162): 'SECOND'
   NO_CANDIDATES
 
 KtNameReferenceExpression(156,162): 'SECOND'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

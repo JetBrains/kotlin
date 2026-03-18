@@ -33,7 +33,7 @@ FILE: selfReferentialAnnotation.kt
             }
 
             public final static val entries: R|kotlin/enums/EnumEntries<MyRequiresOptIn.MyLevel>|
-                public get(): R|kotlin/enums/EnumEntries<MyRequiresOptIn.MyLevel>|
+                public static get(): R|kotlin/enums/EnumEntries<MyRequiresOptIn.MyLevel>|
 
         }
 

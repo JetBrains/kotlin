@@ -25,7 +25,7 @@ internal class KotlinKParameter(
         kmParameter.type.toKType(callable.container.jClass.classLoader, typeParameterTable) {
             require(callable.container is KPackageImpl || callable.isConstructor) {
                 // For class callables, we'll also need to tweak instance receiver parameter type (see `DescriptorKParameter`).
-                "Only constructors and top-level callables are supported for now: $callable"
+                "Only constructors and top-level callables are supported for now: ${callable.container}/${callable.name} $name"
             }
             callable.caller.parameterTypes[index]
         }
@@ -35,7 +35,7 @@ internal class KotlinKParameter(
         get() {
             require(callable is KotlinKProperty<*> || callable.container is KPackageImpl || callable.isConstructor) {
                 // For class functions, we'll also need to check the flag for parameters from inherited functions.
-                "Only constructors and top-level callables are supported for now: $callable"
+                "Only constructors and top-level callables are supported for now: ${callable.container}/${callable.name} $name"
             }
             return kmParameter.declaresDefaultValue
         }

@@ -1,2 +1,5 @@
 KtNameReferenceExpression(23,31): 'Suppress'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Suppress
+    ]

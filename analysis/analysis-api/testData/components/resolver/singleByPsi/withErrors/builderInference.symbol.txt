@@ -1,2 +1,5 @@
 KtNameReferenceExpression(248,251): 'add'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Target.add(<dispatch receiver>: test.Target<T>, t: T): kotlin.Unit
+    ]

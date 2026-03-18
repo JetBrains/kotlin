@@ -31,10 +31,10 @@ fun acceptGenericInterfaceString(l: MyGenericInterfaceWithNonGenericImpl<String>
 fun <U2> acceptGenericInterface(l: MyGenericInterfaceWithNonGenericImpl<U2>) { }
 
 fun test() {
-    acceptList(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["1", "2", "3"]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGenericList<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["1", "2", "3"]<!>)
-    acceptGenericInterfaceString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["1", "2", "3"]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGenericInterface<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["1", "2", "3"]<!>)
+    acceptList(["1", "2", "3"])
+    acceptGenericList(["1", "2", "3"])
+    acceptGenericInterfaceString(["1", "2", "3"])
+    acceptGenericInterface(["1", "2", "3"])
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, nestedClass,

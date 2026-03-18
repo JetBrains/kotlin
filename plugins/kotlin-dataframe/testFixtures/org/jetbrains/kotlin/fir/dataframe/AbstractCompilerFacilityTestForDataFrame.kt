@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.fir.dataframe
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory.createConfigurator
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
-import org.jetbrains.kotlin.fir.dataframe.services.DataFrameClasspathProvider
-import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
-import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.fir.dataframe.services.DataFrameRuntimeClasspathProvider
+import org.jetbrains.kotlin.fir.dataframe.services.DataFrameEnvironmentConfigurator
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 abstract class AbstractCompilerFacilityTestForDataFrame : AbstractCompilerFacilityTest() {
@@ -26,8 +25,7 @@ abstract class AbstractCompilerFacilityTestForDataFrame : AbstractCompilerFacili
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
-        builder.useConfigurators(::ExperimentalExtensionRegistrarConfigurator)
-        builder.useCustomRuntimeClasspathProviders(::DataFrameClasspathProvider)
-        builder.useConfigurators(::DataFramePluginAnnotationsProvider)
+        builder.useConfigurators(::DataFrameEnvironmentConfigurator)
+        builder.useCustomRuntimeClasspathProviders(::DataFrameRuntimeClasspathProvider)
     }
 }

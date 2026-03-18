@@ -33,7 +33,7 @@ FILE: unsupportedContextParameters.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<E>|
-            public get(): R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
 
     }
     context(<unused var>: R|kotlin/String|)

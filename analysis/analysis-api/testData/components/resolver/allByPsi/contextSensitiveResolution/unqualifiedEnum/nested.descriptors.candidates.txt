@@ -86,7 +86,7 @@ KtWhenExpression(186,307): 'when (o) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(192,193): 'o'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -128,7 +128,7 @@ KtWhenExpression(234,301): 'when (i) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(240,241): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -218,7 +218,7 @@ KtWhenExpression(357,598): 'when (o) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(363,364): 'o'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -284,7 +284,7 @@ KtWhenExpression(459,550): 'when (i) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(465,466): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -344,7 +344,7 @@ KtCallExpression(577,582): 'baz()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(577,580): 'baz'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

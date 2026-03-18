@@ -20,8 +20,8 @@ class NullabilityAnnotationSourceProvider(testServices: TestServices) : Addition
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         return listOf(
-            "analysis/symbol-light-classes/testData/additionalFiles/NotNull.java",
-            "analysis/symbol-light-classes/testData/additionalFiles/Nullable.java",
+            "testData/additionalFiles/NotNull.java",
+            "testData/additionalFiles/Nullable.java",
         ).map { path ->
             File(path).toTestFile(relativePath = "org/jetbrains/annotations")
         }

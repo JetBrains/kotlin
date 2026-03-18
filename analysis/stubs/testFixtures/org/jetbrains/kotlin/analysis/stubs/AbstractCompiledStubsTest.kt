@@ -56,18 +56,5 @@ abstract class AbstractCompiledStubsTest(defaultTargetPlatform: TargetPlatform) 
 
                 return variantChain
             }
-
-        override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
-            super.configureTest(builder, disposable)
-
-            // Drop together with the test data as soon as 1.9 is unsupported
-            builder.forTestsMatching("*/k1/*") {
-                defaultDirectives {
-                    LanguageSettingsDirectives.LANGUAGE_VERSION with LanguageVersion.KOTLIN_1_9
-                    LanguageSettingsDirectives.API_VERSION with ApiVersion.KOTLIN_1_9
-                    +LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
-                }
-            }
-        }
     }
 }

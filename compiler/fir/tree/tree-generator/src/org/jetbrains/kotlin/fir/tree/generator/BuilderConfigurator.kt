@@ -266,10 +266,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
         }
 
-        builder(enumEntry) {
-            withCopy()
-        }
-
         builder(typeOperatorCall) {
             parents += callBuilder
             default("argumentList") {

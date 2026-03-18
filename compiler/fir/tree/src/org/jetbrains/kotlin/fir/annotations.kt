@@ -46,3 +46,6 @@ annotation class SessionConfiguration
  */
 @RequiresOptIn
 annotation class OnlyForDefaultLanguageFeatureDisabled(val languageFeature: LanguageFeature)
+
+@RequiresOptIn
+annotation class FirIdeOnly

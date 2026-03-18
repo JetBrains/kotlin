@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.cli.common.arguments.allowTestsOnlyLanguageFeatures
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
+import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
+import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
+import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
-import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.konan.test.handlers.FileCheckHandler
 import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunner
 import org.jetbrains.kotlin.konan.test.klib.NativeCompilerSecondStageFacade
@@ -25,19 +26,18 @@ import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
@@ -50,7 +50,11 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
         super.configure(builder)
         configureFirParser(FirParser.LightTree)
         useAdditionalService(::LibraryProvider)
-        useConfigurators(::NativeEnvironmentConfigurator)
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator,
+            ::NativeSecondStageEnvironmentConfigurator,
+        )
         useDirectives(NativeEnvironmentConfigurationDirectives, TestDirectives, LanguageSettingsDirectives)
         useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper, ::FileCheckTestSkipper)
         enableMetaInfoHandler()
@@ -70,15 +74,15 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
 
         commonConfigurationForNativeFirstStageUpToSerialization(
             FrontendKinds.FIR,
-            ::FirFrontendFacade,
-            ::Fir2IrNativeResultsConverter,
-            ::NativePreSerializationLoweringFacade,
+            ::FirCliNativeFacade,
+            ::Fir2IrCliNativeFacade,
+            ::NativePreSerializationLoweringCliFacade,
         )
-        facadeStep(::NativeKlibSerializerFacade)
+        facadeStep(::KlibSerializerNativeCliFacade)
         klibArtifactsHandlersStep()
 
         // 2nd stage (klibs -> executable)
-        facadeStep(::NativeCompilerSecondStageFacade.bind(currentCustomNativeCompilerSettings))
+        facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(currentCustomNativeCompilerSettings))
         nativeArtifactsHandlersStep {
             useHandlers(::FileCheckHandler, ::NativeBoxRunner)
         }
@@ -99,13 +103,6 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
         ) {
             defaultDirectives {
                 DIAGNOSTICS with "-warnings"
-            }
-        }
-
-        forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
-            defaultDirectives {
-                +FIR_DUMP
-                +RENDER_FIR_DECLARATION_ATTRIBUTES
             }
         }
     }

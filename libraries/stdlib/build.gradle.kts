@@ -3,7 +3,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -56,10 +56,25 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
+
+    if (this is KotlinJvmCompilerOptions) {
+        suppressRedundantCliArgumentWarning()
+    }
 }
 
 fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
     freeCompilerArgs.add("-Xreturn-value-checker=full")
+}
+
+/**
+ * Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
+ * But this produces a warning
+ * "The argument ... is redundant for the current language version ..."
+ * in the bootstrap test and fails because of -Werror.
+ * To work around it, we suppress the warning.
+ */
+fun KotlinCommonCompilerOptions.suppressRedundantCliArgumentWarning() {
+    freeCompilerArgs.add("-Xwarning-level=REDUNDANT_CLI_ARG:disabled")
 }
 
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
@@ -102,6 +117,7 @@ kotlin {
                         )
                         mainCompilationOptions()
                         addReturnValueCheckerInfo()
+                        suppressRedundantCliArgumentWarning()
                     }
                 }
             }
@@ -119,6 +135,7 @@ kotlin {
                                 diagnosticNamesArg
                             )
                         )
+                        suppressRedundantCliArgumentWarning()
                     }
                 }
             }
@@ -442,26 +459,18 @@ kotlin {
 
             prepareJsIrMainSources.configure {
                 val ignoredFileNames = setOf("Atomics.kt", "AtomicArrays.kt")
-                val unimplementedNativeBuiltIns =
-                    (file(jvmBuiltinsDir).list()!!.toSortedSet() - file("$jsDir/builtins/").list()!!)
-                        .filterNot { ignoredFileNames.contains(it) }
-                        .map { "$jvmBuiltinsRelativeDir/$it" }
+                val jsBuiltins: FileCollection = layout.projectDirectory.dir("js/builtins").asFileTree
+                val jvmBuiltins: FileCollection = layout.projectDirectory.dir("jvm/builtins").asFileTree
+                val jsBuiltinsSrcDirFile = layout.buildDirectory.dir("src/js-builtin-sources")
 
-                val sources = unimplementedNativeBuiltIns
-
-                sources.forEach { path ->
-                    from("$rootDir/$path") {
-                        into(path.dropLastWhile { it != '/' })
+                into(jsBuiltinsSrcDirFile)
+                from(jvmBuiltins) {
+                    into("kotlin")
+                    ignoredFileNames.forEach {
+                        exclude(it)
                     }
-                }
-
-                into(jsBuiltinsSrcDir)
-
-                doLast {
-                    unimplementedNativeBuiltIns.forEach { path ->
-                        val file = File("$destinationDir/$path")
-                        val sourceCode = file.readText()
-                        file.writeText(sourceCode)
+                    jsBuiltins.files.forEach {
+                        exclude(it.name)
                     }
                 }
             }
@@ -497,28 +506,26 @@ kotlin {
                 srcDir("wasm/stubs")
             }
             prepareWasmBuiltinSources.configure {
-                val unimplementedNativeBuiltIns =
-                    (file(jvmBuiltinsDir).list().toSortedSet() - file("wasm/builtins/kotlin/").list())
-                        .map { "$jvmBuiltinsRelativeDir/$it" }
-
-                val sources = unimplementedNativeBuiltIns
-
+                val wasmBuiltins: FileCollection = layout.projectDirectory.dir("wasm/builtins/kotlin/").asFileTree
+                val jvmBuiltins: FileCollection = layout.projectDirectory.dir("jvm/builtins").asFileTree
+                val wasmBuiltinsSrcDirFile = layout.buildDirectory.dir("src/wasm-builtin-sources")
                 val excluded = listOf(
                     "Atomics.kt", "AtomicArrays.kt",
                     // Included with K/N collections
                     "Collections.kt", "Iterator.kt"
                 )
 
-                sources.forEach { path ->
-                    from("$rootDir/$path") {
-                        into(path.dropLastWhile { it != '/' })
-                        excluded.forEach {
-                            exclude(it)
-                        }
+                into(wasmBuiltinsSrcDirFile)
+                from(jvmBuiltins) {
+                    into("kotlin")
+                    excluded.forEach {
+                        exclude(it)
                     }
-                }
+                    wasmBuiltins.files.forEach {
+                        exclude(it.name)
+                    }
 
-                into(layout.buildDirectory.dir("src/wasm-builtin-sources"))
+                }
             }
 
         }
@@ -798,7 +805,7 @@ tasks {
 
     val jvmTest by existing(Test::class)
 
-    listOf(JdkMajorVersion.JDK_9_0, JdkMajorVersion.JDK_11_0).forEach { jvmVersion ->
+    listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_25_0).forEach { jvmVersion ->
         val jvmVersionTest = register("jvm${jvmVersion.majorVersion}Test", Test::class) {
             group = "verification"
             javaLauncher.set(getToolchainLauncherFor(jvmVersion))

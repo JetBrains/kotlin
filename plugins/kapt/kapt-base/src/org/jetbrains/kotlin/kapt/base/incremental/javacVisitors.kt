@@ -44,7 +44,7 @@ class MentionedTypesTaskListener(
             }
             cache.addSourceStructure(structure)
             time += System.currentTimeMillis() - l
-        } catch (t: Throwable) {
+        } catch (_: Throwable) {
             failureReason = "Running non-incrementally because analyzing ${e.sourceFile.toUri()} failed."
         }
     }
@@ -54,15 +54,15 @@ private enum class Visibility {
     ABI, NON_ABI
 }
 
-private class TypeTreeVisitor(val elementUtils: Elements, val trees: Trees, val compilationUnit: CompilationUnitTree, val sourceStructure: SourceFileStructure) :
-    SimpleTreeVisitor<Void, Visibility>() {
-
+private class TypeTreeVisitor(
+    val elementUtils: Elements, val trees: Trees, val compilationUnit: CompilationUnitTree, val sourceStructure: SourceFileStructure,
+) : SimpleTreeVisitor<Void, Visibility>() {
     val constantTreeVisitor = ConstantTreeVisitor(sourceStructure)
 
     /** Handle annotations on this class, including the @Inherited ones as those are not visible using Tree APIs. */
     private fun handleClassAnnotations(classSymbol: Symbol.ClassSymbol) {
-        elementUtils.getAllAnnotationMirrors(classSymbol).forEach {
-            (it.annotationType.asElement() as? TypeElement)?.let {
+        for (annotation in elementUtils.getAllAnnotationMirrors(classSymbol)) {
+            (annotation.annotationType.asElement() as? TypeElement)?.let {
                 sourceStructure.addMentionedAnnotations(it.qualifiedName.toString())
             }
         }

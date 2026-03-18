@@ -1,0 +1,46 @@
+test1: ---
+assert((a as String).length == 5)
+        |            |      |
+        test         4      false
+---
+test2: ---
+assert((a as String?)?.length == 5)
+        |              |      |
+        test           4      false
+---
+test3: ---
+assert((a as List<T>).isEmpty())
+        |             |
+        [1, 2]        false
+---
+test4: ---
+assert((a as List<*>).isEmpty())
+        |             |
+        [1, 2]        false
+---
+test5: ---
+assert((a as MyString).length == 5)
+        |              |      |
+        test           4      false
+---
+test6: ---
+assert(a as Nothing? == "null")
+       |             |
+       null          false
+---
+test7: ---
+assert((a as MutableList<Int>).add(3) == false)
+        |                      |      |
+        [1, 2, 3]              true   false
+---
+test8: ---
+assert(a as Base + 1)
+       |         |
+       Base      false
+---
+test9: ---
+assert((::foo as () -> Boolean)())
+        |                      |
+        |                      false
+        fun foo(): kotlin.Boolean
+---

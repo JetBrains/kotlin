@@ -9,21 +9,19 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.generators.kotlinpoet.annotation
-import org.jetbrains.kotlin.generators.kotlinpoet.function
-import org.jetbrains.kotlin.generators.kotlinpoet.interfaceType
-import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
-import org.jetbrains.kotlin.generators.kotlinpoet.property
+import org.jetbrains.kotlin.arguments.dsl.types.WithStringRepresentation
+import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
+import kotlin.reflect.full.allSuperclasses
+import kotlin.reflect.full.primaryConstructor
 
 internal class BtaApiGenerator(
     private val targetPackage: String,
     private val skipXX: Boolean,
-    private val kotlinVersion: KotlinReleaseVersion
+    private val kotlinVersion: KotlinReleaseVersion,
 ) : BtaGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
@@ -82,6 +80,8 @@ internal class BtaApiGenerator(
     ) {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
         val enumsExperimental = mutableMapOf<KClass<*>, Boolean>()
+        val customTypesToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
+        val customTypesExperimental = mutableMapOf<KClass<*>, Boolean>()
 
         arguments.forEach { argument ->
             val name = argument.extractName()
@@ -92,8 +92,13 @@ internal class BtaApiGenerator(
              * Marks enum to be generated and returns its name
              */
             fun generatedEnumType(type: KClass<*>): ClassName {
+                require(WithStringRepresentation::class in type.allSuperclasses) {
+                    "Compiler enum ${type.qualifiedName} must implement ${WithStringRepresentation::class.qualifiedName} to be used with BTA."
+                }
                 val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
-                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, type.accessor())
+                @Suppress("UNCHECKED_CAST")
+                enumConstants as List<WithStringRepresentation>
+                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants)
                 if (type !in enumsExperimental && experimental) {
                     enumsExperimental[type] = true
                 } else if (type in enumsExperimental && !experimental) {
@@ -102,6 +107,21 @@ internal class BtaApiGenerator(
                     enumsExperimental[type] = false
                 }
                 return type.toBtaEnumClassName()
+            }
+
+            /**
+             * Marks custom types to be generated and returns its name
+             */
+            fun generatedCustomType(type: KClass<*>): ClassName {
+                customTypesToGenerate[type] = generateCustomTypeBuilder(type)
+                if (type !in customTypesExperimental && experimental) {
+                    customTypesExperimental[type] = true
+                } else if (type in customTypesExperimental && !experimental) {
+                    // if at least one option that is NOT experimental uses the type,
+                    // then the type is not experimental itself
+                    customTypesExperimental[type] = false
+                }
+                return type.toBtaCustomClassName()
             }
 
             // argument is newer than current version
@@ -123,11 +143,17 @@ internal class BtaApiGenerator(
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
                     val argumentType = argument.valueType.kType
-                    if (argumentType.isCompilerEnum) {
-                        val type = argumentType.classifier as KClass<*>
-                        generatedEnumType(type)
-                    } else {
-                        argumentType.asTypeName()
+                    val type = argumentType.classifier as? KClass<*> ?: error("Type is not a KClass: $argumentType")
+                    when {
+                        type.java.isEnum -> {
+                            generatedEnumType(type)
+                        }
+                        type.isCustomType -> {
+                            generatedCustomType(type)
+                        }
+                        else -> {
+                            argumentType.asTypeName()
+                        }
                     }
                 }
                 is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
@@ -160,6 +186,14 @@ internal class BtaApiGenerator(
             }
             writeEnumFile(typeSpecBuilder.build(), type)
         }
+
+        customTypesToGenerate.forEach { (type, typeSpecBuilder) ->
+            if (customTypesExperimental.getOrDefault(type, false)) {
+                typeSpecBuilder.addAnnotation(ANNOTATION_EXPERIMENTAL)
+            }
+
+            writeCustomClassFile(typeSpecBuilder.build(), type)
+        }
     }
 
     private fun PropertySpec.Builder.maybeAddExperimentalAnnotation(experimental: Boolean) {
@@ -185,10 +219,9 @@ internal class BtaApiGenerator(
         }
     }
 
-    fun generateEnumTypeBuilder(
-        sourceEnum: Collection<Enum<*>>,
-        nameAccessor: KProperty1<Any, String>,
-    ): TypeSpec.Builder {
+    fun <T> generateEnumTypeBuilder(
+        sourceEnum: Collection<T>,
+    ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation{
         val className = sourceEnum.first()::class.toBtaEnumClassName()
         return TypeSpec.enumBuilder(className).apply {
             property<String>("stringValue") {
@@ -196,6 +229,7 @@ internal class BtaApiGenerator(
             }
             addKdoc(KDOC_SINCE_2_3_0)
             primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
+            val nameAccessor = WithStringRepresentation::stringRepresentation
             sourceEnum.forEach {
                 addEnumConstant(
                     it.name.uppercase(),
@@ -213,6 +247,51 @@ internal class BtaApiGenerator(
         }.build()
         enumFile.writeTo(enumFileAppendable)
         outputs += Path(enumFile.relativePath) to enumFileAppendable.toString()
+    }
+
+    private fun generateCustomTypeBuilder(sourceClass: KClass<*>): TypeSpec.Builder {
+        val className = sourceClass.toBtaCustomClassName()
+
+        return TypeSpec.classBuilder(className).apply {
+            addKdoc(KDOC_SINCE_2_4_0)
+            if (sourceClass.isData) {
+                addModifiers(KModifier.DATA)
+            }
+
+            val constructor =
+                requireNotNull(sourceClass.primaryConstructor) {
+                    "Class ${sourceClass.qualifiedName} must have a primary constructor"
+                }
+            val parameters = constructor.parameters
+
+            primaryConstructor(
+                FunSpec.constructorBuilder().apply {
+                    parameters.forEach { param ->
+                        addParameter(requireNotNull(param.name), param.type.asTypeName())
+                    }
+                }.build()
+            )
+
+            parameters.forEach { param ->
+                val paramType = param.type.asTypeName()
+                val parameterName = requireNotNull(param.name)
+                addProperty(
+                    PropertySpec.builder(parameterName, paramType)
+                        .initializer(parameterName)
+                        .build()
+                )
+            }
+        }
+    }
+
+    private fun writeCustomClassFile(typeSpec: TypeSpec, sourceClass: KClass<*>) {
+        val className = sourceClass.toBtaCustomClassName()
+        val fileAppendable = createGeneratedFileAppendable()
+        val file = FileSpec.builder(className).apply {
+            addType(typeSpec)
+        }.build()
+        file.writeTo(fileAppendable)
+        outputs += Path(file.relativePath) to fileAppendable.toString()
     }
 
     fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, deprecateSet: Boolean = false) {

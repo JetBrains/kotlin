@@ -62,7 +62,7 @@ KtCallExpression(188,193): 'Any()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(188,191): 'Any'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -116,7 +116,7 @@ KtReturnExpression(250,263): 'return x == A'
   NO_CANDIDATES
 
 KtBinaryExpression(257,263): 'x == A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -153,7 +153,7 @@ KtBinaryExpression(257,263): 'x == A'
     isInBestCandidates = true
 
 KtNameReferenceExpression(257,258): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -208,7 +208,7 @@ KtOperationReferenceExpression(259,261): '=='
     isInBestCandidates = true
 
 KtNameReferenceExpression(262,263): 'A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -261,7 +261,7 @@ KtReturnExpression(319,339): 'return x == MyEnum.A'
   NO_CANDIDATES
 
 KtBinaryExpression(326,339): 'x == MyEnum.A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -298,7 +298,7 @@ KtBinaryExpression(326,339): 'x == MyEnum.A'
     isInBestCandidates = true
 
 KtNameReferenceExpression(326,327): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -395,7 +395,7 @@ KtReturnExpression(400,423): 'return x == Companion.A'
   NO_CANDIDATES
 
 KtBinaryExpression(407,423): 'x == Companion.A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -432,7 +432,7 @@ KtBinaryExpression(407,423): 'x == Companion.A'
     isInBestCandidates = true
 
 KtNameReferenceExpression(407,408): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -487,7 +487,7 @@ KtOperationReferenceExpression(409,411): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(412,423): 'Companion.A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -511,7 +511,7 @@ KtNameReferenceExpression(412,421): 'Companion'
   NO_CANDIDATES
 
 KtNameReferenceExpression(422,423): 'A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -562,7 +562,7 @@ KtWhenExpression(468,514): 'when (x) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(474,475): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -586,7 +586,7 @@ KtWhenConditionWithExpression(487,488): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(487,488): 'A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -651,7 +651,7 @@ KtWhenExpression(552,605): 'when (x) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(558,559): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -729,7 +729,7 @@ KtWhenExpression(648,704): 'when (x) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(654,655): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -753,7 +753,7 @@ KtWhenConditionWithExpression(667,678): 'Companion.A'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(667,678): 'Companion.A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -777,7 +777,7 @@ KtNameReferenceExpression(667,676): 'Companion'
   NO_CANDIDATES
 
 KtNameReferenceExpression(677,678): 'A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

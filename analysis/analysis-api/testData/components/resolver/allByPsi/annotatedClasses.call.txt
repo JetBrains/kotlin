@@ -47,7 +47,7 @@ KtAnnotationEntry(15,45): '@Target(AnnotationTarget.TYPE)'
       }
 
 KtConstructorCalleeExpression(16,22): 'Target'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -95,7 +95,7 @@ KtValueArgument(23,44): 'AnnotationTarget.TYPE'
   null
 
 KtDotQualifiedExpression(23,44): 'AnnotationTarget.TYPE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -118,7 +118,7 @@ KtNameReferenceExpression(23,39): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(40,44): 'TYPE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -222,7 +222,7 @@ KtAnnotationEntry(148,177): '@Anno("parameter type $prop")'
       }
 
 KtConstructorCalleeExpression(149,153): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -279,7 +279,7 @@ KtSimpleNameStringTemplateEntry(170,175): '$prop'
   null
 
 KtNameReferenceExpression(171,175): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -347,7 +347,7 @@ KtAnnotationEntry(183,219): '@Anno("nested parameter type $prop")'
       }
 
 KtConstructorCalleeExpression(184,188): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -404,7 +404,7 @@ KtSimpleNameStringTemplateEntry(212,217): '$prop'
   null
 
 KtNameReferenceExpression(213,217): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -472,7 +472,7 @@ KtAnnotationEntry(231,274): '@Anno("nested nested parameter type $prop")'
       }
 
 KtConstructorCalleeExpression(232,236): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -529,7 +529,7 @@ KtSimpleNameStringTemplateEntry(267,272): '$prop'
   null
 
 KtNameReferenceExpression(268,272): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -591,7 +591,7 @@ KtAnnotationEntry(286,313): '@Anno("defaultValue $prop")'
       }
 
 KtConstructorCalleeExpression(287,291): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -648,7 +648,7 @@ KtSimpleNameStringTemplateEntry(306,311): '$prop'
   null
 
 KtNameReferenceExpression(307,311): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -710,7 +710,7 @@ KtAnnotationEntry(321,368): '@Anno("anonymousFunction parameter type $prop")'
       }
 
 KtConstructorCalleeExpression(322,326): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -767,7 +767,7 @@ KtSimpleNameStringTemplateEntry(361,366): '$prop'
   null
 
 KtNameReferenceExpression(362,366): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -829,7 +829,7 @@ KtAnnotationEntry(375,419): '@Anno("anonymousFunction return type $prop")'
       }
 
 KtConstructorCalleeExpression(376,380): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -886,7 +886,7 @@ KtSimpleNameStringTemplateEntry(412,417): '$prop'
   null
 
 KtNameReferenceExpression(413,417): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -986,7 +986,7 @@ KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@An
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(480,616): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1045,7 +1045,7 @@ KtAnnotationEntry(480,510): '@Anno("super type call $prop")'
       }
 
 KtConstructorCalleeExpression(481,485): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1102,7 +1102,7 @@ KtSimpleNameStringTemplateEntry(503,508): '$prop'
   null
 
 KtNameReferenceExpression(504,508): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1170,7 +1170,7 @@ KtAnnotationEntry(525,561): '@Anno("nested super type ref $prop")'
       }
 
 KtConstructorCalleeExpression(526,530): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1227,7 +1227,7 @@ KtSimpleNameStringTemplateEntry(554,559): '$prop'
   null
 
 KtNameReferenceExpression(555,559): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1295,7 +1295,7 @@ KtAnnotationEntry(567,610): '@Anno("nested nested super type ref $prop")'
       }
 
 KtConstructorCalleeExpression(568,572): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1352,7 +1352,7 @@ KtSimpleNameStringTemplateEntry(603,608): '$prop'
   null
 
 KtNameReferenceExpression(604,608): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1410,7 +1410,7 @@ KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@An
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(653,789): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1469,7 +1469,7 @@ KtAnnotationEntry(653,683): '@Anno("super type call $prop")'
       }
 
 KtConstructorCalleeExpression(654,658): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1526,7 +1526,7 @@ KtSimpleNameStringTemplateEntry(676,681): '$prop'
   null
 
 KtNameReferenceExpression(677,681): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1594,7 +1594,7 @@ KtAnnotationEntry(698,734): '@Anno("nested super type ref $prop")'
       }
 
 KtConstructorCalleeExpression(699,703): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1651,7 +1651,7 @@ KtSimpleNameStringTemplateEntry(727,732): '$prop'
   null
 
 KtNameReferenceExpression(728,732): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1719,7 +1719,7 @@ KtAnnotationEntry(740,783): '@Anno("nested nested super type ref $prop")'
       }
 
 KtConstructorCalleeExpression(741,745): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1776,7 +1776,7 @@ KtSimpleNameStringTemplateEntry(776,781): '$prop'
   null
 
 KtNameReferenceExpression(777,781): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1853,7 +1853,7 @@ KtAnnotationEntry(840,869): '@Anno("super type ref $prop")'
       }
 
 KtConstructorCalleeExpression(841,845): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1910,7 +1910,7 @@ KtSimpleNameStringTemplateEntry(862,867): '$prop'
   null
 
 KtNameReferenceExpression(863,867): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1978,7 +1978,7 @@ KtAnnotationEntry(875,911): '@Anno("nested super type ref $prop")'
       }
 
 KtConstructorCalleeExpression(876,880): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2035,7 +2035,7 @@ KtSimpleNameStringTemplateEntry(904,909): '$prop'
   null
 
 KtNameReferenceExpression(905,909): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2103,7 +2103,7 @@ KtAnnotationEntry(917,960): '@Anno("nested nested super type ref $prop")'
       }
 
 KtConstructorCalleeExpression(918,922): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2160,7 +2160,7 @@ KtSimpleNameStringTemplateEntry(953,958): '$prop'
   null
 
 KtNameReferenceExpression(954,958): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

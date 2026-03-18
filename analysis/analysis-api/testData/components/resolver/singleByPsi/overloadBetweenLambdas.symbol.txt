@@ -1,2 +1,5 @@
 KtNameReferenceExpression(129,133): 'post'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/post(action: (kotlin.Unit) -> kotlin.Unit): kotlin.Unit
+    ]

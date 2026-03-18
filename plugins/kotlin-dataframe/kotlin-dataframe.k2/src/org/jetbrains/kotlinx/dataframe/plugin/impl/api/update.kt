@@ -113,6 +113,7 @@ private fun Arguments.updateWithImpl(
             )
             simpleColumnOf(original.name, updatedType)
         }
+        is FillNaNsApproximation -> receiver.schema
     }
 }
 

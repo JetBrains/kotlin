@@ -30,7 +30,7 @@ FILE: kt82684.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<E>|
-            public get(): R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
 
     }
     public final annotation class ExpectEnum : R|kotlin/Annotation| {

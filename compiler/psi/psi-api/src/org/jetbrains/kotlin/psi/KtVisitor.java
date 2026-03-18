@@ -107,6 +107,11 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitKtElement(classBody, data);
     }
 
+    @KtExperimentalApi
+    public R visitCompanionBlock(@NotNull KtCompanionBlock companionBlock, D data) {
+        return visitKtElement(companionBlock, data);
+    }
+
     public R visitModifierList(@NotNull KtModifierList list, D data) {
         return visitKtElement(list, data);
     }

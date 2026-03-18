@@ -16,6 +16,12 @@ import kotlin.js.internal.boxedLong.toStringImpl
 @Target(AnnotationTarget.FUNCTION)
 internal annotation class JsIntrinsic
 
+@UsedFromCompilerGeneratedCode
+// @JsIntrinsic
+// TODO(KT-84992): Remove the body of the intrinsic and @JsIntrinsic annotation after bootstrap
+internal fun isLongCompiledToBigInt(): Boolean =
+    jsTypeOf(2L) === "bigint"
+
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
 internal fun jsEqeq(a: Any?, b: Any?): Boolean

@@ -20,6 +20,7 @@ dependencies {
         testImplementation(project(":kotlin-native:Interop:Indexer"))
         testImplementation(project(":native:kotlin-native-utils"))
         testImplementation(project(":kotlin-native:Interop:StubGenerator"))
+        testImplementation(project(":native:unsafe-mem"))
         testImplementation(testFixtures(project(":native:native.tests")))
     }
 

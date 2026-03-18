@@ -1,0 +1,5 @@
+KtNameReferenceExpression(23,31): 'Suppress'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg names: kotlin.String): kotlin.Suppress
+    ]

@@ -10,6 +10,9 @@ fun foo(a: Bar?): Unit = TODO()
 fun foo_any(a: Any): Unit = TODO()
 fun foo_any(a: Any?): Unit = TODO()
 
+fun produceNullableUnit(): Unit? = TODO()
+fun consumeNullableUnit(a: Unit?): Unit = TODO()
+
 fun p(): Bar? = null
 fun p_any(): Any? = null
 
@@ -52,4 +55,3 @@ fun primitive_in(
 ): Unit = TODO()
 fun primitive_out(): Boolean? = null
 var primitive: Double? = null
-

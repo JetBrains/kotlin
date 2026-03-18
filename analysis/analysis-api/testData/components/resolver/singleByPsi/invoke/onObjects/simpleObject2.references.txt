@@ -2,5 +2,6 @@ KtNameReferenceExpression(79,82): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo) object Foo

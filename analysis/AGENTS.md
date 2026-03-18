@@ -52,6 +52,9 @@ When modifying test data files or running generated tests (`*Generated`) that co
 
 # Run only golden tests (useful for quick baseline updates)
 ./gradlew manageTestDataGlobally --mode=update --golden-only
+
+# Incremental update — only re-run variant tests for changed paths
+./gradlew manageTestDataGlobally --mode=update --incremental
 ```
 
 **Why use `manageTestDataGlobally`?**
@@ -94,3 +97,6 @@ WHEN working with lazy resolution (LL API):
 
 WHEN writing or managing test data files:
 → READ [`test-data-manager/AGENTS.md`](test-data-manager/AGENTS.md)
+
+WHEN seeking historical context on design decisions:
+→ READ [`docs/design-documents/README.md`](docs/design-documents/README.md) (these are historical snapshots, not necessarily up to date)

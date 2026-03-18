@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 
 /**
  * Represents a simple name reference to a variable, function, or type.
@@ -25,7 +26,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
  * //      ^_^
  * ```
  */
-class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression {
+@OptIn(KtExperimentalApi::class)
+class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression, KtResolvableCall {
     constructor(node: ASTNode) : super(node)
 
     constructor(stub: KotlinNameReferenceExpressionStub) : super(stub, KtStubBasedElementTypes.REFERENCE_EXPRESSION)

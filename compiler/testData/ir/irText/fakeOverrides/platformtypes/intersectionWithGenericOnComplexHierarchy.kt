@@ -1,8 +1,6 @@
+// IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-
-// Minor bug: mismatches in parameter types' flexibility
-// KOTLIN_REFLECT_DUMP_MISMATCH
 
 // FILE: Java1.java
 public interface Java1<T>  {

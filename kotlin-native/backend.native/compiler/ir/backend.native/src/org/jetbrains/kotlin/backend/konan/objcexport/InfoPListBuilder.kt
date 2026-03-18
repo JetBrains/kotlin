@@ -24,7 +24,7 @@ internal enum class BundleType {
  * https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Introduction/Introduction.html
  */
 internal class InfoPListBuilder(
-        private val config: KonanConfig,
+        private val config: NativeSecondStageCompilationConfig,
         private val bundleType: BundleType = BundleType.FRAMEWORK
 ) {
     private val configuration = config.configuration

@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.gradle.plugin.launch
 internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
     val collectorProvider = kotlinToolingDiagnosticsCollectorProvider
     val reporterProvider = collectorProvider.flatMap { it.parameters.problemsReporterFactory }.map { it.getInstance(objects) }
-    val diagnosticRenderingOptions = ToolingDiagnosticRenderingOptions.forProject(this)
+    val diagnosticsContext = toolingDiagnosticsContext
 
     // Setup reporting from tasks
     tasks.withType(UsesKotlinToolingDiagnostics::class.java).configureEach {
         it.usesService(collectorProvider)
         it.toolingDiagnosticsCollector.value(collectorProvider)
-        it.diagnosticRenderingOptions.set(diagnosticRenderingOptions)
+        it.toolingDiagnosticsContext.set(diagnosticsContext)
     }
 
     // Launch checkers. Note that they are invoked eagerly to give them a fine-grained
@@ -26,13 +26,13 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
     launchKotlinGradleProjectCheckers()
 
     // Setup a task that will abort the build if errors will be reported. This task should be the first in the taskgraph
-    project.locateOrRegisterCheckKotlinGradlePluginErrorsTask()
+    project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(diagnosticsContext)
 
     // Schedule diagnostics rendering
     project.launch {
         configurationResult.await()
-        val diagnostics = collectorProvider.map { it.getDiagnosticsForProject(project) }.get()
-        diagnostics.reportProblems(reporterProvider.get(), diagnosticRenderingOptions)
+        val diagnostics = collectorProvider.map { it.getDiagnosticsForProject(project.path) }.get()
+        diagnostics.reportProblems(reporterProvider.get(), diagnosticsContext.renderingOptions)
     }
 
     // Schedule switching of Collector to transparent mode, so that any diagnostics reported

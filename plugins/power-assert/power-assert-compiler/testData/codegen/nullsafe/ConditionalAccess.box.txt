@@ -1,0 +1,5 @@
+---
+assert(text?.length?.minus(2) == 1)
+       |     |       |        |
+       Hello 5       3        false
+---

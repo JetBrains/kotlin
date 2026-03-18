@@ -336,7 +336,7 @@ KtParenthesizedExpression(68,71): '(i)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(69,70): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -655,7 +655,7 @@ KtParenthesizedExpression(122,125): '(i)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(123,124): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1266,7 +1266,7 @@ KtParenthesizedExpression(232,239): '(value)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(233,238): 'value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

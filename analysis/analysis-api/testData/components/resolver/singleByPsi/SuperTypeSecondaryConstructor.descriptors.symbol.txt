@@ -1,0 +1,5 @@
+KtNameReferenceExpression(45,46): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]

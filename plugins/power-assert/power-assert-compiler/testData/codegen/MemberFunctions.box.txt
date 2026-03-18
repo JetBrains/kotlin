@@ -1,0 +1,5 @@
+---
+assert(hello.length == "World".substring(1, 4).length)
+       |     |      |          |               |
+       Hello 5      false      orl             3
+---

@@ -18,12 +18,20 @@ interface ServicesAndDirectivesContainer {
         get() = emptyList()
 }
 
-abstract class AbstractTestFacade<InputArtifact, OutputArtifact> : ServicesAndDirectivesContainer
+sealed class AbstractTestFacadeBase<InputArtifact, OutputArtifact> : ServicesAndDirectivesContainer
         where InputArtifact : ResultingArtifact<InputArtifact>,
-              OutputArtifact : ResultingArtifact<OutputArtifact> {
+              OutputArtifact : ResultingArtifact<OutputArtifact>
+{
     abstract val inputKind: TestArtifactKind<InputArtifact>
     abstract val outputKind: TestArtifactKind<OutputArtifact>
+}
 
+// ----------------------------- non-grouping phase -----------------------------
+
+abstract class AbstractTestFacade<InputArtifact, OutputArtifact> : AbstractTestFacadeBase<InputArtifact, OutputArtifact>()
+        where InputArtifact : ResultingArtifact<InputArtifact>,
+              OutputArtifact : ResultingArtifact<OutputArtifact>
+{
     abstract fun transform(module: TestModule, inputArtifact: InputArtifact): OutputArtifact?
     abstract fun shouldTransform(module: TestModule): Boolean
 }
@@ -92,4 +100,13 @@ abstract class DeserializerFacade<BinaryArtifact, BackendInputArtifact>(
     override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == outputKind
     }
+}
+
+// ----------------------------- grouping phase -----------------------------
+
+abstract class AbstractGroupingPhaseTestFacade<InputArtifact, OutputArtifact> : AbstractTestFacadeBase<InputArtifact, OutputArtifact>()
+        where InputArtifact : ResultingArtifact<InputArtifact>,
+              OutputArtifact : ResultingArtifact<OutputArtifact>
+{
+    abstract fun transform(inputArtifact: InputArtifact): OutputArtifact?
 }

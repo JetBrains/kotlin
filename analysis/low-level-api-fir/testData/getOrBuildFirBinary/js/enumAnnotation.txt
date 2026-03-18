@@ -15,7 +15,7 @@ public final [ResolvedTo(BODY_RESOLVE)] enum class Enum : R|kotlin/Enum<Enum>| {
     }
 
     public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Enum] val entries: R|kotlin/enums/EnumEntries<Enum>|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Enum>|
+        public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Enum>|
 
     private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Enum] constructor(): R|Enum|
 

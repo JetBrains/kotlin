@@ -1,0 +1,44 @@
+FILE: companionBlocks.kt
+    public final? [FirstCompanionBlockKey=KtSourceElement] class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? static [ContainingClassKey=C] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? fun member1(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
+        public? final? static [ContainingClassKey=C] val bar: <implicit> = LAZY_EXPRESSION
+            public? static [ContainingClassKey=C] get(): <implicit>
+
+        public? final? static [ContainingClassKey=C] val baz: <implicit>
+            public? static [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? val member2: <implicit> = LAZY_EXPRESSION
+            public? [ContainingClassKey=C] get(): <implicit>
+
+        public? final? static [ContainingClassKey=C] fun qux(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final? companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|C.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? class Nested : R|kotlin/Any| {
+            public? [ContainingClassKey=Nested] constructor(): R|C.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final typealias TA = Int
+
+        public? [ContainingClassKey=C] constructor(): R|C| { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
+    }

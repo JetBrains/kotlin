@@ -38,7 +38,7 @@ FIR element rendered:
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] val entries: R|kotlin/enums/EnumEntries<Marked.E>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Marked.E>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Marked.E>|
 
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] constructor(): R|Marked.E|
 

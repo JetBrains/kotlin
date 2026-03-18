@@ -1,0 +1,41 @@
+fun box(): String {
+  return test1(a = "test").plus(other = test1(a = 1)).plus(other = test2(a = 1))
+}
+
+fun test1(a: Any): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Any = a
+      val tmp1_Explain: String? = tmp0_Explain as? String
+      val tmp2_Explain: Int? = { // BLOCK
+        val tmp_0: String? = tmp1_Explain
+        when {
+          EQEQ(arg0 = tmp_0, arg1 = null) -> null
+          else -> tmp_0 /*as String */.<get-length>()
+        }
+      }
+      val tmp3_Explain: Int = 5
+      val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+      assert(value = tmp4_Explain, lazyMessage = local fun <anonymous>(): String {
+        return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 216, source = "    assert((a as? String)?.length == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 38, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 12, endOffset = 13, displayOffset = 12, value = tmp0_Explain), ValueExpression(startOffset = 12, endOffset = 24, displayOffset = 14, value = tmp1_Explain), ValueExpression(startOffset = 12, endOffset = 33, displayOffset = 27, value = tmp2_Explain), LiteralExpression(startOffset = 37, endOffset = 38, displayOffset = 37, value = tmp3_Explain), EqualityExpression(startOffset = 11, endOffset = 38, displayOffset = 34, value = tmp4_Explain, lhs = tmp2_Explain, rhs = tmp3_Explain)]))])) */)
+      }
+)
+    }
+  }
+)
+}
+
+fun test2(a: Any): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Any = a
+      val tmp1_Explain: String? = tmp0_Explain as? String
+      requireNotNull<String>(value = tmp1_Explain, lazyMessage = local fun <anonymous>(): String {
+        return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 304, source = "    requireNotNull(a as? String)", arguments = listOf<Argument>(elements = [Argument(startOffset = 19, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 19, endOffset = 20, displayOffset = 19, value = tmp0_Explain), ValueExpression(startOffset = 19, endOffset = 31, displayOffset = 21, value = tmp1_Explain)]))])) */)
+      }
+)
+    } /*~> Unit */
+  }
+)
+}
+

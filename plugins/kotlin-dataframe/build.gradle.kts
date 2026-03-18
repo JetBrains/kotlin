@@ -43,7 +43,7 @@ projectTests {
     withTestJar()
     withMockJdkAnnotationsJar()
 
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
         val classpathProvider = objects.newInstance<DataFramePluginClasspathProvider>()
         classpathProvider.classpath.from(dataframeRuntimeClasspath)
         jvmArgumentProviders.add(classpathProvider)

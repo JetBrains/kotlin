@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 <!WRONG_MODIFIER_TARGET!>companion<!> class A {
     companion object {
 

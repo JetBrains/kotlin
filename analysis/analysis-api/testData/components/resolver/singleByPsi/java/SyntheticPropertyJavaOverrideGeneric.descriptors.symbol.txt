@@ -1,0 +1,20 @@
+<caret_1>:
+  KtNameReferenceExpression(192,195): 'foo'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var foo: Foo<kotlin.String!>
+      ]
+
+<caret_2>:
+  KtNameReferenceExpression(211,214): 'foo'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var foo: Foo<kotlin.String!>
+      ]
+
+<caret_3>:
+  KtNameReferenceExpression(329,332): 'foo'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var foo: Foo<kotlin.String!>
+      ]

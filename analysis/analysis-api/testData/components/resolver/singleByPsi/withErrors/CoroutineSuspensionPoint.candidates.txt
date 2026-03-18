@@ -1,5 +1,5 @@
 KtNameReferenceExpression(183,194): 'suspendHere'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

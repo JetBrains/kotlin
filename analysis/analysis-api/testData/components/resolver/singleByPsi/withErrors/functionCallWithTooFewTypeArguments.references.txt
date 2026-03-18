@@ -2,5 +2,7 @@ KtNameReferenceExpression(45,52): 'generic'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: 3 type arguments expected for 'fun <A, B, C> generic(): Unit'.>
     symbols:
       (in ROOT) fun <A, B, C> generic()

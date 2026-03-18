@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("analysis/low-level-api-fir/testData/genericAnalysis") {
+class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/genericAnalysis") {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
     @Test

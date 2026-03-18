@@ -53,7 +53,7 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(166,173): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -167,7 +167,7 @@ KtBlockExpression(333,403): '{'
   null
 
 KtBinaryExpression(339,353): 'i + EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -203,7 +203,7 @@ KtBinaryExpression(339,353): 'i + EnumValue1'
       }
 
 KtNameReferenceExpression(339,340): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -256,7 +256,7 @@ KtOperationReferenceExpression(341,342): '+'
       }
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -276,7 +276,7 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -312,7 +312,7 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
       }
 
 KtNameReferenceExpression(358,359): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -365,12 +365,12 @@ KtOperationReferenceExpression(360,361): '+'
       }
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtBinaryExpression(382,401): 'i - InheritorObject'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -406,7 +406,7 @@ KtBinaryExpression(382,401): 'i - InheritorObject'
       }
 
 KtNameReferenceExpression(382,383): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

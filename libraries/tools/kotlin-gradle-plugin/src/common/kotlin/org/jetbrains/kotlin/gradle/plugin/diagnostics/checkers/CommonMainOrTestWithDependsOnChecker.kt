@@ -16,8 +16,7 @@ internal object CommonMainOrTestWithDependsOnChecker : KotlinGradleProjectChecke
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         fun KotlinSourceSet.registerReporting(suffix: String) {
             internal.dependsOn.forAll {
-                collector.reportOncePerGradleProject(
-                    project,
+                collector.reportOncePerGradleProject(diagnosticsContext,
                     KotlinToolingDiagnostics.CommonMainOrTestWithDependsOnDiagnostic(suffix),
                     key = suffix
                 )

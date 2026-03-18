@@ -74,4 +74,31 @@ val ReplScriptCompilationConfigurationKeys.makeSnippetIdentifier by PropertiesCo
 fun makeDefaultSnippetIdentifier(snippetId: ReplSnippetId) =
     "Line_${snippetId.no}${if (snippetId.generation > REPL_SNIPPET_FIRST_GEN) "_gen_${snippetId.generation}" else ""}"
 
-
+/**
+ * THIS IS EXTREMELY DANGEROUS, USE WITH CAUTION.
+ *
+ * A fully qualified name for a function which accepts a parameter-less, trailing lambda.
+ * When specified, this function is used to wrap the snippet content during evaluation.
+ * This can be used to support `suspend` within a REPL snippet,
+ * introduce a new reciever or context parameters,
+ * or wrap evaluation with some other custom behavior.
+ *
+ * For example, given a wrapper named `kotlinx.coroutines.runBlocking', a snippet like:
+ * ```kotlin
+ * // SNIPPET
+ * suspend fun request(url: String) { ... }
+ * val response = request("https://...")
+ * ```
+ *
+ * Will be transformed into a snippet like:
+ * ```kotlin
+ * // SNIPPET
+ * kotlinx.coroutines.runBlocking {
+ *     suspend fun request(url: String) { ... }
+ *     val response = request("https://...")
+ * }
+ * ```
+ *
+ * Yet the `response` property will still be accessible from later REPL snippets.
+ */
+val ReplScriptCompilationConfigurationKeys.internalWrapper by PropertiesCollection.key<String?>()

@@ -298,7 +298,6 @@ class ClassicFrontendFacade(
                     languageVersionSettings = configuration.languageVersionSettings,
                     storageManager = storageManager,
                     builtIns = builtInsModule,
-                    packageAccessHandler = null,
                     lookupTracker = LookupTracker.DO_NOTHING
                 )
                 if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
@@ -478,18 +477,17 @@ class ClassicFrontendFacade(
             override val analyzerServices: PlatformDependentAnalyzerServices get() = CommonPlatformAnalyzerServices
         }
 
-        private val _moduleInfos: List<ModuleInfoImpl> =
-            ModuleInfoImpl(module).let { listOf(it) + it.module.allDependencyModules.map(::ModuleInfoImpl) }
-        override val moduleInfos: List<ModuleInfo> get() = _moduleInfos
+        override val moduleInfos: List<ModuleInfo>
+            field = ModuleInfoImpl(module).let { listOf(it) + it.module.allDependencyModules.map(::ModuleInfoImpl) }
 
         override fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor =
-            _moduleInfos.singleOrNull { it.name == moduleInfo.name }?.module ?: error("Can't find ModuleDescriptor for $moduleInfo")
+            moduleInfos.singleOrNull { it.name == moduleInfo.name }?.module ?: error("Can't find ModuleDescriptor for $moduleInfo")
 
         override fun registerDependencyForAllModules(moduleInfo: ModuleInfo, descriptorForModule: ModuleDescriptorImpl) = Unit
         override fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider? = null
 
-        override val friendModuleInfos: List<ModuleInfo> = _moduleInfos.filter { it.module.shouldSeeInternalsOf(module) }
-        override val refinesModuleInfos: List<ModuleInfo> = _moduleInfos.filter { it.module in module.allExpectedByModules }
+        override val friendModuleInfos: List<ModuleInfo> = moduleInfos.filter { it.module.shouldSeeInternalsOf(module) }
+        override val refinesModuleInfos: List<ModuleInfo> = moduleInfos.filter { it.module in module.allExpectedByModules }
     }
 
     private fun createModuleContext(

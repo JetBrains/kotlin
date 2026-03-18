@@ -2,5 +2,6 @@ KtPropertyDelegate(160,196): 'by Bar().provideDelegate(null, null)'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) operator fun Foo.getValue(_this: kotlin.Any?, p: kotlin.Any?): kotlin.Int

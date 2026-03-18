@@ -2,5 +2,8 @@ KtLabelReferenceExpression(47,51): '@foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      extension receiver with type kotlin.String
+    resolveToSymbols:
       (in Foo) fun kotlin.String.foo()

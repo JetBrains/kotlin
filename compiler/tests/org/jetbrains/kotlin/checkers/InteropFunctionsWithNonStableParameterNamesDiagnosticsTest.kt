@@ -90,13 +90,12 @@ class InteropFunctionsWithNonStableParameterNamesDiagnosticsTest : AbstractDiagn
             override val analyzerServices: PlatformDependentAnalyzerServices get() = CommonPlatformAnalyzerServices
         }
 
-        private val dependeeModuleInfos: List<ModuleInfoImpl> = dependees.map(::ModuleInfoImpl)
-
-        override val moduleInfos: List<ModuleInfo> get() = dependeeModuleInfos
+        override val moduleInfos: List<ModuleInfo>
+            field = dependees.map(::ModuleInfoImpl)
 
         override fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor {
             // let's assume there is a few module infos at all
-            return dependeeModuleInfos.firstOrNull { it === moduleInfo }?.module
+            return moduleInfos.firstOrNull { it === moduleInfo }?.module
                 ?: error("Unknown module info $moduleInfo")
         }
 
@@ -104,7 +103,7 @@ class InteropFunctionsWithNonStableParameterNamesDiagnosticsTest : AbstractDiagn
         override fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider? = null
 
         override val friendModuleInfos: List<ModuleInfo> get() = emptyList()
-        override val refinesModuleInfos: List<ModuleInfo> get() = dependeeModuleInfos
+        override val refinesModuleInfos: List<ModuleInfo> get() = moduleInfos
     }
 
     companion object {

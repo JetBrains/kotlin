@@ -16,6 +16,6 @@ FILE: lib.kt
         }
 
         public final static [ContainingClassKey=Base1] val entries: R|kotlin/enums/EnumEntries<Base1>|
-            public get(): R|kotlin/enums/EnumEntries<Base1>|
+            public static get(): R|kotlin/enums/EnumEntries<Base1>|
 
     }

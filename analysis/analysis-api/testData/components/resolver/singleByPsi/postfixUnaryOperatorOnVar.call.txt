@@ -1,5 +1,5 @@
 KtPostfixExpression(31,34): 'i++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

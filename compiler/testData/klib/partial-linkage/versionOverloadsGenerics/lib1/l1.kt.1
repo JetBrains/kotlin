@@ -1,0 +1,21 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+class C {
+    fun <A> foo(
+        a: Int = 1,
+        @IntroducedAt("1") b: A? = "foo" as A?,
+        @IntroducedAt("2") c: Boolean = false,
+    ): String = "$a/$b/$c"
+
+    fun <A, B> bar(
+        a: A,
+        b: B,
+        @IntroducedAt("1") p: Pair<A, B> = a to b,
+        @IntroducedAt("2") s: String = "${p.first}:${p.second}",
+        @IntroducedAt("2") flag: Boolean = true,
+    ): String {
+        val p1 = p.first.toString()
+        val p2 = p.second.toString()
+        return "$a/$b/$p1/$p2/$s/$flag"
+    }
+}

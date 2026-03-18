@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.jvm
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -22,8 +23,10 @@ import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceMan
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
@@ -141,14 +144,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
             val environment = createCoreEnvironment(
-                rootDisposable, configuration, messageCollector,
-                moduleChunk.targetDescription()
+                rootDisposable, configuration, moduleChunk.targetDescription()
             ) ?: run {
                 configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
                 return COMPILATION_ERROR
             }
 
             if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
+                CheckDiagnosticCollector.reportToMessageCollector(configuration)
                 if (arguments.version) return OK
 
                 messageCollector.report(ERROR, "No source files")
@@ -159,14 +162,19 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 JvmFrontendPipelinePhase.dumpModel(dumpModelDir, chunk, configuration, arguments)
             }
 
-            if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR
-            return OK
+            val success = KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
+            CheckDiagnosticCollector.reportToMessageCollector(configuration)
+            return when {
+                success -> OK
+                else -> COMPILATION_ERROR
+            }
         } catch (e: CompilationException) {
             messageCollector.report(
                 EXCEPTION,
                 OutputMessageUtil.renderException(e),
                 MessageUtil.psiElementToMessageLocation(e.element)
             )
+            CheckDiagnosticCollector.reportToMessageCollector(configuration)
             return INTERNAL_ERROR
         }
     }
@@ -233,20 +241,19 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         fun createCoreEnvironment(
             rootDisposable: Disposable,
             configuration: CompilerConfiguration,
-            messageCollector: MessageCollector,
             targetDescription: String
         ): KotlinCoreEnvironment? {
             val perfManager = configuration.perfManager
             perfManager?.targetDescription = targetDescription
 
-            if (messageCollector.hasErrors()) return null
+            if (CheckDiagnosticCollector.checkHasErrors(configuration)) return null
 
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val sourceFiles = environment.getSourceFiles()
             perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
 
-            return if (messageCollector.hasErrors()) null else environment
+            return if (CheckDiagnosticCollector.checkHasErrors(configuration)) null else environment
         }
 
         internal fun createCustomPerformanceManagerOrNull(
@@ -275,13 +282,13 @@ fun CompilerConfiguration.configureModuleChunk(
         val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         fun strongWarning(message: String) {
-            messageCollector.report(STRONG_WARNING, message)
+            this.report(COMPILER_ARGUMENTS_WARNING, message)
         }
 
         if (destination != null) {
             strongWarning("The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified")
         }
-        if (arguments.javaSourceRoots != null) {
+        if (arguments.javaSourceRoots.isNotEmpty()) {
             strongWarning("The '-Xjava-source-roots' option is ignored because '-Xbuild-file' is specified")
         }
         if (arguments.javaPackagePrefix != null) {

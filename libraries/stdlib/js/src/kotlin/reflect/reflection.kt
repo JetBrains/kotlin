@@ -26,11 +26,16 @@ internal fun <T : Any> getKClass(jClass: JsClass<T>): KClass<T> {
     }
 }
 
+@OptIn(JsIntrinsic::class)
 @UsedFromCompilerGeneratedCode
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
     when (jsTypeOf(e)) {
         "string" -> PrimitiveClasses.stringClass
         "number" -> if (jsBitwiseOr(e, 0).asDynamic() === e) PrimitiveClasses.intClass else PrimitiveClasses.doubleClass
+        "bigint" -> {
+            if (isLongCompiledToBigInt() && js("BigInt.asIntN(64, e)") === e) PrimitiveClasses.longClass
+            else PrimitiveClasses.bigintClass
+        }
         "boolean" -> PrimitiveClasses.booleanClass
         "function" -> PrimitiveClasses.functionClass(e.asDynamic().length)
         else -> {

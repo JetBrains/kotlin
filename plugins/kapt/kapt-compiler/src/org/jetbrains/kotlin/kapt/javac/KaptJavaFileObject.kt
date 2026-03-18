@@ -87,8 +87,7 @@ class KaptJavaFileObject(
     }
 
     override fun hashCode(): Int {
-        var result = 0
-        result = 31 * result + compilationUnit.hashCode()
+        var result = compilationUnit.hashCode()
         result = 31 * result + clazz.hashCode()
         result = 31 * result + timestamp.hashCode()
         return result

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.directives
 import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
 import org.jetbrains.kotlin.config.InferenceLogsFormat
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilderBase
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -178,7 +178,7 @@ object DumpCfgOption {
     const val FLOW = "FLOW"
 }
 
-fun TestConfigurationBuilder.configureFirParser(parser: FirParser) {
+fun TestConfigurationBuilderBase<*, *>.configureFirParser(parser: FirParser) {
     defaultDirectives {
         FIR_PARSER with parser
     }

@@ -94,7 +94,7 @@ fun <T : ForwardDeclaredProtocolProtocol> testProtocol2Impl(s: Any?) = consumePr
 fun testClass2(s: Any?) = testClass2Impl<ForwardDeclaredClass>(s)
 fun testProtocol2(s: Any?) = testProtocol2Impl<ForwardDeclaredProtocolProtocol>(s)
 
-// MODULE: main(lib, b)
+// MODULE: main(lib, b, a)
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 

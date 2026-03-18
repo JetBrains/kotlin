@@ -92,7 +92,7 @@ KtNameReferenceExpression(204,210): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(213,214): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

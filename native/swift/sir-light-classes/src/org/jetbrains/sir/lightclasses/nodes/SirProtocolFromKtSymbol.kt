@@ -41,8 +41,8 @@ internal open class SirProtocolFromKtSymbol(
     override val documentation: String? by lazy {
         ktSymbol.documentation()
     }
-    override val name: String by lazy {
-        (this.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.name.asString()
+    override val name: String by lazyWithSessions {
+        (this.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
     }
     override var parent: SirDeclarationParent
         get() = withSessions {
@@ -219,6 +219,7 @@ private class SirRelocatedFunction(
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val fixity: SirFixity? get() = source.fixity
     override val attributes: List<SirAttribute> get() = source.attributes
+    override val contextParameter: SirParameter? get() = source.contextParameter
     override val extensionReceiverParameter: SirParameter? get() = source.extensionReceiverParameter
     override val parameters: List<SirParameter> get() = source.parameters
     override val errorType: SirType get() = source.errorType

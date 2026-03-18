@@ -2,5 +2,6 @@ KtNameReferenceExpression(75,83): 'Conflict'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Conflict) constructor()

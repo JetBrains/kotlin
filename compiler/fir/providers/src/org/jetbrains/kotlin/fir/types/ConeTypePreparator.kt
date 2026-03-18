@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.types.AbstractTypePreparator
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
-import org.jetbrains.kotlin.types.model.projection
 
 class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator() {
     private fun <T : ConeRigidType> prepareType(type: T): T {
@@ -22,7 +21,7 @@ class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator() {
         } as T
     }
 
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
+    override fun prepareType(type: KotlinTypeMarker): ConeKotlinType {
         if (type !is ConeKotlinType) {
             throw AssertionError("Unexpected type in ConeTypePreparator: ${this::class.java}")
         }
@@ -32,7 +31,7 @@ class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator() {
         }
     }
 
-    override fun clearTypeFromUnnecessaryAttributes(type: RigidTypeMarker): RigidTypeMarker {
+    override fun clearTypeFromUnnecessaryAttributes(type: RigidTypeMarker): ConeRigidType {
         return (type as ConeRigidType).dropEnhancedNullability()
     }
 

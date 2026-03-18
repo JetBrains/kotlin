@@ -49,18 +49,16 @@ fun testMultiline(s: String?, sb: StringBuilder) {
         x + 3
     }
 
-    // These calls are reported now because myLet() declaration has must-use status of its own
-
     s?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
         it.last().<!RETURN_VALUE_NOT_USED!>myLet<!> {
-        it + "b"
-    }
+            it + "b"
+        }
         it.last().myLet {
             it + "b"
         }
     }
 
-    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
+    s?.myLet {
         it.last().myLet {
             sb.append(it)
         }
@@ -68,6 +66,17 @@ fun testMultiline(s: String?, sb: StringBuilder) {
             sb.append(it)
         }
     }
+}
+
+fun testNonLocalReturn(s: String?): Int {
+    s?.myLet<String, Nothing> { return 42 }
+    s?.myLet<String, String> { return 42 }
+    return 0
+}
+
+fun testNoExplicitReturns(s: String?) {
+    s?.myLet<String, Nothing> { throw IllegalStateException("a") }
+    s?.myLet<String, String> { throw IllegalStateException("a") }
 }
 
 /* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contractReturnsResultOfEffect, contracts, functionDeclaration,

@@ -1,2 +1,5 @@
 KtOperationReferenceExpression(20,21): '>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]

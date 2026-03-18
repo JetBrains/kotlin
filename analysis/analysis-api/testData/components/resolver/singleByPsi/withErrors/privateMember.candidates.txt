@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(59,66): 'a.foo()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

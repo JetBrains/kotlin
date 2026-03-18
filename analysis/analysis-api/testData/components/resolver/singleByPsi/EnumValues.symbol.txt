@@ -1,2 +1,5 @@
 KtNameReferenceExpression(55,61): 'values'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/E.values(): kotlin.Array<test.E>
+    ]

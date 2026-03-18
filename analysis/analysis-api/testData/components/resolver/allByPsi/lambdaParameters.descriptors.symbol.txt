@@ -89,10 +89,16 @@ KtConstantExpression(74,75): '1'
   null
 
 KtDotQualifiedExpression(80,94): 'prop.action1()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<extension receiver>: P1<dispatch receiver>: kotlin.Function1<P1, R>): R
+    ]
 
 KtNameReferenceExpression(80,84): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.Int
+    ]
 
 KtCallExpression(85,94): 'action1()'
   KaSymbolResolutionSuccess:
@@ -101,7 +107,10 @@ KtCallExpression(85,94): 'action1()'
     ]
 
 KtNameReferenceExpression(85,92): 'action1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      action1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+    ]
 
 KtValueArgumentList(92,94): '()'
   null
@@ -113,7 +122,10 @@ KtCallExpression(99,112): 'action1(prop)'
     ]
 
 KtNameReferenceExpression(99,106): 'action1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      action1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+    ]
 
 KtValueArgumentList(106,112): '(prop)'
   null
@@ -122,13 +134,19 @@ KtValueArgument(107,111): 'prop'
   null
 
 KtNameReferenceExpression(107,111): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(118,132): 'prop.action2()'
   null
 
 KtNameReferenceExpression(118,122): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.Int
+    ]
 
 KtCallExpression(123,132): 'action2()'
   KaSymbolResolutionError:
@@ -136,7 +154,9 @@ KtCallExpression(123,132): 'action2()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: action2>
 
 KtNameReferenceExpression(123,130): 'action2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: action2>
 
 KtValueArgumentList(130,132): '()'
   null
@@ -148,7 +168,10 @@ KtCallExpression(151,164): 'action2(prop)'
     ]
 
 KtNameReferenceExpression(151,158): 'action2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      action2: kotlin.Function1<kotlin.Int, kotlin.Unit>
+    ]
 
 KtValueArgumentList(158,164): '(prop)'
   null
@@ -157,4 +180,7 @@ KtValueArgument(159,163): 'prop'
   null
 
 KtNameReferenceExpression(159,163): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.Int
+    ]

@@ -47,7 +47,7 @@ FILE: annotation.kt
         }
 
         public final static [ContainingClassKey=My] val entries: R|kotlin/enums/EnumEntries<My>|
-            public get(): R|kotlin/enums/EnumEntries<My>|
+            public static get(): R|kotlin/enums/EnumEntries<My>|
 
     }
     @base() public? final? fun foo(@base() y: @base() Int): @base() Int {
@@ -110,7 +110,7 @@ FILE: annotation.kt
         }
 
         public final static [ContainingClassKey=MyDerived] val entries: R|kotlin/enums/EnumEntries<MyDerived>|
-            public get(): R|kotlin/enums/EnumEntries<MyDerived>|
+            public static get(): R|kotlin/enums/EnumEntries<MyDerived>|
 
     }
     @derived(IntegerLiteral(1)) public? final? fun fooDerived(@derived(IntegerLiteral(1)) y: @derived(IntegerLiteral(1)) Int): @derived(IntegerLiteral(1)) Int {

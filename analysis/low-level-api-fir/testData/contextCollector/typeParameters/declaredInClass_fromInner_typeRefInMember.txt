@@ -15,6 +15,7 @@ Tower Data Context:
         Scope: FirNestedClassifierScopeImpl
             Classifiers:
                 FirRegularClassSymbol public final inner class Inner<Outer(MyParam)> : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class Outer<MyParam> : R|kotlin/Any|
     Element 7
         Scope: FirMemberTypeParameterScope
             Classifiers:
@@ -24,12 +25,14 @@ Tower Data Context:
             FirRegularClassSymbol public final class Outer<MyParam> : R|kotlin/Any|
                 Type: test.Outer<MyParam>
     Element 9
-        Scope: FirMemberTypeParameterScope
+        Static scope owner symbol: FirRegularClassSymbol public final inner class Inner<Outer(MyParam)> : R|kotlin/Any|
     Element 10
+        Scope: FirMemberTypeParameterScope
+    Element 11
         Implicit receiver:
             FirRegularClassSymbol public final inner class Inner<Outer(MyParam)> : R|kotlin/Any|
                 Type: test.Outer.Inner<MyParam>
-    Element 11
+    Element 12
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol p: R|MyParam|

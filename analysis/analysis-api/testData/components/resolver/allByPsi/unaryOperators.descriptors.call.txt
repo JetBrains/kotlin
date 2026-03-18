@@ -26,7 +26,7 @@ KtProperty(34,53): 'val negative = -one'
   null
 
 KtPrefixExpression(49,53): '-one'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -66,7 +66,7 @@ KtOperationReferenceExpression(49,50): '-'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(50,53): 'one'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -86,7 +86,7 @@ KtProperty(58,77): 'val positive = +one'
   null
 
 KtPrefixExpression(73,77): '+one'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -126,7 +126,7 @@ KtOperationReferenceExpression(73,74): '+'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(74,77): 'one'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -143,7 +143,7 @@ KtNameReferenceExpression(74,77): 'one'
       typeArgumentsMapping = {}
 
 KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -186,7 +186,7 @@ KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
   null
 
 KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -229,7 +229,7 @@ KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
   null
 
 KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -269,7 +269,7 @@ KtOperationReferenceExpression(87,88): '-'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -289,7 +289,7 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -326,7 +326,7 @@ KtCallExpression(88,97): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(88,95): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -366,7 +366,7 @@ KtCallExpression(98,110): 'unaryMinus()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(98,108): 'unaryMinus'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -409,7 +409,7 @@ KtCallExpression(111,116): 'not()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(111,114): 'not'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

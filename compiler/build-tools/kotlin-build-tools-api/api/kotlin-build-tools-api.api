@@ -57,6 +57,40 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExec
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer {
+	public abstract fun render (Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity : java/lang/Enum {
+	public static final field DEBUG Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field ERROR Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field INFO Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field WARNING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation {
+	public fun <init> (Ljava/lang/String;IIIILjava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()I
+	public final fun component6 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;IIIILjava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;Ljava/lang/String;IIIILjava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()I
+	public final fun getColumnEnd ()I
+	public final fun getLine ()I
+	public final fun getLineContent ()Ljava/lang/String;
+	public final fun getLineEnd ()I
+	public final fun getPath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DelicateBuildToolsApi : java/lang/annotation/Annotation {
 }
 
@@ -214,6 +248,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_ANNOTATION_DEFAULT_TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_ANNOTATION_TARGET_ALL Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_CHECK_PHASE_CONDITIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_COLLECTION_LITERALS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_COMPILER_PLUGIN_ORDER Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_CONTEXT_PARAMETERS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
@@ -449,6 +484,41 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArgu
 	public final fun getId ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode : java/lang/Enum {
+	public static final field STABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
+	public static final field UNSTABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode : java/lang/Enum {
+	public static final field FIRST_ONLY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+	public static final field FIRST_ONLY_WARN Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+	public static final field PARAM_PROPERTY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode : java/lang/Enum {
+	public static final field ALWAYS_DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public static final field ALWAYS_ENABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public static final field JVM Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public static final field LEGACY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode : java/lang/Enum {
+	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode;
+	public static final field ENABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode : java/lang/Enum {
 	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
 	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
@@ -464,6 +534,53 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMod
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease : java/lang/Enum {
+	public static final field JDK_10 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_11 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_12 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_13 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_14 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_15 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_16 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_17 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_18 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_19 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_1_6 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_1_7 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_1_8 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_20 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_21 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_22 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_23 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_24 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_25 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_6 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_7 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_8 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_9 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode : java/lang/Enum {
+	public static final field IGNORE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+	public static final field WARN Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode : java/lang/Enum {
+	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
+	public static final field ENABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
+	public static final field NO_COMPATIBILITY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget : java/lang/Enum {
@@ -513,6 +630,23 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVer
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode : java/lang/Enum {
+	public static final field CLASS Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
+	public static final field INDY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode : java/lang/Enum {
+	public static final field COMPLETE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+	public static final field NAME_MISMATCH Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+	public static final field ONLY_SYNTAX Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode : java/lang/Enum {
 	public static final field CHECKER Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 	public static final field DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
@@ -520,6 +654,47 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnVal
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode : java/lang/Enum {
+	public static final field CLASS Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode;
+	public static final field INDY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/StringConcatMode : java/lang/Enum {
+	public static final field INDY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/StringConcatMode;
+	public static final field INDY_WITH_CONSTANTS Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/StringConcatMode;
+	public static final field INLINE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/StringConcatMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/StringConcatMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/StringConcatMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode : java/lang/Enum {
+	public static final field ERROR Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+	public static final field NONE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+	public static final field WARNING Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode : java/lang/Enum {
+	public static final field INDY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
+	public static final field INLINE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/types/ProfileCompilerCommand {
+	public fun <init> (Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;)V
+	public final fun getCommand ()Ljava/lang/String;
+	public final fun getOutputDir ()Ljava/nio/file/Path;
+	public final fun getProfilerPath ()Ljava/nio/file/Path;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriFileIdToPathDataDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
@@ -736,6 +911,8 @@ public class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncremental
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Companion;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;)Ljava/lang/Object;
 	public abstract fun getClasspath ()Ljava/util/List;
 	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Builder;
@@ -746,6 +923,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;)Ljava/lang/Object;
 	public abstract fun getClasspath ()Ljava/util/List;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Companion {
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
@@ -776,6 +956,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspa
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation : org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
 	public static final field COMPILER_ARGUMENTS_LOG_LEVEL Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
+	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Companion;
 	public static final field GENERATE_COMPILER_REF_INDEX Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field INCREMENTAL_COMPILATION Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;

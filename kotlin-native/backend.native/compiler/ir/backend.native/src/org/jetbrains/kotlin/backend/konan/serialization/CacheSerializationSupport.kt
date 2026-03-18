@@ -125,11 +125,11 @@ internal class InlineFunctionDeserializer(
 
         with(declarationDeserializer) {
             function.withDeserializeBodies {
-                body = (deserializeStatementBody(inlineFunctionReference.body) as IrBody)
+                body = (deserializeStatementBody(inlineFunctionReference.body, inlineFunctionReference.startOffset) as IrBody)
                 parameters.filter { it.kind == IrParameterKind.Regular }.forEachIndexed { index, parameter ->
                     val defaultValueIndex = inlineFunctionReference.defaultValues[index]
                     if (defaultValueIndex != INVALID_INDEX)
-                        parameter.defaultValue = deserializeExpressionBody(defaultValueIndex)
+                        parameter.defaultValue = deserializeExpressionBody(defaultValueIndex, parameter.startOffset)
                 }
             }
         }
@@ -397,17 +397,18 @@ internal object ClassFieldsSerializer {
         }
 
         val idSignatureSerializer = IdSignatureSerializer(
-                ::serializeString,
-                ::serializeString,
-                protoIdSignatureMap,
-                protoIdSignatureArray
+            ::serializeString,
+            ::serializeString,
+            protoIdSignatureMap,
+            protoIdSignatureArray,
+            serializeForKlibAbi_2_3 = false,
         )
 
         classFields.forEach {
             idSignatureSerializer.protoIdSignature(it.classSignature)
         }
-        val signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory()
-        val signatureStrings = IrStringWriter(protoStringArray).writeIntoMemory()
+        val signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, false).writeIntoMemory()
+        val signatureStrings = IrStringWriter(protoStringArray, false).writeIntoMemory()
         val stringTable = buildStringTable {
             classFields.forEach {
                 +it.file.fqName
@@ -431,7 +432,7 @@ internal object ClassFieldsSerializer {
                 stream.writeInt(field.alignment)
             }
         }
-        return IrArrayWriter(listOf(signatures, signatureStrings, stream.buf)).writeIntoMemory()
+        return IrArrayWriter(listOf(signatures, signatureStrings, stream.buf), false).writeIntoMemory()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedClassFields>) {

@@ -33,6 +33,11 @@ class CasesPublicAPITest {
     }
 
     @Test
+    fun syntheticConstructors() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
+
+    @Test
     fun companions() {
         snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.companions.PrivateApi"))
     }
@@ -142,6 +147,16 @@ class CasesPublicAPITest {
     @Test
     fun file() {
         snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.file.FileFacade1Kt"))
+    }
+
+    @Test
+    fun jvmOverloads() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
+
+    @Test
+    fun consts() {
+        snapshotAPIAndCompare(testName.methodName)
     }
 
     private fun snapshotAPIAndCompareRoot(

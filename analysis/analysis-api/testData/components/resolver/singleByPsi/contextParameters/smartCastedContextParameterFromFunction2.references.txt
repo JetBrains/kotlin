@@ -2,6 +2,7 @@ KtNameReferenceExpression(97,100): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) context(`<unused var>`@A)
       fun foo()

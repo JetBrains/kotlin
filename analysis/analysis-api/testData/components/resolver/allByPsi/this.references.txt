@@ -2,13 +2,17 @@ KtNameReferenceExpression(8,11): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package one
 
 KtCallExpression(66,71): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -16,6 +20,7 @@ KtNameReferenceExpression(66,69): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -23,6 +28,7 @@ KtNameReferenceExpression(80,84): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -30,6 +36,7 @@ KtCallExpression(85,90): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -37,6 +44,7 @@ KtNameReferenceExpression(85,88): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -44,6 +52,7 @@ KtNameReferenceExpression(99,103): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -51,6 +60,7 @@ KtLabelReferenceExpression(103,111): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -58,6 +68,7 @@ KtCallExpression(112,117): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -65,6 +76,7 @@ KtNameReferenceExpression(112,115): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -72,6 +84,7 @@ KtCallExpression(203,208): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -79,6 +92,7 @@ KtNameReferenceExpression(203,206): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) fun foo()
 
@@ -86,6 +100,7 @@ KtNameReferenceExpression(221,225): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -93,6 +108,7 @@ KtCallExpression(226,231): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -100,6 +116,7 @@ KtNameReferenceExpression(226,229): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) fun foo()
 
@@ -107,6 +124,7 @@ KtNameReferenceExpression(244,248): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -114,6 +132,7 @@ KtLabelReferenceExpression(248,259): '@InnerOuter'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -121,6 +140,7 @@ KtCallExpression(260,265): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -128,6 +148,7 @@ KtNameReferenceExpression(260,263): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) fun foo()
 
@@ -135,6 +156,7 @@ KtNameReferenceExpression(278,282): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -142,6 +164,7 @@ KtLabelReferenceExpression(282,290): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -149,6 +172,7 @@ KtCallExpression(291,296): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -156,6 +180,7 @@ KtNameReferenceExpression(291,294): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -163,6 +188,7 @@ KtCallExpression(403,408): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -170,6 +196,7 @@ KtNameReferenceExpression(403,406): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter.InnerNested) fun foo()
 
@@ -177,6 +204,7 @@ KtNameReferenceExpression(425,429): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -184,6 +212,7 @@ KtCallExpression(430,435): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -191,6 +220,7 @@ KtNameReferenceExpression(430,433): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter.InnerNested) fun foo()
 
@@ -198,6 +228,7 @@ KtNameReferenceExpression(452,456): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -205,6 +236,7 @@ KtLabelReferenceExpression(456,468): '@InnerNested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -212,6 +244,7 @@ KtCallExpression(469,474): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -219,6 +252,7 @@ KtNameReferenceExpression(469,472): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter.InnerNested) fun foo()
 
@@ -226,6 +260,7 @@ KtNameReferenceExpression(491,495): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -233,6 +268,7 @@ KtLabelReferenceExpression(495,506): '@InnerOuter'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -240,6 +276,7 @@ KtCallExpression(507,512): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -247,6 +284,7 @@ KtNameReferenceExpression(507,510): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) fun foo()
 
@@ -254,6 +292,7 @@ KtNameReferenceExpression(529,533): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -261,6 +300,7 @@ KtLabelReferenceExpression(533,541): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -268,6 +308,7 @@ KtCallExpression(542,547): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -275,6 +316,7 @@ KtNameReferenceExpression(542,545): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -282,6 +324,7 @@ KtLabelReferenceExpression(573,578): 'anon@'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -289,20 +332,27 @@ KtNameReferenceExpression(583,590): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in one) class MyClass
 
 KtNameReferenceExpression(595,601): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtCallExpression(625,630): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -310,6 +360,7 @@ KtNameReferenceExpression(625,628): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -317,6 +368,7 @@ KtNameReferenceExpression(651,655): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type one.MyClass
 
@@ -324,6 +376,7 @@ KtCallExpression(656,661): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -331,6 +384,7 @@ KtNameReferenceExpression(656,659): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -338,6 +392,7 @@ KtNameReferenceExpression(682,686): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type one.MyClass
 
@@ -345,13 +400,17 @@ KtLabelReferenceExpression(686,691): '@anon'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      extension receiver with type one.MyClass
+    resolveToSymbols:
       (in <local>: MyClass.InnerOuter.InnerNested.<no name>.f) fun one.MyClass.(s: kotlin.String): kotlin.Unit
 
 KtCallExpression(692,697): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -359,6 +418,7 @@ KtNameReferenceExpression(692,695): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -366,6 +426,7 @@ KtNameReferenceExpression(718,722): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -373,6 +434,7 @@ KtLabelReferenceExpression(722,734): '@InnerNested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -380,6 +442,7 @@ KtCallExpression(735,740): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -387,6 +450,7 @@ KtNameReferenceExpression(735,738): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter.InnerNested) fun foo()
 
@@ -394,6 +458,7 @@ KtNameReferenceExpression(761,765): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -401,6 +466,7 @@ KtLabelReferenceExpression(765,776): '@InnerOuter'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -408,6 +474,7 @@ KtCallExpression(777,782): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -415,6 +482,7 @@ KtNameReferenceExpression(777,780): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) fun foo()
 
@@ -422,6 +490,7 @@ KtNameReferenceExpression(803,807): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -429,6 +498,7 @@ KtLabelReferenceExpression(807,815): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -436,6 +506,7 @@ KtCallExpression(816,821): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -443,6 +514,7 @@ KtNameReferenceExpression(816,819): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -450,6 +522,7 @@ KtCallExpression(857,1107): 'myWith { t ->'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -457,6 +530,7 @@ KtNameReferenceExpression(857,863): 'myWith'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) fun <T> T.myWith(body: T.(T) -> kotlin.Unit)
 
@@ -464,6 +538,7 @@ KtCallExpression(891,896): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -471,6 +546,7 @@ KtNameReferenceExpression(891,894): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter.InnerNested) fun foo()
 
@@ -478,6 +554,7 @@ KtNameReferenceExpression(917,921): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type one.MyClass.InnerOuter.InnerNested
 
@@ -485,6 +562,7 @@ KtCallExpression(922,927): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -492,6 +570,7 @@ KtNameReferenceExpression(922,925): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter.InnerNested) fun foo()
 
@@ -499,6 +578,7 @@ KtNameReferenceExpression(948,952): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type one.MyClass.InnerOuter.InnerNested
 
@@ -506,13 +586,17 @@ KtLabelReferenceExpression(952,959): '@myWith'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      extension receiver with type one.MyClass.InnerOuter.InnerNested
+    resolveToSymbols:
       (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.MyClass.InnerOuter.InnerNested.(t: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtCallExpression(960,965): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -520,6 +604,7 @@ KtNameReferenceExpression(960,963): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter.InnerNested) fun foo()
 
@@ -527,6 +612,7 @@ KtNameReferenceExpression(986,990): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -534,6 +620,7 @@ KtLabelReferenceExpression(990,1002): '@InnerNested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) inner class InnerNested
 
@@ -541,6 +628,7 @@ KtCallExpression(1003,1008): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -548,6 +636,7 @@ KtNameReferenceExpression(1003,1006): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter.InnerNested) fun foo()
 
@@ -555,6 +644,7 @@ KtNameReferenceExpression(1029,1033): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -562,6 +652,7 @@ KtLabelReferenceExpression(1033,1044): '@InnerOuter'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) inner class InnerOuter
 
@@ -569,6 +660,7 @@ KtCallExpression(1045,1050): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -576,6 +668,7 @@ KtNameReferenceExpression(1045,1048): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter) fun foo()
 
@@ -583,6 +676,7 @@ KtNameReferenceExpression(1071,1075): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -590,6 +684,7 @@ KtLabelReferenceExpression(1075,1083): '@MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) class MyClass
 
@@ -597,6 +692,7 @@ KtCallExpression(1084,1089): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -604,6 +700,7 @@ KtNameReferenceExpression(1084,1087): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass) fun foo()
 
@@ -611,6 +708,7 @@ KtCallExpression(1125,1194): 'myWith label@{'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -618,6 +716,7 @@ KtNameReferenceExpression(1125,1131): 'myWith'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) fun <T> T.myWith(body: T.(T) -> kotlin.Unit)
 
@@ -625,6 +724,7 @@ KtLabelReferenceExpression(1132,1138): 'label@'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -632,6 +732,7 @@ KtNameReferenceExpression(1160,1164): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type one.MyClass.InnerOuter.InnerNested
 
@@ -639,13 +740,17 @@ KtLabelReferenceExpression(1164,1170): '@label'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      extension receiver with type one.MyClass.InnerOuter.InnerNested
+    resolveToSymbols:
       (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.MyClass.InnerOuter.InnerNested.(it: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtCallExpression(1171,1176): 'foo()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -653,6 +758,7 @@ KtNameReferenceExpression(1171,1174): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.MyClass.InnerOuter.InnerNested) fun foo()
 
@@ -660,41 +766,57 @@ KtNameReferenceExpression(1236,1237): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: myWith) T
 
 KtNameReferenceExpression(1251,1252): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: myWith) T
 
 KtNameReferenceExpression(1254,1255): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: myWith) T
 
 KtNameReferenceExpression(1260,1264): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) object Unit
 
 KtCallExpression(1272,1282): 'body(this)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in kotlin.Function2) operator fun invoke(p1: P1, p2: P2): R
+    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1272,1276): 'body'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       body: T.(T) -> kotlin.Unit
 
@@ -702,5 +824,6 @@ KtNameReferenceExpression(1277,1281): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type T

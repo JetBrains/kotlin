@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.isEnumEntry
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.resolvedSymbolOrCompanionSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
 import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
@@ -93,11 +96,15 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
         }
     }
 
+    context(context: CheckerContext)
     private fun FirExpression.getClassSymbol(session: FirSession): FirRegularClassSymbol? {
         return when (this) {
-            is FirResolvedQualifier -> {
-                this.resolvedType.toRegularClassSymbol(session)
-            }
+            is FirResolvedQualifier ->
+                if (LanguageFeature.FixedUninitializedEnumCompanionCheck.isEnabled()) {
+                    this.resolvedSymbolOrCompanionSymbol()
+                } else {
+                    this.resolvedType.toRegularClassSymbol(session)
+                }
             else -> (this.toReference(session) as? FirThisReference)?.boundSymbol
         } as? FirRegularClassSymbol
     }

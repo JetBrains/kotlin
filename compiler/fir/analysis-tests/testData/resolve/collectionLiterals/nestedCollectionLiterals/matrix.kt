@@ -41,14 +41,14 @@ fun test() {
        [7, 8, 9],
     ])
     takeMatrix([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
-    takeMatrix([[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]])
+    takeMatrix([[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]])
 
     var matrix: Matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     matrix = []
     matrix = [[]]
     matrix = [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]
     matrix = [[<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]]
-    matrix = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]]
+    matrix = [[<!UNRESOLVED_REFERENCE!>[]<!>]]
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, objectDeclaration,

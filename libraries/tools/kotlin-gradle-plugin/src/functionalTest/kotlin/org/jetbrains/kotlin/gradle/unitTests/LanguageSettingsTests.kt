@@ -170,7 +170,7 @@ class LanguageSettingsTests {
         val project = kmpProject {
             with(multiplatformExtension) {
                 sourceSets.commonMain {
-                    @Suppress("DEPRECATION")
+                    @Suppress("DEPRECATION_ERROR")
                     languageSettings.enableLanguageFeature("InlineClasses")
                 }
             }
@@ -214,7 +214,7 @@ class LanguageSettingsTests {
                     languageSettings {
                         apiVersion = "1.4"
                         languageVersion = "1.3"
-                        @Suppress("DEPRECATION")
+                        @Suppress("DEPRECATION_ERROR")
                         enableLanguageFeature("SoundSmartcastForEnumEntries")
                         progressiveMode = true
                     }

@@ -44,7 +44,10 @@ KtWhenExpression(120,162): 'when (a) {'
   null
 
 KtNameReferenceExpression(126,127): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: A
+    ]
 
 KtWhenEntry(135,145): 'A.A -> "A"'
   null
@@ -53,13 +56,22 @@ KtWhenConditionWithExpression(135,138): 'A.A'
   null
 
 KtDotQualifiedExpression(135,138): 'A.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.A
+    ]
 
 KtNameReferenceExpression(135,136): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNameReferenceExpression(137,138): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.A
+    ]
 
 KtStringTemplateExpression(142,145): '"A"'
   null
@@ -74,13 +86,22 @@ KtWhenConditionWithExpression(150,153): 'A.B'
   null
 
 KtDotQualifiedExpression(150,153): 'A.B'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.B
+    ]
 
 KtNameReferenceExpression(150,151): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNameReferenceExpression(152,153): 'B'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.B
+    ]
 
 KtStringTemplateExpression(157,160): '"B"'
   null

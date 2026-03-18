@@ -1,0 +1,299 @@
+KtFile: 'augmentedAssignment.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,216): 'class A {'
+  null
+
+KtClassBody(8,216): '{'
+  null
+
+KtNamedFunction(14,50): 'operator fun plusAssign(other: A) {}'
+  null
+
+KtDeclarationModifierList(14,22): 'operator'
+  null
+
+KtParameterList(37,47): '(other: A)'
+  null
+
+KtParameter(38,46): 'other: A'
+  null
+
+KtTypeReference(45,46): 'A'
+  null
+
+KtUserType(45,46): 'A'
+  null
+
+KtNameReferenceExpression(45,46): 'A'
+  null
+
+KtBlockExpression(48,50): '{}'
+  null
+
+KtNamedFunction(55,92): 'operator fun minusAssign(other: A) {}'
+  null
+
+KtDeclarationModifierList(55,63): 'operator'
+  null
+
+KtParameterList(79,89): '(other: A)'
+  null
+
+KtParameter(80,88): 'other: A'
+  null
+
+KtTypeReference(87,88): 'A'
+  null
+
+KtUserType(87,88): 'A'
+  null
+
+KtNameReferenceExpression(87,88): 'A'
+  null
+
+KtBlockExpression(90,92): '{}'
+  null
+
+KtNamedFunction(97,134): 'operator fun timesAssign(other: A) {}'
+  null
+
+KtDeclarationModifierList(97,105): 'operator'
+  null
+
+KtParameterList(121,131): '(other: A)'
+  null
+
+KtParameter(122,130): 'other: A'
+  null
+
+KtTypeReference(129,130): 'A'
+  null
+
+KtUserType(129,130): 'A'
+  null
+
+KtNameReferenceExpression(129,130): 'A'
+  null
+
+KtBlockExpression(132,134): '{}'
+  null
+
+KtNamedFunction(139,174): 'operator fun divAssign(other: A) {}'
+  null
+
+KtDeclarationModifierList(139,147): 'operator'
+  null
+
+KtParameterList(161,171): '(other: A)'
+  null
+
+KtParameter(162,170): 'other: A'
+  null
+
+KtTypeReference(169,170): 'A'
+  null
+
+KtUserType(169,170): 'A'
+  null
+
+KtNameReferenceExpression(169,170): 'A'
+  null
+
+KtBlockExpression(172,174): '{}'
+  null
+
+KtNamedFunction(179,214): 'operator fun remAssign(other: A) {}'
+  null
+
+KtDeclarationModifierList(179,187): 'operator'
+  null
+
+KtParameterList(201,211): '(other: A)'
+  null
+
+KtParameter(202,210): 'other: A'
+  null
+
+KtTypeReference(209,210): 'A'
+  null
+
+KtUserType(209,210): 'A'
+  null
+
+KtNameReferenceExpression(209,210): 'A'
+  null
+
+KtBlockExpression(212,214): '{}'
+  null
+
+KtNamedFunction(218,319): 'fun test() {'
+  null
+
+KtParameterList(226,228): '()'
+  null
+
+KtBlockExpression(229,319): '{'
+  null
+
+KtProperty(235,246): 'val a = A()'
+  null
+
+KtCallExpression(243,246): 'A()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtNameReferenceExpression(243,244): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtValueArgumentList(244,246): '()'
+  null
+
+KtProperty(251,262): 'val b = A()'
+  null
+
+KtCallExpression(259,262): 'A()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtNameReferenceExpression(259,260): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtValueArgumentList(260,262): '()'
+  null
+
+KtBinaryExpression(267,273): 'a += b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.plusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(267,268): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
+
+KtOperationReferenceExpression(269,271): '+='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.plusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(272,273): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
+
+KtBinaryExpression(278,284): 'a -= b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.minusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(278,279): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
+
+KtOperationReferenceExpression(280,282): '-='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.minusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(283,284): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
+
+KtBinaryExpression(289,295): 'a *= b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.timesAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(289,290): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
+
+KtOperationReferenceExpression(291,293): '*='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.timesAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(294,295): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
+
+KtBinaryExpression(300,306): 'a /= b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.divAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(300,301): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
+
+KtOperationReferenceExpression(302,304): '/='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.divAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(305,306): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
+
+KtBinaryExpression(311,317): 'a %= b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.remAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(311,312): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
+
+KtOperationReferenceExpression(313,315): '%='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.remAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(316,317): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]

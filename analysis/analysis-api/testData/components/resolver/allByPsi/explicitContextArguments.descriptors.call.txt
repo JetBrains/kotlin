@@ -320,12 +320,12 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
 KtNameReferenceExpression(395,402): 'unnamed'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -388,7 +388,7 @@ KtNameReferenceExpression(395,402): 'unnamed'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
@@ -474,12 +474,12 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
 KtNameReferenceExpression(445,450): 'named'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -542,7 +542,7 @@ KtNameReferenceExpression(445,450): 'named'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
@@ -628,12 +628,12 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
             callableId = null)
         }
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
 KtNameReferenceExpression(494,501): 'unnamed'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -696,7 +696,7 @@ KtNameReferenceExpression(494,501): 'unnamed'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
@@ -730,7 +730,7 @@ KtCallExpression(529,539): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(529,537): 'Explicit'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -828,12 +828,12 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
             callableId = null)
         }
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
 KtNameReferenceExpression(563,568): 'named'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -896,7 +896,7 @@ KtNameReferenceExpression(563,568): 'named'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
@@ -930,7 +930,7 @@ KtCallExpression(596,606): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(596,604): 'Explicit'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1036,7 +1036,7 @@ KtCallExpression(664,794): 'with(Explicit()) {'
       }
 
 KtNameReferenceExpression(664,668): 'with'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1112,7 +1112,7 @@ KtCallExpression(669,679): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(669,677): 'Explicit'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1207,12 +1207,12 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
 KtNameReferenceExpression(691,698): 'unnamed'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1275,7 +1275,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
@@ -1361,12 +1361,12 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
 KtNameReferenceExpression(745,750): 'named'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1429,7 +1429,7 @@ KtNameReferenceExpression(745,750): 'named'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
@@ -1515,12 +1515,12 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
             callableId = null)
         }
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
 KtNameReferenceExpression(800,807): 'unnamed'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1583,7 +1583,7 @@ KtNameReferenceExpression(800,807): 'unnamed'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun unnamed(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
@@ -1617,7 +1617,7 @@ KtCallExpression(835,845): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(835,843): 'Explicit'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1715,12 +1715,12 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
             callableId = null)
         }
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
 KtNameReferenceExpression(869,874): 'named'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1783,7 +1783,7 @@ KtNameReferenceExpression(869,874): 'named'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt
     public fun named(regular: String): Unit defined in root package in file explicitContextArguments.kt>
 
@@ -1817,7 +1817,7 @@ KtCallExpression(902,912): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(902,910): 'Explicit'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

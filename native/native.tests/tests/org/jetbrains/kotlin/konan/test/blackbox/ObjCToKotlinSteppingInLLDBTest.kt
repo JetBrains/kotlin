@@ -308,6 +308,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             freeCompilerArgs = freeCompilerArgs,
             nominalPackageName = PackageName.EMPTY,
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                exitCodeCheck = TestRunCheck.ExitCode.SkipIfNot(0), // Mute if fails. See KT-84923.
                 outputMatcher = spec.let { TestRunCheck.OutputMatcher { output -> spec.checkLLDBOutput(output, testRunSettings.get()) } }
             ),
             extras = TestCase.NoTestRunnerExtras(

@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(53,61): 's.action'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

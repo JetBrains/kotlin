@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(106,113): 'f.foo()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -53,9 +53,9 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
         valueArgumentMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-    
+
     fun <A> Foo<A>.foo(i: Int): Unit:
       No value passed for parameter 'i'.
-    
+
     fun <B> Foo<B>.foo(s: String): Unit:
       No value passed for parameter 's'.>

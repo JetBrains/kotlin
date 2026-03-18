@@ -104,13 +104,62 @@ KtProperty(133,166): 'var current = this@iterator.start'
   null
 
 KtDotQualifiedExpression(147,166): 'this@iterator.start'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val start: kotlin.Int
+    ]
 
 KtThisExpression(147,160): 'this@iterator'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: f/IntProgression
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(147,151): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: f/IntProgression
+        visibility: PUBLIC
+    ]
 
 KtContainerNode(151,160): '@iterator'
   null
@@ -142,7 +191,10 @@ KtLabelReferenceExpression(151,160): '@iterator'
     ]
 
 KtNameReferenceExpression(161,166): 'start'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val start: kotlin.Int
+    ]
 
 KtNamedFunction(171,224): 'override fun hasNext() = current <= this@iterator.end'
   null
@@ -154,22 +206,80 @@ KtParameterList(191,193): '()'
   null
 
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(196,203): 'current'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var current: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(204,206): '<='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val end: kotlin.Int
+    ]
 
 KtThisExpression(207,220): 'this@iterator'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: f/IntProgression
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(207,211): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: f/IntProgression
+        visibility: PUBLIC
+    ]
 
 KtContainerNode(211,220): '@iterator'
   null
@@ -201,7 +311,10 @@ KtLabelReferenceExpression(211,220): '@iterator'
     ]
 
 KtNameReferenceExpression(221,224): 'end'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val end: kotlin.Int
+    ]
 
 KtNamedFunction(229,265): 'override fun next(): Int = current++'
   null
@@ -222,13 +335,23 @@ KtNameReferenceExpression(250,253): 'Int'
   null
 
 KtPostfixExpression(256,265): 'current++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var current: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(256,263): 'current'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var current: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(263,265): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNamedFunction(269,330): 'fun usage() {'
   null
@@ -240,7 +363,12 @@ KtBlockExpression(281,330): '{'
   null
 
 KtForExpression(287,328): 'for (i in IntProgression(1, 10)) {'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+    ]
 
 KtParameter(292,293): 'i'
   null
@@ -255,7 +383,10 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
     ]
 
 KtNameReferenceExpression(297,311): 'IntProgression'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+    ]
 
 KtValueArgumentList(311,318): '(1, 10)'
   null

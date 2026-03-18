@@ -2,5 +2,6 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Sub) constructor(p1: kotlin.Int)

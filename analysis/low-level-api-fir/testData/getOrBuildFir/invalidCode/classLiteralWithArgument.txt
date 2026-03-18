@@ -1,0 +1,15 @@
+KT element: KtValueArgument
+FIR element: FirAnonymousFunctionExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] classLiteralWithArgument.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        <getClass>(Q|kotlin/String|).<Unresolved name: invoke>#([ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+    }

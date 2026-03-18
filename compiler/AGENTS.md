@@ -1,5 +1,9 @@
 # Compiler Architecture
 
+## Intro
+
+Consider reading [fir-basics.md](../docs/fir/fir-basics.md).
+
 ## Two Frontends
 
 1. **K1/FE 1.0 (Legacy)**: Located in `compiler/frontend/` - uses PSI and BindingContext
@@ -23,3 +27,16 @@ Backend implementations:
 - `compiler/ir/backend.js/` - JavaScript backend
 - `compiler/ir/backend.wasm/` - WebAssembly backend
 - `kotlin-native/backend.native/` - Native backend
+
+## Inference
+
+For type inference implementation details, read [inference.md](../docs/fir/inference.md).
+
+## Commit Guidelines
+
+- **FIR prefix**: When changes are mostly related to FIR (`compiler/fir/`), use `FIR: ` prefix in the commit subject line.
+- **Test-before-fix**: When fixing an issue and adding a test, commit the test data as a separate commit **before** the fix. This helps reviewers see how the fix actually changes semantics (the test will show diagnostic differences in the fix commit).
+
+## Testing
+
+For FIR analysis test data format (directives, diagnostic markers, file structure), see [analysis-tests/AGENTS.md](fir/analysis-tests/AGENTS.md).

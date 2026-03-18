@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.test.utils
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.junit.Assert
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
@@ -56,6 +58,18 @@ private val lastCharExclusions = listOf(
     FirErrors.ERROR_SUPPRESSION.name,
     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION.name,
     FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR.name,
+)
+
+private val uselessInIdExclusions = listOf(
+    FirErrors.USELESS_CAST.name,
+    FirErrors.USELESS_ELVIS.name,
+    FirErrors.USELESS_ELVIS_LEFT_IS_NULL.name,
+    FirErrors.USELESS_ELVIS_RIGHT_IS_NULL.name,
+    FirErrors.USELESS_IS_CHECK.name,
+    FirErrors.USELESS_VARARG_ON_PARAMETER.name,
+    FirErrors.USELESS_CALL_ON_NOT_NULL.name,
+    FirJvmErrors.USELESS_JVM_EXPOSE_BOXED.name,
+    FirJsErrors.JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE.name,
 )
 
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
@@ -186,6 +200,18 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
         """\bmust not\b""".toRegex(RegexOption.IGNORE_CASE),
         "uses 'must not'. Replace with 'cannot'",
     )
+
+    checkRule(
+        name,
+        message,
+        """\buseless\b""".toRegex(RegexOption.IGNORE_CASE),
+        "uses 'useless'. Use 'redundant' if the problem doesn't affect the compilation result " +
+                "or describe the problem more precisely (e.g. 'unreachable else' instead of 'useless else'",
+    )
+
+    if (name.contains("useless", ignoreCase = true) && name !in uselessInIdExclusions) {
+        add("Diagnostic ID '$name' contains the term 'useless'.")
+    }
 }
 
 

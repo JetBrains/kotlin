@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.common.ir.BackendKlibSymbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -70,6 +69,11 @@ private object ClassIds {
     val nativePtr = "NativePtr".internalClassId
     val functionAdapter = "FunctionAdapter".internalClassId
     val defaultConstructorMarker = "DefaultConstructorMarker".internalClassId
+
+    // Internal test classes
+    private val String.internalTestClassId get() = ClassId(RuntimeNames.kotlinNativeInternalTestPackageName, Name.identifier(this))
+    val testInitializer = "TestInitializer".internalTestClassId
+    val testsProcessed = "TestsProcessed".internalTestClassId
 
     // Interop classes
     private val String.interopClassId get() = ClassId(InteropFqNames.packageName, Name.identifier(this))
@@ -632,4 +636,7 @@ class BackendNativeSymbols(
     override val getWithoutBoundCheckName: Name = KonanNameConventions.getWithoutBoundCheck
 
     override val setWithoutBoundCheckName: Name = KonanNameConventions.setWithoutBoundCheck
+
+    override val testInitializer = ClassIds.testInitializer.classSymbol()
+    override val testsProcessed = ClassIds.testsProcessed.classSymbol()
 }

@@ -1,2 +1,5 @@
 KtNameReferenceExpression(138,146): 'variable'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var variable: MyClass
+    ]

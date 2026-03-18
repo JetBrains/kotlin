@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.checkers
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.checkApiAndLanguageVersion
+import org.jetbrains.kotlin.cli.common.fromConfiguration
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.utils.checkRules
 import org.junit.Assert
@@ -21,11 +24,16 @@ class CliDiagnosticTest {
     @Test
     fun verify() {
         val collector = MessageCollectorStub()
+        val configuration = CompilerConfiguration.create(messageCollector = collector)
         val apiVersions = LanguageVersion.entries.map { ApiVersion.createByLanguageVersion(it) }
         for (languageVersion in LanguageVersion.entries) {
             for (apiVersion in apiVersions) {
                 for (argumentVariant in argumentVariants) {
-                    argumentVariant.checkApiAndLanguageVersion(languageVersion, apiVersion, collector)
+                    argumentVariant.checkApiAndLanguageVersion(
+                        languageVersion,
+                        apiVersion,
+                        CommonCompilerArgumentsConfigurator.Reporter.fromConfiguration(configuration)
+                    )
                 }
             }
         }

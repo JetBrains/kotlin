@@ -1,0 +1,16 @@
+---
+assert((a as? String)?.length == 5)
+        | |            |      |
+        | test         4      false
+        test
+---
+---
+assert((a as? String)?.length == 5)
+        | |            |      |
+        1 null         null   false
+---
+---
+requireNotNull(a as? String)
+               | |
+               1 null
+---

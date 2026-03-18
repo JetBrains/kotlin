@@ -1,0 +1,34 @@
+KtCallExpression(118,125): 'block()'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaImplicitInvokeCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = block
+          isSafeNavigation = false
+          type = @R|kotlin.ContextFunctionTypeParams|(count = Int(1))  kotlin.Function2<kotlin.String, kotlin.Int, kotlin.Unit>
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = regularReceiver
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.String
+          returnType = kotlin.Unit
+          symbol = kotlin/Function2.invoke(<extension receiver>: P1, <dispatch receiver>: kotlin.Function2<P1, P2, R>, p2: P2): R
+          valueParameters = [
+            KaVariableSignature:
+              name = p2
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p2: P2
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function2.invoke
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+    public abstract operator fun String.invoke(p2: Int): Unit defined in kotlin.Function2>

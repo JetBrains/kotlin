@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.lombok
 
-import org.jetbrains.kotlin.cli.common.reportDiagnostic
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -29,7 +29,7 @@ class LombokComponentRegistrar : CompilerPluginRegistrar() {
     }
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        configuration.reportDiagnostic(
+        configuration.report(
             LombokDiagnostics.LOMBOK_PLUGIN_IS_EXPERIMENTAL,
             "Lombok Kotlin compiler plugin is an experimental feature. See: https://kotlinlang.org/docs/components-stability.html.",
         )
@@ -65,7 +65,7 @@ class LombokCommandLineProcessor : CommandLineProcessor {
             CONFIG_FILE_OPTION -> {
                 val file = File(value)
                 if (!file.exists()) {
-                    configuration.reportDiagnostic(
+                    configuration.report(
                         LombokDiagnostics.LOMBOK_CONFIG_IS_MISSING,
                         "lombok.config file not found: ${file.absolutePath}"
                     )
@@ -73,7 +73,7 @@ class LombokCommandLineProcessor : CommandLineProcessor {
                 }
                 configuration.put(LOMBOK_CONFIG_FILE, file)
             }
-            else -> configuration.reportDiagnostic(
+            else -> configuration.report(
                 LombokDiagnostics.UNKNOWN_PLUGIN_OPTION,
                 "Unknown lombok plugin option: '${option.optionName}=$value'"
             )

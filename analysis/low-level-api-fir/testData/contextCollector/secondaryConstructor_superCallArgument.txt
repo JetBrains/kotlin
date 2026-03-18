@@ -12,6 +12,8 @@ Tower Data Context:
     Element 5
         Scope: FirExplicitSimpleImportingScope
     Element 6
+        Static scope owner symbol: FirRegularClassSymbol public final class Child : R|test/Base|
+    Element 7
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructor_superCallArgument.kt

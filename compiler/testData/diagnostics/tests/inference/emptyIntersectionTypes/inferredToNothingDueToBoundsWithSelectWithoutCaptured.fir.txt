@@ -1,0 +1,46 @@
+FILE: inferredToNothingDueToBoundsWithSelectWithoutCaptured.kt
+    public abstract interface SelfI<C : R|SelfI<C>|> : R|kotlin/Any| {
+    }
+    public final class A<S : R|SelfI<S>|> : R|kotlin/Any| {
+        public constructor<S : R|SelfI<S>|>(): R|A<S>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun <T : R|S|> materialize(): R|T| {
+            ^materialize (R|/Entity.Entity|() as R|T|)
+        }
+
+    }
+    public final val aStar: R|A<*>| = R|/A.A|<R|CapturedType(*)|>()
+        public get(): R|A<*>|
+    public final val aEntity: R|A<Entity>| = R|/A.A|<R|Entity|>()
+        public get(): R|A<Entity>|
+    public abstract interface Path : R|Traversable| {
+    }
+    public final val path: R|Path| = object : R|Path| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+        public get(): R|Path|
+    public abstract interface Traversable : R|kotlin/Any| {
+    }
+    public open class Entity : R|Traversable|, R|SelfI<Entity>| {
+        public constructor(): R|Entity| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval x2: R|Path| = when () {
+            CMP(>, String().R|kotlin/Any.hashCode|().R|kotlin/Int.compareTo|(Int(0))) ->  {
+                R|/path|
+            }
+            else ->  {
+                R|/aEntity|.R|SubstitutionOverride</A.materialize: R|T|>|<R|it(Entity & Path)|>()
+            }
+        }
+
+    }

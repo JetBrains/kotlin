@@ -8,20 +8,17 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 /**
@@ -38,6 +35,7 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
         )
 
         val newAccess = buildPropertyAccessExpression {
+            annotations.addAll(originalExpression.annotations)
             explicitReceiver = additionalQualifier
             source = originalExpression.source
             calleeReference = buildSimpleNamedReference {
@@ -102,3 +100,27 @@ private fun ConeDiagnostic.meansNoAvailableCandidate(): Boolean =
         }
         else -> false
     }
+
+/**
+ * @receiver Resolved version of original FQ name
+ */
+fun FirQualifierWithContextSensitiveAlternative.appendCSRAlternativeDiagnosticIfNeeded(resolvedSimpleNameVersion: FirExpression?): Boolean {
+    check(this is FirExpression) {
+        "All inheritors of sealed FirQualifierWithContextSensitiveAlternative should be expressions, but ${this::class.simpleName} found"
+    }
+
+    if (obtainSymbol() != resolvedSimpleNameVersion?.obtainSymbol()) return false
+
+    when (this) {
+        is FirPropertyAccessExpression -> appendNonFatalDiagnostics(ContextSensitiveResolutionMightBeUsed)
+        is FirResolvedQualifier -> appendNonFatalDiagnostics(ContextSensitiveResolutionMightBeUsed)
+    }
+
+    return true
+}
+
+private fun FirExpression.obtainSymbol(): FirBasedSymbol<*>? = when (this) {
+    is FirPropertyAccessExpression -> toResolvedCallableSymbol()
+    is FirResolvedQualifier -> symbol
+    else -> null
+}

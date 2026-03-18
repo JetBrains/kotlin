@@ -47,7 +47,10 @@ KtNameReferenceExpression(174,180): 'MyEnum'
   null
 
 KtNameReferenceExpression(183,190): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(199,226): 'val stringProp: String = ""'
   null
@@ -71,31 +74,52 @@ KtParameterList(248,250): '()'
   null
 
 KtNameReferenceExpression(253,260): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(270,306): 'val EnumOptionAlias = MyEnum.Option1'
   null
 
 KtDotQualifiedExpression(292,306): 'MyEnum.Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtNameReferenceExpression(292,298): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(299,306): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(308,340): 'val OptionAlias = MyEnum.Option2'
   null
 
 KtDotQualifiedExpression(326,340): 'MyEnum.Option2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option2
+    ]
 
 KtNameReferenceExpression(326,332): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(333,340): 'Option2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option2
+    ]
 
 KtProperty(342,375): 'val tlEnumProp1: MyEnum = Option1'
   null
@@ -110,7 +134,10 @@ KtNameReferenceExpression(359,365): 'MyEnum'
   null
 
 KtNameReferenceExpression(368,375): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(376,413): 'val tlEnumProp2: MyEnum = OptionAlias'
   null
@@ -125,7 +152,10 @@ KtNameReferenceExpression(393,399): 'MyEnum'
   null
 
 KtNameReferenceExpression(402,413): 'OptionAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val OptionAlias: MyEnum
+    ]
 
 KtProperty(414,448): 'val tlEnumProp3: MyEnum = enumProp'
   null
@@ -140,7 +170,10 @@ KtNameReferenceExpression(431,437): 'MyEnum'
   null
 
 KtNameReferenceExpression(440,448): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtProperty(449,487): 'val topLevelProp4: MyEnum = stringProp'
   null
@@ -155,7 +188,10 @@ KtNameReferenceExpression(468,474): 'MyEnum'
   null
 
 KtNameReferenceExpression(477,487): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtNamedFunction(489,598): 'fun testReassignment() {'
   null
@@ -179,43 +215,82 @@ KtNameReferenceExpression(525,531): 'MyEnum'
   null
 
 KtNameReferenceExpression(534,541): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtBinaryExpression(546,557): 'm = Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(546,547): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtOperationReferenceExpression(548,549): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(550,557): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtBinaryExpression(562,577): 'm = OptionAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(562,563): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtOperationReferenceExpression(564,565): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(566,577): 'OptionAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val OptionAlias: MyEnum
+    ]
 
 KtBinaryExpression(582,596): 'm = stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(582,583): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtOperationReferenceExpression(584,585): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(586,596): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtNamedFunction(600,679): 'fun testCorrectDefaultParam(arg1: MyEnum = Option1, arg2: MyEnum = enumProp) {}'
   null
@@ -236,7 +311,10 @@ KtNameReferenceExpression(634,640): 'MyEnum'
   null
 
 KtNameReferenceExpression(643,650): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtParameter(652,675): 'arg2: MyEnum = enumProp'
   null
@@ -251,7 +329,10 @@ KtNameReferenceExpression(658,664): 'MyEnum'
   null
 
 KtNameReferenceExpression(667,675): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtBlockExpression(677,679): '{}'
   null
@@ -275,7 +356,10 @@ KtNameReferenceExpression(711,717): 'MyEnum'
   null
 
 KtNameReferenceExpression(720,730): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtBlockExpression(732,734): '{}'
   null
@@ -302,7 +386,10 @@ KtNameReferenceExpression(762,768): 'MyEnum'
   null
 
 KtNameReferenceExpression(771,778): 'Option2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option2
+    ]
 
 KtClassBody(780,851): '{'
   null
@@ -320,7 +407,10 @@ KtNameReferenceExpression(797,803): 'MyEnum'
   null
 
 KtNameReferenceExpression(806,814): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtProperty(819,849): 'val prop3: MyEnum = stringProp'
   null
@@ -335,4 +425,7 @@ KtNameReferenceExpression(830,836): 'MyEnum'
   null
 
 KtNameReferenceExpression(839,849): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]

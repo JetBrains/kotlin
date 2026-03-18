@@ -1,0 +1,6 @@
+FILE: companionExtensions.kt
+    public? final? static fun String.foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? static val Int.bar: <implicit> = LAZY_EXPRESSION
+        public? static get(): <implicit>
+    public? final? static val Int.baz: <implicit>
+        public? static get(): <implicit> { LAZY_BLOCK }

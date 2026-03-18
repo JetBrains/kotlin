@@ -2,5 +2,6 @@ KtNameReferenceExpression(78,85): 'suspend'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun <R> suspend(noinline block: suspend () -> R): suspend () -> R

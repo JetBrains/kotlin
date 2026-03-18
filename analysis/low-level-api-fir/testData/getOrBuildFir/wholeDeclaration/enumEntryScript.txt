@@ -24,6 +24,6 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }

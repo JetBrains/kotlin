@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -57,7 +56,7 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST,
         trace: BindingTrace = NoScopeRecordCliBindingTrace(environment.project)
     ): GenerationState =
-        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace).first
+        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
 
     @JvmStatic
     @JvmOverloads
@@ -67,12 +66,12 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         trace: BindingTrace = NoScopeRecordCliBindingTrace(files.first().project)
-    ): Pair<GenerationState, BindingContext> {
+    ): GenerationState {
         val project = files.first().project
         return if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider) to BindingContext.EMPTY
+            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider)
         } else {
-            compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
+            compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace).first
         }
     }
 
@@ -105,7 +104,7 @@ object GenerationUtils {
             FirParser.Psi,
         )
 
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration)
         val diagnosticReporter = DiagnosticsCollectorImpl()
         firAnalyzerFacade.runResolution()
         val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)

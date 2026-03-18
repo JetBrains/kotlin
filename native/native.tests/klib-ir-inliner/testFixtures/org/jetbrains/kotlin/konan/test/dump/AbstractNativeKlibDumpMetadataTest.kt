@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Tag
 import java.io.File
 
 @Tag("klib")
-@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+@UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
 abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String) {

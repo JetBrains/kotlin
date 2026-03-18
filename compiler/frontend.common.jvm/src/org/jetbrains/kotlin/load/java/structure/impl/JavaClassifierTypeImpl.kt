@@ -25,9 +25,23 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 class JavaClassifierTypeImpl(
     psiClassTypeSource: JavaElementTypeSource<PsiClassType>,
 ) : JavaTypeImpl<PsiClassType>(psiClassTypeSource), JavaClassifierType {
-
     @Volatile
     private var resolutionResult: ResolutionResult? = null
+
+    /**
+     * Type arguments are cached because they can be heavily requested in some workloads. In Analysis API mode, [createTypeSource] creates a
+     * smart type pointer, which can be an expensive operation.
+     *
+     * We use a simple volatile variable instead of a lazy value to reduce memory overhead. Some workloads can have hundreds of thousands of
+     * [JavaClassifierTypeImpl] instances, meaning every byte counts. The computation is idempotent and publication does not need to be
+     * synchronized.
+     *
+     * [JavaClassifierTypeImpl] instances do not exceed the lifetime of their containing cache (e.g., the FIR session). In particular, they
+     * do not survive any modification of the associated PSI. The invalidation of [_typeArguments] is thus not necessary when the underlying
+     * type arguments are modified, since a new instance of [JavaClassifierTypeImpl] would be created.
+     */
+    @Volatile
+    private var _typeArguments: List<JavaType?>? = null
 
     override val classifier: JavaClassifierImpl<*>?
         get() = resolve().classifier
@@ -44,27 +58,39 @@ class JavaClassifierTypeImpl(
     override val isRaw: Boolean
         get() = resolve().isRaw
 
-    override// parameters including ones from outer class
-    val typeArguments: List<JavaType?>
+    /**
+     * A list of type arguments for the type parameters of this class and its outer class(es).
+     */
+    override val typeArguments: List<JavaType?>
         get() {
-            val classifier = classifier as? JavaClassImpl ?: return emptyList()
-            val parameters = getTypeParameters(classifier.psi)
+            _typeArguments?.let { return it }
 
-            val substitutor = substitutor
-
-            val result = ArrayList<JavaType?>(parameters.size)
-            for (typeParameter in parameters) {
-                val substitutedType = substitutor.substitute(typeParameter)
-                result.add(substitutedType?.let { JavaTypeImpl.create(createTypeSource(it)) })
-            }
-
-            return result
+            val computed = computeTypeArguments()
+            _typeArguments = computed
+            return computed
         }
+
+    private fun computeTypeArguments(): List<JavaType?> {
+        val classifier = classifier as? JavaClassImpl ?: return emptyList()
+        val parameters = getTypeParameters(classifier.psi)
+
+        // Note: Returning `emptyList` is important so that we don't cache a new, empty array list instance.
+        if (parameters.isEmpty()) return emptyList()
+
+        val substitutor = substitutor
+
+        val result = ArrayList<JavaType?>(parameters.size)
+        for (typeParameter in parameters) {
+            val substitutedType = substitutor.substitute(typeParameter)
+            result.add(substitutedType?.let { create(createTypeSource(it)) })
+        }
+        return result
+    }
 
     private class ResolutionResult(
         val classifier: JavaClassifierImpl<*>?,
         val substitutor: PsiSubstitutor,
-        val isRaw: Boolean
+        val isRaw: Boolean,
     ) {
         /**
          * Checks if the [ResolutionResult] is valid.
@@ -84,9 +110,9 @@ class JavaClassifierTypeImpl(
      *
      * The code is thread safe and the logic is the following:
      * 1. Try to get a cached resolution result and return it if it's not invalidated
-     * 2. Otherwise, resolve the current [JavaClassifierType], update the cache and return the result.
+     * 2. Otherwise, resolve the current [JavaClassifierType], update the cache, and return the result.
      *
-     * @returns [ResolutionResult] to which the [JavaClassifierType] resovled
+     * @returns The [ResolutionResult] to which the [JavaClassifierType] resolved.
      */
     private fun resolve(): ResolutionResult {
         while (true) {

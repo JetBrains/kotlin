@@ -20,7 +20,7 @@ KtProperty(18,45): 'val value = "1" + "2" + "3"'
   null
 
 KtBinaryExpression(30,45): '"1" + "2" + "3"'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -56,7 +56,7 @@ KtBinaryExpression(30,45): '"1" + "2" + "3"'
       }
 
 KtBinaryExpression(30,39): '"1" + "2"'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -2,5 +2,6 @@ KtNameReferenceExpression(82,86): 'copy'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Data) {psi: KtPrimaryConstructor} fun copy({psi: KtParameter} aaa: kotlin.Int): Data

@@ -2,5 +2,6 @@ KtNameReferenceExpression(76,102): 'generatedTopLevelFunction1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in generated) fun generatedTopLevelFunction1(): generated.GeneratedClass2 [origin = SOURCE]

@@ -24,9 +24,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         androidProject(gradleVersion, agpVersion, jdkVersion, applyBcvPlugin = true) {
-            abiValidation {
-                enabled.set(true)
-            }
+            abiValidation { }
 
             build("updateKotlinAbi")
             assertFileExists(referenceJvmDumpFile())
@@ -45,9 +43,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         kmpWithAndroidProject(gradleVersion, agpVersion, jdkVersion, applyBcvPlugin = true) {
-            abiValidation {
-                enabled.set(true)
-            }
+            abiValidation()
 
             buildScriptInjection {
                 kotlinMultiplatform.apply {

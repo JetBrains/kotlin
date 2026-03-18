@@ -12,34 +12,34 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
+import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
+import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
+import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
-import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationNativeSymbolValidationHandler
 import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 
 @Suppress("JUnitTestCaseWithNoTests")
 class NativeSymbolsTest : AbstractSymbolsValidationTest(
     TargetBackend.NATIVE,
     NativePlatforms.unspecifiedNativePlatform,
-    ::FirFrontendFacade,
-    ::Fir2IrNativeResultsConverter,
-    ::NativePreSerializationLoweringFacade,
-    ::NativeKlibSerializerFacade,
+    ::FirCliNativeFacade,
+    ::Fir2IrCliNativeFacade,
+    ::NativePreSerializationLoweringCliFacade,
+    ::KlibSerializerNativeCliFacade,
     ::NativeDeserializerFacade,
     ::IrPreSerializationNativeSymbolValidationHandler,
     ::NativeSymbolValidationHandler,
 ) {
     override fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(::NativeEnvironmentConfigurator)
+        useConfigurators(::NativeFirstStageEnvironmentConfigurator)
     }
 }
 

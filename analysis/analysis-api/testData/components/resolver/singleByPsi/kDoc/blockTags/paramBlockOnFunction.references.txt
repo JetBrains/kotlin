@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in ROOT) fun abc(abc: kotlin.Int)
         1: abc: kotlin.Int
@@ -12,6 +13,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         abc: kotlin.Int
 
@@ -20,6 +22,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in ROOT) fun abc(abc: kotlin.Int)
         1: abc: kotlin.Int

@@ -14,18 +14,14 @@ import com.sun.tools.javac.tree.DocCommentTable
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubGeneration) {
     private val docCommentTable = KaptDocCommentTable()
@@ -38,15 +34,6 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
 
         if (descriptor is ConstructorDescriptor && psiElement is KtClassOrObject) {
             // We don't want the class comment to be duplicated on <init>()
-            return
-        }
-
-        if (node is MethodNode
-            && psiElement is KtProperty
-            && descriptor is PropertyAccessorDescriptor
-            && kaptContext.bindingContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor.correspondingProperty] == true
-        ) {
-            // Do not place documentation on backing field and property accessors
             return
         }
 
@@ -91,7 +78,7 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
         return docCommentTable
     }
 
-    protected fun saveKDocComment(tree: JCTree, comment: KDoc) {
+    private fun saveKDocComment(tree: JCTree, comment: KDoc) {
         docCommentTable.putComment(tree, KDocComment(extractComment(comment)))
     }
 }
@@ -104,23 +91,21 @@ private class KDocComment(val body: String) : Tokens.Comment {
 }
 
 private class KaptDocCommentTable(map: Map<JCTree, Tokens.Comment> = emptyMap()) : DocCommentTable {
-    private val table = map.toMutableMap()
-
     val map: Map<JCTree, Tokens.Comment>
-        get() = table
+        field = map.toMutableMap()
 
-    override fun hasComment(tree: JCTree) = tree in table
-    override fun getComment(tree: JCTree) = table[tree]
+    override fun hasComment(tree: JCTree) = tree in map
+    override fun getComment(tree: JCTree) = map[tree]
     override fun getCommentText(tree: JCTree) = getComment(tree)?.text
 
     override fun getCommentTree(tree: JCTree): DCTree.DCDocComment? = null
 
     override fun putComment(tree: JCTree, c: Tokens.Comment) {
-        table[tree] = c
+        map[tree] = c
     }
 
     fun removeComment(tree: JCTree) {
-        table.remove(tree)
+        map.remove(tree)
     }
 }
 
@@ -137,16 +122,20 @@ private fun escapeNestedComments(text: String): String {
         val currentChar = text[index]
         fun nextChar() = text.getOrNull(index + 1)
 
-        if (currentChar == '/' && nextChar() == '*') {
-            commentLevel++
-            index++
-            result.append("/ *")
-        } else if (currentChar == '*' && nextChar() == '/') {
-            commentLevel = maxOf(0, commentLevel - 1)
-            index++
-            result.append("* /")
-        } else {
-            result.append(currentChar)
+        when (currentChar) {
+            '/' if nextChar() == '*' -> {
+                commentLevel++
+                index++
+                result.append("/ *")
+            }
+            '*' if nextChar() == '/' -> {
+                commentLevel = maxOf(0, commentLevel - 1)
+                index++
+                result.append("* /")
+            }
+            else -> {
+                result.append(currentChar)
+            }
         }
 
         index++

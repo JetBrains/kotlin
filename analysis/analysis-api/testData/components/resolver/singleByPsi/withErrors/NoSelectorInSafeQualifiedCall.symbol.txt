@@ -1,2 +1,5 @@
 KtNameReferenceExpression(108,115): 'makeFoo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      testing/makeFoo(): testing.Foo
+    ]

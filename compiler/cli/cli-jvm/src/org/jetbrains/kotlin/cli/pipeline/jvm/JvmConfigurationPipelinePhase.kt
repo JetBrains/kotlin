@@ -8,17 +8,13 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
 import org.jetbrains.kotlin.cli.jvm.compiler.configureSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
-import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
+import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -65,8 +61,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         configuration: CompilerConfiguration,
     ) {
         val (arguments, services, _, _, _) = input
-        val messageCollector = configuration.messageCollector
-        messageCollector.report(LOGGING, "Configuring the compilation environment")
+        configuration.reportLog("Configuring the compilation environment")
 
         arguments.buildFile?.let { configuration.buildFile = File(it) }
         configuration.allowNoSourceFiles = arguments.allowNoSourceFiles

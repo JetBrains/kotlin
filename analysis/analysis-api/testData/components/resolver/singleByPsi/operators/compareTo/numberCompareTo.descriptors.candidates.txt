@@ -1,5 +1,5 @@
 KtNameReferenceExpression(20,29): 'compareTo'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -36,7 +36,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -73,7 +73,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -110,7 +110,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -146,7 +146,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -183,7 +183,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

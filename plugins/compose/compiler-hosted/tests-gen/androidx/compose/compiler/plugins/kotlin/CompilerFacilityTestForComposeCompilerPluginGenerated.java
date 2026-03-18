@@ -18,10 +18,14 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/compose/compiler-hosted/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class CompilerFacilityTestForComposeCompilerPluginGenerated extends AbstractCompilerFacilityTestForComposeCompilerPlugin {
+  private void run(String fileName) {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/" + fileName);
+  }
+
   @Test
   @TestMetadata("abstractDefaults.kt")
   public void testAbstractDefaults() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/abstractDefaults.kt");
+    run("abstractDefaults.kt");
   }
 
   @Test
@@ -32,192 +36,192 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   @Test
   @TestMetadata("annotatedParamInImmutable.kt")
   public void testAnnotatedParamInImmutable() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/annotatedParamInImmutable.kt");
+    run("annotatedParamInImmutable.kt");
   }
 
   @Test
   @TestMetadata("classContainingInlineFunction.kt")
   public void testClassContainingInlineFunction() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/classContainingInlineFunction.kt");
+    run("classContainingInlineFunction.kt");
   }
 
   @Test
   @TestMetadata("composeNavigationWithDataClass.kt")
   public void testComposeNavigationWithDataClass() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/composeNavigationWithDataClass.kt");
+    run("composeNavigationWithDataClass.kt");
   }
 
   @Test
   @TestMetadata("constExprInitializer.kt")
   public void testConstExprInitializer() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/constExprInitializer.kt");
+    run("constExprInitializer.kt");
   }
 
   @Test
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/dataClass.kt");
+    run("dataClass.kt");
   }
 
   @Test
   @TestMetadata("funInterface.kt")
   public void testFunInterface() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/funInterface.kt");
+    run("funInterface.kt");
   }
 
   @Test
   @TestMetadata("functionReference.kt")
   public void testFunctionReference() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/functionReference.kt");
+    run("functionReference.kt");
   }
 
   @Test
   @TestMetadata("inlineFuncInDependencyOfDependency.kt")
   public void testInlineFuncInDependencyOfDependency() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/inlineFuncInDependencyOfDependency.kt");
+    run("inlineFuncInDependencyOfDependency.kt");
   }
 
   @Test
   @TestMetadata("inlineFuncWithExposedComposableSingleton.kt")
   public void testInlineFuncWithExposedComposableSingleton() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/inlineFuncWithExposedComposableSingleton.kt");
+    run("inlineFuncWithExposedComposableSingleton.kt");
   }
 
   @Test
   @TestMetadata("inlineFunctionReference.kt")
   public void testInlineFunctionReference() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/inlineFunctionReference.kt");
+    run("inlineFunctionReference.kt");
   }
 
   @Test
   @TestMetadata("inlinedLambda.kt")
   public void testInlinedLambda() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/inlinedLambda.kt");
+    run("inlinedLambda.kt");
   }
 
   @Test
   @TestMetadata("interface.kt")
   public void testInterface() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/interface.kt");
+    run("interface.kt");
   }
 
   @Test
   @TestMetadata("interfaceDelegation.kt")
   public void testInterfaceDelegation() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/interfaceDelegation.kt");
+    run("interfaceDelegation.kt");
   }
 
   @Test
   @TestMetadata("interfaceWithFakeOverride.kt")
   public void testInterfaceWithFakeOverride() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/interfaceWithFakeOverride.kt");
+    run("interfaceWithFakeOverride.kt");
   }
 
   @Test
   @TestMetadata("javaSam.kt")
   public void testJavaSam() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/javaSam.kt");
+    run("javaSam.kt");
   }
 
   @Test
   @TestMetadata("lazyPropertyBackingField.kt")
   public void testLazyPropertyBackingField() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/lazyPropertyBackingField.kt");
+    run("lazyPropertyBackingField.kt");
   }
 
   @Test
   @TestMetadata("multiModulesWithComposableFunction.kt")
   public void testMultiModulesWithComposableFunction() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/multiModulesWithComposableFunction.kt");
+    run("multiModulesWithComposableFunction.kt");
   }
 
   @Test
   @TestMetadata("nestedLambda.kt")
   public void testNestedLambda() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/nestedLambda.kt");
+    run("nestedLambda.kt");
   }
 
   @Test
   @TestMetadata("propertyGetterBody.kt")
   public void testPropertyGetterBody() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/propertyGetterBody.kt");
+    run("propertyGetterBody.kt");
   }
 
   @Test
   @TestMetadata("propertyWithDelegateBackingField.kt")
   public void testPropertyWithDelegateBackingField() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/propertyWithDelegateBackingField.kt");
+    run("propertyWithDelegateBackingField.kt");
   }
 
   @Test
   @TestMetadata("sourceLibModuleInlineClass.kt")
   public void testSourceLibModuleInlineClass() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlineClass.kt");
+    run("sourceLibModuleInlineClass.kt");
   }
 
   @Test
   @TestMetadata("sourceLibModuleInlineFunc.kt")
   public void testSourceLibModuleInlineFunc() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlineFunc.kt");
+    run("sourceLibModuleInlineFunc.kt");
   }
 
   @Test
   @TestMetadata("sourceLibModuleInlineFunc2.kt")
   public void testSourceLibModuleInlineFunc2() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlineFunc2.kt");
+    run("sourceLibModuleInlineFunc2.kt");
   }
 
   @Test
   @TestMetadata("sourceLibModuleInlineFuncJvmName.kt")
   public void testSourceLibModuleInlineFuncJvmName() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlineFuncJvmName.kt");
+    run("sourceLibModuleInlineFuncJvmName.kt");
   }
 
   @Test
   @TestMetadata("sourceLibModuleInlineFuncOfCompanion.kt")
   public void testSourceLibModuleInlineFuncOfCompanion() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlineFuncOfCompanion.kt");
+    run("sourceLibModuleInlineFuncOfCompanion.kt");
   }
 
   @Test
   @TestMetadata("sourceLibModuleInlineFuncOfInnerClass.kt")
   public void testSourceLibModuleInlineFuncOfInnerClass() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlineFuncOfInnerClass.kt");
+    run("sourceLibModuleInlineFuncOfInnerClass.kt");
   }
 
   @Test
   @TestMetadata("sourceLibModuleInlineFuncRef.kt")
   public void testSourceLibModuleInlineFuncRef() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlineFuncRef.kt");
+    run("sourceLibModuleInlineFuncRef.kt");
   }
 
   @Test
   @TestMetadata("sourceLibModuleInlineFuncRef2.kt")
   public void testSourceLibModuleInlineFuncRef2() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlineFuncRef2.kt");
+    run("sourceLibModuleInlineFuncRef2.kt");
   }
 
   @Test
   @TestMetadata("sourceLibModuleInlinePropertyGetter.kt")
   public void testSourceLibModuleInlinePropertyGetter() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlinePropertyGetter.kt");
+    run("sourceLibModuleInlinePropertyGetter.kt");
   }
 
   @Test
   @TestMetadata("testOverrideLambda.kt")
   public void testTestOverrideLambda() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/testOverrideLambda.kt");
+    run("testOverrideLambda.kt");
   }
 
   @Test
   @TestMetadata("valueArgumentForLibraryConstructor.kt")
   public void testValueArgumentForLibraryConstructor() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/valueArgumentForLibraryConstructor.kt");
+    run("valueArgumentForLibraryConstructor.kt");
   }
 
   @Test
   @TestMetadata("versionOverloads.kt")
   public void testVersionOverloads() {
-    runTest("plugins/compose/compiler-hosted/testData/codegen/versionOverloads.kt");
+    run("versionOverloads.kt");
   }
 }

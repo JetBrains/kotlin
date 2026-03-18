@@ -1,0 +1,6 @@
+---sum=6
+Message:
+dbg(operation, 1 + 2 + 3, "Message:")
+    |            |   |
+    sum          3   6
+---

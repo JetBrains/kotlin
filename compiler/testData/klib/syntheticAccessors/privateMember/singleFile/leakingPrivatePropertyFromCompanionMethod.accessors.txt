@@ -1,0 +1,14 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivatePropertyFromCompanionMethod.kt */
+
+internal class UndoManager<R : Any?>
+    private val capacity: String
+        /* TARGET declaration */ private fun <get-capacity>(): String
+    public companion object Companion
+        public inline fun <reified T : Any?> getValue(value: UndoManager<T>): String
+            /* ACCESSOR use-site */ access$<get-capacity><R>($this = value)
+    /* ACCESSOR declaration */ internal /* static */ fun <R : Any?> access$<get-capacity>($this: UndoManager<R>): String
+        /* TARGET use-site */ $this.<get-capacity>()
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-capacity><R>($this = value)

@@ -2,5 +2,7 @@ KtNameReferenceExpression(183,194): 'suspendHere'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'.>
     symbols:
       (in Controller) suspend fun suspendHere(x: ERROR_TYPE(Symbol not found for Continuation))

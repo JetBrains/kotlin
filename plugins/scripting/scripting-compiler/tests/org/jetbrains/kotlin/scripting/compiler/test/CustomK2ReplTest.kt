@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
 import org.junit.jupiter.api.Assumptions.abort
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.reflect.full.declaredMemberFunctions
@@ -477,6 +476,49 @@ class CustomK2ReplTest {
         val expected = sequence { while (true) yield(null) }
 
         checkEvaluatedSnippetsResultVals(expected, results)
+    }
+
+    @Test
+    fun testSuspendWrapper() {
+        if (!isK2) return
+        val coroutinesCoreClasspath = System.getProperty("kotlin.script.test.kotlinx.coroutines.core.classpath")!!
+            .split(File.pathSeparator).map(::File)
+
+        evalAndCheckSnippetsResultVals(
+            sequenceOf(
+                """
+                    import kotlinx.coroutines.*
+                    
+                    suspend fun request(): String {
+                        yield()
+                        return "OK"
+                    }
+                    
+                    launch {
+                    }
+                    
+                    val response = request()
+                """.trimIndent(),
+                """
+                    response
+                """.trimIndent()
+            ),
+            sequenceOf(
+                null,
+                "OK",
+            ),
+            baseCompilationConfiguration.with {
+                updateClasspath(coroutinesCoreClasspath)
+                repl {
+                    internalWrapper("kotlinx.coroutines.runBlocking")
+                }
+            },
+            baseEvaluationConfiguration.with {
+                jvm {
+                    baseClassLoader(null)
+                }
+            }
+        )
     }
 }
 

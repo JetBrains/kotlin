@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 
 class JavaTypeEnhancementStateParser(
-    private val collector: MessageCollector,
+    private val reporter: CommonCompilerArgumentsConfigurator.Reporter,
     private val kotlinVersion: KotlinVersion
 ) {
     fun parse(
@@ -42,8 +40,7 @@ class JavaTypeEnhancementStateParser(
                 kotlinVersion
             )
             else -> {
-                collector.report(
-                    CompilerMessageSeverity.ERROR,
+                reporter.reportError(
                     "Unrecognized -Xsupport-compatqual-checker-framework-annotations option: $supportCompatqualCheckerFrameworkAnnotations. Possible values are 'enable'/'disable'"
                 )
                 getReportLevelForAnnotation(
@@ -107,8 +104,7 @@ class JavaTypeEnhancementStateParser(
         val reportLevel = ReportLevel.findByDescription(jspecifyState)
 
         if (reportLevel == null) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
+            reporter.reportError(
                 "Unrecognized -Xjspecify-annotations option: $jspecifyState. Possible values are 'ignore'/'warn'/'strict'"
             )
             return getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE, nullabilityAnnotationReportLevels, kotlinVersion)
@@ -151,8 +147,7 @@ class JavaTypeEnhancementStateParser(
                     }
                 }
                 item == "enable" -> {
-                    collector.report(
-                        CompilerMessageSeverity.STRONG_WARNING,
+                    reporter.reportWarning(
                         "Option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead"
                     )
                     if (global != null) return@forEach
@@ -181,11 +176,11 @@ class JavaTypeEnhancementStateParser(
     }
 
     private fun reportUnrecognizedReportLevel(item: String, sourceCompilerOption: String) {
-        collector.report(CompilerMessageSeverity.ERROR, "Unrecognized $sourceCompilerOption value: $item")
+        reporter.reportError("Unrecognized $sourceCompilerOption value: $item")
     }
 
     private fun reportDuplicateAnnotation(first: String, second: String, sourceCompilerOption: String) {
-        collector.report(CompilerMessageSeverity.ERROR, "Conflict duplicating $sourceCompilerOption value: $first, $second")
+        reporter.reportError("Conflict duplicating $sourceCompilerOption value: $first, $second")
     }
 
     private fun parseAnnotationWithReportLevel(item: String, sourceCompilerOption: String): Pair<FqName, ReportLevel>? {
@@ -203,7 +198,10 @@ class JavaTypeEnhancementStateParser(
     }
 
     companion object {
-        private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, KotlinVersion(1, 7, 20))
+        private val DEFAULT = JavaTypeEnhancementStateParser(
+            CommonCompilerArgumentsConfigurator.Reporter.DoNothing,
+            KotlinVersion(1, 7, 20)
+        )
         private const val NULLABILITY_ANNOTATIONS_COMPILER_OPTION = "-Xnullability-annotations"
 
         fun parsePlainNullabilityAnnotationReportLevels(nullabilityAnnotations: String): Pair<FqName, ReportLevel> =

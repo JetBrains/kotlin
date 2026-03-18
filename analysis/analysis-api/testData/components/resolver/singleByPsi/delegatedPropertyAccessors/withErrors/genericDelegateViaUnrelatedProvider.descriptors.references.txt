@@ -1,0 +1,7 @@
+KtPropertyDelegate(502,538): 'by ProvideDelegateHolder("provided")'
+  KtPropertyDelegationMethodsReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

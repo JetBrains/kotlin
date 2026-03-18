@@ -3,5 +3,8 @@ KtDestructuringDeclarationEntry(120,124): 'val1'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: '<error property>' !in []
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in ROOT) fun <T : kotlin.Any, Z> createTuple(a: T, b: Z & kotlin.Any): ERROR_TYPE(Symbol not found for Pair)
+    resolveToSymbols:
       val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)

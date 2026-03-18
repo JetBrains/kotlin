@@ -83,7 +83,7 @@ fun Project.setPublishableArtifact(
 ) {
     addArtifact("runtimeElements", jarTask)
     addArtifact("apiElements", jarTask)
-    addArtifact("archives", jarTask)
+    tasks.named("assemble").configure { dependsOn(jarTask) }
 }
 
 fun removeJarTaskArtifact(
@@ -134,7 +134,7 @@ fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvi
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
-    project.addArtifact("archives", runtimeJarTask, runtimeJarTask)
+    tasks.named("assemble").configure { dependsOn(runtimeJarTask) }
     project.addArtifact("runtimeElements", runtimeJarTask, runtimeJarTask)
     project.addArtifact("apiElements", runtimeJarTask, runtimeJarTask)
 
@@ -152,7 +152,7 @@ fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit
         body()
     }
 
-    project.addArtifact("archives", task, task)
+    tasks.named("assemble").configure { dependsOn(task) }
     project.addArtifact("runtimeElements", task, task)
     project.addArtifact("apiElements", task, task)
 
@@ -175,7 +175,7 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
         body()
     }
 
-    addArtifact("archives", sourcesJar)
+    tasks.named("assemble").configure { dependsOn(sourcesJar) }
     addArtifact("sources", sourcesJar)
 
     configurePublishedComponent {
@@ -237,7 +237,7 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
         body()
     }
 
-    addArtifact("archives", javadocTask)
+    tasks.named("assemble").configure { dependsOn(javadocTask) }
 
     configurePublishedComponent {
         addVariantsFromConfiguration(configurations[JAVADOC_ELEMENTS_CONFIGURATION_NAME]) { }

@@ -24,7 +24,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
-internal fun MethodNode.allSuspensionPointsAreTailCalls(suspensionPoints: List<SuspensionPoint>, optimizeReturnUnit: Boolean): Boolean {
+internal fun MethodNode.allSuspensionPointsAreTailCalls(suspensionPoints: List<SuspensionPoint>): Boolean {
     val frames = MethodTransformer.analyze("fake", this, TcoInterpreter(suspensionPoints))
     val controlFlowGraph = ControlFlowGraph.build(this)
 
@@ -39,9 +39,9 @@ internal fun MethodNode.allSuspensionPointsAreTailCalls(suspensionPoints: List<S
         val stack = mutableListOf(this)
         while (stack.isNotEmpty()) {
             val insn = stack.popLast()
-            // In Unit-returning functions, the last statement is followed by POP + GETSTATIC Unit.INSTANCE + ARETURN
-            // if it is itself not Unit-returning.
-            if (insn.opcode == Opcodes.ARETURN || (optimizeReturnUnit && isUnitSuspendCall && insn.isPopBeforeReturnUnit)) {
+            // In Unit-returning functions, the last call statement may be followed by POP + GETSTATIC Unit.INSTANCE + ARETURN.
+            // In that case whether we can safely apply TCO depends on whether that last call is known to be Unit call
+            if (insn.opcode == Opcodes.ARETURN || (isUnitSuspendCall && insn.isPopBeforeReturnUnit)) {
                 if (frames[instructions.indexOf(insn)]?.top() !is FromSuspensionPointValue?) {
                     return false
                 }

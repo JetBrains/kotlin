@@ -507,6 +507,8 @@ public actual inline fun sign(x: Double): Double = nativeMath.signum(x)
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -516,6 +518,8 @@ public actual inline fun min(a: Double, b: Double): Double = nativeMath.min(a, b
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.max
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -643,20 +647,43 @@ public actual inline fun Double.withSign(sign: Int): Double = nativeMath.copySig
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
+ *
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline val Double.ulp: Double get() = nativeMath.ulp(this)
 
 /**
- * Returns the [Double] value nearest to this value in direction of positive infinity.
+ * Returns the [Double] value nearest to this value in a direction of positive infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextUp() is `NaN`
+ *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `0.0.nextUp()` is `Double.MIN_VALUE`
+ *
+ * @see nextTowards
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextUp
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun Double.nextUp(): Double = nativeMath.nextUp(this)
 
 /**
- * Returns the [Double] value nearest to this value in direction of negative infinity.
+ * Returns the [Double] value nearest to this value in a direction of negative infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextDown() is `NaN`
+ *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
+ *
+ * @see nextUp
+ * @see nextTowards
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextDown
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -669,6 +696,11 @@ public actual inline fun Double.nextDown(): Double = nativeMath.nextAfter(this, 
  *   - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
  *   - `x.nextTowards(x) == x`
  *
+ * @see nextUp
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextTowards
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1126,6 +1158,8 @@ public actual inline fun sign(x: Float): Float = nativeMath.signum(x)
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1135,6 +1169,8 @@ public actual inline fun min(a: Float, b: Float): Float = nativeMath.min(a, b)
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.max
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1257,24 +1293,52 @@ public actual inline fun Float.withSign(sign: Int): Float = nativeMath.copySign(
  *
  * An ulp is a positive distance between this value and the next nearest [Float] value larger in magnitude.
  *
- * Special Cases:
+ * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
  *   - `0.0.ulp` is `Float.MIN_VALUE`
+ *
+ * @see nextUp
+ * @see nextDown
+ * @see nextTowards
+ * @sample samples.math.MathSamples.Floats.ulp
+ * @sample samples.math.MathSamples.Floats.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public inline val Float.ulp: Float get() = nativeMath.ulp(this)
 
 /**
- * Returns the [Float] value nearest to this value in direction of positive infinity.
+ * Returns the [Float] value nearest to this value in a direction of positive infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextUp() is `NaN`
+ *   - `Float.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `0.0f.nextUp()` is `Float.MIN_VALUE`
+ *
+ * @see nextTowards
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Floats.nextUp
+ * @sample samples.math.MathSamples.Floats.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public inline fun Float.nextUp(): Float = nativeMath.nextUp(this)
 
 /**
- * Returns the [Float] value nearest to this value in direction of negative infinity.
+ * Returns the [Float] value nearest to this value in a direction of negative infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextDown() is `NaN`
+ *   - `Float.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `0.0.nextDown()` is `-Float.MIN_VALUE`
+ *
+ * @see nextUp
+ * @see nextTowards
+ * @see ulp
+ * @sample samples.math.MathSamples.Floats.nextDown
+ * @sample samples.math.MathSamples.Floats.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1287,6 +1351,11 @@ public inline fun Float.nextDown(): Float = nativeMath.nextAfter(this, Double.NE
  *   - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
  *   - `x.nextTowards(x) == x`
  *
+ * @see nextUp
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Floats.nextTowards
+ * @sample samples.math.MathSamples.Floats.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1343,6 +1412,8 @@ public actual inline fun abs(n: Int): Int = nativeMath.abs(n)
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1350,6 +1421,8 @@ public actual inline fun min(a: Int, b: Int): Int = nativeMath.min(a, b)
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.max
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1396,6 +1469,8 @@ public actual inline fun abs(n: Long): Long = nativeMath.abs(n)
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1403,6 +1478,8 @@ public actual inline fun min(a: Long, b: Long): Long = nativeMath.min(a, b)
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.max
  */
 @SinceKotlin("1.2")
 @InlineOnly

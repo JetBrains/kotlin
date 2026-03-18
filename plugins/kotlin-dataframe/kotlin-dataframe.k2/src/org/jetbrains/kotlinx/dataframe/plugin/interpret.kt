@@ -53,7 +53,7 @@ fun <T> KotlinTypeFacade.interpret(
 ): Interpreter.Success<T>? {
     val refinedArguments: RefinedArguments = functionCall.collectArgumentExpressions()
 
-    val defaultArguments = processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet() + THIS_CALL
+    val defaultArguments = processor.expectedArguments().filter { it.defaultValue is Present }.map { it.name }.toSet() + THIS_CALL
     val actualValueArguments = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
     val conflictingKeys = additionalArguments.keys intersect actualValueArguments.keys
     if (conflictingKeys.isNotEmpty()) {
@@ -62,7 +62,7 @@ fun <T> KotlinTypeFacade.interpret(
         }
         return null
     }
-    val expectedArgsMap = processor.expectedArguments
+    val expectedArgsMap = processor.expectedArguments()
         .associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
 
     val typeArguments = buildMap {
@@ -100,8 +100,8 @@ fun <T> KotlinTypeFacade.interpret(
 
     val arguments = mutableMapOf<String, Interpreter.Success<Any?>>()
     arguments += additionalArguments
-    arguments += typeArguments
     arguments[THIS_CALL] = Interpreter.Success(functionCall)
+    arguments += typeArguments
     val interpretationResults = refinedArguments.refinedArguments.mapNotNull {
         val name = it.name.identifier
         val expectedArgument = expectedArgsMap[name] ?: error("$processor $name")
@@ -235,7 +235,7 @@ private fun KotlinTypeFacade.extractValue(
     is FirPropertyAccessExpression -> {
         (expression.calleeReference as? FirResolvedNamedReference)?.let {
             val symbol = it.resolvedSymbol
-            val firPropertySymbol = symbol as? FirPropertySymbol
+            val firPropertySymbol = symbol as? FirLocalPropertySymbol
             val literalInitializer = firPropertySymbol?.resolvedInitializer
 
             if (symbol is FirEnumEntrySymbol) {
@@ -249,7 +249,8 @@ private fun KotlinTypeFacade.extractValue(
             } else if (literalInitializer != null) {
                 extractValue(literalInitializer, reporter)
             } else {
-                Interpreter.Success(columnWithPathApproximations(expression))
+                val columnPath = columnWithPathApproximations(expression)
+                columnPath?.let { Interpreter.Success(it) }
             }
         }
     }
@@ -363,7 +364,7 @@ private fun List<FirPropertySymbol>.sortPropertiesByOrderAnnotation(): List<FirP
 }
 
 context(session: FirSession)
-private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPropertyAccessExpression): ColumnsResolver {
+private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPropertyAccessExpression): ColumnsResolver? {
     return propertyAccess.resolvedType.let {
         val column = when (it.classId) {
             Names.DATA_COLUMN_CLASS_ID -> {
@@ -378,18 +379,16 @@ private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPro
                 val name = propertyAccess.columnName()
                 SimpleColumnGroup(name, pluginDataFrameSchema(arg).columns())
             }
-            else -> return object : ColumnsResolver {
-                override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
-                    return emptyList()
-                }
-            }
+            else -> null
         }
-        ResolvedDataColumn(
-            ColumnWithPathApproximation(
-                path = ColumnPath(path(propertyAccess)),
-                column
+        column?.let { column ->
+            ResolvedDataColumn(
+                ColumnWithPathApproximation(
+                    path = ColumnPath(path(propertyAccess)),
+                    column
+                )
             )
-        )
+        }
     }
 }
 

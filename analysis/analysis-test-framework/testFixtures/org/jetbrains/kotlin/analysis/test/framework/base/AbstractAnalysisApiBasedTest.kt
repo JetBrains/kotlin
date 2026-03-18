@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.TestConfiguration
+import org.jetbrains.kotlin.test.NonGroupingPhaseTestConfiguration
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -444,13 +444,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         }
     }
 
-    private fun createTestConfiguration(): TestConfiguration {
+    private fun createTestConfiguration(): NonGroupingPhaseTestConfiguration {
         val testConfiguration = testConfiguration(testDataPath.toString(), configure)
         Disposer.register(disposable, testConfiguration.rootDisposable)
         return testConfiguration
     }
 
-    private fun createAndRegisterTestModuleStructure(testConfiguration: TestConfiguration) {
+    private fun createAndRegisterTestModuleStructure(testConfiguration: NonGroupingPhaseTestConfiguration) {
         val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
             testDataPath.toString(),
             testConfiguration.directives,
@@ -459,7 +459,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         testServices.register(TestModuleStructure::class, moduleStructure)
     }
 
-    private fun prepareToTheAnalysis(testConfiguration: TestConfiguration) {
+    private fun prepareToTheAnalysis(testConfiguration: NonGroupingPhaseTestConfiguration) {
         val moduleStructure = testServices.moduleStructure
         val artifactsProvider = ArtifactsProvider(testServices, moduleStructure.modules)
         testServices.registerArtifactsProvider(artifactsProvider)

@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -18,21 +19,22 @@ import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.useK1Implementation
 
-internal fun createPlatformKType(lowerBound: KType, upperBound: KType): KType =
-    if (useK1Implementation)
-        DescriptorKType(
-            KotlinTypeFactory.flexibleType(
-                (lowerBound as DescriptorKType).type as SimpleType,
-                (upperBound as DescriptorKType).type as SimpleType,
-            )
-        )
-    else
+internal fun createPlatformKType(
+    lowerBound: KType,
+    upperBound: KType,
+    isRawType: Boolean,
+): KType =
+    if (useK1Implementation) {
+        val lower = (lowerBound as DescriptorKType).type as SimpleType
+        val upper = (upperBound as DescriptorKType).type as SimpleType
+        DescriptorKType(if (isRawType) RawTypeImpl(lower, upper) else KotlinTypeFactory.flexibleType(lower, upper))
+    } else {
         FlexibleKType.create(
             lowerBound as AbstractKType,
             upperBound as AbstractKType,
-            // TODO: KT-78951 typeOf creates a non-raw type for raw types from Java
-            isRawType = false,
+            isRawType,
         )
+    }
 
 internal fun createMutableCollectionKType(type: KType): KType {
     if (useK1Implementation) {

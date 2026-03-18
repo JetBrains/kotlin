@@ -20,7 +20,7 @@ object KtTokens : SyntaxElementTypesWithIds() {
      * They should match corresponding element types.
      * As an example, see [SyntaxElementTypesWithIds.getElementTypeId] usages.
      */
-    const val EOF_ID: Int = KDocTokens.KDOC_RPAR_ID + 1
+    const val EOF_ID: Int = KDocTokens.CODE_SPAN_TEXT_ID + 1
     const val RESERVED_ID: Int = EOF_ID + 1
     const val BLOCK_COMMENT_ID: Int = RESERVED_ID + 1
     const val EOL_COMMENT_ID: Int = BLOCK_COMMENT_ID + 1

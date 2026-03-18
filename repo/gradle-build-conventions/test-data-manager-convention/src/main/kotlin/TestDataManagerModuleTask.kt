@@ -44,6 +44,7 @@ abstract class TestDataManagerModuleTask : JavaExec(), TestDataManagerTask {
         testDataPath.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.testDataPath", it) }
         testClassPattern.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.testClassPattern", it) }
         goldenOnly.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.goldenOnly", it) }
+        incremental.orNull?.let { systemProperty("$testDataManagerOptionsPrefix.incremental", it) }
 
         super.exec()
     }

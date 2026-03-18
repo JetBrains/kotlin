@@ -2,5 +2,7 @@ KtNameReferenceExpression(14,17): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun foo(): Unit'.>
     symbols:
       (in ROOT) fun foo()

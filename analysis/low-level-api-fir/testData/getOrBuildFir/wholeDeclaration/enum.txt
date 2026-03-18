@@ -22,7 +22,7 @@ public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class MyClass : <ERROR TYPE
     }
 
     public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyClass>|
+        public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyClass>|
 
 }
 
@@ -47,7 +47,7 @@ FILE: [ResolvedTo(IMPORTS)] enum.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyClass>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyClass>|
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }

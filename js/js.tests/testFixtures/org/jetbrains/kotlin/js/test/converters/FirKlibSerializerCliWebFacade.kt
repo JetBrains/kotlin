@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,12 +20,9 @@ import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.ServiceRegistrationData
-import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.service
 import java.io.File
 
 class FirKlibSerializerCliWebFacade(
@@ -58,10 +55,15 @@ class FirKlibSerializerCliWebFacade(
             )
         }
 
+        val klibArtifact = BinaryArtifacts.KLib(File(output.outputKlibPath), output.configuration.diagnosticsCollector)
+
         if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
+            // We have to register the KLIB artifact here because `recordIncrementalData` will use the second-stage CompilerConfiguration,
+            // which will be created by `JsSecondStageEnvironmentConfigurator`, which needs the registered KLIB artifact.
+            testServices.artifactsProvider.registerArtifact(module, klibArtifact)
             testServices.jsIrIncrementalDataProvider.recordIncrementalData(module, output)
         }
 
-        return BinaryArtifacts.KLib(File(output.outputKlibPath), output.configuration.diagnosticsCollector)
+        return klibArtifact
     }
 }

@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
-import org.jetbrains.kotlin.wasm.test.handlers.WasmTypeScriptCompilationHandler
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 
 fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
@@ -327,9 +326,6 @@ open class AbstractFirWasmTypeScriptExportTest(
     testGroupOutputDirPrefix: String = "typescript-export/"
 ) : AbstractFirWasmJsTest(pathToTestDir, testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
-        builder.wasmArtifactsHandlersStep {
-            useHandlers(::WasmTypeScriptCompilationHandler)
-        }
         super.configure(builder)
         builder.defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS

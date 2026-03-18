@@ -12,9 +12,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -49,12 +50,10 @@ class IrLazyFunction(
     override var isInfix: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : AbstractIrLazyFunction(), Psi2IrLazyFunctionBase {
+) : IrSimpleFunction(), IrLazyFunctionBase, Psi2IrLazyFunctionBase {
     override var annotations: List<IrAnnotation> by createLazyAnnotations()
 
-    override var body: IrBody? by lazyVar(stubGenerator.lock) {
-        if (tryLoadIr()) body else null
-    }
+    override var body: IrBody? = null
 
     override var returnType: IrType by lazyVar(stubGenerator.lock) {
         createReturnType()
@@ -95,9 +94,6 @@ class IrLazyFunction(
 
     override val containerSource: DeserializedContainerSource?
         get() = (descriptor as? DescriptorWithContainerSource)?.containerSource
-
-    override val isDeserializationEnabled: Boolean
-        get() = stubGenerator.extensions.irDeserializationEnabled
 
     init {
         symbol.bind(this)

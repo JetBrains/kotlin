@@ -2,6 +2,7 @@ KtNameReferenceExpression(150,153): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) context(`<unused var>`@T, cp2@kotlin.Boolean)
       abstract val foo: T

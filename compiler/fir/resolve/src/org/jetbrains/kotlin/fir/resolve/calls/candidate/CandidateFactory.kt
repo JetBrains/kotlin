@@ -42,6 +42,9 @@ class CandidateFactory private constructor(
 
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
+            callInfo.containingCandidateForCollectionLiteral?.let {
+                return buildBaseSystemForContainingCallAwareCases(context, it, callInfo)
+            }
             val system = context.inferenceComponents.createConstraintSystem()
             callInfo.argumentAtoms.forEach {
                 system.addSubsystemFromAtom(it)
@@ -58,13 +61,6 @@ class CandidateFactory private constructor(
             containingCall: Candidate,
         ): CandidateFactory =
             CandidateFactory(context, buildBaseSystemForContainingCallAwareCases(context, containingCall, null))
-
-        fun createForCollectionLiterals(
-            context: ResolutionContext,
-            containingCall: Candidate,
-            callInfo: CallInfo,
-        ): CandidateFactory =
-            CandidateFactory(context, buildBaseSystemForContainingCallAwareCases(context, containingCall, callInfo))
 
         private fun buildBaseSystemForContainingCallAwareCases(
             context: ResolutionContext,
@@ -230,7 +226,7 @@ class CandidateFactory private constructor(
         val referencedClass = (this as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session) ?: return false
         if (referencedClass.classKind == ClassKind.OBJECT) return false
 
-        val companionObject = referencedClass.companionObjectSymbol ?: return true
+        val companionObject = referencedClass.resolvedCompanionObjectSymbol ?: return true
         return session.languageVersionSettings.supportsFeature(LanguageFeature.SkipHiddenObjectsInResolution)
                 && companionObject.isDeprecationLevelHidden(session)
     }
@@ -259,11 +255,13 @@ class CandidateFactory private constructor(
             is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic, callInfo.callSite.source)
             is CallKind.Function,
             is CallKind.DelegatingConstructorCall,
-            is CallKind.CallableReference
-            -> createErrorFunctionSymbol(diagnostic)
-            is CallKind.SyntheticSelect -> throw IllegalStateException()
-            is CallKind.SyntheticIdForCallableReferencesResolution -> throw IllegalStateException()
-            is CallKind.CustomForIde -> throw IllegalStateException()
+            is CallKind.CallableReference,
+            is CallKind.CollectionLiteral,
+                -> createErrorFunctionSymbol(diagnostic)
+            is CallKind.SyntheticSelect,
+            is CallKind.SyntheticIdForCallableReferencesResolution,
+            is CallKind.CustomForIde
+                -> throw IllegalStateException()
         }
         return Candidate(
             symbol,

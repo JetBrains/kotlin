@@ -1,0 +1,4 @@
+KtForExpression(23,37): 'for(i in f) {}'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>

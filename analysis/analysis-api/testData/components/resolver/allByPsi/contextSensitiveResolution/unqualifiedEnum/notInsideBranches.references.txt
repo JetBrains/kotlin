@@ -2,13 +2,17 @@ KtNameReferenceExpression(113,117): 'Some'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class Some
 
 KtNameReferenceExpression(127,128): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       s: Some
 
@@ -16,6 +20,7 @@ KtNameReferenceExpression(136,141): 'FIRST'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Some) FIRST
 
@@ -23,6 +28,8 @@ KtNameReferenceExpression(145,151): 'SECOND'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SECOND'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -30,6 +37,7 @@ KtNameReferenceExpression(156,162): 'SECOND'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Some) SECOND
 
@@ -37,5 +45,7 @@ KtNameReferenceExpression(166,171): 'FIRST'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'FIRST'.>
     symbols:
       Nothing (Unresolved reference)

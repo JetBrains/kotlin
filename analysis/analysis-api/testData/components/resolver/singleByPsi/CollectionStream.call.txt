@@ -1,5 +1,5 @@
 KtNameReferenceExpression(174,180): 'stream'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -20,10 +20,16 @@ KtProperty(18,45): 'val value = "1" + "2" + "3"'
   null
 
 KtBinaryExpression(30,45): '"1" + "2" + "3"'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+    ]
 
 KtBinaryExpression(30,39): '"1" + "2"'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+    ]
 
 KtStringTemplateExpression(30,33): '"1"'
   null
@@ -32,7 +38,10 @@ KtLiteralStringTemplateEntry(31,32): '1'
   null
 
 KtOperationReferenceExpression(34,35): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+    ]
 
 KtStringTemplateExpression(36,39): '"2"'
   null
@@ -41,7 +50,10 @@ KtLiteralStringTemplateEntry(37,38): '2'
   null
 
 KtOperationReferenceExpression(40,41): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+    ]
 
 KtStringTemplateExpression(42,45): '"3"'
   null

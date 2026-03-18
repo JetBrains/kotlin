@@ -1,0 +1,9 @@
+FILE: companionExtensions.kt
+    public? final? static fun String.foo(): R|kotlin/Unit| {
+    }
+    public? final? static val Int.bar: <implicit> = IntegerLiteral(1)
+        public? static get(): <implicit>
+    public? final? static val Int.baz: <implicit>
+        public? static get(): <implicit> {
+            ^ IntegerLiteral(1)
+        }

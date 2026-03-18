@@ -21,6 +21,13 @@ import callingDelegatingToSuperDefaultImplementation = JS_TESTS.foo.callingDeleg
 import FunIFace = JS_TESTS.foo.FunIFace;
 import makeFunInterfaceWithSam = JS_TESTS.foo.makeFunInterfaceWithSam;
 import callFunInterface = JS_TESTS.foo.callFunInterface;
+import NoRuntimeIface = JS_TESTS.foo.NoRuntimeIface;
+import ChildOfNoRuntime = JS_TESTS.foo.ChildOfNoRuntime;
+import KotlinNoRuntimeImpl = JS_TESTS.foo.KotlinNoRuntimeImpl;
+import KotlinChildNoRuntimeImpl = JS_TESTS.foo.KotlinChildNoRuntimeImpl;
+import NoRuntimeFunIface = JS_TESTS.foo.NoRuntimeFunIface;
+import callNoRuntimeFunInterface = JS_TESTS.foo.callNoRuntimeFunInterface;
+import makeNoRuntimeFunInterfaceWithSam = JS_TESTS.foo.makeNoRuntimeFunInterfaceWithSam;
 
 class TsFooImpl implements IFoo<string> {
     readonly [IFoo.Symbol] = true
@@ -105,6 +112,22 @@ class TsFunImpl implements FunIFace {
     apply(x: string): string {
         return `TS ${x}`
     }
+}
+
+class TsNoRuntimeFunImpl implements NoRuntimeFunIface {
+    run(): Array<string> {
+        return ["SAM from TypeScript"];
+    }
+}
+
+// TypeScript-side implementations for @JsNoRuntime interfaces
+class TsNoRuntimeImpl implements NoRuntimeIface {
+    constructor(public readonly a: string) {}
+}
+
+class TsChildNoRuntimeImpl implements ChildOfNoRuntime {
+    constructor(public readonly a: string) {}
+    child(): string { return `child-${this.a}` }
 }
 
 async function testFoo(foo: IFoo<string>, languageImplemented: string): Promise<string> {
@@ -254,6 +277,18 @@ function testFunInterface(f: FunIFace, expectedPrefix: string): string {
     return "OK"
 }
 
+function testNoRuntimeFunInterface(f: NoRuntimeFunIface, expectedSuffix: string): string {
+    let result: any
+
+    result = f.run()[0]
+    if (result !== `SAM from ${expectedSuffix}`) return "Fail: calling f.run returns unexpected result: " + result
+
+    result = callNoRuntimeFunInterface(f)[0]
+    if (result !== `SAM from ${expectedSuffix}`) return "Fail: calling callFunInterface with f returns unexpected result: " + result
+
+    return "OK"
+}
+
 async function box(): Promise<string> {
     let result = await testFoo(new TsFooImpl(), "TYPESCRIPT")
     if (result !== "OK") return result
@@ -266,6 +301,24 @@ async function box(): Promise<string> {
 
     funResult = testFunInterface(new TsFunImpl(), "TS")
     if (funResult !== "OK") return funResult
+
+    let noRuntimeFunResult = testNoRuntimeFunInterface(makeNoRuntimeFunInterfaceWithSam(), "Kotlin")
+    if (noRuntimeFunResult !== "OK") return noRuntimeFunResult
+
+    noRuntimeFunResult = testNoRuntimeFunInterface(new TsNoRuntimeFunImpl(), "TypeScript")
+    if (noRuntimeFunResult !== "OK") return noRuntimeFunResult
+
+    const tsNR: NoRuntimeIface = new TsNoRuntimeImpl("X")
+    if (tsNR.a !== "X") return "Fail: TsNoRuntimeImpl.a is wrong: " + tsNR.a
+
+    const tsChildNR: ChildOfNoRuntime = new TsChildNoRuntimeImpl("Y")
+    if (tsChildNR.child() !== "child-Y") return "Fail: TsChildNoRuntimeImpl.child() is wrong: " + tsChildNR.child()
+
+    const ktNR: NoRuntimeIface = new KotlinNoRuntimeImpl("K")
+    if (ktNR.a !== "K") return "Fail: KotlinNoRuntimeImpl.a is wrong: "+ ktNR.a
+
+    const ktChildNR: ChildOfNoRuntime = new KotlinChildNoRuntimeImpl("Z")
+    if (ktChildNR.child() !== "child-Z") return "Fail: KotlinChildNoRuntimeImpl.child() is wrong: " + ktChildNR.child()
 
     return "OK"
 }

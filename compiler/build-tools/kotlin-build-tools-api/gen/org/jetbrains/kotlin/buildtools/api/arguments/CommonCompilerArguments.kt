@@ -3,6 +3,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
@@ -11,10 +12,13 @@ import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.HeaderMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
 
 /**
  * @since 2.3.0
@@ -145,7 +149,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ANNOTATION_DEFAULT_TARGET: CommonCompilerArgument<String?> =
+    public val X_ANNOTATION_DEFAULT_TARGET: CommonCompilerArgument<AnnotationDefaultTargetMode?> =
         CommonCompilerArgument("X_ANNOTATION_DEFAULT_TARGET", KotlinReleaseVersion(2, 1, 20))
 
     /**
@@ -167,6 +171,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_CHECK_PHASE_CONDITIONS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_CHECK_PHASE_CONDITIONS", KotlinReleaseVersion(1, 3, 40))
+
+    /**
+     * Enable experimental language support for collection literals.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_COLLECTION_LITERALS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_COLLECTION_LITERALS", KotlinReleaseVersion(2, 4, 0))
 
     /**
      * Specify an execution order constraint for compiler plugins.
@@ -260,7 +274,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_DISABLE_PHASES: CommonCompilerArgument<Array<String>?> =
+    public val X_DISABLE_PHASES: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_DISABLE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
@@ -464,7 +478,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<String?> =
+    public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<NameBasedDestructuringMode?> =
         CommonCompilerArgument("X_NAME_BASED_DESTRUCTURING", KotlinReleaseVersion(2, 3, 0))
 
     /**
@@ -514,7 +528,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PHASES_TO_DUMP: CommonCompilerArgument<Array<String>?> =
+    public val X_PHASES_TO_DUMP: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_PHASES_TO_DUMP", KotlinReleaseVersion(1, 3, 20))
 
     /**
@@ -524,7 +538,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PHASES_TO_DUMP_AFTER: CommonCompilerArgument<Array<String>?> =
+    public val X_PHASES_TO_DUMP_AFTER: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_PHASES_TO_DUMP_AFTER", KotlinReleaseVersion(1, 3, 20))
 
     /**
@@ -534,7 +548,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PHASES_TO_DUMP_BEFORE: CommonCompilerArgument<Array<String>?> =
+    public val X_PHASES_TO_DUMP_BEFORE: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_PHASES_TO_DUMP_BEFORE", KotlinReleaseVersion(1, 3, 20))
 
     /**
@@ -544,7 +558,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PHASES_TO_VALIDATE: CommonCompilerArgument<Array<String>?> =
+    public val X_PHASES_TO_VALIDATE: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_PHASES_TO_VALIDATE", KotlinReleaseVersion(1, 3, 40))
 
     /**
@@ -554,7 +568,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PHASES_TO_VALIDATE_AFTER: CommonCompilerArgument<Array<String>?> =
+    public val X_PHASES_TO_VALIDATE_AFTER: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_PHASES_TO_VALIDATE_AFTER", KotlinReleaseVersion(1, 3, 40))
 
     /**
@@ -564,7 +578,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PHASES_TO_VALIDATE_BEFORE: CommonCompilerArgument<Array<String>?> =
+    public val X_PHASES_TO_VALIDATE_BEFORE: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_PHASES_TO_VALIDATE_BEFORE", KotlinReleaseVersion(1, 3, 40))
 
     /**
@@ -686,7 +700,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_SUPPRESS_WARNING: CommonCompilerArgument<Array<String>?> =
+    public val X_SUPPRESS_WARNING: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_SUPPRESS_WARNING", KotlinReleaseVersion(2, 1, 0))
 
     /**
@@ -740,7 +754,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_VERBOSE_PHASES: CommonCompilerArgument<Array<String>?> =
+    public val X_VERBOSE_PHASES: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_VERBOSE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
@@ -750,7 +764,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_VERIFY_IR: CommonCompilerArgument<String?> =
+    public val X_VERIFY_IR: CommonCompilerArgument<VerifyIrMode?> =
         CommonCompilerArgument("X_VERIFY_IR", KotlinReleaseVersion(2, 0, 20))
 
     /**
@@ -807,7 +821,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
      */
     @JvmField
-    public val KOTLIN_HOME: CommonCompilerArgument<String?> =
+    public val KOTLIN_HOME: CommonCompilerArgument<Path?> =
         CommonCompilerArgument("KOTLIN_HOME", KotlinReleaseVersion(1, 1, 50))
 
     /**
@@ -821,7 +835,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
      */
     @JvmField
-    public val OPT_IN: CommonCompilerArgument<Array<String>?> =
+    public val OPT_IN: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("OPT_IN", KotlinReleaseVersion(1, 4, 0))
 
     /**

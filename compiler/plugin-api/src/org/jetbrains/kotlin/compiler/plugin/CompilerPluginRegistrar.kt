@@ -25,21 +25,19 @@ abstract class CompilerPluginRegistrar {
     abstract fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration)
 
     class ExtensionStorage {
-        private val _registeredExtensions = mutableMapOf<ExtensionPointDescriptor<*>, MutableList<Any>>()
         val registeredExtensions: Map<ExtensionPointDescriptor<*>, List<Any>>
-            get() = _registeredExtensions
+            field = mutableMapOf<ExtensionPointDescriptor<*>, MutableList<Any>>()
 
-        private val _disposables = mutableListOf<PluginDisposable>()
         val disposables: List<PluginDisposable>
-            get() = _disposables
+            field = mutableListOf<PluginDisposable>()
 
         operator fun <T : Any> get(descriptor: ExtensionPointDescriptor<T>): List<T> {
             @Suppress("UNCHECKED_CAST")
-            return _registeredExtensions[descriptor] as List<T>? ?: emptyList()
+            return registeredExtensions[descriptor] as List<T>? ?: emptyList()
         }
 
         fun <T : Any> ExtensionPointDescriptor<T>.registerExtension(extension: T) {
-            _registeredExtensions.getOrPut(this, ::mutableListOf).add(extension)
+            registeredExtensions.getOrPut(this, ::mutableListOf).add(extension)
         }
 
         /**
@@ -51,7 +49,7 @@ abstract class CompilerPluginRegistrar {
          */
         @Suppress("unused")
         fun registerDisposable(disposable: PluginDisposable) {
-            _disposables += disposable
+            disposables += disposable
         }
     }
 

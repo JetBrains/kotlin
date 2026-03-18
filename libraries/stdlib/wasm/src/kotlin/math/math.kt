@@ -395,6 +395,8 @@ public actual fun sign(x: Double): Double = when {
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Double, b: Double): Double = kotlin.wasm.internal.wasm_f64_min(a, b)
@@ -403,6 +405,8 @@ public actual fun min(a: Double, b: Double): Double = kotlin.wasm.internal.wasm_
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Double, b: Double): Double = kotlin.wasm.internal.wasm_f64_max(a, b)
@@ -500,10 +504,16 @@ public actual fun Double.withSign(sign: Int): Double = kotlin.wasm.internal.wasm
  *
  * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
  *
- * Special Cases:
+ * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
+ *
+ * @see nextUp
+ * @see nextDown
+ * @see nextTowards
+ * @sample samples.math.MathSamples.Doubles.ulp
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public actual val Double.ulp: Double get() = when {
@@ -514,7 +524,18 @@ public actual val Double.ulp: Double get() = when {
 }
 
 /**
- * Returns the [Double] value nearest to this value in direction of positive infinity.
+ * Returns the [Double] value nearest to this value in a direction of positive infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextUp() is `NaN`
+ *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `0.0.nextUp()` is `Double.MIN_VALUE`
+ *
+ * @see nextTowards
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextUp
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public actual fun Double.nextUp(): Double = when {
@@ -524,7 +545,18 @@ public actual fun Double.nextUp(): Double = when {
 }
 
 /**
- * Returns the [Double] value nearest to this value in direction of negative infinity.
+ * Returns the [Double] value nearest to this value in a direction of negative infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextDown() is `NaN`
+ *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
+ *
+ * @see nextUp
+ * @see nextTowards
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextDown
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public actual fun Double.nextDown(): Double = when {
@@ -534,12 +566,17 @@ public actual fun Double.nextDown(): Double = when {
 }
 
 /**
- * Returns the [Double] value nearest to this value in direction from this value towards the value [to].
+ * Returns the [Double] value nearest to this value in a direction from this value towards the value [to].
  *
  * Special cases:
  *   - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
  *   - `x.nextTowards(x) == x`
  *
+ * @see nextUp
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextTowards
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public actual fun Double.nextTowards(to: Double): Double = kotlin.math.fdlibm.nextafter(this, to)
@@ -974,6 +1011,8 @@ public actual fun sign(x: Float): Float = when {
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Float, b: Float): Float = kotlin.wasm.internal.wasm_f32_min(a, b)
@@ -982,6 +1021,8 @@ public actual fun min(a: Float, b: Float): Float = kotlin.wasm.internal.wasm_f32
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Float, b: Float): Float = kotlin.wasm.internal.wasm_f32_max(a ,b)
@@ -1134,12 +1175,16 @@ public actual fun abs(n: Int): Int = if (n < 0) -n else n
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Int, b: Int): Int = if (a < b) a else b
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Int, b: Int): Int = if (a > b) a else b
@@ -1181,12 +1226,16 @@ public actual fun abs(n: Long): Long = if (n < 0) -n else n
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.min
  */
 @SinceKotlin("1.2")
 public actual fun min(a: Long, b: Long): Long = if (a <= b) a else b
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.max
  */
 @SinceKotlin("1.2")
 public actual fun max(a: Long, b: Long): Long = if (a >= b) a else b

@@ -113,10 +113,6 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
     PsiChildRangeArgumentType
 )
 
-@get:TestOnly
-@set:TestOnly
-var CREATE_BY_PATTERN_MAY_NOT_REFORMAT = false
-
 fun <TElement : KtElement> createByPattern(
     pattern: String,
     vararg args: Any,
@@ -179,9 +175,6 @@ fun <TElement : KtElement> createByPattern(
     val codeStyleManager = CodeStyleManager.getInstance(project)
 
     if (reformat) {
-        if (CREATE_BY_PATTERN_MAY_NOT_REFORMAT) {
-            throw java.lang.IllegalArgumentException("Reformatting is not allowed in the current context; please change the invocation to use reformat=false")
-        }
         val stringPlaceholderRanges = allPlaceholders.asSequence()
             .filter { args[it.key] is String }
             .flatMap { it.value }

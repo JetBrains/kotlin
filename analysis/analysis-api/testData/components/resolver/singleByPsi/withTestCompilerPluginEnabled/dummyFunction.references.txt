@@ -2,5 +2,6 @@ KtNameReferenceExpression(127,136): 'dummyTest'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test) fun dummyTest(value: test.Test): kotlin.String

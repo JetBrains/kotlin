@@ -53,7 +53,7 @@ function box(): string {
     assert(new Test2("1", "2").component1() === "1")
 
     assert(shortNameBasedDestructuring() === "42")
-    assert(fullNameBasedDestructuring() === "4 2 ")
+    assert(fullNameBasedDestructuring() === "4 2")
     assert(shortPositionBasedDestructuring() === "42")
     assert(fullPositionBasedDestructuring() === "4 2")
 

@@ -13,6 +13,6 @@ abstract class AbstractStandaloneTest : TestWithDisposable() {
     abstract val suiteName: String
 
     protected fun testDataPath(path: String): Path {
-        return Paths.get("analysis/analysis-api-standalone/testData/$suiteName").resolve(path)
+        return Paths.get("testData/$suiteName").resolve(path)
     }
 }

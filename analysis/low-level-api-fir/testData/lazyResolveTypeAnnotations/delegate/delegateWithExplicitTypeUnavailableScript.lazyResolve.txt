@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -231,7 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor([ResolvedTo(BODY_RESOLVE)] i: R|OriginalInterface|): R|Derived| {
                 super<R|kotlin/Any|>()
             }
@@ -340,4 +340,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithExplicitTypeUnavailableScript.kts
             }
 
         }
-

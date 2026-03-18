@@ -503,6 +503,10 @@ internal fun wasm_i64_trunc_sat_f64_s(a: Double): Long =
 internal fun wasm_i32_load(x: Int): Int =
     implementedAsIntrinsic
 
+@WasmOp(WasmOp.I32_LOAD8_S)
+internal fun wasm_i32_load8_s(x: Int): Byte =
+    implementedAsIntrinsic
+
 @WasmOp(WasmOp.I32_LOAD16_U)
 internal fun wasm_i32_load16_u(x: Int): Int =
     implementedAsIntrinsic
@@ -511,9 +515,48 @@ internal fun wasm_i32_load16_u(x: Int): Int =
 internal fun wasm_i32_store(addr: Int, i: Int): Unit =
     implementedAsIntrinsic
 
+@WasmOp(WasmOp.I32_STORE8)
+internal fun wasm_i32_store8(addr: Int, i: Byte): Unit =
+    implementedAsIntrinsic
+
 @WasmOp(WasmOp.I32_STORE16)
 internal fun wasm_i32_store16(addr: Int, c: Char): Unit =
     implementedAsIntrinsic
+
+/**
+ * Current linear memory size in pages
+ */
+@WasmOp(WasmOp.MEMORY_SIZE)
+internal fun wasm_memory_size(): Int =
+    implementedAsIntrinsic
+
+/**
+ * Grow memory by a given delta (in pages).
+ * Return the previous size, or -1 if enough memory cannot be allocated.
+ */
+@Suppress("UNUSED_PARAMETER")
+@WasmOp(WasmOp.MEMORY_GROW)
+internal fun wasm_memory_grow(delta: Int): Int =
+    implementedAsIntrinsic
+
+/**
+ * Copy `size` bytes from `src` to `dst` in linear memory.
+ */
+//@Suppress("UNUSED_PARAMETER")
+//@WasmOp(WasmOp.MEMORY_COPY)
+//internal fun wasm_memory_copy(dst: Int, src: Int, size: Int): Unit =
+//    implementedAsIntrinsic
+
+// TODO replace this function with intrinsic above after bootstrap
+internal fun wasm_memory_copy(dst: Int, src: Int, size: Int) {
+    var s = src
+    var d = dst
+    repeat(size) {
+        wasm_i32_store8(d, wasm_i32_load8_s(s))
+        s++
+        d++
+    }
+}
 
 @WasmOp(WasmOp.I32_CLZ)
 internal fun wasm_i32_clz(a: Int): Int =

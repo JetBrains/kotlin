@@ -20,6 +20,10 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @UseExtTestCaseGroupProvider()
 public class SwiftExportWithBinaryCompilationTest extends AbstractSwiftExportWithBinaryCompilationTest {
+  private void run(String fileName) {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInGeneration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone-integration-tests/simple/testData/generation"), Pattern.compile("^([^.]+)$"), null, false);

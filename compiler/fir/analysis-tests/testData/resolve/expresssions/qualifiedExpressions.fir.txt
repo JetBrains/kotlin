@@ -43,7 +43,7 @@ FILE: qualifiedExpressions.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<a/b/E>|
-            public get(): R|kotlin/enums/EnumEntries<a/b/E>|
+            public static get(): R|kotlin/enums/EnumEntries<a/b/E>|
 
     }
     public final fun foo(): R|kotlin/Unit| {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesByFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.test.services.TestServices
@@ -29,10 +30,28 @@ abstract class AbstractResolveCandidatesByFileFirTreeConsistencyTest : AbstractR
     }
 }
 
+/**
+ * A workaround to mark the test as a non-golden one.
+ *
+ * It is fine to just add a synthetic prefix since [AbstractResolveCandidatesByFileFirTreeConsistencyTest] is not supposed to generate any outputs
+ */
+internal fun TestVariantChain.patchedChainForConsistencyTests(): List<String> {
+    val original = this
+    return original + listOf(original.lastOrNull()?.let { "$it." }.orEmpty() + "consistency")
+}
+
 abstract class AbstractSourceResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileFirTreeConsistencyTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator =
+        object : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
+            override val testPrefixes: List<String>
+                get() = super.testPrefixes.patchedChainForConsistencyTests()
+        }
 }
 
 abstract class AbstractScriptResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileFirTreeConsistencyTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator =
+        object : AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false) {
+            override val testPrefixes: List<String>
+                get() = super.testPrefixes.patchedChainForConsistencyTests()
+        }
 }

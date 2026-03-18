@@ -1,0 +1,118 @@
+@JvmSynthetic
+fun assertEquals$powerassert(expected: Any?, actual: Any?, @Ignore message: String? = null, $explanation: Function0<CallExplanation>) {
+  when {
+    EQEQ(arg0 = actual, arg1 = expected).not() -> { // BLOCK
+      val diagram: CallExplanation = { // BLOCK
+        val tmp_0: CallExplanation? = $explanation.invoke()
+        when {
+          EQEQ(arg0 = tmp_0, arg1 = null) -> error(message = "no power-assert")
+          else -> tmp_0
+        }
+      }
+      throw AssertionError(p0 = { // BLOCK
+        val tmp_1: String? = message
+        when {
+          EQEQ(arg0 = tmp_1, arg1 = null) -> ""
+          else -> tmp_1
+        }
+      } + "\n".plus(other = toDefaultMessage(/* <this> = diagram */)))
+    }
+  }
+}
+
+@PowerAssert
+fun assertEquals(expected: Any?, actual: Any?, @Ignore message: String? = null) {
+  when {
+    EQEQ(arg0 = actual, arg1 = expected).not() -> { // BLOCK
+      val diagram: CallExplanation = { // BLOCK
+        val tmp_2: CallExplanation? = null
+        when {
+          EQEQ(arg0 = tmp_2, arg1 = null) -> error(message = "no power-assert")
+          else -> tmp_2
+        }
+      }
+      throw AssertionError(p0 = { // BLOCK
+        val tmp_3: String? = message
+        when {
+          EQEQ(arg0 = tmp_3, arg1 = null) -> ""
+          else -> tmp_3
+        }
+      } + "\n".plus(other = toDefaultMessage(/* <this> = diagram */)))
+    }
+  }
+}
+
+fun box(): String {
+  return runAll(tests = [to<String, Function0<Unit>>(/* <this> = "test1", */ that = local fun <anonymous>() {
+    test1()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test2", */ that = local fun <anonymous>() {
+    test2()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test3", */ that = local fun <anonymous>() {
+    test3()
+  }
+)])
+}
+
+fun test1() {
+  { // BLOCK
+    val tmp0_Explain: String = "Hello"
+    val tmp1_Explain: Int = tmp0_Explain.<get-length>()
+    { // BLOCK
+      val tmp2_Explain: String = "World"
+      val tmp3_Explain: Int = 1
+      val tmp4_Explain: Int = 4
+      val tmp5_Explain: String = substring(/* <this> = tmp2_Explain, */ startIndex = tmp3_Explain, endIndex = tmp4_Explain)
+      val tmp6_Explain: Int = tmp5_Explain.<get-length>()
+      assertEquals$powerassert(expected = tmp1_Explain, actual = tmp6_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+        return CallExplanation(offset = 475, source = "    assertEquals(\"Hello\".length, \"World\".substring(1, 4).length)", arguments = listOf<Argument>(elements = [Argument(startOffset = 17, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 17, endOffset = 24, displayOffset = 17, value = tmp0_Explain), ValueExpression(startOffset = 17, endOffset = 31, displayOffset = 25, value = tmp1_Explain)])), Argument(startOffset = 33, endOffset = 63, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 33, endOffset = 40, displayOffset = 33, value = tmp2_Explain), LiteralExpression(startOffset = 51, endOffset = 52, displayOffset = 51, value = tmp3_Explain), LiteralExpression(startOffset = 54, endOffset = 55, displayOffset = 54, value = tmp4_Explain), ValueExpression(startOffset = 33, endOffset = 56, displayOffset = 41, value = tmp5_Explain), ValueExpression(startOffset = 33, endOffset = 63, displayOffset = 57, value = tmp6_Explain)])), null]))
+      }
+)
+    }
+  }
+}
+
+fun test2() {
+  { // BLOCK
+    val tmp0_Explain: String = "Hello"
+    val tmp1_Explain: Int = tmp0_Explain.<get-length>()
+    { // BLOCK
+      val tmp2_Explain: String = "World"
+      val tmp3_Explain: Int = 1
+      val tmp4_Explain: Int = 4
+      val tmp5_Explain: String = substring(/* <this> = tmp2_Explain, */ startIndex = tmp3_Explain, endIndex = tmp4_Explain)
+      val tmp6_Explain: Int = tmp5_Explain.<get-length>()
+      { // BLOCK
+        val tmp7_Explain: String = "Values are not equal!"
+        assertEquals$powerassert(expected = tmp1_Explain, actual = tmp6_Explain, message = tmp7_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 557, source = "    assertEquals(\"Hello\".length, \"World\".substring(1, 4).length, message = \"Values are not equal!\")", arguments = listOf<Argument>(elements = [Argument(startOffset = 17, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 17, endOffset = 24, displayOffset = 17, value = tmp0_Explain), ValueExpression(startOffset = 17, endOffset = 31, displayOffset = 25, value = tmp1_Explain)])), Argument(startOffset = 33, endOffset = 63, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 33, endOffset = 40, displayOffset = 33, value = tmp2_Explain), LiteralExpression(startOffset = 51, endOffset = 52, displayOffset = 51, value = tmp3_Explain), LiteralExpression(startOffset = 54, endOffset = 55, displayOffset = 54, value = tmp4_Explain), ValueExpression(startOffset = 33, endOffset = 56, displayOffset = 41, value = tmp5_Explain), ValueExpression(startOffset = 33, endOffset = 63, displayOffset = 57, value = tmp6_Explain)])), null]))
+        }
+)
+      }
+    }
+  }
+}
+
+fun test3() {
+  val message: String = "Values are not equal!"
+  { // BLOCK
+    val tmp0_Explain: String = "Hello"
+    val tmp1_Explain: Int = tmp0_Explain.<get-length>()
+    { // BLOCK
+      val tmp2_Explain: String = "World"
+      val tmp3_Explain: Int = 1
+      val tmp4_Explain: Int = 4
+      val tmp5_Explain: String = substring(/* <this> = tmp2_Explain, */ startIndex = tmp3_Explain, endIndex = tmp4_Explain)
+      val tmp6_Explain: Int = tmp5_Explain.<get-length>()
+      { // BLOCK
+        val tmp7_Explain: String = message
+        assertEquals$powerassert(expected = tmp1_Explain, actual = tmp6_Explain, message = tmp7_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 716, source = "    assertEquals(\"Hello\".length, \"World\".substring(1, 4).length, message)", arguments = listOf<Argument>(elements = [Argument(startOffset = 17, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 17, endOffset = 24, displayOffset = 17, value = tmp0_Explain), ValueExpression(startOffset = 17, endOffset = 31, displayOffset = 25, value = tmp1_Explain)])), Argument(startOffset = 33, endOffset = 63, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 33, endOffset = 40, displayOffset = 33, value = tmp2_Explain), LiteralExpression(startOffset = 51, endOffset = 52, displayOffset = 51, value = tmp3_Explain), LiteralExpression(startOffset = 54, endOffset = 55, displayOffset = 54, value = tmp4_Explain), ValueExpression(startOffset = 33, endOffset = 56, displayOffset = 41, value = tmp5_Explain), ValueExpression(startOffset = 33, endOffset = 63, displayOffset = 57, value = tmp6_Explain)])), null]))
+        }
+)
+      }
+    }
+  }
+}
+

@@ -50,7 +50,10 @@ KtReturnExpression(51,59): 'return a'
     ]
 
 KtNameReferenceExpression(58,59): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.String
+    ]
 
 KtClass(69,409): 'class Base {'
   null
@@ -86,13 +89,66 @@ KtBlockExpression(120,164): '{'
   null
 
 KtDotQualifiedExpression(130,140): 'this.bar()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtThisExpression(130,134): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Base
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(130,134): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Base
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtCallExpression(135,140): 'bar()'
   KaSymbolResolutionSuccess:
@@ -101,7 +157,10 @@ KtCallExpression(135,140): 'bar()'
     ]
 
 KtNameReferenceExpression(135,138): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtValueArgumentList(138,140): '()'
   null
@@ -110,7 +169,9 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
   null
 
 KtNameReferenceExpression(149,150): 'a'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: a>
 
 KtCallExpression(151,158): 'foo("")'
   null
@@ -167,13 +228,66 @@ KtBlockExpression(229,292): '{'
   null
 
 KtDotQualifiedExpression(243,253): 'this.bar()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtThisExpression(243,247): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Base
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(243,247): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Base
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtCallExpression(248,253): 'bar()'
   KaSymbolResolutionSuccess:
@@ -182,7 +296,10 @@ KtCallExpression(248,253): 'bar()'
     ]
 
 KtNameReferenceExpression(248,251): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtValueArgumentList(251,253): '()'
   null
@@ -197,7 +314,9 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
   null
 
 KtNameReferenceExpression(273,274): 'a'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: a>
 
 KtCallExpression(275,282): 'foo("")'
   null
@@ -248,13 +367,19 @@ KtCallExpression(349,360): 'funMember()'
     ]
 
 KtNameReferenceExpression(349,358): 'funMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtValueArgumentList(358,360): '()'
   null
 
 KtNameReferenceExpression(369,383): 'propertyMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val propertyMember: kotlin.String
+    ]
 
 KtNamedFunction(395,407): 'fun bar() {}'
   null
@@ -281,7 +406,10 @@ KtCallExpression(441,542): 'with(Base()) {'
     ]
 
 KtNameReferenceExpression(441,445): 'with'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
 
 KtValueArgumentList(445,453): '(Base())'
   null
@@ -296,7 +424,10 @@ KtCallExpression(446,452): 'Base()'
     ]
 
 KtNameReferenceExpression(446,450): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Base
+    ]
 
 KtValueArgumentList(450,452): '()'
   null
@@ -320,7 +451,10 @@ KtCallExpression(464,536): 'with(A()) {'
     ]
 
 KtNameReferenceExpression(464,468): 'with'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
 
 KtValueArgumentList(468,473): '(A())'
   null
@@ -335,7 +469,10 @@ KtCallExpression(469,472): 'A()'
     ]
 
 KtNameReferenceExpression(469,470): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(470,472): '()'
   null
@@ -359,13 +496,19 @@ KtCallExpression(488,499): 'funMember()'
     ]
 
 KtNameReferenceExpression(488,497): 'funMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtValueArgumentList(497,499): '()'
   null
 
 KtNameReferenceExpression(512,526): 'propertyMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val propertyMember: kotlin.String
+    ]
 
 KtNamedFunction(546,637): 'fun usageExplicitContextArguments() {'
   null
@@ -383,7 +526,10 @@ KtCallExpression(588,635): 'with(Base()) {'
     ]
 
 KtNameReferenceExpression(588,592): 'with'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
 
 KtValueArgumentList(592,600): '(Base())'
   null
@@ -398,7 +544,10 @@ KtCallExpression(593,599): 'Base()'
     ]
 
 KtNameReferenceExpression(593,597): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Base
+    ]
 
 KtValueArgumentList(597,599): '()'
   null
@@ -423,7 +572,11 @@ KtCallExpression(611,629): 'funMember(a = A())'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with funMember>
 
 KtNameReferenceExpression(611,620): 'funMember'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with funMember>
 
 KtValueArgumentList(620,629): '(a = A())'
   null
@@ -444,7 +597,10 @@ KtCallExpression(625,628): 'A()'
     ]
 
 KtNameReferenceExpression(625,626): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(626,628): '()'
   null

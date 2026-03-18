@@ -1,0 +1,41 @@
+@kotlin.Metadata
+synthetic final class Head$bogus$1 {
+    // source: 'KT67332.kt'
+    enclosing method Head.bogus()V
+    inner (anonymous) class Head$bogus$1
+    method <init>(p0: java.lang.Object): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): void
+}
+
+@kotlin.Metadata
+public final class Head {
+    // source: 'KT67332.kt'
+    private synthetic final static field tail$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field tail$volatile: java.lang.Object
+    inner (anonymous) class Head$bogus$1
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method access$doNothing(p0: Head): void
+    public final method bogus(): void
+    private final method doNothing(): void
+    public synthetic final static method getTail$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public synthetic final method getTail$volatile(): java.lang.Object
+    public synthetic final method setTail$volatile(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class KT67332Kt {
+    // source: 'KT67332.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public synthetic final static method find$atomicfu$ATOMIC_ARRAY$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function0): void
+    public synthetic final static method find$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function0): void
+    public synthetic final static method find$atomicfu$BOXED_ATOMIC$Any(p0: java.util.concurrent.atomic.AtomicReference, p1: kotlin.jvm.functions.Function0): void
+    public final static method findInternal(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
+}
+
+@kotlin.Metadata
+public final class Seg {
+    // source: 'KT67332.kt'
+    public method <init>(): void
+}

@@ -1,5 +1,5 @@
 KtConstructorCalleeExpression(40,41): 'A'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
         contextArgumentMapping = {}
@@ -33,4 +33,4 @@ KtConstructorCalleeExpression(40,41): 'A'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>

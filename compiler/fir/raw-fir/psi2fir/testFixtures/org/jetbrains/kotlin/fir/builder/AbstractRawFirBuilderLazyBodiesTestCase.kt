@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd
 import java.io.File

@@ -23,7 +23,10 @@ KtAnnotationEntry(31,61): '@Target(AnnotationTarget.TYPE)'
     ]
 
 KtConstructorCalleeExpression(32,38): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
 
 KtTypeReference(32,38): 'Target'
   null
@@ -32,7 +35,10 @@ KtUserType(32,38): 'Target'
   null
 
 KtNameReferenceExpression(32,38): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtValueArgumentList(38,61): '(AnnotationTarget.TYPE)'
   null
@@ -41,13 +47,22 @@ KtValueArgument(39,60): 'AnnotationTarget.TYPE'
   null
 
 KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.TYPE
+    ]
 
 KtNameReferenceExpression(39,55): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(56,60): 'TYPE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.TYPE
+    ]
 
 KtPrimaryConstructor(83,95): '(val i: Int)'
   null
@@ -140,7 +155,10 @@ KtAnnotationEntry(225,241): '@Anno(0 + outer)'
     ]
 
 KtConstructorCalleeExpression(226,230): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(226,230): 'Anno'
   null
@@ -149,7 +167,10 @@ KtUserType(226,230): 'Anno'
   null
 
 KtNameReferenceExpression(226,230): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(230,241): '(0 + outer)'
   null
@@ -158,16 +179,25 @@ KtValueArgument(231,240): '0 + outer'
   null
 
 KtBinaryExpression(231,240): '0 + outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(231,232): '0'
   null
 
 KtOperationReferenceExpression(233,234): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(235,240): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(242,291): 'Base<@Anno(1 + outer) Base<@Anno(2 + outer) Int>>'
   null
@@ -194,7 +224,10 @@ KtAnnotationEntry(247,263): '@Anno(1 + outer)'
     ]
 
 KtConstructorCalleeExpression(248,252): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(248,252): 'Anno'
   null
@@ -203,7 +236,10 @@ KtUserType(248,252): 'Anno'
   null
 
 KtNameReferenceExpression(248,252): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(252,263): '(1 + outer)'
   null
@@ -212,16 +248,25 @@ KtValueArgument(253,262): '1 + outer'
   null
 
 KtBinaryExpression(253,262): '1 + outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(253,254): '1'
   null
 
 KtOperationReferenceExpression(255,256): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(257,262): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(264,290): 'Base<@Anno(2 + outer) Int>'
   null
@@ -248,7 +293,10 @@ KtAnnotationEntry(269,285): '@Anno(2 + outer)'
     ]
 
 KtConstructorCalleeExpression(270,274): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(270,274): 'Anno'
   null
@@ -257,7 +305,10 @@ KtUserType(270,274): 'Anno'
   null
 
 KtNameReferenceExpression(270,274): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(274,285): '(2 + outer)'
   null
@@ -266,16 +317,25 @@ KtValueArgument(275,284): '2 + outer'
   null
 
 KtBinaryExpression(275,284): '2 + outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(275,276): '2'
   null
 
 KtOperationReferenceExpression(277,278): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(279,284): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(286,289): 'Int'
   null
@@ -284,7 +344,10 @@ KtNameReferenceExpression(286,289): 'Int'
   null
 
 KtNameReferenceExpression(295,304): 'Companion'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/MyClass.Companion
+    ]
 
 KtDelegatedSuperTypeEntry(310,374): '@Anno(4 + outer) Second<@Anno(5 + outer) String> by NestedObject'
   null
@@ -302,7 +365,10 @@ KtAnnotationEntry(310,326): '@Anno(4 + outer)'
     ]
 
 KtConstructorCalleeExpression(311,315): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(311,315): 'Anno'
   null
@@ -311,7 +377,10 @@ KtUserType(311,315): 'Anno'
   null
 
 KtNameReferenceExpression(311,315): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(315,326): '(4 + outer)'
   null
@@ -320,16 +389,25 @@ KtValueArgument(316,325): '4 + outer'
   null
 
 KtBinaryExpression(316,325): '4 + outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(316,317): '4'
   null
 
 KtOperationReferenceExpression(318,319): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(320,325): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(327,358): 'Second<@Anno(5 + outer) String>'
   null
@@ -356,7 +434,10 @@ KtAnnotationEntry(334,350): '@Anno(5 + outer)'
     ]
 
 KtConstructorCalleeExpression(335,339): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(335,339): 'Anno'
   null
@@ -365,7 +446,10 @@ KtUserType(335,339): 'Anno'
   null
 
 KtNameReferenceExpression(335,339): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(339,350): '(5 + outer)'
   null
@@ -374,16 +458,25 @@ KtValueArgument(340,349): '5 + outer'
   null
 
 KtBinaryExpression(340,349): '5 + outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(340,341): '5'
   null
 
 KtOperationReferenceExpression(342,343): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(344,349): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(351,357): 'String'
   null
@@ -392,7 +485,10 @@ KtNameReferenceExpression(351,357): 'String'
   null
 
 KtNameReferenceExpression(362,374): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/MyClass.NestedObject
+    ]
 
 KtClassBody(375,610): '{'
   null
@@ -422,7 +518,10 @@ KtAnnotationEntry(400,416): '@Anno(6 + inner)'
     ]
 
 KtConstructorCalleeExpression(401,405): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(401,405): 'Anno'
   null
@@ -431,7 +530,10 @@ KtUserType(401,405): 'Anno'
   null
 
 KtNameReferenceExpression(401,405): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(405,416): '(6 + inner)'
   null
@@ -440,16 +542,73 @@ KtValueArgument(406,415): '6 + inner'
   null
 
 KtBinaryExpression(406,415): '6 + inner'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun plus(other: Int): Int:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun plus(other: Byte): Int:
+      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+
+    fun plus(other: Short): Int:
+      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+
+    fun plus(other: Long): Long:
+      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+
+    fun plus(other: Float): Float:
+      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+
+    fun plus(other: Double): Double:
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtConstantExpression(406,407): '6'
   null
 
 KtOperationReferenceExpression(408,409): '+'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun plus(other: Int): Int:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun plus(other: Byte): Int:
+      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+
+    fun plus(other: Short): Int:
+      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+
+    fun plus(other: Long): Long:
+      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+
+    fun plus(other: Float): Float:
+      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+
+    fun plus(other: Double): Double:
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(410,415): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.String
+    ]
 
 KtUserType(417,466): 'Base<@Anno(7 + inner) Base<@Anno(8 + inner) Int>>'
   null
@@ -476,7 +635,10 @@ KtAnnotationEntry(422,438): '@Anno(7 + inner)'
     ]
 
 KtConstructorCalleeExpression(423,427): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(423,427): 'Anno'
   null
@@ -485,7 +647,10 @@ KtUserType(423,427): 'Anno'
   null
 
 KtNameReferenceExpression(423,427): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(427,438): '(7 + inner)'
   null
@@ -494,16 +659,73 @@ KtValueArgument(428,437): '7 + inner'
   null
 
 KtBinaryExpression(428,437): '7 + inner'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun plus(other: Int): Int:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun plus(other: Byte): Int:
+      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+
+    fun plus(other: Short): Int:
+      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+
+    fun plus(other: Long): Long:
+      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+
+    fun plus(other: Float): Float:
+      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+
+    fun plus(other: Double): Double:
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtConstantExpression(428,429): '7'
   null
 
 KtOperationReferenceExpression(430,431): '+'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun plus(other: Int): Int:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun plus(other: Byte): Int:
+      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+
+    fun plus(other: Short): Int:
+      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+
+    fun plus(other: Long): Long:
+      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+
+    fun plus(other: Float): Float:
+      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+
+    fun plus(other: Double): Double:
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(432,437): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.String
+    ]
 
 KtUserType(439,465): 'Base<@Anno(8 + inner) Int>'
   null
@@ -530,7 +752,10 @@ KtAnnotationEntry(444,460): '@Anno(8 + inner)'
     ]
 
 KtConstructorCalleeExpression(445,449): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(445,449): 'Anno'
   null
@@ -539,7 +764,10 @@ KtUserType(445,449): 'Anno'
   null
 
 KtNameReferenceExpression(445,449): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(449,460): '(8 + inner)'
   null
@@ -548,16 +776,73 @@ KtValueArgument(450,459): '8 + inner'
   null
 
 KtBinaryExpression(450,459): '8 + inner'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun plus(other: Int): Int:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun plus(other: Byte): Int:
+      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+
+    fun plus(other: Short): Int:
+      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+
+    fun plus(other: Long): Long:
+      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+
+    fun plus(other: Float): Float:
+      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+
+    fun plus(other: Double): Double:
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtConstantExpression(450,451): '8'
   null
 
 KtOperationReferenceExpression(452,453): '+'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun plus(other: Int): Int:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun plus(other: Byte): Int:
+      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+
+    fun plus(other: Short): Int:
+      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+
+    fun plus(other: Long): Long:
+      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+
+    fun plus(other: Float): Float:
+      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+
+    fun plus(other: Double): Double:
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(454,459): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.String
+    ]
 
 KtUserType(461,464): 'Int'
   null
@@ -608,7 +893,10 @@ KtAnnotationEntry(559,575): '@Anno(9 + inner)'
     ]
 
 KtConstructorCalleeExpression(560,564): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(560,564): 'Anno'
   null
@@ -617,7 +905,10 @@ KtUserType(560,564): 'Anno'
   null
 
 KtNameReferenceExpression(560,564): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(564,575): '(9 + inner)'
   null
@@ -626,16 +917,25 @@ KtValueArgument(565,574): '9 + inner'
   null
 
 KtBinaryExpression(565,574): '9 + inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(565,566): '9'
   null
 
 KtOperationReferenceExpression(567,568): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(569,574): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.Int
+    ]
 
 KtUserType(576,608): 'Second<@Anno(10 + inner) String>'
   null
@@ -662,7 +962,10 @@ KtAnnotationEntry(583,600): '@Anno(10 + inner)'
     ]
 
 KtConstructorCalleeExpression(584,588): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(584,588): 'Anno'
   null
@@ -671,7 +974,10 @@ KtUserType(584,588): 'Anno'
   null
 
 KtNameReferenceExpression(584,588): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(588,600): '(10 + inner)'
   null
@@ -680,16 +986,25 @@ KtValueArgument(589,599): '10 + inner'
   null
 
 KtBinaryExpression(589,599): '10 + inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(589,591): '10'
   null
 
 KtOperationReferenceExpression(592,593): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(594,599): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.Int
+    ]
 
 KtUserType(601,607): 'String'
   null

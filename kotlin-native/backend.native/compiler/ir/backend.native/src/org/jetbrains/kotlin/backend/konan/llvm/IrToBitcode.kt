@@ -441,7 +441,6 @@ internal class CodeGeneratorVisitor(
     val ALLOC_THREAD_LOCAL_GLOBALS = 0
     val INIT_GLOBALS = 1
     val INIT_THREAD_LOCAL_GLOBALS = 2
-    val DEINIT_GLOBALS = 3
 
     val FILE_NOT_INITIALIZED = 0
     val FILE_INITIALIZED = 2
@@ -452,16 +451,16 @@ internal class CodeGeneratorVisitor(
                 val bbInit = basicBlock("init", null)
                 val bbLocalInit = basicBlock("local_init", null)
                 val bbLocalAlloc = basicBlock("local_alloc", null)
-                val bbGlobalDeinit = basicBlock("global_deinit", null)
                 val bbDefault = basicBlock("default", null) {
                     unreachable()
                 }
 
                 switch(function.param(0),
-                        listOf(llvm.int32(INIT_GLOBALS) to bbInit,
+                        listOf(
+                                llvm.int32(INIT_GLOBALS) to bbInit,
                                 llvm.int32(INIT_THREAD_LOCAL_GLOBALS) to bbLocalInit,
-                                llvm.int32(ALLOC_THREAD_LOCAL_GLOBALS) to bbLocalAlloc,
-                                llvm.int32(DEINIT_GLOBALS) to bbGlobalDeinit),
+                                llvm.int32(ALLOC_THREAD_LOCAL_GLOBALS) to bbLocalAlloc
+                        ),
                         bbDefault)
 
                 // Globals initializers may contain accesses to objects, so visit them first.
@@ -485,24 +484,6 @@ internal class CodeGeneratorVisitor(
                     if (llvm.tlsCount > 0) {
                         val memory = function.param(1)
                         call(llvm.addTLSRecord, listOf(memory, llvm.tlsKey, llvm.int32(llvm.tlsCount)))
-                    }
-                    ret(null)
-                }
-
-                appendingTo(bbGlobalDeinit) {
-                    state.topLevelFields
-                            // Only if a subject for memory management.
-                            .forEach { irField ->
-                                if (irField.type.binaryTypeIsReference() && irField.storageKind != FieldStorageKind.THREAD_LOCAL) {
-                                    val address = staticFieldPtr(irField, functionGenerationContext)
-                                    storeHeapRef(llvm.kNull, address)
-                                }
-                            }
-                    state.globalSharedObjects.forEach { address ->
-                        storeHeapRef(llvm.kNull, address)
-                    }
-                    state.globalInitState?.let {
-                        store(llvm.intptr(FILE_NOT_INITIALIZED), it)
                     }
                     ret(null)
                 }

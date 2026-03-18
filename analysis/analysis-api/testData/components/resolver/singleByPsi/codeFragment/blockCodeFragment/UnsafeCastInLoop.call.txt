@@ -1,5 +1,5 @@
 KtNameReferenceExpression(218,221): 'inc'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

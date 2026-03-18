@@ -41,7 +41,10 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
     ]
 
 KtConstructorCalleeExpression(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtTypeReference(166,173): 'MyClass'
   null
@@ -140,37 +143,72 @@ KtBlockExpression(333,403): '{'
   null
 
 KtBinaryExpression(339,353): 'i + EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(339,340): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: OperatorHolder
+    ]
 
 KtOperationReferenceExpression(341,342): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(358,359): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: OperatorHolder
+    ]
 
 KtOperationReferenceExpression(360,361): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtBinaryExpression(382,401): 'i - InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(382,383): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: OperatorHolder
+    ]
 
 KtOperationReferenceExpression(384,385): '-'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(386,401): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]

@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
@@ -43,14 +42,13 @@ import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 
 /**
- * This extension implements K2 kapt in the same way as K1 kapt: invoke the compiler in the "skip bodies" / suppress-errors mode,
- * and translate the resulting in-memory class files, correcting error types.
+ * This extension implements K2 kapt by invoking the compiler in the "skip bodies" / suppress-errors mode, and translating the resulting
+ * in-memory class files to Java sources, correcting error types.
  */
 @OptIn(LegacyK2CliPipeline::class)
 open class FirKaptAnalysisHandlerExtension(
@@ -60,7 +58,7 @@ open class FirKaptAnalysisHandlerExtension(
     lateinit var options: KaptOptions
 
     override fun isApplicable(configuration: CompilerConfiguration): Boolean {
-        return configuration[KAPT_OPTIONS] != null && configuration.getBoolean(USE_FIR) && !configuration.skipBodies
+        return configuration[KAPT_OPTIONS] != null && !configuration.skipBodies
     }
 
     override fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean {
@@ -69,7 +67,7 @@ open class FirKaptAnalysisHandlerExtension(
             ?: MessageCollectorBackedKaptLogger(
                 KaptFlag.VERBOSE in optionsBuilder.flags,
                 KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
-                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                configuration.messageCollector,
             )
         val messageCollector = logger.messageCollector
 
@@ -80,10 +78,10 @@ open class FirKaptAnalysisHandlerExtension(
 
         optionsBuilder.apply {
             projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
-            val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
+            val contentRoots = configuration.contentRoots
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
-            classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+            classesOutputDir = classesOutputDir ?: configuration.outputDirectory
         }
 
         optionsBuilder.checkOptions(logger, configuration)?.let { return it }
@@ -230,7 +228,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         return KaptContextForStubGeneration(
             options, false, logger, builderFactory.compiledClasses, builderFactory.origins, generationState,
-            BindingContext.EMPTY, frontendOutput.frontendOutput.outputs.flatMap { it.fir },
+            frontendOutput.frontendOutput.outputs.flatMap { it.fir },
         )
     }
 
@@ -269,7 +267,7 @@ open class FirKaptAnalysisHandlerExtension(
         stubs: List<KaptStub>,
         messageCollector: MessageCollector,
     ) {
-        val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
+        val reportOutputFiles = kaptContext.generationState.configuration.reportOutputFiles
         val outputFiles = if (reportOutputFiles) kaptContext.generationState.factory.asList().associateBy {
             it.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")
         } else null
@@ -322,7 +320,7 @@ open class FirKaptAnalysisHandlerExtension(
     ) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
-        val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
+        val reportOutputFiles = kaptContext.generationState.configuration.reportOutputFiles
         kaptContext.generationState.factory.writeAll(incrementalDataOutputDir) { outputInfo, output ->
             kaptContext.generationState.configuration.fileMappingTracker?.let {
                 when (outputInfo.generatedForCompilerPlugin) {
@@ -344,7 +342,7 @@ open class FirKaptAnalysisHandlerExtension(
         EfficientProcessorLoader(options, logger)
 
     private fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean? {
-        if (classesOutputDir == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
+        if (classesOutputDir == null && configuration.outputJar != null) {
             logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
             return false
         }
@@ -361,9 +359,7 @@ open class FirKaptAnalysisHandlerExtension(
                 classesOutputDir == null -> "Classes output directory"
                 else -> "Stubs output directory"
             }
-            val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)
-                ?: configuration.get(JVMConfigurationKeys.MODULES).orEmpty().joinToString()
-
+            val moduleName = configuration.moduleName ?: configuration.modules.joinToString()
             logger.warn("$nonExistentOptionName is not specified for $moduleName, skipping annotation processing")
             return false
         }
@@ -373,5 +369,11 @@ open class FirKaptAnalysisHandlerExtension(
         }
 
         return null
+    }
+
+    private inline fun <T> measureTimeMillis(block: () -> T): Pair<Long, T> {
+        val start = System.currentTimeMillis()
+        val result = block()
+        return Pair(System.currentTimeMillis() - start, result)
     }
 }

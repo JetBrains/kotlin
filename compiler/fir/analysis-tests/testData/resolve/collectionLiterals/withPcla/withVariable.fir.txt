@@ -1,0 +1,200 @@
+FILE: withVariable.kt
+    public abstract interface Box<T> : R|kotlin/Any| {
+        public abstract var x: R|T|
+            public get(): R|T|
+            public set(value: R|T|): R|kotlin/Unit|
+
+    }
+    public final fun <Z> buildBox(block: R|Box<Z>.() -> kotlin/Unit|): R|Box<Z>| {
+        ^buildBox R|kotlin/TODO|()
+    }
+    public final fun <X> id(x: R|X|): R|X| {
+        ^id R|<local>/x|
+    }
+    public final fun <R> runIf(b: R|kotlin/Boolean|, block: R|() -> R|): R|R?| {
+        ^runIf when () {
+            R|<local>/b|.R|kotlin/Boolean.not|() ->  {
+                Null(null)
+            }
+            else ->  {
+                R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/buildBox|<R|kotlin/collections/Set<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/Set<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/Int>|>| = R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildBox@fun R|Box<kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3)))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/Collection<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/Collection<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Collection<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Collection<kotlin/Int>|>| = R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/List<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        }
+        )
+        R|/buildBox<CS errors: /buildBox>#|<<ERROR TYPE REF: Cannot infer argument for type parameter Z>>(<L> = buildBox@fun R|Box<ERROR CLASS: Cannot infer argument for type parameter Z>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: <ERROR TYPE REF: Cannot infer argument for type parameter Z>>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/List<kotlin/String>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<kotlin/String>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/String>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3)))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/List<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3)))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/List<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>()
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        }
+        )
+        R|/buildBox<CS errors: /buildBox>#|<<ERROR TYPE REF: Cannot infer argument for type parameter Z>>(<L> = buildBox@fun R|Box<ERROR CLASS: Cannot infer argument for type parameter Z>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: <ERROR TYPE REF: Cannot infer argument for type parameter Z>>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|TypeVariable(Z)|>|)
+        }
+        )
+    }
+    public final fun testWithSemifixation(): R|kotlin/Unit| {
+        R|/buildBox|<R|kotlin/collections/List<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/Set<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/Set<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/Int>|>| = R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/Int>|>|.R|SubstitutionOverride<kotlin/collections/Set.size: R|kotlin/Int|>|
+        }
+        )
+        R|/buildBox<CS errors: /buildBox>#|<R|kotlin/collections/Set<kotlin/String>|>(<L> = buildBox@fun R|Box<kotlin/collections/Set<kotlin/String>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/String>|>| = R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/String>|>| = Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(!))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/String>|><CS errors: /Box.x>#|.R|SubstitutionOverride<kotlin/collections/Set.size: R|kotlin/Int|><Inapplicable(RESOLVED): kotlin/collections/Set.size>#|
+        }
+        )
+        R|/buildBox<CS errors: /buildBox>#|<R|kotlin/collections/Collection<kotlin/String>|>(<L> = buildBox@fun R|Box<kotlin/collections/Collection<kotlin/String>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Collection<kotlin/String>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(!))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Collection<kotlin/String>|>| = R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Collection<kotlin/String>|><CS errors: /Box.x>#|.R|SubstitutionOverride<kotlin/collections/Collection.size: R|kotlin/Int|><Inapplicable(RESOLVED): kotlin/collections/Collection.size>#|
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/List<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>| = Q|kotlin/collections|.R|kotlin/collections/listOf<Inapplicable(INAPPLICABLE): kotlin/collections/listOf>#|<R|kotlin/Int|>(vararg(String(1), String(2), String(3)))
+        }
+        )
+    }
+    public final fun testWithoutAssignment(): R|kotlin/Unit| {
+        R|/buildBox|<R|kotlin/Int|>(<L> = buildBox@fun R|Box<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/Int|>| = Int(42)
+        }
+        )
+        R|/buildBox|<R|kotlin/Int|>(<L> = buildBox@fun R|Box<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/Int|>| = Int(42)
+            Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        }
+        )
+        R|/buildBox|<R|kotlin/Int|>(<L> = buildBox@fun R|Box<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|TypeVariable(Z)|>|)
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/Int|>| = Int(42)
+        }
+        )
+        R|/buildBox<CS errors: /buildBox>#|<<ERROR TYPE REF: Cannot infer argument for type parameter Z>>(<L> = buildBox@fun R|Box<ERROR CLASS: Cannot infer argument for type parameter Z>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        }
+        )
+        R|/buildBox<CS errors: /buildBox>#|<<ERROR TYPE REF: Cannot infer argument for type parameter Z>>(<L> = buildBox@fun R|Box<ERROR CLASS: Cannot infer argument for type parameter Z>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|TypeVariable(Z)|>|)
+        }
+        )
+    }
+    public final fun testWithId(): R|kotlin/Unit| {
+        R|/buildBox|<R|kotlin/collections/List<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<kotlin/Int>|>| = R|/id|<R|kotlin/collections/List<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = R|/id|<R|kotlin/collections/List<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = R|/id|<R|kotlin/collections/List<kotlin/String>|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3))))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildBox@fun R|Box<kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = R|/id|<R|kotlin/collections/Set<kotlin/String>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3))))
+        }
+        )
+    }
+    public final fun testWithElvis(): R|kotlin/Unit| {
+        R|/buildBox|<R|kotlin/collections/Set<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/Set<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/Int>|>| = R|/runIf|<R|kotlin/collections/Set<kotlin/Int>|>(Boolean(true), <L> = runIf@fun <anonymous>(): R|kotlin/collections/Set<kotlin/Int>| <inline=NoInline>  {
+                ^ R|kotlin/collections/setOf|<R|kotlin/Int|>()
+            }
+            ) ?: Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildBox@fun R|Box<kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>| = R|/runIf|<R|kotlin/collections/List<kotlin/Int>|>(Boolean(true), <L> = runIf@fun <anonymous>(): R|kotlin/collections/List<kotlin/Int>| <inline=NoInline>  {
+                ^ Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            }
+            ) ?: Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3)))
+        }
+        )
+        R|/buildBox<CS errors: /buildBox>#|<<ERROR TYPE REF: Cannot infer argument for type parameter Z>>(<L> = buildBox@fun R|Box<ERROR CLASS: Cannot infer argument for type parameter Z>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: <ERROR TYPE REF: Cannot infer argument for type parameter Z>>| = R|/runIf|<<ERROR TYPE REF: Cannot infer argument for type parameter R>>(Boolean(true), <L> = runIf@fun <anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=NoInline>  {
+                ^ Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+            }
+            ) ?: Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+        }
+        )
+    }
+    public final fun testWithWhen(): R|kotlin/Unit| {
+        R|/buildBox|<R|kotlin/collections/Collection<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/Collection<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Collection<kotlin/Int>|>| = when () {
+                Boolean(true) ->  {
+                    Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>()
+                }
+                else ->  {
+                    Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>()
+                }
+            }
+
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Collection<kotlin/Int>|>| = R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))
+        }
+        )
+        R|/buildBox|<R|kotlin/collections/Set<kotlin/Int>|>(<L> = buildBox@fun R|Box<kotlin/collections/Set<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</Box.x: R|kotlin/collections/Set<kotlin/Int>|>| = when () {
+                Boolean(true) ->  {
+                    Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>()
+                }
+                else ->  {
+                    R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))
+                }
+            }
+
+        }
+        )
+    }

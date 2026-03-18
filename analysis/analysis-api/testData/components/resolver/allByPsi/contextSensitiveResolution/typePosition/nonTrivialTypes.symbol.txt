@@ -302,10 +302,16 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
   null
 
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.foo(): MySealed!
+    ]
 
 KtNameReferenceExpression(403,412): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtCallExpression(413,418): 'foo()'
   KaSymbolResolutionSuccess:
@@ -314,7 +320,10 @@ KtCallExpression(413,418): 'foo()'
     ]
 
 KtNameReferenceExpression(413,416): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.foo(): MySealed!
+    ]
 
 KtValueArgumentList(416,418): '()'
   null
@@ -335,13 +344,22 @@ KtNameReferenceExpression(433,437): 'Left'
   null
 
 KtDotQualifiedExpression(441,446): 'foo.x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtNameReferenceExpression(441,444): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: MySealed!
+    ]
 
 KtNameReferenceExpression(445,446): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtWhenEntry(455,472): 'is Right -> foo.y'
   null
@@ -359,19 +377,31 @@ KtNameReferenceExpression(458,463): 'Right'
   null
 
 KtDotQualifiedExpression(467,472): 'foo.y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtNameReferenceExpression(467,470): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: MySealed!
+    ]
 
 KtNameReferenceExpression(471,472): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtBinaryExpressionWithTypeRHS(583,612): 'mg as MyGenericSealed<String>'
   null
 
 KtNameReferenceExpression(583,585): 'mg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      mg: MyGeneric<kotlin.Any>
+    ]
 
 KtOperationReferenceExpression(586,588): 'as'
   null
@@ -404,7 +434,10 @@ KtWhenExpression(617,683): 'when (mg) {'
   null
 
 KtNameReferenceExpression(623,625): 'mg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      mg: MyGeneric<kotlin.Any>
+    ]
 
 KtWhenEntry(637,652): 'is Left -> mg.x'
   null
@@ -422,13 +455,22 @@ KtNameReferenceExpression(640,644): 'Left'
   null
 
 KtDotQualifiedExpression(648,652): 'mg.x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtNameReferenceExpression(648,650): 'mg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      mg: MyGeneric<kotlin.Any>
+    ]
 
 KtNameReferenceExpression(651,652): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtWhenEntry(661,677): 'is Right -> mg.y'
   null
@@ -446,19 +488,31 @@ KtNameReferenceExpression(664,669): 'Right'
   null
 
 KtDotQualifiedExpression(673,677): 'mg.y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtNameReferenceExpression(673,675): 'mg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      mg: MyGeneric<kotlin.Any>
+    ]
 
 KtNameReferenceExpression(676,677): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtBinaryExpressionWithTypeRHS(804,833): 'cs as MyGenericSealed<String>'
   null
 
 KtNameReferenceExpression(804,806): 'cs'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      cs: kotlin.CharSequence
+    ]
 
 KtOperationReferenceExpression(807,809): 'as'
   null
@@ -491,7 +545,10 @@ KtWhenExpression(838,904): 'when (cs) {'
   null
 
 KtNameReferenceExpression(844,846): 'cs'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      cs: kotlin.CharSequence
+    ]
 
 KtWhenEntry(858,873): 'is Left -> cs.x'
   null
@@ -506,16 +563,25 @@ KtUserType(861,865): 'Left'
   null
 
 KtNameReferenceExpression(861,865): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
 
 KtDotQualifiedExpression(869,873): 'cs.x'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
 KtNameReferenceExpression(869,871): 'cs'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      cs: kotlin.CharSequence
+    ]
 
 KtNameReferenceExpression(872,873): 'x'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
 KtWhenEntry(882,898): 'is Right -> cs.y'
   null
@@ -530,13 +596,22 @@ KtUserType(885,890): 'Right'
   null
 
 KtNameReferenceExpression(885,890): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtDotQualifiedExpression(894,898): 'cs.y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>
 
 KtNameReferenceExpression(894,896): 'cs'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      cs: kotlin.CharSequence
+    ]
 
 KtNameReferenceExpression(897,898): 'y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

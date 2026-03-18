@@ -194,7 +194,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
-            }
+            } ?: emptyArray()
         }
 
         dependencyClasspath { args ->
@@ -367,6 +367,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
         )
         processArgsBeforeCompile(args)
+
         compilerRunner.runJsCompilerAsync(
             args,
             environment,

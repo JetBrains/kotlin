@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 abstract class AbstractAnalysisApiSurfaceCodebaseValidationTest : AbstractAnalysisApiCodebaseValidationTest() {
     override val sourceDirectories = listOf(
         SourceDirectory.ForValidation(
-            sourcePaths = listOf("analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api"),
+            sourcePaths = listOf("src/org/jetbrains/kotlin/analysis/api"),
         )
     )
 

@@ -47,6 +47,9 @@ object CLIConfigurationKeys {
     val RENDER_DIAGNOSTIC_INTERNAL_NAME = CompilerConfigurationKey.create<Boolean>("RENDER_DIAGNOSTIC_INTERNAL_NAME")
 
     @JvmField
+    val TREAT_WARNINGS_AS_ERRORS = CompilerConfigurationKey.create<Boolean>("TREAT_WARNINGS_AS_ERRORS")
+
+    @JvmField
     val ALLOW_KOTLIN_PACKAGE = CompilerConfigurationKey.create<Boolean>("ALLOW_KOTLIN_PACKAGE")
 
     // Used in Eclipse plugin (see KotlinCLICompiler).
@@ -110,6 +113,10 @@ var CompilerConfiguration.diagnosticsCollector: BaseDiagnosticsCollector
 var CompilerConfiguration.renderDiagnosticInternalName: Boolean
     get() = getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     set(value) { put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, value) }
+
+var CompilerConfiguration.treatWarningsAsErrors: Boolean
+    get() = getBoolean(CLIConfigurationKeys.TREAT_WARNINGS_AS_ERRORS)
+    set(value) { put(CLIConfigurationKeys.TREAT_WARNINGS_AS_ERRORS, value) }
 
 var CompilerConfiguration.allowKotlinPackage: Boolean
     get() = getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)

@@ -22,6 +22,8 @@ Tower Data Context:
             Properties:
                 FirValueParameterSymbol parameter1: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|
     Element 8
+        Static scope owner symbol: FirRegularClassSymbol local final class Foo : R|kotlin/Any|
+    Element 9
         Implicit receiver:
             FirRegularClassSymbol local final class Foo : R|kotlin/Any|
                 Type: <local>.Foo

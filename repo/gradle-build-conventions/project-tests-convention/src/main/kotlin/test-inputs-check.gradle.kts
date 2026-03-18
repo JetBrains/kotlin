@@ -128,7 +128,8 @@ tasks.withType<Test>().configureEach {
                     )
                 } else if (file.extension == "jar") {
                     listOf(
-                        """permission java.io.FilePermission "${file.absolutePath}", "read";""",
+                        // JvmCompilationUtils.compileJavaFiles uses embedded javaCompiler if no jdkHome is set, and it opens dependencies
+                        """permission java.io.FilePermission "${file.absolutePath}", "read,write";""",
                         """permission java.io.FilePermission "${file.absolutePath}/-", "read";""",
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                     )
@@ -235,6 +236,14 @@ tasks.withType<Test>().configureEach {
                             ((defineJDKEnvVariables + javaVersion.get()).distinct().map { version ->
                                 """permission java.io.FilePermission "${getJDKFromToolchain(service, version)}/-", "read,execute";"""
                             }).joinToString("\n    ")
+                        )
+                        .replace(
+                            "{{flight_recorder}}",
+                            buildString {
+                                if (testInputsCheck.allowFlightRecorder.get()) {
+                                    append("""permission jdk.jfr.FlightRecorderPermission "registerEvent";""")
+                                }
+                            }
                         )
                         .replace("{{gradle_user_home}}", """$gradleUserHomeDir""")
                         .replace("{{all_permissions_for_gradle_ro_dep_cache}}", allPermissionsForGradleRoDepCache ?: "")

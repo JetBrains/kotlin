@@ -1,0 +1,11 @@
+---
+assert(	text	!=	null	&&	text	.length			==	5	&&	text	.lowercase()	==	text)
+       	|   	| 	    	  	|   	 |     			| 	 	  	|   	 |          	| 	|
+       	|   	| 	    	  	|   	 5     			| 	 	  	|   	 hello      	| 	Hello
+       	|   	| 	    	  	|   	       			| 	 	  	|   	            	false
+       	|   	| 	    	  	|   	       			| 	 	  	Hello
+       	|   	| 	    	  	|   	       			true
+       	|   	| 	    	  	Hello
+       	|   	true
+       	Hello
+---

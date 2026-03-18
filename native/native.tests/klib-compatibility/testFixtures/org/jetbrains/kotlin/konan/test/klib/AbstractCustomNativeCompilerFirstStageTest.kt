@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -28,7 +30,7 @@ import org.junit.jupiter.api.Tag
 open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest() {
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         super.configure(builder)
-        useMetaTestConfigurators(::TargetBackendTestSkipper)
+        useMetaTestConfigurators(::TargetBackendTestSkipper, ::UnsupportedFeaturesTestConfigurator)
         globalDefaults {
             frontend = if (customNativeCompilerSettings.defaultLanguageVersion.usesK2) FrontendKinds.FIR else FrontendKinds.ClassicFrontend
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
@@ -40,7 +42,8 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
         }
 
         useConfigurators(
-            ::NativeEnvironmentConfigurator,
+            ::CommonEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator,
         )
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,
@@ -60,7 +63,7 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
             ::CustomKlibCompilerTestSuppressor,
         )
         useDirectives(TestDirectives)
-        facadeStep(::NativeCompilerSecondStageFacade.bind(currentCustomNativeCompilerSettings))
+        facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(currentCustomNativeCompilerSettings))
         nativeArtifactsHandlersStep {
             useHandlers(::NativeBoxRunner)
         }

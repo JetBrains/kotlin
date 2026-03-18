@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
 plugins {
     kotlin("jvm")
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -17,11 +20,33 @@ dependencies {
 
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:psi:psi-impl"))
+
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
+    testFixturesCompileOnly(intellijCore())
+    testCompileOnly(intellijCore())
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
+}
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
+
+    /** The 'test' task inputs cannot depend on [checkForeignClassUsage] outputs. */
+    testData(project.isolated, "api/psi-utils-api.api")
+    testData(project.isolated, "api/psi-utils-api.undocumented")
+
+    testData(project.isolated, "src")
 }
 
 private val stableNonPublicMarkers = listOf(

@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -83,4 +83,3 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| { LAZY_BLOCK }
-

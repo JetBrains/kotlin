@@ -1,5 +1,5 @@
 KtNameReferenceExpression(23,31): 'Suppress'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

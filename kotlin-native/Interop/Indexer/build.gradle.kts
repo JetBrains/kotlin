@@ -29,7 +29,7 @@ dependencies {
     implementation(project(":native:kotlin-native-utils"))
 
     testImplementation(kotlin("test-junit"))
-    testImplementation(project(":compiler:util"))
+    testImplementation(project(":native:unsafe-mem"))
     testCppRuntime(project(":kotlin-native:libclangInterop"))
     testCppRuntime(project(":kotlin-native:Interop:Runtime"))
 }

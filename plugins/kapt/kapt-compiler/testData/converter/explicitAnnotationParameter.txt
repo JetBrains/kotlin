@@ -1,0 +1,68 @@
+import kotlin.reflect.KClass;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class FooAnnotation : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(vararg value: kotlin/reflect/KClass<*> (* kotlin/Array<out kotlin/reflect/KClass<*>> *))
+ *
+ *   // getter: value()[Ljava/lang/Class;
+ *   public final val value: kotlin/Array<out kotlin/reflect/KClass<*>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface FooAnnotation {
+
+    public abstract java.lang.Class<?>[] value();
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+/**
+ * public abstract interface FooAnnotationUser : kotlin/Any {
+ *
+ *   // signature: usageA()V
+ *   @FooAnnotation(value = [])
+ *   public abstract fun usageA(): kotlin/Unit
+ *
+ *   // signature: usageAB()V
+ *   @FooAnnotation(value = [])
+ *   public abstract fun usageAB(): kotlin/Unit
+ *
+ *   // signature: usageWithExplicitValueParamA()V
+ *   @FooAnnotation(value = [])
+ *   public abstract fun usageWithExplicitValueParamA(): kotlin/Unit
+ *
+ *   // signature: usageWithExplicitValueParamAB()V
+ *   @FooAnnotation(value = [])
+ *   public abstract fun usageWithExplicitValueParamAB(): kotlin/Unit
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface FooAnnotationUser {
+
+    @FooAnnotation(value = {TypeA.class})
+    public abstract void usageA();
+
+    @FooAnnotation(value = {TypeA.class, TypeB.class})
+    public abstract void usageAB();
+
+    @FooAnnotation(value = {TypeA.class})
+    public abstract void usageWithExplicitValueParamA();
+
+    @FooAnnotation(value = {TypeA.class, TypeB.class})
+    public abstract void usageWithExplicitValueParamAB();
+}

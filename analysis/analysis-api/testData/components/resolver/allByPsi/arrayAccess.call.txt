@@ -44,7 +44,7 @@ KtBlockExpression(34,193): '{'
   null
 
 KtBinaryExpression(40,49): 'list += 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -82,7 +82,7 @@ KtBinaryExpression(40,49): 'list += 1'
       }
 
 KtNameReferenceExpression(40,44): 'list'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -179,7 +179,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
       }
 
 KtNameReferenceExpression(74,78): 'list'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -205,7 +205,7 @@ KtProperty(86,129): 'val explicitIndex = list.get(implicitIndex)'
   null
 
 KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -241,7 +241,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
       }
 
 KtNameReferenceExpression(106,110): 'list'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -294,7 +294,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
       }
 
 KtNameReferenceExpression(111,114): 'get'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -336,7 +336,7 @@ KtValueArgument(115,128): 'implicitIndex'
   null
 
 KtNameReferenceExpression(115,128): 'implicitIndex'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -353,7 +353,7 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -508,7 +508,7 @@ KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
       }
 
 KtConstructorCalleeExpression(136,144): 'Suppress'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -598,7 +598,7 @@ KtArrayAccessExpression(159,166): 'list[1]'
       }
 
 KtNameReferenceExpression(159,163): 'list'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -740,7 +740,7 @@ KtConstantExpression(171,172): '2'
   null
 
 KtBinaryExpression(177,191): '(list[2]) += 3'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -895,7 +895,7 @@ KtArrayAccessExpression(178,185): 'list[2]'
       }
 
 KtNameReferenceExpression(178,182): 'list'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1132,7 +1132,7 @@ KtCallExpression(241,261): 'foo(--list[i], list)'
       }
 
 KtNameReferenceExpression(241,244): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1185,7 +1185,7 @@ KtValueArgument(245,254): '--list[i]'
   null
 
 KtPrefixExpression(245,254): '--list[i]'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -1421,7 +1421,7 @@ KtArrayAccessExpression(247,254): 'list[i]'
       }
 
 KtNameReferenceExpression(247,251): 'list'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1441,7 +1441,7 @@ KtContainerNode(251,254): '[i]'
   null
 
 KtNameReferenceExpression(252,253): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1461,7 +1461,7 @@ KtValueArgument(256,260): 'list'
   null
 
 KtNameReferenceExpression(256,260): 'list'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1478,7 +1478,7 @@ KtNameReferenceExpression(256,260): 'list'
       typeArgumentsMapping = {}
 
 KtPrefixExpression(266,277): '++(list[2])'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -1717,7 +1717,7 @@ KtArrayAccessExpression(269,276): 'list[2]'
       }
 
 KtNameReferenceExpression(269,273): 'list'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

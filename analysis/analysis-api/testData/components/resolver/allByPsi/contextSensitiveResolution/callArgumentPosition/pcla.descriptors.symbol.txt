@@ -143,7 +143,10 @@ KtCallExpression(257,263): 'TODO()'
     ]
 
 KtNameReferenceExpression(257,261): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(261,263): '()'
   null
@@ -176,7 +179,10 @@ KtCallExpression(290,340): 'generate {'
     ]
 
 KtNameReferenceExpression(290,298): 'generate'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+    ]
 
 KtLambdaArgument(299,340): '{'
   null
@@ -197,7 +203,10 @@ KtCallExpression(309,317): 'yield(m)'
     ]
 
 KtNameReferenceExpression(309,314): 'yield'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtValueArgumentList(314,317): '(m)'
   null
@@ -206,7 +215,10 @@ KtValueArgument(315,316): 'm'
   null
 
 KtNameReferenceExpression(315,316): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MyEnum
+    ]
 
 KtCallExpression(326,334): 'yield(X)'
   KaSymbolResolutionSuccess:
@@ -215,7 +227,10 @@ KtCallExpression(326,334): 'yield(X)'
     ]
 
 KtNameReferenceExpression(326,331): 'yield'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtValueArgumentList(331,334): '(X)'
   null
@@ -224,7 +239,11 @@ KtValueArgument(332,333): 'X'
   null
 
 KtNameReferenceExpression(332,333): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      var <Error property>: ERROR_TYPE
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(346,396): 'generate {'
   KaSymbolResolutionSuccess:
@@ -233,7 +252,10 @@ KtCallExpression(346,396): 'generate {'
     ]
 
 KtNameReferenceExpression(346,354): 'generate'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+    ]
 
 KtLambdaArgument(355,396): '{'
   null
@@ -254,7 +276,10 @@ KtCallExpression(365,373): 'yield(X)'
     ]
 
 KtNameReferenceExpression(365,370): 'yield'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtValueArgumentList(370,373): '(X)'
   null
@@ -263,7 +288,11 @@ KtValueArgument(371,372): 'X'
   null
 
 KtNameReferenceExpression(371,372): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      var <Error property>: ERROR_TYPE
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(382,390): 'yield(m)'
   KaSymbolResolutionSuccess:
@@ -272,7 +301,10 @@ KtCallExpression(382,390): 'yield(m)'
     ]
 
 KtNameReferenceExpression(382,387): 'yield'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtValueArgumentList(387,390): '(m)'
   null
@@ -281,7 +313,10 @@ KtValueArgument(388,389): 'm'
   null
 
 KtNameReferenceExpression(388,389): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MyEnum
+    ]
 
 KtProperty(402,451): 'val x: MyEnum = generate {'
   null
@@ -302,7 +337,10 @@ KtCallExpression(418,451): 'generate {'
     ]
 
 KtNameReferenceExpression(418,426): 'generate'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+    ]
 
 KtLambdaArgument(427,451): '{'
   null
@@ -323,7 +361,10 @@ KtCallExpression(437,445): 'yield(X)'
     ]
 
 KtNameReferenceExpression(437,442): 'yield'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtValueArgumentList(442,445): '(X)'
   null
@@ -332,7 +373,9 @@ KtValueArgument(443,444): 'X'
   null
 
 KtNameReferenceExpression(443,444): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(457,490): 'generate {'
   KaSymbolResolutionError:
@@ -342,7 +385,11 @@ KtCallExpression(457,490): 'generate {'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generate>
 
 KtNameReferenceExpression(457,465): 'generate'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generate>
 
 KtLambdaArgument(466,490): '{'
   null
@@ -363,7 +410,10 @@ KtCallExpression(476,484): 'yield(X)'
     ]
 
 KtNameReferenceExpression(476,481): 'yield'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtValueArgumentList(481,484): '(X)'
   null
@@ -372,4 +422,8 @@ KtValueArgument(482,483): 'X'
   null
 
 KtNameReferenceExpression(482,483): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      var <Error property>: ERROR_TYPE
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>

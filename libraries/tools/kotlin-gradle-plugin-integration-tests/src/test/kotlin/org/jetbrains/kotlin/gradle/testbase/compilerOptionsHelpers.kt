@@ -18,8 +18,7 @@ private val KotlinVersion.isSupported: Boolean
     get() = deprecationAnnotation?.message != "Unsupported"
 
 val KotlinVersion.Companion.firstSupported: KotlinVersion
-    // TODO: delete me when Kotlin 1.9 will be completely unsupported (part of KT-80590)
-    get() = KotlinVersion.entries.first { it.isSupported && it != @Suppress("DEPRECATION") KotlinVersion.KOTLIN_1_9 }
+    get() = KotlinVersion.entries.first { it.isSupported }
 
 private val KotlinVersion.isDeprecated
     get() = deprecationAnnotation != null

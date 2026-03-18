@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

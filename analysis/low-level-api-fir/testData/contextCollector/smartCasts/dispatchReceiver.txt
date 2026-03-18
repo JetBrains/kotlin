@@ -12,14 +12,16 @@ Tower Data Context:
     Element 5
         Scope: FirExplicitSimpleImportingScope
     Element 6
+        Static scope owner symbol: FirRegularClassSymbol public open class Foo : R|kotlin/Any|
+    Element 7
         Implicit receiver:
             FirRegularClassSymbol public open class Foo : R|kotlin/Any|
                 Type: Bar
-    Element 7
-        Scope: FirLocalScope
     Element 8
         Scope: FirLocalScope
     Element 9
+        Scope: FirLocalScope
+    Element 10
         Scope: FirLocalScope
 Smart Casts:
     FirRegularClassSymbol public open class Foo : R|kotlin/Any|

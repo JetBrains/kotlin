@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMap
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.BinaryArtifacts.WasmCompilationSet
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
@@ -30,7 +31,7 @@ class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServ
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
-            val artifacts = modulesToArtifact.values.single()
+            val artifacts = modulesToArtifact.values.single() as BinaryArtifacts.Wasm.CompilationSets
             processCompilationSet(artifacts.compilation, "dev")
             artifacts.dceCompilation?.let {
                 processCompilationSet(it, "dce")

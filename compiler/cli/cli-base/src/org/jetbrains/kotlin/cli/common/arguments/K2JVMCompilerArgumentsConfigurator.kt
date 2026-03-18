@@ -5,31 +5,29 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 
 class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator() {
     override fun configureAnalysisFlags(
         arguments: CommonCompilerArguments,
-        collector: MessageCollector,
+        reporter: Reporter,
         languageVersion: LanguageVersion,
     ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
         require(this is K2JVMCompilerArguments)
-        return super.configureAnalysisFlags(arguments, collector, languageVersion).apply {
+        return super.configureAnalysisFlags(arguments, reporter, languageVersion).apply {
             putAnalysisFlag(JvmAnalysisFlags.strictMetadataVersionSemantics, strictMetadataVersionSemantics)
             putAnalysisFlag(
                 JvmAnalysisFlags.javaTypeEnhancementState,
-                JavaTypeEnhancementStateParser(collector, languageVersion.toKotlinVersion())
+                JavaTypeEnhancementStateParser(reporter, languageVersion.toKotlinVersion())
                     .parse(jsr305, supportCompatqualCheckerFrameworkAnnotations, jspecifyAnnotations, nullabilityAnnotations)
             )
             putAnalysisFlag(AnalysisFlags.ignoreDataFlowInAssert, JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY)
 
-            configureJvmDefaultMode(collector)?.let {
+            configureJvmDefaultMode(reporter)?.let {
                 putAnalysisFlag(JvmAnalysisFlags.jvmDefaultMode, it)
                 @Suppress("DEPRECATION")
                 if (jvmDefault != null) {
-                    collector.report(CompilerMessageSeverity.STRONG_WARNING, "-Xjvm-default is deprecated. Use -jvm-default instead.")
+                    reporter.reportWarning( "-Xjvm-default is deprecated. Use -jvm-default instead.")
                 }
             }
 
@@ -43,11 +41,10 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
     }
 
     @Suppress("DEPRECATION")
-    private fun K2JVMCompilerArguments.configureJvmDefaultMode(collector: MessageCollector?): JvmDefaultMode? = when {
+    private fun K2JVMCompilerArguments.configureJvmDefaultMode(reporter: Reporter?): JvmDefaultMode? = when {
         jvmDefaultStable != null -> JvmDefaultMode.fromStringOrNull(jvmDefaultStable).also {
             if (it == null) {
-                collector?.report(
-                    CompilerMessageSeverity.ERROR,
+                reporter?.reportError(
                     "Unknown -jvm-default mode: $jvmDefaultStable, supported modes: " +
                             "${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
                 )
@@ -55,8 +52,7 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
         }
         jvmDefault != null -> JvmDefaultMode.fromStringOrNullOld(jvmDefault).also {
             if (it == null) {
-                collector?.report(
-                    CompilerMessageSeverity.ERROR,
+                reporter?.reportError(
                     "Unknown -Xjvm-default mode: $jvmDefault, supported modes: " +
                             "${JvmDefaultMode.entries.map(JvmDefaultMode::oldDescription)}"
                 )
@@ -67,10 +63,10 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
 
     override fun configureLanguageFeatures(
         arguments: CommonCompilerArguments,
-        collector: MessageCollector,
+        reporter: Reporter,
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         require(this is K2JVMCompilerArguments)
-        val result = super.configureLanguageFeatures(arguments, collector)
+        val result = super.configureLanguageFeatures(arguments, reporter)
         result.configureJvmLanguageFeatures(this)
 
         if (indyAllowAnnotatedLambdas == true) {

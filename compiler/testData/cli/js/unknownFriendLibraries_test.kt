@@ -1,0 +1,2 @@
+fun testFun() = internalFun()
+

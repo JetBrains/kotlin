@@ -5,19 +5,34 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.encodings
 
-@JvmInline
-value class BinaryCoordinates(private val decoded: BinaryLattice) {
-    private fun diff(): Int = decoded.second
+import org.jetbrains.kotlin.protobuf.CodedInputStream
+import org.jetbrains.kotlin.protobuf.CodedOutputStream
 
-    val startOffset: Int get() = decoded.first
-    val endOffset: Int get() = startOffset + diff()
+internal object BinaryCoordinatesEncoding {
+    fun encode(startOffset: Int, endOffset: Int, useZigZag: Boolean): Long {
+        assert(startOffset <= endOffset)
 
-    companion object {
-        fun encode(startOffset: Int, endOffset: Int): Long {
-            assert(startOffset <= endOffset)
-            return BinaryLattice.encode(startOffset, endOffset - startOffset)
+        var start = startOffset
+        if (useZigZag) {
+            // Zig-zag encoding converts most negative integers into positive ones, at the cost of 1 bit.
+            // While negative numbers are not that frequent, they require 10 bytes to serialize in the var-int-64 encoding
+            // used later in Protobuf.
+            start = CodedOutputStream.encodeZigZag32(start)
         }
+        return BinaryLattice.encode(start, endOffset - startOffset)
+    }
 
-        fun decode(code: Long) = BinaryCoordinates(BinaryLattice.decode(code))
+    fun decode(code: Long, usesZigZag: Boolean): IrElementCoordinates {
+        val decoded = BinaryLattice.decode(code)
+        var start = decoded.first
+        if (usesZigZag) {
+            start = CodedInputStream.decodeZigZag32(start)
+        }
+        return IrElementCoordinates(start, start + decoded.second)
     }
 }
+
+internal data class IrElementCoordinates(
+    val startOffset: Int,
+    val endOffset: Int,
+)

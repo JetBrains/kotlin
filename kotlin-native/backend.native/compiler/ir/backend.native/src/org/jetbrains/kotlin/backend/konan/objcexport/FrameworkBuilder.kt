@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.Family
@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.konan.target.Family
  * Constructs an Apple framework without a binary.
  */
 internal class FrameworkBuilder(
-    private val config: KonanConfig,
-    private val infoPListBuilder: InfoPListBuilder,
-    private val moduleMapBuilder: ModuleMapBuilder,
-    private val objCHeaderWriter: ObjCHeaderWriter,
-    private val mainPackageGuesser: MainPackageGuesser,
+        private val config: NativeSecondStageCompilationConfig,
+        private val infoPListBuilder: InfoPListBuilder,
+        private val moduleMapBuilder: ModuleMapBuilder,
+        private val objCHeaderWriter: ObjCHeaderWriter,
+        private val mainPackageGuesser: MainPackageGuesser,
 ) {
     fun build(
             moduleDescriptor: ModuleDescriptor,

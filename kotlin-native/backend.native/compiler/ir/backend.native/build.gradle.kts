@@ -25,7 +25,7 @@ dependencies {
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.serialization.native"))
-    implementation(project(":compiler:util"))
+    implementation(project(":native:unsafe-mem"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":core:descriptors"))
     implementation(project(":kotlin-native:llvmInterop"))

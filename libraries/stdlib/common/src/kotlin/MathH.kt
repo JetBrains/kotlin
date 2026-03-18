@@ -401,6 +401,8 @@ public expect fun sign(x: Double): Double
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.min
  */
 @SinceKotlin("1.2")
 public expect fun min(a: Double, b: Double): Double
@@ -409,6 +411,8 @@ public expect fun min(a: Double, b: Double): Double
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.max
  */
 @SinceKotlin("1.2")
 public expect fun max(a: Double, b: Double): Double
@@ -508,33 +512,66 @@ public expect fun Double.withSign(sign: Int): Double
  *
  * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
  *
- * Special Cases:
+ * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
+ *
+ * @see nextUp
+ * @see nextDown
+ * @see nextTowards
+ * @sample samples.math.MathSamples.Doubles.ulp
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public expect val Double.ulp: Double
 
 /**
- * Returns the [Double] value nearest to this value in direction of positive infinity.
+ * Returns the [Double] value nearest to this value in a direction of positive infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextUp() is `NaN`
+ *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `0.0.nextUp()` is `Double.MIN_VALUE`
+ *
+ * @see nextTowards
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextUp
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public expect fun Double.nextUp(): Double
 
 /**
- * Returns the [Double] value nearest to this value in direction of negative infinity.
+ * Returns the [Double] value nearest to this value in a direction of negative infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextDown() is `NaN`
+ *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
+ *
+ * @see nextUp
+ * @see nextTowards
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextDown
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public expect fun Double.nextDown(): Double
 
 /**
- * Returns the [Double] value nearest to this value in direction from this value towards the value [to].
+ * Returns the [Double] value nearest to this value in a direction from this value towards the value [to].
  *
  * Special cases:
  *   - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
  *   - `x.nextTowards(x) == x`
  *
+ * @see nextUp
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextTowards
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public expect fun Double.nextTowards(to: Double): Double
@@ -954,6 +991,8 @@ public expect fun sign(x: Float): Float
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.min
  */
 @SinceKotlin("1.2")
 public expect fun min(a: Float, b: Float): Float
@@ -962,6 +1001,8 @@ public expect fun min(a: Float, b: Float): Float
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.max
  */
 @SinceKotlin("1.2")
 public expect fun max(a: Float, b: Float): Float
@@ -1107,12 +1148,16 @@ public expect fun abs(n: Int): Int
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.min
  */
 @SinceKotlin("1.2")
 public expect fun min(a: Int, b: Int): Int
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Ints.max
  */
 @SinceKotlin("1.2")
 public expect fun max(a: Int, b: Int): Int
@@ -1156,12 +1201,16 @@ public expect fun abs(n: Long): Long
 
 /**
  * Returns the smaller of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.min
  */
 @SinceKotlin("1.2")
 public expect fun min(a: Long, b: Long): Long
 
 /**
  * Returns the greater of two values.
+ *
+ * @sample samples.math.MathSamples.Longs.max
  */
 @SinceKotlin("1.2")
 public expect fun max(a: Long, b: Long): Long

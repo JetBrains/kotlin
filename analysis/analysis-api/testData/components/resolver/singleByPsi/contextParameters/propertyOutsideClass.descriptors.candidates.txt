@@ -1,5 +1,5 @@
 KtNameReferenceExpression(245,259): 'propertyMember'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:

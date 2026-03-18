@@ -47,6 +47,38 @@ extension _KotlinFlow {
     }
 }
 
+/// A typed wrapper around kotlinx.coroutines.flow.Flow
+/// that preserves the element type as a Swift generic parameter.
+public struct _KotlinTypedFlow<Element>: AsyncSequence {
+    internal let _flow: any _KotlinFlow
+
+    public init(_ flow: any _KotlinFlow) {
+        self._flow = flow
+    }
+
+    /// Returns the underlying type-erased flow.
+    public var wrapped: any _KotlinFlow {
+        _flow
+    }
+
+    public func makeAsyncIterator() -> _KotlinTypedFlowIterator<Element> {
+        _KotlinTypedFlowIterator(_flow.makeAsyncIterator())
+    }
+}
+
+public struct _KotlinTypedFlowIterator<Element>: AsyncIteratorProtocol {
+    private var _iterator: KotlinFlowIterator
+
+    internal init(_ iterator: KotlinFlowIterator) {
+        self._iterator = iterator
+    }
+
+    public mutating func next() async throws -> Element? {
+        guard let raw = try await _iterator.next() else { return nil }
+        return raw as! Element
+    }
+}
+
 /// An async iterator type for kotlinx.coroutines.flow.Flow
 ///
 /// ## Discussion
@@ -88,7 +120,7 @@ public final class KotlinFlowIterator: KotlinRuntime.KotlinBase, AsyncIteratorPr
 
                         let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), { arg0 in
                                 return {
-                                    continuation(arg0.flatMap(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef:)));
+                                    continuation(arg0.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)));
                                     return 0
                                 }()
                         }, { arg0 in

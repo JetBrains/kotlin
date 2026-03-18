@@ -19,6 +19,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationEnumEntry.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] val entries: R|kotlin/enums/EnumEntries<Abc>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Abc>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Abc>|
 
     }

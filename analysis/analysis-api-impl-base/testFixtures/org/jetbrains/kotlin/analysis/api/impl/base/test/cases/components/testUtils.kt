@@ -249,20 +249,7 @@ internal fun sortedCalls(collection: Collection<KaCall>): Collection<KaCall> = c
     compareCalls(call1, call2)
 }
 
-internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
-    is KaCompoundVariableAccessCall -> listOfNotNull(
-        variableCall.symbol,
-        operationCall.symbol,
-    )
-
-    is KaCompoundArrayAccessCall -> listOfNotNull(
-        getterCall.symbol,
-        setterCall.symbol,
-        operationCall.symbol,
-    )
-
-    is KaCallableMemberCall<*, *> -> listOf(symbol)
-}
+internal fun KaCall.symbols(): List<KaSymbol> = (this as KaSingleOrMultiCall).symbols
 
 context(_: KaSession)
 internal fun sortedSymbols(collection: Collection<KaSymbol>): Collection<KaSymbol> = collection.sortedWith { symbol1, symbol2 ->
@@ -372,7 +359,7 @@ internal fun assertStableResult(
     }
 
     val symbols = sortedSymbols(symbolResolutionAttempt!!.symbols)
-    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.map { (it as KaCallableMemberCall<*, *>).symbol })
+    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
     assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
 }
 

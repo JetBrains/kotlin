@@ -7,7 +7,6 @@ package org.jetbrains.kotlinx.atomicfu.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +18,10 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerTest {
+  private void run(String fileName) {
+    runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -27,24 +30,24 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   @Test
   @TestMetadata("CheckAtomicVisibilityTest.kt")
   public void testCheckAtomicVisibilityTest() {
-    runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/CheckAtomicVisibilityTest.kt");
+    run("CheckAtomicVisibilityTest.kt");
   }
 
   @Test
   @TestMetadata("errorProneAtomicArrayArguments.kt")
   public void testErrorProneAtomicArrayArguments() {
-    runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/errorProneAtomicArrayArguments.kt");
+    run("errorProneAtomicArrayArguments.kt");
   }
 
   @Test
   @TestMetadata("ErrorProneAtomicRefPrimitives.kt")
   public void testErrorProneAtomicRefPrimitives() {
-    runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/ErrorProneAtomicRefPrimitives.kt");
+    run("ErrorProneAtomicRefPrimitives.kt");
   }
 
   @Test
   @TestMetadata("errorProneAtomicReferenceArguments.kt")
   public void testErrorProneAtomicReferenceArguments() {
-    runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/errorProneAtomicReferenceArguments.kt");
+    run("errorProneAtomicReferenceArguments.kt");
   }
 }

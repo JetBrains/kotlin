@@ -728,6 +728,15 @@ class IntegerMathTest {
         positives.forEach { assertEquals(it, it.absoluteValue) }
     }
 
+    @Test fun absoluteValue() {
+        assertEquals(Int.MIN_VALUE, Int.MIN_VALUE.absoluteValue)
+        assertEquals(Int.MIN_VALUE, abs(Int.MIN_VALUE))
+
+        for (value in intArrayOf(0, 1, 42, Int.MAX_VALUE)) {
+            assertEquals(value, (-value).absoluteValue)
+            assertEquals(value, abs(-value))
+        }
+    }
 
     @Test fun longSigns() {
         val negatives = listOf(Long.MIN_VALUE, -65536L, -1L)
@@ -740,5 +749,15 @@ class IntegerMathTest {
         assertEquals(Long.MIN_VALUE, Long.MIN_VALUE.absoluteValue)
 
         positives.forEach { assertEquals(it, it.absoluteValue) }
+    }
+
+    @Test fun longAbsoluteValue() {
+        assertEquals(Long.MIN_VALUE, Long.MIN_VALUE.absoluteValue)
+        assertEquals(Long.MIN_VALUE, abs(Long.MIN_VALUE))
+
+        for (value in longArrayOf(0L, 1L, 42L, Long.MAX_VALUE)) {
+            assertEquals(value, (-value).absoluteValue)
+            assertEquals(value, abs(-value))
+        }
     }
 }

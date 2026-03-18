@@ -183,7 +183,7 @@ FILE fqName:<root> fileName:/kt45236.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.NetRequestStatus<T of <root>.isError>
     annotations:
-      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalContracts modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.contracts.ExperimentalContracts>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      OptIn(markerClass = [ExperimentalContracts::class] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun isError <T> (<this>: <root>.NetRequestStatus<T of <root>.isError>): kotlin.Boolean declared in <root>'
         TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.NetRequestStatus.Error<T of <root>.isError>

@@ -68,7 +68,10 @@ KtWhenExpression(162,236): 'when (s) {'
   null
 
 KtNameReferenceExpression(168,169): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtWhenEntry(181,191): 'FIRST -> 1'
   null
@@ -77,7 +80,10 @@ KtWhenConditionWithExpression(181,186): 'FIRST'
   null
 
 KtNameReferenceExpression(181,186): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.FIRST
+    ]
 
 KtConstantExpression(190,191): '1'
   null
@@ -89,7 +95,10 @@ KtWhenConditionWithExpression(200,206): 'SECOND'
   null
 
 KtNameReferenceExpression(200,206): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.SECOND
+    ]
 
 KtConstantExpression(210,211): '2'
   null
@@ -101,7 +110,10 @@ KtWhenConditionWithExpression(220,225): 'THIRD'
   null
 
 KtNameReferenceExpression(220,225): 'THIRD'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.THIRD
+    ]
 
 KtConstantExpression(229,230): '3'
   null
@@ -152,16 +164,28 @@ KtWhenConditionWithExpression(302,312): 's == FIRST'
   null
 
 KtBinaryExpression(302,312): 's == FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(302,303): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtOperationReferenceExpression(304,306): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(307,312): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.FIRST
+    ]
 
 KtConstantExpression(316,317): '1'
   null
@@ -173,16 +197,28 @@ KtWhenConditionWithExpression(326,337): 's == SECOND'
   null
 
 KtBinaryExpression(326,337): 's == SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(326,327): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtOperationReferenceExpression(328,330): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(331,337): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.SECOND
+    ]
 
 KtConstantExpression(341,342): '2'
   null
@@ -194,16 +230,28 @@ KtWhenConditionWithExpression(351,361): 's == THIRD'
   null
 
 KtBinaryExpression(351,361): 's == THIRD'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(351,352): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtOperationReferenceExpression(353,355): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(356,361): 'THIRD'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.THIRD
+    ]
 
 KtConstantExpression(365,366): '3'
   null
@@ -224,19 +272,31 @@ KtProperty(416,447): 'val SECOND = test.Sample.SECOND'
   null
 
 KtDotQualifiedExpression(429,447): 'test.Sample.SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.SECOND
+    ]
 
 KtDotQualifiedExpression(429,440): 'test.Sample'
   null
 
 KtNameReferenceExpression(429,433): 'test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(434,440): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(441,447): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.SECOND
+    ]
 
 KtNamedFunction(453,667): 'fun priority(s: Sample): Int {'
   null
@@ -272,19 +332,31 @@ KtProperty(492,521): 'val FIRST = test.Sample.THIRD'
   null
 
 KtDotQualifiedExpression(504,521): 'test.Sample.THIRD'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.THIRD
+    ]
 
 KtDotQualifiedExpression(504,515): 'test.Sample'
   null
 
 KtNameReferenceExpression(504,508): 'test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(509,515): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(516,521): 'THIRD'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.THIRD
+    ]
 
 KtReturnExpression(530,661): 'return when (s) {'
   KaSymbolResolutionSuccess:
@@ -296,7 +368,10 @@ KtWhenExpression(537,661): 'when (s) {'
   null
 
 KtNameReferenceExpression(543,544): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtWhenEntry(560,570): 'FIRST -> 3'
   null
@@ -305,7 +380,10 @@ KtWhenConditionWithExpression(560,565): 'FIRST'
   null
 
 KtNameReferenceExpression(560,565): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val FIRST: test.Sample
+    ]
 
 KtConstantExpression(569,570): '3'
   null
@@ -317,7 +395,10 @@ KtWhenConditionWithExpression(583,589): 'SECOND'
   null
 
 KtNameReferenceExpression(583,589): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val SECOND: test.Sample
+    ]
 
 KtConstantExpression(593,594): '2'
   null
@@ -329,19 +410,31 @@ KtWhenConditionWithExpression(607,624): 'test.Sample.FIRST'
   null
 
 KtDotQualifiedExpression(607,624): 'test.Sample.FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.FIRST
+    ]
 
 KtDotQualifiedExpression(607,618): 'test.Sample'
   null
 
 KtNameReferenceExpression(607,611): 'test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(612,618): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(619,624): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.FIRST
+    ]
 
 KtConstantExpression(628,629): '1'
   null

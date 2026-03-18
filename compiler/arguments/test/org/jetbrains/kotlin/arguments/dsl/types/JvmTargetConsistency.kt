@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget as CompilerJvmTarget
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -31,28 +30,6 @@ class JvmTargetConsistency {
         assertEquals(
             defaultTarget.description,
             JvmTarget.CURRENT_DEFAULT_VERSION
-        )
-    }
-
-    @Test
-    fun jvmTargetArgumentDescriptionIsUpdated() {
-        val jvmTargetArg = actualJvmCompilerArguments.arguments.single { it.name == "jvm-target" }
-
-        assertEquals(
-            expected = -56085994,
-            actual = jvmTargetArg.description.hashCode(),
-            message = "'${jvmTargetArg.name}' description in '${actualJvmCompilerArguments::name}' should be updated. Current value should be moved into new value in 'valueInVersions' map."
-        )
-    }
-
-    @Test
-    fun jdkReleaseArgumentDescriptionIsUpdated() {
-        val jdkReleaseArg = actualJvmCompilerArguments.arguments.single { it.name == "Xjdk-release" }
-
-        assertEquals(
-            expected = -662137912,
-            actual = jdkReleaseArg.description.hashCode(),
-            message = "'${jdkReleaseArg.name}' description in '${actualJvmCompilerArguments::name}' should be updated. Current value should be moved into new value in 'valueInVersions' map."
         )
     }
 

@@ -50,17 +50,12 @@ fun configureMavenWrapperInProjectDirectory(
     val wrapperDir = projectDirectory.resolve(".mvn/wrapper")
     wrapperDir.createDirectories()
 
-    // Copy maven-wrapper.jar
-    classLoader.getResourceAsStream("maven-wrapper/maven-wrapper.jar")?.use { input ->
-        wrapperDir.resolve("maven-wrapper.jar").outputStream().use { output ->
-            input.copyTo(output)
-        }
-    } ?: error("Resource maven-wrapper/maven-wrapper.jar not found")
-
     // Create maven-wrapper.properties
     val propertiesContent = """
-        distributionType=bin
+        wrapperVersion=3.3.4
+        distributionType=only-script
         distributionUrl=https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2/org/apache/maven/apache-maven/$mavenVersion/apache-maven-$mavenVersion-bin.zip
+        # Maven wrapper properties parser requires \n after each line
     """.trimIndent()
 
     wrapperDir.resolve("maven-wrapper.properties").writeText(propertiesContent)

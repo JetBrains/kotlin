@@ -132,7 +132,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
                 is IrConstructor ->
                     function.makeConstructorAccessor()
                 is IrSimpleFunction ->
-                    function.makeSimpleFunctionAccessor(superQualifierSymbol, dispatchReceiverType, parent, scopeInfo)
+                    function.makeSimpleFunctionAccessor(superQualifierSymbol, parent, scopeInfo)
             }
         }
     }
@@ -153,7 +153,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     protected abstract fun accessorModality(parent: IrDeclarationParent): Modality
 
     private fun IrSimpleFunction.makeSimpleFunctionAccessor(
-        superQualifierSymbol: IrClassSymbol?, dispatchReceiverType: IrType?, parent: IrDeclarationParent, scopeInfo: ScopeInfo
+        superQualifierSymbol: IrClassSymbol?, parent: IrDeclarationParent, scopeInfo: ScopeInfo
     ): IrSimpleFunction {
         val source = this
 
@@ -172,7 +172,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             accessor.copyTypeParameters(capturedTypeParameters, IrDeclarationOrigin.SYNTHETIC_ACCESSOR_CAPTURED_TYPE_PARAMETER)
             accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
             val typeParameterMapping = (capturedTypeParameters + source.typeParameters).zip(accessor.typeParameters).toMap()
-            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType, typeParameterMapping)
+            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR, (parent as? IrClass)?.defaultType, typeParameterMapping)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor, typeParameterMapping)
 
             accessor.body = context.irFactory.createBlockBody(

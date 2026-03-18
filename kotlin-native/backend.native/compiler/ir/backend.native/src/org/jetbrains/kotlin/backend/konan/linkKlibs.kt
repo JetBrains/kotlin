@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStruc
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
     val symbolTable: SymbolTable?
@@ -81,12 +84,10 @@ internal fun LinkKlibsContext.linkKlibs(
     val (moduleDescriptor, environment) = input
     // Translate AST to high level IR.
     val messageCollector = config.configuration.messageCollector
-    val partialLinkageConfig = config.configuration.partialLinkageConfig
 
     val translator = Psi2IrTranslator(
             config.configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false, partialLinkageConfig.isEnabled),
-            messageCollector::checkNoUnboundSymbols
+            Psi2IrConfiguration(ignoreErrors = false),
     )
     val generatorContext = translator.createGeneratorContext(
             moduleDescriptor,
@@ -131,14 +132,22 @@ internal fun LinkKlibsContext.linkKlibs(
                 stubGenerator = stubGenerator,
         )
 
+        // TODO Don't use file names in friend modules detection. Should be done in scope of KT-61096
+        val canonicalFriendPaths = config.friendModuleFiles.mapToSetOrEmpty { it.canonicalPath }
         val friendModules = config.resolvedLibraries.getFullList()
-                .filter { it.libraryFile in config.friendModuleFiles }
+                .filter { it.libraryFile.canonicalPath in canonicalFriendPaths }
                 .map { it.uniqueName }
 
         val friendModulesMap = (
                 listOf(moduleDescriptor.name.asStringStripSpecialMarkers()) +
                         config.includedLibraries.map { it.uniqueName }
                 ).associateWith { friendModules }
+
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+                config.configuration.diagnosticsCollector,
+                config.languageVersionSettings,
+        )
+
 
         KonanIrLinker(
                 currentModule = moduleDescriptor,
@@ -151,9 +160,9 @@ internal fun LinkKlibsContext.linkKlibs(
                 cInteropModuleDeserializerFactory = cInteropModuleDeserializerFactory,
                 exportedDependencies = exportedDependencies,
                 partialLinkageSupport = createPartialLinkageSupportForLinker(
-                        partialLinkageConfig = partialLinkageConfig,
+                        partialLinkageConfig = config.configuration.partialLinkageConfig,
                         builtIns = generatorContext.irBuiltIns,
-                        messageCollector = messageCollector,
+                        diagnosticReporter = irDiagnosticReporter,
                 ),
                 libraryBeingCached = config.libraryToCache,
                 userVisibleIrModulesSupport = config.userVisibleIrModulesSupport,

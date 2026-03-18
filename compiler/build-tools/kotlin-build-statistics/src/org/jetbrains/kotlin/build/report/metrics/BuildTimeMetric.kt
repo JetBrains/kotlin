@@ -108,14 +108,6 @@ object NON_INCREMENTAL_COMPILATION_IN_PROCESS :
     private fun readResolve(): Any = NON_INCREMENTAL_COMPILATION_IN_PROCESS
 }
 
-object NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS : GradleBuildTimeMetric(
-    RUN_COMPILATION,
-    "Non incremental out of process compilation",
-    name = "NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS"
-) {
-    private fun readResolve(): Any = NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS
-}
-
 object NON_INCREMENTAL_COMPILATION_DAEMON :
     GradleBuildTimeMetric(RUN_COMPILATION, "Non incremental compilation in daemon", name = "NON_INCREMENTAL_COMPILATION_DAEMON") {
     private fun readResolve(): Any = NON_INCREMENTAL_COMPILATION_DAEMON

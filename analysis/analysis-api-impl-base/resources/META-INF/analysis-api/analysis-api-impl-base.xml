@@ -142,7 +142,5 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
     <kotlinGlobalSearchScopeMergeStrategy implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy"/>
-
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference$Provider"/>
   </extensions>
 </idea-plugin>

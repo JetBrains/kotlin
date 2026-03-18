@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.resolution.KtResolvable
 
 /**
  * Represents a reference to a label in a labeled expression, such as `@main` in `return@main`.
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.resolution.KtResolvable
  * }
  * ```
  */
-@OptIn(KtExperimentalApi::class)
-class KtLabelReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node), KtResolvable {
+class KtLabelReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
     override fun getReferencedNameElement() = getIdentifier() ?: this
 }

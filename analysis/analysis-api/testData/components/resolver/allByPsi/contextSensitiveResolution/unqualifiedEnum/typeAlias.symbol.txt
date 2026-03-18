@@ -56,7 +56,10 @@ KtWhenExpression(146,189): 'when (o) {'
   null
 
 KtNameReferenceExpression(152,153): 'o'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      o: {Other=} Some
+    ]
 
 KtWhenEntry(161,171): 'FIRST -> 1'
   null
@@ -65,7 +68,10 @@ KtWhenConditionWithExpression(161,166): 'FIRST'
   null
 
 KtNameReferenceExpression(161,166): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some.FIRST
+    ]
 
 KtConstantExpression(170,171): '1'
   null
@@ -77,7 +83,10 @@ KtWhenConditionWithExpression(176,182): 'SECOND'
   null
 
 KtNameReferenceExpression(176,182): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some.SECOND
+    ]
 
 KtConstantExpression(186,187): '2'
   null

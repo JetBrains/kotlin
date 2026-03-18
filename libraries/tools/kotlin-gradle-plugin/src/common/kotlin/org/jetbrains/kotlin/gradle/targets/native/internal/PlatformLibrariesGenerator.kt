@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.gradle.tasks.addArg
 import org.jetbrains.kotlin.gradle.utils.lifecycleWithDuration
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
@@ -217,10 +218,7 @@ internal class PlatformLibrariesGenerator(
             }
         }
 
-        logger.lifecycle(generationMessage)
-        logger.lifecycleWithDuration("$generationMessage finished,") {
-            runGenerationTool()
-        }
+        generatePlatformLibs(generationMessage)
 
         val librariesAreActuallyGenerated = checkLibrariesInDistribution()
         assert(librariesAreActuallyGenerated) { "Some platform libraries were not generated" }
@@ -232,6 +230,19 @@ internal class PlatformLibrariesGenerator(
         assert(librariesAreActuallyCached) { "Some platform libraries were not precompiled" }
         if (librariesAreActuallyCached) {
             alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
+        }
+    }
+
+    private fun generatePlatformLibs(generationMessage: String) {
+        val lock = commonizerLockForDirectory.getOrPut(platformLibsDirectory) {
+            NativeDistributionCommonizerLock(platformLibsDirectory) { message -> NativeVersionValueSource.Companion.logger.info("Kotlin Native Platform Libraries: $message") }
+        }
+
+        lock.withLock {
+            logger.lifecycle(generationMessage)
+            logger.lifecycleWithDuration("$generationMessage finished,") {
+                runGenerationTool()
+            }
         }
     }
 
@@ -280,5 +291,7 @@ internal class PlatformLibrariesGenerator(
         fun registerRequiredServiceIfAbsent(project: Project): Provider<GeneratedPlatformLibrariesService> {
             return project.gradle.registerClassLoaderScopedBuildService(GeneratedPlatformLibrariesService::class)
         }
+
+        private val commonizerLockForDirectory = ConcurrentHashMap<File, NativeDistributionCommonizerLock>()
     }
 }

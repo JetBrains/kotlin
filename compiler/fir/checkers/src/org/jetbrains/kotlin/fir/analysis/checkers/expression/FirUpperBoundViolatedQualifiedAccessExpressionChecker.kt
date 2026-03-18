@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -21,8 +20,6 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -146,10 +143,13 @@ private class ErrorDiagnosticDetector : DiagnosticReporter() {
     override var hasErrors = false
         private set
 
+    override var hasWarningsForWError: Boolean = false
+        private set
+
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
-        if (diagnostic?.severity == Severity.ERROR) {
-            hasErrors = true
-        }
+        val severity = diagnostic?.severity ?: return
+        hasErrors = hasErrors || severity.isError
+        hasWarningsForWError = hasWarningsForWError || severity.isErrorWhenWError
     }
 }
 

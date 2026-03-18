@@ -25,7 +25,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -124,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -223,7 +223,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -289,7 +289,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -322,7 +322,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -355,7 +355,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -388,7 +388,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -421,7 +421,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -454,7 +454,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithEnumFromBody.kt
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 

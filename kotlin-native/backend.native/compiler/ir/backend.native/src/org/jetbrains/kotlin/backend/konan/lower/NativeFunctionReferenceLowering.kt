@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinka
 import org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.customNameInReflection
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSignificance
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
@@ -133,11 +134,11 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
 
     private fun IrBuilderWithScope.irKFunctionDescription(functionReference: IrRichFunctionReference, description: KFunctionDescription, reflectionTargetLinkageError: PartialLinkageCase?): IrConstantValue {
         if (reflectionTargetLinkageError != null) {
-            val errorMessage = generationState.context.partialLinkageSupport.prepareLinkageError(
-                    doNotLog = true,
+            val errorMessage = generationState.context.partialLinkageSupport.renderAndLogLinkageError(
                     reflectionTargetLinkageError,
                     functionReference,
                     PLFile.determineFileFor(functionReference.invokeFunction),
+                    PartialLinkageIssueSignificance.MINOR,
             )
             return irConstantObject(
                     kFunctionDescriptionLinkageErrorSymbol.owner,

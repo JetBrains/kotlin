@@ -23,10 +23,13 @@ internal inline fun internal() {
 
 private class Private2 {
     object Obj
+    fun foo() {}
 }
 
 internal inline fun internal2() {
     ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Private2.Obj<!>>() // should be an error
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>Private2<!>().<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>()
+
 }
 
 private fun <T : Private> private1(arg: () -> T) {}
@@ -98,6 +101,12 @@ private object O {
 internal inline fun internal5() {
     <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>O<!>.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>C<!>()
 }
+
+private fun interface I {
+    fun foo(): Int
+}
+
+internal inline fun internal6(): Int = (<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>I<!> { 1 }).<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>()
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,
 companionObject, functionDeclaration, functionalType, inline, integerLiteral, interfaceDeclaration, isExpression,

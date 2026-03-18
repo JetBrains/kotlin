@@ -1,0 +1,7 @@
+KtNameReferenceExpression(73,77): 'Ann0'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in Ann0) constructor()

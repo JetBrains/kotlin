@@ -18,6 +18,7 @@ sealed interface ReadBuffer {
     fun get(result: ByteArray, offset: Int, length: Int)
     var position: Int
 
+    val byte: Byte
     val int: Int
     val long: Long
 
@@ -40,6 +41,9 @@ sealed interface ReadBuffer {
             set(value) {
                 buffer.position(value)
             }
+
+        override val byte: Byte
+            get() = buffer.get()
 
         override val int: Int
             get() = buffer.int
@@ -78,6 +82,13 @@ sealed interface ReadBuffer {
                 val buf = ensureBuffer()
                 pos = value
                 buf.position(value)
+            }
+
+        override val byte: Byte
+            get() {
+                val buf = ensureBuffer()
+                pos += 1
+                return buf.get()
             }
 
         override val int: Int

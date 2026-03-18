@@ -2,5 +2,6 @@ KtCollectionLiteralExpression(136,138): '[]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyList.Companion) operator fun of(vararg vals: kotlin.String): MyList

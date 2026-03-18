@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.builtins.ProgressionKind
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
 import org.jetbrains.kotlin.generators.builtins.areEqualNumbers
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
-import org.jetbrains.kotlin.generators.builtins.hashLong
 import java.io.PrintWriter
 
 class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out, annotateAsBuiltinWithBytecode = true) {
@@ -30,17 +29,17 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out, annotateAs
 
             val hashCode = when (kind) {
                 CHAR -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * first.code + last.code)"
+                        "        if (isEmpty()) -1 else (31 * first.code + last.code)"
                 INT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * first + last)"
+                        "        if (isEmpty()) -1 else (31 * first + last)"
                 LONG -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * ${hashLong("first")} + ${hashLong("last")}).toInt()"
+                        "        if (isEmpty()) -1 else 31 * first.hashCode() + last.hashCode()"
             }
 
             val toString = "\"\$first..\$last\""
 
             out.println(
-"""/**
+                """/**
  * A range of values of type `$t`.
  */
 public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t>, OpenEndRange<$t> {

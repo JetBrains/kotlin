@@ -581,6 +581,14 @@ internal fun checkCondition(condition: FirExpression) {
     }
 }
 
+fun extractArgumentsTypeRefAndSource(qualifier: FirResolvedQualifier): List<FirTypeRefSource> {
+    return buildList {
+        for (typeArgument in qualifier.typeArguments) {
+            add(FirTypeRefSource((typeArgument as? FirTypeProjectionWithVariance)?.typeRef, typeArgument.source))
+        }
+    }
+}
+
 fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSource>? {
     if (typeRef !is FirResolvedTypeRef) return null
     val result = mutableListOf<FirTypeRefSource>()
@@ -941,7 +949,7 @@ fun FirResolvedQualifier.isStandalone(
 ): Boolean {
     val lastQualifiedAccess = context.callsOrAssignments.lastOrNull() as? FirQualifiedAccessExpression
     // Note: qualifier isn't standalone when it's in receiver (SomeClass.foo) or getClass (SomeClass::class) position
-    if (lastQualifiedAccess?.explicitReceiver === this || lastQualifiedAccess?.dispatchReceiver === this) return false
+    if (lastQualifiedAccess?.explicitReceiver === this || lastQualifiedAccess?.dispatchReceiver === this || lastQualifiedAccess?.extensionReceiver == this) return false
     val lastGetClass = context.getClassCalls.lastOrNull()
     if (lastGetClass?.argument === this) return false
     if (isExplicitParentOfResolvedQualifier()) return false
@@ -949,10 +957,12 @@ fun FirResolvedQualifier.isStandalone(
     return true
 }
 
+/**
+ * @return `true` for qualifiers that are explicit parents (receivers) for other qualifiers, e.g., for `Outer` in `Outer.Nested`
+ */
 context(context: CheckerContext)
 fun FirResolvedQualifier.isExplicitParentOfResolvedQualifier(): Boolean {
-    val secondToLastElement = context.containingElements.elementAtOrNull(context.containingElements.size - 2)
-    return secondToLastElement.let { it is FirResolvedQualifier && it.explicitParent == this }
+    return context.secondToLastContainer.let { it is FirResolvedQualifier && it.explicitParent == this }
 }
 
 fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =

@@ -93,11 +93,6 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             details = "Since Kotlin 2.2, the KMP Isolated Projects support is enabled by default. This property will be removed in 2.4 release." +
                     " Leave your questions here https://youtrack.jetbrains.com/issue/KT-79257",
         ), // Since 2.3.20
-        // TODO: KT-82960 Remove deprecated enableKotlinToolingMetadataArtifact in 2.4.0
-        DeprecatedProperty(
-            propertyName = "kotlin.mpp.enableKotlinToolingMetadataArtifact",
-            details = "The flag is deprecated and scheduled to be removed in 2.4.0: https://kotl.in/KT-79924",
-        ), // since 2.3.20
         DeprecatedProperty(
             propertyName = KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE,
             details = "The flag is deprecated and scheduled to be removed in 2.4.0: https://kotl.in/KT-83678",
@@ -106,6 +101,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
                 it.toString().toBooleanLenient() == false
             }
         ), // since 2.3.20
+        DeprecatedProperty(
+            propertyName = "kotlin.mpp.androidSourceSetLayoutVersion",
+            details = "Android Source Set Layout V2 is enabled by default and can't be changed. Leave your questions here https://youtrack.jetbrains.com/issue/KT-82265"
+        )
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(
@@ -127,8 +126,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         warningDeprecatedProperties.filter {
             propertiesBuildService.shouldReportProperty(project, it)
         }.forEach {
-            collector.reportOncePerGradleBuild(
-                project,
+            collector.reportOncePerGradleBuild(diagnosticsContext,
                 KotlinToolingDiagnostics.DeprecatedWarningGradleProperties(
                     it.propertyName,
                     it.details,
@@ -140,8 +138,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         errorDeprecatedProperties.filter {
             propertiesBuildService.shouldReportProperty(project, it)
         }.forEach {
-            collector.reportOncePerGradleBuild(
-                project,
+            collector.reportOncePerGradleBuild(diagnosticsContext,
                 KotlinToolingDiagnostics.DeprecatedErrorGradleProperties(
                     it.propertyName,
                     it.details,

@@ -2,5 +2,6 @@ KDocName(48,50): 'bb'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: f.C) val bb: kotlin.Int

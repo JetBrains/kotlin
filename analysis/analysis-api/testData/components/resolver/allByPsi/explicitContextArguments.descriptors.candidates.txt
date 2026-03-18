@@ -324,7 +324,7 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(395,402): 'unnamed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -357,7 +357,7 @@ KtNameReferenceExpression(395,402): 'unnamed'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -476,7 +476,7 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(445,450): 'named'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -509,7 +509,7 @@ KtNameReferenceExpression(445,450): 'named'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -630,7 +630,7 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
     isInBestCandidates = true
 
 KtNameReferenceExpression(494,501): 'unnamed'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -664,7 +664,7 @@ KtNameReferenceExpression(494,501): 'unnamed'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -729,7 +729,7 @@ KtCallExpression(529,539): 'Explicit()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(529,537): 'Explicit'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -834,7 +834,7 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
     isInBestCandidates = true
 
 KtNameReferenceExpression(563,568): 'named'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -868,7 +868,7 @@ KtNameReferenceExpression(563,568): 'named'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -933,7 +933,7 @@ KtCallExpression(596,606): 'Explicit()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(596,604): 'Explicit'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1041,7 +1041,7 @@ KtCallExpression(664,794): 'with(Explicit()) {'
     isInBestCandidates = true
 
 KtNameReferenceExpression(664,668): 'with'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1119,7 +1119,7 @@ KtCallExpression(669,679): 'Explicit()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(669,677): 'Explicit'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1219,7 +1219,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(691,698): 'unnamed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1252,7 +1252,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1371,7 +1371,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(745,750): 'named'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1404,7 +1404,7 @@ KtNameReferenceExpression(745,750): 'named'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1525,7 +1525,7 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
     isInBestCandidates = true
 
 KtNameReferenceExpression(800,807): 'unnamed'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1559,7 +1559,7 @@ KtNameReferenceExpression(800,807): 'unnamed'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with unnamed>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1624,7 +1624,7 @@ KtCallExpression(835,845): 'Explicit()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(835,843): 'Explicit'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1729,7 +1729,7 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
     isInBestCandidates = true
 
 KtNameReferenceExpression(869,874): 'named'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1763,7 +1763,7 @@ KtNameReferenceExpression(869,874): 'named'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with named>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1828,7 +1828,7 @@ KtCallExpression(902,912): 'Explicit()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(902,910): 'Explicit'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

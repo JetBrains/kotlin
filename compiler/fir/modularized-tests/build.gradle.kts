@@ -57,7 +57,7 @@ optInToK1Deprecation()
 projectTests {
     testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
-        systemProperties(this.project.properties.filterKeys<String, Any?> { it.startsWith("fir.") })
+        systemProperties(providers.gradlePropertiesPrefixedBy("fir.").get())
         this.workingDir = rootDir
         systemProperty("fir.bench.compose.plugin.classpath", composeCompilerPlugin.asPath)
         val argsExt = this.project.findProperty("fir.modularized.jvm.args") as? String

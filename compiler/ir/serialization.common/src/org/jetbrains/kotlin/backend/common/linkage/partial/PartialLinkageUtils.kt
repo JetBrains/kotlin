@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME_SETTER
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_COLUMN_NUMBER
 import org.jetbrains.kotlin.ir.UNDEFINED_LINE_NUMBER
@@ -133,8 +133,8 @@ fun IrStatement.isPartialLinkageRuntimeError(): Boolean {
 }
 
 
-// A workaround for KT-58837 until KT-58904 is fixed. TODO: Merge with MessageCollector.
-class PartialLinkageLogger(val messageCollector: MessageCollector, val logLevel: PartialLinkageLogLevel) {
+// A workaround for KT-58837 until KT-58904 is fixed.
+class PartialLinkageLogger(val diagnosticReporter: IrDiagnosticReporter, val logLevel: PartialLinkageLogLevel) {
     class Location(val moduleName: String, val filePath: String, val lineNumber: Int, val columnNumber: Int) {
         fun render(): StringBuilder = StringBuilder().apply {
             append(moduleName)
@@ -149,17 +149,10 @@ class PartialLinkageLogger(val messageCollector: MessageCollector, val logLevel:
         override fun toString() = render().toString()
     }
 
-    private val irLoggerSeverity = when (logLevel) {
-        PartialLinkageLogLevel.INFO -> CompilerMessageSeverity.INFO
-        PartialLinkageLogLevel.WARNING -> CompilerMessageSeverity.WARNING
-        PartialLinkageLogLevel.ERROR -> CompilerMessageSeverity.ERROR
-    }
-
-    fun log(message: String, location: Location) {
-        messageCollector.report(
-            severity = irLoggerSeverity,
-            message = location.render().append(": ").append(message).toString(),
-            location = null
+    fun log(message: String, location: Location, significance: PartialLinkageIssueSignificance) {
+        diagnosticReporter.report(
+            significance.toDiagnosticFactory(),
+            location.render().append(": ").append(message).toString()
         )
     }
 }

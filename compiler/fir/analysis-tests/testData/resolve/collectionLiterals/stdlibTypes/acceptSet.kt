@@ -17,15 +17,15 @@ fun test() {
     acceptGeneric([42, "42"])
 
     acceptString([])
-    acceptString(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
-    acceptString(<!ARGUMENT_TYPE_MISMATCH!>[42, "42"]<!>)
+    acceptString([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
+    acceptString([<!ARGUMENT_TYPE_MISMATCH!>42<!>, "42"])
     acceptString(["1", "2", "3"])
 
     acceptListString([])
     acceptListString([listOf()])
     acceptListString([listOf<String>()])
-    acceptListString(<!ARGUMENT_TYPE_MISMATCH!>[listOf<Int>()]<!>)
-    acceptListString(<!ARGUMENT_TYPE_MISMATCH!>[listOf(42)]<!>)
+    acceptListString([<!ARGUMENT_TYPE_MISMATCH!>listOf<Int>()<!>])
+    acceptListString([<!ARGUMENT_TYPE_MISMATCH!>listOf(42)<!>])
     acceptListString([listOf("42")])
 }
 

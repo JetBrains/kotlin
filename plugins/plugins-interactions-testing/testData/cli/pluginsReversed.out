@@ -4,4 +4,5 @@ error: plugin 'kotlin.plugin.test.before' must run before 'kotlin.plugin.test.mi
 error: plugin 'kotlin.plugin.test.after' must run after 'kotlin.plugin.test.middle'
 error: plugin 'kotlin.plugin.test.middle' must run after 'kotlin.plugin.test.before'
 error: plugin 'kotlin.plugin.test.after' must run after 'kotlin.plugin.test.before'
+warning: argument -Xcompiler-plugin is experimental
 COMPILATION_ERROR

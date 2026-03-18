@@ -2,5 +2,6 @@ KtCollectionLiteralExpression(43,58): '["1", "2", "3"]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.sequences) fun <T> sequenceOf(vararg elements: T): kotlin.sequences.Sequence<T>

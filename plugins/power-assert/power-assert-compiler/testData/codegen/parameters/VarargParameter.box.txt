@@ -1,0 +1,7 @@
+---
+assert(listOf("a", "b", "c") == listOf(i++, i++, i++))
+       |                     |  |      |    |    |
+       [a, b, c]             |  |      0    1    2
+                             |  [0, 1, 2]
+                             false
+---

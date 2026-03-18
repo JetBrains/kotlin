@@ -59,7 +59,7 @@ public final class IrStatement extends
           }
           case 8: {
             bitField0_ |= 0x00000001;
-            coordinates_ = input.readInt64();
+            globalCoordinates_ = input.readInt64();
             break;
           }
           case 18: {
@@ -140,6 +140,11 @@ public final class IrStatement extends
             statementCase_ = 7;
             break;
           }
+          case 64: {
+            bitField0_ |= 0x00000002;
+            localCoordinates_ = input.readInt64();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -213,19 +218,44 @@ public final class IrStatement extends
         statementCase_);
   }
 
-  public static final int COORDINATES_FIELD_NUMBER = 1;
-  private long coordinates_;
+  public static final int GLOBAL_COORDINATES_FIELD_NUMBER = 1;
+  private long globalCoordinates_;
   /**
-   * <code>required int64 coordinates = 1;</code>
+   * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * For explanation of the default value, see the comment on IrExpression.coordinates.
+   * </pre>
    */
-  public boolean hasCoordinates() {
+  public boolean hasGlobalCoordinates() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int64 coordinates = 1;</code>
+   * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * For explanation of the default value, see the comment on IrExpression.coordinates.
+   * </pre>
    */
-  public long getCoordinates() {
-    return coordinates_;
+  public long getGlobalCoordinates() {
+    return globalCoordinates_;
+  }
+
+  public static final int LOCAL_COORDINATES_FIELD_NUMBER = 8;
+  private long localCoordinates_;
+  /**
+   * <code>optional int64 local_coordinates = 8;</code>
+   */
+  public boolean hasLocalCoordinates() {
+    return ((bitField0_ & 0x00000002) == 0x00000002);
+  }
+  /**
+   * <code>optional int64 local_coordinates = 8;</code>
+   */
+  public long getLocalCoordinates() {
+    return localCoordinates_;
   }
 
   public static final int DECLARATION_FIELD_NUMBER = 2;
@@ -331,7 +361,8 @@ public final class IrStatement extends
   }
 
   private void initFields() {
-    coordinates_ = 0L;
+    globalCoordinates_ = 6148914691236517201L;
+    localCoordinates_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -339,10 +370,6 @@ public final class IrStatement extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasCoordinates()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (hasDeclaration()) {
       if (!getDeclaration().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -387,7 +414,7 @@ public final class IrStatement extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt64(1, coordinates_);
+      output.writeInt64(1, globalCoordinates_);
     }
     if (statementCase_ == 2) {
       output.writeMessage(2, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration) statement_);
@@ -407,6 +434,9 @@ public final class IrStatement extends
     if (statementCase_ == 7) {
       output.writeMessage(7, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody) statement_);
     }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      output.writeInt64(8, localCoordinates_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -418,7 +448,7 @@ public final class IrStatement extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(1, coordinates_);
+        .computeInt64Size(1, globalCoordinates_);
     }
     if (statementCase_ == 2) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -443,6 +473,10 @@ public final class IrStatement extends
     if (statementCase_ == 7) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(7, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody) statement_);
+    }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(8, localCoordinates_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -542,8 +576,10 @@ public final class IrStatement extends
 
     public Builder clear() {
       super.clear();
-      coordinates_ = 0L;
+      globalCoordinates_ = 6148914691236517201L;
       bitField0_ = (bitField0_ & ~0x00000001);
+      localCoordinates_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000002);
       statementCase_ = 0;
       statement_ = null;
       return this;
@@ -572,7 +608,11 @@ public final class IrStatement extends
       if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
         to_bitField0_ |= 0x00000001;
       }
-      result.coordinates_ = coordinates_;
+      result.globalCoordinates_ = globalCoordinates_;
+      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+        to_bitField0_ |= 0x00000002;
+      }
+      result.localCoordinates_ = localCoordinates_;
       if (statementCase_ == 2) {
         result.statement_ = statement_;
       }
@@ -598,8 +638,11 @@ public final class IrStatement extends
 
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.getDefaultInstance()) return this;
-      if (other.hasCoordinates()) {
-        setCoordinates(other.getCoordinates());
+      if (other.hasGlobalCoordinates()) {
+        setGlobalCoordinates(other.getGlobalCoordinates());
+      }
+      if (other.hasLocalCoordinates()) {
+        setLocalCoordinates(other.getLocalCoordinates());
       }
       switch (other.getStatementCase()) {
         case DECLARATION: {
@@ -636,10 +679,6 @@ public final class IrStatement extends
     }
 
     public final boolean isInitialized() {
-      if (!hasCoordinates()) {
-        
-        return false;
-      }
       if (hasDeclaration()) {
         if (!getDeclaration().isInitialized()) {
           
@@ -712,34 +751,86 @@ public final class IrStatement extends
 
     private int bitField0_;
 
-    private long coordinates_ ;
+    private long globalCoordinates_ = 6148914691236517201L;
     /**
-     * <code>required int64 coordinates = 1;</code>
+     * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
-    public boolean hasCoordinates() {
+    public boolean hasGlobalCoordinates() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int64 coordinates = 1;</code>
+     * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
-    public long getCoordinates() {
-      return coordinates_;
+    public long getGlobalCoordinates() {
+      return globalCoordinates_;
     }
     /**
-     * <code>required int64 coordinates = 1;</code>
+     * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
-    public Builder setCoordinates(long value) {
+    public Builder setGlobalCoordinates(long value) {
       bitField0_ |= 0x00000001;
-      coordinates_ = value;
+      globalCoordinates_ = value;
       
       return this;
     }
     /**
-     * <code>required int64 coordinates = 1;</code>
+     * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
-    public Builder clearCoordinates() {
+    public Builder clearGlobalCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      coordinates_ = 0L;
+      globalCoordinates_ = 6148914691236517201L;
+      
+      return this;
+    }
+
+    private long localCoordinates_ ;
+    /**
+     * <code>optional int64 local_coordinates = 8;</code>
+     */
+    public boolean hasLocalCoordinates() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int64 local_coordinates = 8;</code>
+     */
+    public long getLocalCoordinates() {
+      return localCoordinates_;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 8;</code>
+     */
+    public Builder setLocalCoordinates(long value) {
+      bitField0_ |= 0x00000002;
+      localCoordinates_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int64 local_coordinates = 8;</code>
+     */
+    public Builder clearLocalCoordinates() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      localCoordinates_ = 0L;
       
       return this;
     }

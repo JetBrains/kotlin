@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 
-internal abstract class KonanBackendContext(config: KonanConfig) : BasicNativeBackendPhaseContext(config), CommonBackendContext {
+internal abstract class KonanBackendContext(config: NativeSecondStageCompilationConfig) : BasicNativeBackendPhaseContext(config), CommonBackendContext {
     abstract val builtIns: KonanBuiltIns
 
     abstract override val symbols: BackendNativeSymbols

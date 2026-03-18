@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] ambiguousLocalEnum.kt
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<<local>/EnumClass>|
+                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<<local>/EnumClass>|
 
         }
 
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] ambiguousLocalEnum.kt
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<<local>/EnumClass>|
+                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<<local>/EnumClass>|
 
         }
 

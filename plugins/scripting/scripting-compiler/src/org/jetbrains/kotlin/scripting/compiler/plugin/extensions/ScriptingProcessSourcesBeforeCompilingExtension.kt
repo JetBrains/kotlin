@@ -196,7 +196,8 @@ class ScriptingIrExplainGenerationExtension(val project: MockProject) : IrGenera
                 ?: file.getKtFile()?.findScriptDefinition()?.compilationConfiguration
             val explainFieldName =
                 scriptCompilationConfiguration?.get(ScriptCompilationConfiguration.explainField) ?: return
-            KotlinScriptExpressionExplainTransformer(SourceFile(file), pluginContext, explainFieldName).visitFile(file)
+            val source = SourceFile.findSource(file) ?: return
+            KotlinScriptExpressionExplainTransformer(source, pluginContext, explainFieldName).visitFile(file)
         }
     }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -353,9 +354,13 @@ internal class ScopeBasedTowerLevel(
     private val givenExtensionReceiver: FirExpression?,
     private val withHideMembersOnly: Boolean,
     private val constructorFilter: ConstructorFilter,
+    private val companionExtensionPolicy: CompanionExtensionPolicy,
     private val dispatchReceiverForStatics: ExpressionReceiverValue?
 ) : TowerLevel(), SessionHolder {
     override val session: FirSession get() = bodyResolveComponents.session
+
+    internal var hasFoundCompanionExtensions: Boolean = false
+        private set
 
     private val scope = if (LanguageFeature.MultiPlatformProjects.isEnabled()) {
         FirActualizingScope(givenScope, session)
@@ -425,6 +430,12 @@ internal class ScopeBasedTowerLevel(
         callInfo: CallInfo,
         processor: TowerLevelProcessor
     ) {
+        val isCompanionExtension = candidate.isCompanionExtension
+        if (isCompanionExtension) hasFoundCompanionExtensions = true
+        if (isCompanionExtension != companionExtensionPolicy.acceptsCompanionExtension) {
+            return
+        }
+
         candidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         if (withHideMembersOnly && !candidate.hasAnnotationWithClassId(HidesMembers, session)) {
             return
@@ -438,6 +449,7 @@ internal class ScopeBasedTowerLevel(
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
             return
         }
+
         val unwrappedCandidate = candidate.fir.importedFromObjectOrStaticData?.original?.symbol ?: candidate
         processor.consumeCandidate(
             unwrappedCandidate,

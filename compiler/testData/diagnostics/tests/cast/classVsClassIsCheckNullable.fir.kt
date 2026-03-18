@@ -6,7 +6,7 @@ open class B
 
 fun test(a: A?) = <!IMPOSSIBLE_IS_CHECK_ERROR!>a is B<!>
 
-fun test2(a: A?) = <!IMPOSSIBLE_IS_CHECK_ERROR!>a is B?<!>
+fun test2(a: A?) = <!IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_ERROR!>a is B?<!>
 
 fun test3(a: A) = <!IMPOSSIBLE_IS_CHECK_ERROR!>a is B?<!>
 

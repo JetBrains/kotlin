@@ -34,14 +34,12 @@ internal object KotlinTargetAlreadyDeclaredChecker : KotlinGradleProjectChecker 
             when (targetsGroup.first().internal.targetPreset) {
                 // For JS targets fire WARNING for now
                 // FIXME: https://youtrack.jetbrains.com/issue/KT-59316/Deprecate-multiple-same-targets#focus=Comments-27-9992405.0-0
-                is KotlinJsIrTargetPreset -> collector.report(
-                    project,
+                is KotlinJsIrTargetPreset -> collector.report(diagnosticsContext,
                     KotlinToolingDiagnostics.KotlinTargetAlreadyDeclaredWarning(
                         targetDslFunctionName
                     )
                 )
-                else -> collector.report(
-                    project,
+                else -> collector.report(diagnosticsContext,
                     KotlinToolingDiagnostics.KotlinTargetAlreadyDeclaredError(
                         targetDslFunctionName
                     )
@@ -53,11 +51,9 @@ internal object KotlinTargetAlreadyDeclaredChecker : KotlinGradleProjectChecker 
     /**
      * DSL names are taken from [org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions]
      */
-    @Suppress("DEPRECATION_ERROR")
     private val KotlinTarget.targetDslFunctionName
         get() = when (internal.targetPreset) {
             is KotlinJsIrTargetPreset -> "js"
-            is org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsTargetPreset -> "js"
             is KotlinAndroidTargetPreset -> "androidTarget"
             else -> internal.targetPreset?.name
         }

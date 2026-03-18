@@ -126,21 +126,21 @@ FILE fqName:<root> fileName:/serializer.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeA visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] name:serializeA visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FirstSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] kind:Regular name:x index:1 type:<root>.A
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] kind:Regular name:x index:1 type:<root>.A
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeB visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] name:serializeB visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FirstSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] kind:Regular name:x index:1 type:<root>.B
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] kind:Regular name:x index:1 type:<root>.B
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeC visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] name:serializeC visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FirstSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] kind:Regular name:x index:1 type:<root>.C
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] kind:Regular name:x index:1 type:<root>.C
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeD visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] name:serializeD visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FirstSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] kind:Regular name:x index:1 type:<root>.D
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] kind:Regular name:x index:1 type:<root>.D
       BLOCK_BODY
     FUN name:aFunction visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FirstSerializer
@@ -169,21 +169,21 @@ FILE fqName:<root> fileName:/serializer.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeA visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] name:serializeA visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SecondSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] kind:Regular name:x index:1 type:<root>.A
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] kind:Regular name:x index:1 type:<root>.A
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeB visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] name:serializeB visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SecondSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] kind:Regular name:x index:1 type:<root>.B
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] kind:Regular name:x index:1 type:<root>.B
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeC visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] name:serializeC visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SecondSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] kind:Regular name:x index:1 type:<root>.C
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] kind:Regular name:x index:1 type:<root>.C
       BLOCK_BODY
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] name:serializeD visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] name:serializeD visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.SecondSerializer
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.Key] kind:Regular name:x index:1 type:<root>.D
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.MembersOfSerializerGenerator.MembersOfSerializerGeneratorKey] kind:Regular name:x index:1 type:<root>.D
       BLOCK_BODY
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY

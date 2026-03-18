@@ -114,7 +114,7 @@ KtSuperTypeCallEntry(258,271): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(258,269): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -191,7 +191,7 @@ KtSuperTypeCallEntry(320,333): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(320,331): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -271,7 +271,7 @@ KtSuperTypeCallEntry(403,416): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(403,414): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -335,7 +335,7 @@ KtSuperTypeCallEntry(453,471): 'SealedInheritor1()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(453,469): 'SealedInheritor1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -405,7 +405,7 @@ KtSuperTypeCallEntry(533,546): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(533,544): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -469,7 +469,7 @@ KtSuperTypeCallEntry(596,614): 'SealedInheritor1()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(596,612): 'SealedInheritor1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -560,7 +560,7 @@ KtSuperTypeCallEntry(683,696): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(683,694): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -636,7 +636,7 @@ KtBinaryExpressionWithTypeRHS(862,890): 'instance as SealedInheritor1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(862,870): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -672,7 +672,7 @@ KtBinaryExpressionWithTypeRHS(918,946): 'instance as SealedInheritor2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(918,926): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -735,7 +735,7 @@ KtNameReferenceExpression(1007,1023): 'SealedInheritor1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1026,1029): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -858,7 +858,7 @@ KtCallExpression(1217,1245): 'Generic2<SealedInheritor1>()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1217,1225): 'Generic2'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -951,7 +951,7 @@ KtCallExpression(1318,1351): 'constraintFun<SealedInheritor1>()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1318,1331): 'constraintFun'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

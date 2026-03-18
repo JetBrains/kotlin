@@ -44,7 +44,7 @@ KtWhenExpression(121,173): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(127,128): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

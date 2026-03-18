@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.js.engine
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import java.util.concurrent.atomic.AtomicInteger
 
 private val LINE_SEPARATOR = System.getProperty("line.separator")!!
@@ -81,7 +80,7 @@ abstract class ProcessBasedScriptEngine(
     }
 
     override fun release() {
-        process?.destroy()
+        eval("!exit")
         process = null
         if (doTrace)
             println("Release repl.js #${counter.decrementAndGet()} in thread ${Thread.currentThread().id}")

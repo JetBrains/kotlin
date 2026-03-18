@@ -1,0 +1,23 @@
+test1: ---
+assert(listOf("Hello", "World")[1] == "Hello")
+       |                       |   |
+       [Hello, World]          |   false
+                               World
+---
+test2: ---
+assert(listOf("Hello", "World").get(1) == "Hello")
+       |                        |      |
+       [Hello, World]           World  false
+---
+test3: ---
+assert(map["key3"] == 300)
+       |  |        |
+       |  null     false
+       {key1=100, key2=200}
+---
+test4: ---
+assert(matrix[0, 1] == 99)
+       |     |      |
+       |     2      false
+       [[1, 2, 3]]
+---

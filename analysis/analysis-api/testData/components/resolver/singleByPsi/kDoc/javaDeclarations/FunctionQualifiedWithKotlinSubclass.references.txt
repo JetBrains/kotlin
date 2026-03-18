@@ -2,5 +2,6 @@ KDocName(85,102): 'KotlinChild.myFun'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in dependency.JavaBase) open fun myFun()

@@ -1,2 +1,5 @@
 KtNameReferenceExpression(81,87): 'action'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      action: test.Foo.() -> kotlin.Unit
+    ]

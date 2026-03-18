@@ -1,0 +1,339 @@
+KtFile: 'invoke.kt'
+  null
+
+KtPackageDirective(0,9): 'package r'
+  null
+
+KtNameReferenceExpression(8,9): 'r'
+  null
+
+KtImportList(9,9): ''
+  null
+
+KtClass(11,84): 'class MyClass {'
+  null
+
+KtClassBody(25,84): '{'
+  null
+
+KtNamedFunction(31,59): 'operator fun invoke() = this'
+  null
+
+KtDeclarationModifierList(31,39): 'operator'
+  null
+
+KtParameterList(50,52): '()'
+  null
+
+KtThisExpression(55,59): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: r/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNameReferenceExpression(55,59): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: r/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNamedFunction(65,82): 'fun self() = this'
+  null
+
+KtParameterList(73,75): '()'
+  null
+
+KtThisExpression(78,82): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: r/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNameReferenceExpression(78,82): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: r/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNamedFunction(86,104): 'fun foo(): Int = 1'
+  null
+
+KtParameterList(93,95): '()'
+  null
+
+KtTypeReference(97,100): 'Int'
+  null
+
+KtUserType(97,100): 'Int'
+  null
+
+KtNameReferenceExpression(97,100): 'Int'
+  null
+
+KtConstantExpression(103,104): '1'
+  null
+
+KtProperty(105,133): 'val foo: MyClass = MyClass()'
+  null
+
+KtTypeReference(114,121): 'MyClass'
+  null
+
+KtUserType(114,121): 'MyClass'
+  null
+
+KtNameReferenceExpression(114,121): 'MyClass'
+  null
+
+KtCallExpression(124,133): 'MyClass()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): r.MyClass
+    ]
+
+KtNameReferenceExpression(124,131): 'MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): r.MyClass
+    ]
+
+KtValueArgumentList(131,133): '()'
+  null
+
+KtProperty(135,165): 'val property get() = MyClass()'
+  null
+
+KtPropertyAccessor(148,165): 'get() = MyClass()'
+  null
+
+KtParameterList(151,153): '()'
+  null
+
+KtCallExpression(156,165): 'MyClass()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): r.MyClass
+    ]
+
+KtNameReferenceExpression(156,163): 'MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): r.MyClass
+    ]
+
+KtValueArgumentList(163,165): '()'
+  null
+
+KtNamedFunction(167,260): 'fun usages() {'
+  null
+
+KtParameterList(177,179): '()'
+  null
+
+KtBlockExpression(180,260): '{'
+  null
+
+KtCallExpression(186,191): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/foo(): kotlin.Int
+    ]
+
+KtNameReferenceExpression(186,189): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/foo(): kotlin.Int
+    ]
+
+KtValueArgumentList(189,191): '()'
+  null
+
+KtNameReferenceExpression(196,199): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: r.MyClass
+    ]
+
+KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
+
+KtParenthesizedExpression(204,217): '(((foo)())())'
+  null
+
+KtCallExpression(205,216): '((foo)())()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
+
+KtParenthesizedExpression(205,214): '((foo)())'
+  null
+
+KtCallExpression(206,213): '(foo)()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
+
+KtParenthesizedExpression(206,211): '(foo)'
+  null
+
+KtNameReferenceExpression(207,210): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: r.MyClass
+    ]
+
+KtValueArgumentList(211,213): '()'
+  null
+
+KtValueArgumentList(214,216): '()'
+  null
+
+KtCallExpression(218,226): 'invoke()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
+
+KtNameReferenceExpression(218,224): 'invoke'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
+
+KtValueArgumentList(224,226): '()'
+  null
+
+KtDotQualifiedExpression(231,243): 'foo.invoke()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
+
+KtNameReferenceExpression(231,234): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: r.MyClass
+    ]
+
+KtCallExpression(235,243): 'invoke()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
+
+KtNameReferenceExpression(235,241): 'invoke'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
+
+KtValueArgumentList(241,243): '()'
+  null
+
+KtCallExpression(248,258): 'property()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
+
+KtNameReferenceExpression(248,256): 'property'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val property: r.MyClass
+    ]
+
+KtValueArgumentList(256,258): '()'
+  null

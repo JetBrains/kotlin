@@ -7,10 +7,16 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportInfo
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
@@ -24,8 +30,7 @@ fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
-    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
+    treatWarningsAsErrors = arguments.allWarningsAsErrors
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS, arguments.extraWarnings)
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
@@ -45,7 +50,7 @@ fun CompilerConfiguration.setupCommonArguments(
     val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
         IrVerificationMode.resolveMode(verifyIrString).also {
             if (it == null) {
-                messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
+                this.report(COMPILER_ARGUMENTS_ERROR, "Unsupported IR verification mode $verifyIrString")
             }
         }
     } ?: IrVerificationMode.NONE
@@ -54,8 +59,8 @@ fun CompilerConfiguration.setupCommonArguments(
     if (arguments.verifyIrVisibility) {
         put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
         if (irVerificationMode == IrVerificationMode.NONE) {
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            this.report(
+                COMPILER_ARGUMENTS_WARNING,
                 "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
             )
         }
@@ -64,8 +69,8 @@ fun CompilerConfiguration.setupCommonArguments(
     if (arguments.verifyIrNestedOffsets) {
         put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, true)
         if (irVerificationMode == IrVerificationMode.NONE) {
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            this.report(
+                COMPILER_ARGUMENTS_WARNING,
                 "'-Xverify-ir-nested-offsets' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
             )
         }
@@ -74,8 +79,8 @@ fun CompilerConfiguration.setupCommonArguments(
     @Suppress("DEPRECATION")
     if (arguments.useFirExperimentalCheckers) {
         put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, true)
-        messageCollector.report(
-            CompilerMessageSeverity.WARNING,
+        this.report(
+            COMPILER_ARGUMENTS_WARNING,
             "'-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release"
         )
     }
@@ -108,17 +113,44 @@ fun CompilerConfiguration.setupMetadataVersion(
     if (metadataVersionString != null) {
         val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)
         when {
-            versionArray == null -> messageCollector.report(
-                CompilerMessageSeverity.ERROR, "Invalid metadata version: $metadataVersionString", null
+            versionArray == null -> this.report(
+                COMPILER_ARGUMENTS_ERROR, "Invalid metadata version: $metadataVersionString", null
             )
             createMetadataVersion == null -> throw IllegalStateException("Unable to create metadata version: missing argument")
             else -> put(CommonConfigurationKeys.METADATA_VERSION, createMetadataVersion(versionArray))
         }
     }
 }
+fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(configuration: CompilerConfiguration): CommonCompilerArgumentsConfigurator.Reporter {
+    return object : CommonCompilerArgumentsConfigurator.Reporter {
+        override fun reportWarning(message: String) {
+            configuration.report(COMPILER_ARGUMENTS_WARNING, message)
+        }
+
+        override fun reportError(message: String) {
+            configuration.report(COMPILER_ARGUMENTS_ERROR, message)
+        }
+
+        override fun report(factory: KtSourcelessDiagnosticFactory, message: String) {
+            configuration.report(factory, message)
+        }
+
+        override fun info(message: String) {
+            configuration.reportInfo(message)
+        }
+
+        override fun withLanguageVersionSettings(languageVersionSettings: LanguageVersionSettings): CommonCompilerArgumentsConfigurator.Reporter {
+            val newConfiguration = configuration.copy().apply {
+                this.languageVersionSettings = languageVersionSettings
+            }
+            return fromConfiguration(newConfiguration)
+        }
+    }
+}
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
-    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+    val reporter = CommonCompilerArgumentsConfigurator.Reporter.fromConfiguration(this)
+    languageVersionSettings = arguments.toLanguageVersionSettings(reporter)
 }
 
 private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
@@ -148,7 +180,7 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
         }
 
         val argValue = if (effectivePropertyValue is String) "=$effectivePropertyValue" else ""
-        reportDiagnostic(
+        this.report(
             CliDiagnostics.REDUNDANT_CLI_ARG,
             "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
         )
@@ -157,7 +189,7 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
 
 const val KOTLIN_HOME_PROPERTY = "kotlin.home"
 
-fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonCompilerArguments): KotlinPaths? {
+fun computeKotlinPaths(configuration: CompilerConfiguration, arguments: CommonCompilerArguments): KotlinPaths? {
     val kotlinHomeProperty = System.getProperty(KOTLIN_HOME_PROPERTY)
     val kotlinHome = when {
         arguments.kotlinHome != null -> File(arguments.kotlinHome!!)
@@ -169,11 +201,11 @@ fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonComp
         kotlinHome == null -> PathUtil.kotlinPathsForCompiler
         kotlinHome.isDirectory -> KotlinPathsFromHomeDir(kotlinHome)
         else -> {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Kotlin home does not exist or is not a directory: $kotlinHome", null)
+            configuration.report(COMPILER_ARGUMENTS_ERROR, "Kotlin home does not exist or is not a directory: $kotlinHome")
             null
         }
     }?.also {
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + it.homePath, null)
+        configuration.reportLog("Using Kotlin home directory " + it.homePath, null)
     }
 }
 
@@ -245,18 +277,16 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     val rawFragmentSources = arguments.fragmentSources
     val rawFragmentRefines = arguments.fragmentRefines
 
-    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
     fun reportError(message: String) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, message)
+        this.report(COMPILER_ARGUMENTS_ERROR, message)
     }
 
     fun reportWarning(message: String) {
-        messageCollector.report(CompilerMessageSeverity.WARNING, message)
+        this.report(COMPILER_ARGUMENTS_WARNING, message)
     }
 
-    if (rawFragments == null) {
-        if (rawFragmentRefines != null) {
+    if (rawFragments.isEmpty()) {
+        if (rawFragmentRefines.isNotEmpty()) {
             reportError("$FRAGMENT_REFINES_ARG_NAME flag can not be used without $FRAGMENTS_ARG_NAME")
         }
         return null
@@ -269,7 +299,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
 
     val sourcesByFragmentName: Map<String, Set<String>> = rawFragments.associateWith { mutableSetOf<String>() }.apply {
-        rawFragmentSources.orEmpty().forEach { rawFragmentSourceArg ->
+        rawFragmentSources.forEach { rawFragmentSourceArg ->
             val split = rawFragmentSourceArg.split(":", limit = 2)
             if (split.size < 2) {
                 reportError(
@@ -332,7 +362,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     }
 
     if (modules.size == 1) {
-        if (rawFragmentRefines?.isNotEmpty() == true) {
+        if (rawFragmentRefines.isNotEmpty()) {
             reportError("$FRAGMENT_REFINES_ARG_NAME flag is specified but there is only one module declared")
         }
         return HmppCliModuleStructure(modules, sourceDependencies = emptyMap(), moduleDependencies = emptyMap(), friendDependencies = emptyMap())
@@ -347,7 +377,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleByName = modules.associateBy { it.name }
 
-    val sourceDependencies: Map<HmppCliModule, List<HmppCliModule>> = rawFragmentRefines.orEmpty().mapNotNull { rawFragmentRefinesEdge ->
+    val sourceDependencies: Map<HmppCliModule, List<HmppCliModule>> = rawFragmentRefines.mapNotNull { rawFragmentRefinesEdge ->
         val split = rawFragmentRefinesEdge.split(":")
         if (split.size != 2) {
             reportError(
@@ -386,10 +416,10 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         }
     }
 
-    if (arguments.fragmentDependencies != null && !arguments.separateKmpCompilationScheme) {
+    if (arguments.fragmentDependencies.isNotEmpty() && !arguments.separateKmpCompilationScheme) {
         reportError("$FRAGMENT_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
     }
-    if (arguments.fragmentFriendDependencies != null && !arguments.separateKmpCompilationScheme) {
+    if (arguments.fragmentFriendDependencies.isNotEmpty() && !arguments.separateKmpCompilationScheme) {
         reportError("$FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
     }
 

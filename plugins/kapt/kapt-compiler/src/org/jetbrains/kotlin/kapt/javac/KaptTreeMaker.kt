@@ -168,7 +168,7 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
 
     companion object {
         internal fun preRegister(context: Context, kaptContext: KaptContextForStubGeneration) {
-            context.put(treeMakerKey, Context.Factory<TreeMaker> { KaptTreeMaker(it, kaptContext) })
+            context.put(treeMakerKey) { KaptTreeMaker(it, kaptContext) }
         }
     }
 }

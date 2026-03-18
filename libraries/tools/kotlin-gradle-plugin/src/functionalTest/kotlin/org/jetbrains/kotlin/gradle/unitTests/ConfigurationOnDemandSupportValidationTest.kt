@@ -23,7 +23,7 @@ class ConfigurationOnDemandSupportValidationTest {
         val project = buildTestKmpProject(enableConfigurationOnDemand = true)
 
         project.runLifecycleAwareTest {
-            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(path)
 
             val diagnostic = diagnostics.assertContainsDiagnostic(ConfigurationOnDemandNotSupported)
             assertContains("but root project 'test' has Kotlin targets", diagnostic.message)
@@ -36,7 +36,7 @@ class ConfigurationOnDemandSupportValidationTest {
         val project = buildTestKmpProject(enableConfigurationOnDemand = false)
 
         project.runLifecycleAwareTest {
-            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(path)
             diagnostics.assertNoDiagnostics(ConfigurationOnDemandNotSupported)
         }
     }
@@ -46,7 +46,7 @@ class ConfigurationOnDemandSupportValidationTest {
         val project = buildTestJsProject(enableConfigurationOnDemand = true)
 
         project.runLifecycleAwareTest {
-            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(path)
 
             val diagnostic = diagnostics.assertContainsDiagnostic(ConfigurationOnDemandNotSupported)
             assertContains("but root project 'test' has Kotlin targets", diagnostic.message)
@@ -59,7 +59,7 @@ class ConfigurationOnDemandSupportValidationTest {
         val project = buildTestJsProject(enableConfigurationOnDemand = false)
 
         project.runLifecycleAwareTest {
-            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(path)
             diagnostics.assertNoDiagnostics(ConfigurationOnDemandNotSupported)
         }
     }

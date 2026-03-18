@@ -51,7 +51,7 @@ KtCallExpression(66,71): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(66,69): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -73,7 +73,7 @@ KtValueArgumentList(69,71): '()'
   null
 
 KtDotQualifiedExpression(80,90): 'this.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -119,7 +119,7 @@ KtCallExpression(85,90): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(85,88): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -142,7 +142,7 @@ KtValueArgumentList(88,90): '()'
   null
 
 KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -194,7 +194,7 @@ KtCallExpression(112,117): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(112,115): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -260,7 +260,7 @@ KtCallExpression(203,208): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(203,206): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -282,7 +282,7 @@ KtValueArgumentList(206,208): '()'
   null
 
 KtDotQualifiedExpression(221,231): 'this.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -328,7 +328,7 @@ KtCallExpression(226,231): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(226,229): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -351,7 +351,7 @@ KtValueArgumentList(229,231): '()'
   null
 
 KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -403,7 +403,7 @@ KtCallExpression(260,265): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(260,263): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -426,7 +426,7 @@ KtValueArgumentList(263,265): '()'
   null
 
 KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -478,7 +478,7 @@ KtCallExpression(291,296): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(291,294): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -544,7 +544,7 @@ KtCallExpression(403,408): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(403,406): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -566,7 +566,7 @@ KtValueArgumentList(406,408): '()'
   null
 
 KtDotQualifiedExpression(425,435): 'this.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -612,7 +612,7 @@ KtCallExpression(430,435): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(430,433): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -635,7 +635,7 @@ KtValueArgumentList(433,435): '()'
   null
 
 KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -687,7 +687,7 @@ KtCallExpression(469,474): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(469,472): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -710,7 +710,7 @@ KtValueArgumentList(472,474): '()'
   null
 
 KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -762,7 +762,7 @@ KtCallExpression(507,512): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(507,510): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -785,7 +785,7 @@ KtValueArgumentList(510,512): '()'
   null
 
 KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -837,7 +837,7 @@ KtCallExpression(542,547): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(542,545): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -941,7 +941,7 @@ KtCallExpression(625,630): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(625,628): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -983,7 +983,7 @@ KtValueArgumentList(628,630): '()'
   null
 
 KtDotQualifiedExpression(651,661): 'this.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1029,7 +1029,7 @@ KtCallExpression(656,661): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(656,659): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1052,7 +1052,7 @@ KtValueArgumentList(659,661): '()'
   null
 
 KtDotQualifiedExpression(682,697): 'this@anon.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1104,7 +1104,7 @@ KtCallExpression(692,697): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(692,695): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1127,7 +1127,7 @@ KtValueArgumentList(695,697): '()'
   null
 
 KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1179,7 +1179,7 @@ KtCallExpression(735,740): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(735,738): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1202,7 +1202,7 @@ KtValueArgumentList(738,740): '()'
   null
 
 KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1254,7 +1254,7 @@ KtCallExpression(777,782): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(777,780): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1277,7 +1277,7 @@ KtValueArgumentList(780,782): '()'
   null
 
 KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1329,7 +1329,7 @@ KtCallExpression(816,821): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(816,819): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1396,7 +1396,7 @@ KtCallExpression(857,1107): 'myWith { t ->'
       }
 
 KtNameReferenceExpression(857,863): 'myWith'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1497,7 +1497,7 @@ KtCallExpression(891,896): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(891,894): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1539,7 +1539,7 @@ KtValueArgumentList(894,896): '()'
   null
 
 KtDotQualifiedExpression(917,927): 'this.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1585,7 +1585,7 @@ KtCallExpression(922,927): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(922,925): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1608,7 +1608,7 @@ KtValueArgumentList(925,927): '()'
   null
 
 KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1660,7 +1660,7 @@ KtCallExpression(960,965): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(960,963): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1683,7 +1683,7 @@ KtValueArgumentList(963,965): '()'
   null
 
 KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1735,7 +1735,7 @@ KtCallExpression(1003,1008): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1003,1006): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1758,7 +1758,7 @@ KtValueArgumentList(1006,1008): '()'
   null
 
 KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1810,7 +1810,7 @@ KtCallExpression(1045,1050): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1045,1048): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1833,7 +1833,7 @@ KtValueArgumentList(1048,1050): '()'
   null
 
 KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1885,7 +1885,7 @@ KtCallExpression(1084,1089): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1084,1087): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1947,7 +1947,7 @@ KtCallExpression(1125,1194): 'myWith label@{'
       }
 
 KtNameReferenceExpression(1125,1131): 'myWith'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2007,7 +2007,7 @@ KtBlockExpression(1160,1176): 'this@label.foo()'
   null
 
 KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2059,7 +2059,7 @@ KtCallExpression(1171,1176): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1171,1174): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2215,7 +2215,7 @@ KtCallExpression(1272,1282): 'body(this)'
       }
 
 KtNameReferenceExpression(1272,1276): 'body'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

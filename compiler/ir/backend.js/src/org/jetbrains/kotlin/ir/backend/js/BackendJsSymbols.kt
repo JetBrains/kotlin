@@ -10,20 +10,16 @@ import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsSymbols
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationWebSymbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.hasShape
+import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
+import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
@@ -348,6 +344,8 @@ class BackendJsSymbols(
     val jsLongToString: IrSimpleFunctionSymbol = CallableIds.jsLongToString.functionSymbol()
     val longToStringImpl: IrSimpleFunctionSymbol = CallableIds.toStringImpl(compileLongAsBigint).functionSymbol()
 
+    val isLongCompiledToBigInt: IrSimpleFunctionSymbol = CallableIds.isLongCompiledToBigInt.functionSymbol()
+
     val stringConstructorSymbol by StandardClassIds.String.primaryConstructorSymbol()
 
     val anyConstructorSymbol by StandardClassIds.Any.primaryConstructorSymbol()
@@ -595,6 +593,7 @@ private object CallableIds {
     val isComparable = "isComparable".jsCallableId
     val isCharSequence = "isCharSequence".jsCallableId
     val longCopyOfRange = "longCopyOfRange".jsCallableId
+    val isLongCompiledToBigInt = "isLongCompiledToBigInt".jsCallableId
     val isBooleanArray = "isBooleanArray".jsCallableId
     val isByteArray = "isByteArray".jsCallableId
     val isShortArray = "isShortArray".jsCallableId

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.utils.androidPluginIds
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal object AgpCompatibilityCheck {
-    val minimalSupportedAgpVersion = AndroidGradlePluginVersion(8, 2, 2)
+    val minimalSupportedAgpVersion = AndroidGradlePluginVersion(8, 5, 2)
 
     fun Project.runAgpCompatibilityCheckIfAgpIsApplied(
         agpVersionProvider: AndroidGradlePluginVersionProvider = AndroidGradlePluginVersionProvider.Default

@@ -311,7 +311,7 @@ KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(616,623): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -416,7 +416,7 @@ KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(656,663): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -521,7 +521,7 @@ KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
     isInBestCandidates = true
 
 KtNameReferenceExpression(700,707): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

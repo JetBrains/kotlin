@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 
-internal fun ModuleDescriptor.getExportedDependencies(konanConfig: KonanConfig): List<ModuleDescriptor> =
-        getDescriptorsFromLibraries((konanConfig.exportedLibraries + konanConfig.includedLibraries).toSet())
+internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
+        getDescriptorsFromLibraries((config.exportedLibraries + config.includedLibraries).toSet())
 
-internal fun ModuleDescriptor.getIncludedLibraryDescriptors(konanConfig: KonanConfig): List<ModuleDescriptor> =
-        getDescriptorsFromLibraries(konanConfig.includedLibraries.toSet())
+internal fun ModuleDescriptor.getIncludedLibraryDescriptors(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
+        getDescriptorsFromLibraries(config.includedLibraries.toSet())
 
 private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KotlinLibrary>) =
     allDependencyModules.filter {
@@ -156,7 +156,7 @@ private fun getFeaturedLibraries(
     val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
     val result = mutableListOf<KotlinLibrary>()
     //TODO: please add type checks before cast.
-    val libraries = resolvedLibraries.getFullList(null)
+    val libraries = resolvedLibraries.getFullList()
 
     for (library in libraries) {
         val libraryFile = library.libraryFile

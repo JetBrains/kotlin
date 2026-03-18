@@ -245,6 +245,20 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
          */
         @JvmField
         public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX")
+
+        /**
+         * Transform compiler diagnostics into formatted strings for output.
+         *
+         * If no specific renderer is provided, the system defaults to a standard format:
+         * file://<path>:<line>:<column> <message>
+         *
+         * Example Output:
+         * file:///path/to/File.kt:10:5 Unresolved reference: foo
+         *
+         * @see CompilerMessageRenderer
+         */
+        @JvmField
+        public val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> = Option("COMPILER_MESSAGE_RENDERER")
     }
 
     public enum class CompilerArgumentsLogLevel {

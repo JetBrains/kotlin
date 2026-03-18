@@ -2,5 +2,6 @@ KtNameReferenceExpression(50,51): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) var i: kotlin.Int

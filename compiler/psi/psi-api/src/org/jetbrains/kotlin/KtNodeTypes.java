@@ -23,6 +23,7 @@ public interface KtNodeTypes {
 
     IElementType OBJECT_DECLARATION = KtStubBasedElementTypes.OBJECT_DECLARATION;
     IElementType TYPEALIAS = KtStubBasedElementTypes.TYPEALIAS;
+    IElementType COMPANION_BLOCK = KtStubBasedElementTypes.COMPANION_BLOCK;
 
     IElementType ENUM_ENTRY             = KtStubBasedElementTypes.ENUM_ENTRY;
     IElementType CLASS_INITIALIZER      = KtStubBasedElementTypes.CLASS_INITIALIZER;

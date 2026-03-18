@@ -9,12 +9,14 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.TypeName
+import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
 import kotlin.reflect.KType
+import kotlin.reflect.full.allSupertypes
 
 /**
  * Public facade used by the build-tools options generator. Wraps the single source of truth (arguments DSL)
@@ -29,6 +31,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
     val removedSinceVersion: KotlinReleaseVersion?,
 ) {
 
+    @OptIn(ExperimentalArgumentApi::class)
     class SSoTCompilerArgument(
         val effectiveCompilerName: String,
         origin: KotlinCompilerArgument,
@@ -50,7 +53,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         introducedSinceVersion: KotlinReleaseVersion,
         deprecatedSinceVersion: KotlinReleaseVersion?,
         removedSinceVersion: KotlinReleaseVersion?,
-        val applier: MemberName,
+        val applierSimpleName: String,
         val defaultValue: CodeBlock,
     ) : BtaCompilerArgument<BtaCompilerArgumentValueType.CustomArgumentValueType>(
         name = name,
@@ -69,10 +72,10 @@ sealed class BtaCompilerArgumentValueType(
     val isNullable: Boolean = false,
 ) {
     class SSoTCompilerArgumentValueType(
-        val origin: KotlinArgumentValueType<*>
+        val origin: KotlinArgumentValueType<*>,
     ) : BtaCompilerArgumentValueType(isNullable = origin.isNullable.current) {
         val kType: KType
-            get() = origin::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!
+            get() = origin::class.allSupertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!
     }
 
     class CustomArgumentValueType(
@@ -95,7 +98,7 @@ object CustomCompilerArguments {
         introducedSinceVersion = KotlinReleaseVersion.v2_3_20,
         deprecatedSinceVersion = null,
         removedSinceVersion = null,
-        applier = MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "applyCompilerPlugins"),
+        applierSimpleName = "applyCompilerPlugins",
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName("kotlin.collections", "emptyList"),

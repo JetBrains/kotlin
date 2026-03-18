@@ -62,7 +62,7 @@ FILE: onClassifierDeclaration.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Test7>|
-            public get(): R|kotlin/enums/EnumEntries<Test7>|
+            public static get(): R|kotlin/enums/EnumEntries<Test7>|
 
     }
     context(c: R|A|)

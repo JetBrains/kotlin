@@ -38,12 +38,14 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
     Element 11
+        Static scope owner symbol: FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
+    Element 12
         Implicit receiver:
             FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
                 Type: MyClass
-    Element 12
-        Scope: FirLocalScope
     Element 13
+        Scope: FirLocalScope
+    Element 14
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] insideClassMember.kts

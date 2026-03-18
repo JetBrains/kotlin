@@ -140,6 +140,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     const val WHEN_CONDITION_IN_RANGE_ID: Int = WHEN_ENTRY_GUARD_ID + 1
     const val WHEN_CONDITION_IS_PATTERN_ID: Int = WHEN_CONDITION_IN_RANGE_ID + 1
     const val WHEN_CONDITION_EXPRESSION_ID: Int = WHEN_CONDITION_IS_PATTERN_ID + 1
+    const val COMPANION_BLOCK_ID: Int = WHEN_CONDITION_EXPRESSION_ID + 1
 
     val KT_FILE: SyntaxElementType = register(KT_FILE_ID, "kotlin.FILE")
 
@@ -170,6 +171,8 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     val ANNOTATION_TARGET: SyntaxElementType = register(ANNOTATION_TARGET_ID, "ANNOTATION_TARGET")
 
     val CLASS_BODY: SyntaxElementType = register(CLASS_BODY_ID, "CLASS_BODY")
+
+    val COMPANION_BLOCK: SyntaxElementType = register(COMPANION_BLOCK_ID, "COMPANION_BLOCK")
 
     val IMPORT_LIST: SyntaxElementType = register(IMPORT_LIST_ID, "IMPORT_LIST")
 

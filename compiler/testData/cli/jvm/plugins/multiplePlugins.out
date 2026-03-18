@@ -1,3 +1,4 @@
+warning: argument -Xcompiler-plugin is experimental
 compiler/testData/cli/jvm/plugins/multiplePlugins.kt:11:17: error: noarg constructor generation is not possible for inner classes
     inner class Inner(val s: String)
                 ^^^^^

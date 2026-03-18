@@ -18,7 +18,6 @@ package kotlinx.cinterop
 
 import org.jetbrains.kotlin.utils.NativeMemoryAllocator
 import org.jetbrains.kotlin.utils.ThreadSafeDisposableHelper
-import sun.misc.Unsafe
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.LongConsumer
 import kotlin.reflect.KClass
@@ -516,17 +515,12 @@ private fun ffiCreateClosure(ffiCif: ffi_cif, impl: FfiClosureImpl): NativePtr {
             -1L -> throw Error("libffi error occurred")
         }
 
-        caches.addClosure(unsafe.getLong(ffiClosure.rawPtr))
+        caches.addClosure(nativeMemUtils.getLong(ffiClosure))
 
         return res
     } finally {
         nativeHeap.free(ffiClosure)
     }
-}
-
-private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {
-    isAccessible = true
-    return@with this.get(null) as Unsafe
 }
 
 private external fun newGlobalRef(any: Any): Long

@@ -2,6 +2,7 @@ KtCollectionLiteralExpression(91,100): '[1, 2, 3]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
@@ -9,5 +10,6 @@ KtValueArgument(91,100): '[1, 2, 3]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
-      arr: kotlin.IntArray
+      Nothing (Unresolved reference)

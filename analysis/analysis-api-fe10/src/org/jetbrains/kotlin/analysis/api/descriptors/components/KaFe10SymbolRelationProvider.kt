@@ -198,9 +198,19 @@ internal class KaFe10SymbolRelationProvider(
             return KaFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)
         }
 
-    override val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
+    override val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
         get() = withValidityAssertion {
             (getDescriptor() as SamConstructorDescriptor).baseDescriptorForSynthetic.toKaClassSymbol(analysisContext)
+        }
+
+    override val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
+        get() = withValidityAssertion {
+            throw NotImplementedError("Method is not implemented for FE 1.0")
+        }
+
+    override val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
+        get() = withValidityAssertion {
+            throw NotImplementedError("Method is not implemented for FE 1.0")
         }
 
     @KaExperimentalApi

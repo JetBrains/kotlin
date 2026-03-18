@@ -2,5 +2,9 @@ KtOperationReferenceExpression(57,59): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      0: (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+      1: (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
+    resolveToSymbols:
       (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E

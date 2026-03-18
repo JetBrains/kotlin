@@ -2,5 +2,6 @@ KtNameReferenceExpression(122,128): 'Server'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Server) companion object

@@ -108,7 +108,7 @@ KtAnnotationEntry(101,126): '@Anno("a type $constant")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(102,106): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -166,7 +166,7 @@ KtSimpleNameStringTemplateEntry(115,124): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(116,124): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -239,7 +239,7 @@ KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(133,137): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -297,7 +297,7 @@ KtSimpleNameStringTemplateEntry(153,162): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(154,162): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -367,7 +367,7 @@ KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(177,181): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -425,7 +425,7 @@ KtSimpleNameStringTemplateEntry(204,213): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(205,213): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -492,7 +492,7 @@ KtAnnotationEntry(234,259): '@Anno("b type $constant")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(235,239): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -550,7 +550,7 @@ KtSimpleNameStringTemplateEntry(248,257): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(249,257): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -623,7 +623,7 @@ KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(267,271): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -681,7 +681,7 @@ KtSimpleNameStringTemplateEntry(287,296): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(288,296): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -751,7 +751,7 @@ KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(305,309): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -809,7 +809,7 @@ KtSimpleNameStringTemplateEntry(332,341): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(333,341): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -885,7 +885,7 @@ KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(377,381): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -943,7 +943,7 @@ KtSimpleNameStringTemplateEntry(391,396): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(392,396): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -961,7 +961,25 @@ KtNameReferenceExpression(392,396): 'prop'
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(404,422): '@Anno("a $prop") a'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("a $prop") a
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        symbol = util/Pair.component1(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(404,420): '@Anno("a $prop")'
   NO_CANDIDATES
@@ -1001,7 +1019,7 @@ KtAnnotationEntry(404,420): '@Anno("a $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(405,409): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1059,7 +1077,7 @@ KtSimpleNameStringTemplateEntry(413,418): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(414,418): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1077,7 +1095,25 @@ KtNameReferenceExpression(414,418): 'prop'
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(424,442): '@Anno("b $prop") b'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("b $prop") b
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        symbol = util/Pair.component2(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(424,440): '@Anno("b $prop")'
   NO_CANDIDATES
@@ -1117,7 +1153,7 @@ KtAnnotationEntry(424,440): '@Anno("b $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(425,429): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1175,7 +1211,7 @@ KtSimpleNameStringTemplateEntry(433,438): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(434,438): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1241,7 +1277,7 @@ KtCallExpression(446,462): 'Pair(null, null)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(446,450): 'Pair'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1344,7 +1380,7 @@ KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(465,469): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1402,7 +1438,7 @@ KtSimpleNameStringTemplateEntry(479,484): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(480,484): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1420,7 +1456,25 @@ KtNameReferenceExpression(480,484): 'prop'
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(492,510): '@Anno("c $prop") c'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("c $prop") c
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        symbol = util/Pair.component1(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(492,508): '@Anno("c $prop")'
   NO_CANDIDATES
@@ -1460,7 +1514,7 @@ KtAnnotationEntry(492,508): '@Anno("c $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(493,497): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1518,7 +1572,7 @@ KtSimpleNameStringTemplateEntry(501,506): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(502,506): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1536,7 +1590,25 @@ KtNameReferenceExpression(502,506): 'prop'
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(512,530): '@Anno("d $prop") d'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("d $prop") d
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        symbol = util/Pair.component2(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(512,528): '@Anno("d $prop")'
   NO_CANDIDATES
@@ -1576,7 +1648,7 @@ KtAnnotationEntry(512,528): '@Anno("d $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(513,517): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1634,7 +1706,7 @@ KtSimpleNameStringTemplateEntry(521,526): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(522,526): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1700,7 +1772,7 @@ KtCallExpression(534,550): 'Pair(null, null)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(534,538): 'Pair'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

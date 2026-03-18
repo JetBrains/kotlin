@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.signatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 
 open class SpecialGenericSignatures {
@@ -46,9 +47,12 @@ open class SpecialGenericSignatures {
         }
 
         private fun String.method(name: String, parameters: String, returnType: String) =
+            method(Name.identifier(name), parameters, returnType)
+
+        private fun String.method(name: Name, parameters: String, returnType: String) =
             NameAndSignature(
                 this@method,
-                Name.identifier(name),
+                name,
                 parameters, returnType,
             )
 
@@ -113,12 +117,12 @@ open class SpecialGenericSignatures {
 
         private val NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP: Map<NameAndSignature, Name> = signatures {
             mapOf(
-                javaLang("Number").method("toByte", "", JvmPrimitiveType.BYTE.desc) to Name.identifier("byteValue"),
-                javaLang("Number").method("toShort", "", JvmPrimitiveType.SHORT.desc) to Name.identifier("shortValue"),
-                javaLang("Number").method("toInt", "", JvmPrimitiveType.INT.desc) to Name.identifier("intValue"),
-                javaLang("Number").method("toLong", "", JvmPrimitiveType.LONG.desc) to Name.identifier("longValue"),
-                javaLang("Number").method("toFloat", "", JvmPrimitiveType.FLOAT.desc) to Name.identifier("floatValue"),
-                javaLang("Number").method("toDouble", "", JvmPrimitiveType.DOUBLE.desc) to Name.identifier("doubleValue"),
+                javaLang("Number").method(OperatorNameConventions.TO_BYTE, "", JvmPrimitiveType.BYTE.desc) to Name.identifier("byteValue"),
+                javaLang("Number").method(OperatorNameConventions.TO_SHORT, "", JvmPrimitiveType.SHORT.desc) to Name.identifier("shortValue"),
+                javaLang("Number").method(OperatorNameConventions.TO_INT, "", JvmPrimitiveType.INT.desc) to Name.identifier("intValue"),
+                javaLang("Number").method(OperatorNameConventions.TO_LONG, "", JvmPrimitiveType.LONG.desc) to Name.identifier("longValue"),
+                javaLang("Number").method(OperatorNameConventions.TO_FLOAT, "", JvmPrimitiveType.FLOAT.desc) to Name.identifier("floatValue"),
+                javaLang("Number").method(OperatorNameConventions.TO_DOUBLE, "", JvmPrimitiveType.DOUBLE.desc) to Name.identifier("doubleValue"),
                 REMOVE_AT_NAME_AND_SIGNATURE to Name.identifier("remove"),
                 javaLang("CharSequence")
                     .method("get", JvmPrimitiveType.INT.desc, JvmPrimitiveType.CHAR.desc) to Name.identifier("charAt"),

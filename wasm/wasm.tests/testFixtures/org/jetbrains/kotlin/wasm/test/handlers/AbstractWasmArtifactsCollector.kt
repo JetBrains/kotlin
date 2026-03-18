@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
+const val WASM_BASE_FILE_NAME = "index"
+
 abstract class AbstractWasmArtifactsCollector(testServices: TestServices) :
     WasmBinaryArtifactHandler(testServices), WasmArtifactsCollector {
     val modulesToArtifact = mutableMapOf<TestModule, BinaryArtifacts.Wasm>()

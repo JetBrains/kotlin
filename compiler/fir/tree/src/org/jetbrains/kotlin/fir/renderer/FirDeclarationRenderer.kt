@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 open class FirDeclarationRenderer(
     private val localVariablePrefix: String = "l",
+    private val renderVerboseAccessors: Boolean = false
 ) {
 
     internal lateinit var components: FirRendererComponents
@@ -48,7 +50,15 @@ open class FirDeclarationRenderer(
                         prefix + if (declaration.isVal) "val" else "var"
                     }
                 }
-                is FirPropertyAccessor -> if (declaration.isGetter) "get" else "set"
+                is FirPropertyAccessor -> {
+                    val accessorType = if (declaration.isGetter) "get" else "set"
+                    if (renderVerboseAccessors) {
+                        val propertyName = declaration.propertySymbol.name.render()
+                        "fun `<$accessorType-$propertyName>`"
+                    } else {
+                        accessorType
+                    }
+                }
                 is FirField -> "field"
                 is FirEnumEntry -> "enum entry"
                 is FirBackingField -> "backing field"

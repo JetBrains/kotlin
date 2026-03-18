@@ -17,6 +17,13 @@ fun test() {
     assertEq(id([42])) { setOf<String>() }
     assertEqWithInput(id([]), 42) { setOf(it) }
     assertEqWithInput(id([42]), "") { setOf(it) }
+
+    assertEq([]) { [42] }
+    assertEq([42]) { [] }
+
+    assertEqWithInput([42], "") { [] }
+    assertEqWithInput([], "") { [it] }
+    assertEqWithInput(id([]), "") { id([it]) }
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, nullableType, stringLiteral,

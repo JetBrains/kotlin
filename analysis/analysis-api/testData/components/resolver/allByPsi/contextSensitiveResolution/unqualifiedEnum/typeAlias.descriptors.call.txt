@@ -56,7 +56,7 @@ KtWhenExpression(146,189): 'when (o) {'
   null
 
 KtNameReferenceExpression(152,153): 'o'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -79,7 +79,7 @@ KtWhenConditionWithExpression(161,166): 'FIRST'
   null
 
 KtNameReferenceExpression(161,166): 'FIRST'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FIRST>
 
@@ -93,7 +93,7 @@ KtWhenConditionWithExpression(176,182): 'SECOND'
   null
 
 KtNameReferenceExpression(176,182): 'SECOND'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 

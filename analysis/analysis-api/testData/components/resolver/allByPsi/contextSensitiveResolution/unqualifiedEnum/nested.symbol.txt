@@ -89,7 +89,10 @@ KtWhenExpression(186,307): 'when (o) {'
   null
 
 KtNameReferenceExpression(192,193): 'o'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      o: Outer
+    ]
 
 KtWhenEntry(205,215): 'FIRST -> 1'
   null
@@ -98,7 +101,10 @@ KtWhenConditionWithExpression(205,210): 'FIRST'
   null
 
 KtNameReferenceExpression(205,210): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer.FIRST
+    ]
 
 KtConstantExpression(214,215): '1'
   null
@@ -110,13 +116,19 @@ KtWhenConditionWithExpression(224,230): 'SECOND'
   null
 
 KtNameReferenceExpression(224,230): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer.SECOND
+    ]
 
 KtWhenExpression(234,301): 'when (i) {'
   null
 
 KtNameReferenceExpression(240,241): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: Inner
+    ]
 
 KtWhenEntry(257,268): 'SECOND -> 2'
   null
@@ -125,7 +137,10 @@ KtWhenConditionWithExpression(257,263): 'SECOND'
   null
 
 KtNameReferenceExpression(257,263): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner.SECOND
+    ]
 
 KtConstantExpression(267,268): '2'
   null
@@ -137,7 +152,10 @@ KtWhenConditionWithExpression(281,286): 'THIRD'
   null
 
 KtNameReferenceExpression(281,286): 'THIRD'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner.THIRD
+    ]
 
 KtConstantExpression(290,291): '3'
   null
@@ -194,7 +212,10 @@ KtWhenExpression(357,598): 'when (o) {'
   null
 
 KtNameReferenceExpression(363,364): 'o'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      o: Outer
+    ]
 
 KtWhenEntry(376,386): 'FIRST -> 1'
   null
@@ -203,7 +224,10 @@ KtWhenConditionWithExpression(376,381): 'FIRST'
   null
 
 KtNameReferenceExpression(376,381): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer.FIRST
+    ]
 
 KtConstantExpression(385,386): '1'
   null
@@ -215,7 +239,10 @@ KtWhenConditionWithExpression(395,401): 'SECOND'
   null
 
 KtNameReferenceExpression(395,401): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer.SECOND
+    ]
 
 KtBlockExpression(405,592): '{'
   null
@@ -248,7 +275,10 @@ KtWhenExpression(459,550): 'when (i) {'
   null
 
 KtNameReferenceExpression(465,466): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: Inner
+    ]
 
 KtWhenEntry(490,501): 'SECOND -> 2'
   null
@@ -257,7 +287,10 @@ KtWhenConditionWithExpression(490,496): 'SECOND'
   null
 
 KtNameReferenceExpression(490,496): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner.SECOND
+    ]
 
 KtConstantExpression(500,501): '2'
   null
@@ -269,7 +302,10 @@ KtWhenConditionWithExpression(522,527): 'THIRD'
   null
 
 KtNameReferenceExpression(522,527): 'THIRD'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner.THIRD
+    ]
 
 KtConstantExpression(531,532): '3'
   null
@@ -281,7 +317,10 @@ KtCallExpression(577,582): 'baz()'
     ]
 
 KtNameReferenceExpression(577,580): 'baz'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      baz(): kotlin.Int
+    ]
 
 KtValueArgumentList(580,582): '()'
   null

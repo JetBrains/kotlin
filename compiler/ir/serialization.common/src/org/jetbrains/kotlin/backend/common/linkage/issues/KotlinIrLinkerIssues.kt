@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictKind.*
 import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictKind.Companion.mostSignificantConflictKind
 import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictReason.Companion.mostSignificantConflictReasons
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
@@ -32,6 +34,11 @@ abstract class KotlinIrLinkerIssue {
 
 object PartialLinkageErrorsLogged : KotlinIrLinkerIssue() {
     override val errorMessage = "There are linkage errors reported by the partial linkage engine"
+
+    fun raiseIssue(diagnosticReporter: IrDiagnosticReporter): Nothing {
+        diagnosticReporter.report(PartialLinkageDiagnostics.MAJOR_PARTIAL_LINKAGE_ISSUE, errorMessage)
+        throw CompilationErrorException(errorMessage)
+    }
 }
 
 class UnexpectedUnboundIrSymbols(unboundSymbols: Set<IrSymbol>, whenDetected: String) : KotlinIrLinkerIssue() {

@@ -1,0 +1,20 @@
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: []
+  errorMessage: Unresolved type for AllOpenGenerated.NestedMyClass
+  presentableText: AllOpenGenerated.NestedMyClass
+  qualifiers: [
+    KaUnresolvedClassTypeQualifier:
+      name: AllOpenGenerated
+      typeArguments: []
+    KaUnresolvedClassTypeQualifier:
+      name: NestedMyClass
+      typeArguments: []
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+AllOpenGenerated.NestedMyClass

@@ -17,17 +17,26 @@ import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 import kotlin.coroutines.resume
 
 class ResolutionStageRunner {
-    fun processCandidate(candidate: Candidate, context: ResolutionContext, stopOnFirstError: Boolean = true): CandidateApplicability {
+    fun processCandidate(
+        candidate: Candidate,
+        context: ResolutionContext,
+        stopOnFirstError: Boolean = true,
+        runAdditionalStages: Boolean = false,
+    ): CandidateApplicability {
         val sink = CheckerSinkImpl(candidate, stopOnFirstError = stopOnFirstError)
         val inferenceLogger = candidate.callInfo.session.inferenceLogger
         inferenceLogger?.logCandidate(candidate)
         var finished = false
+
         sink.continuation = suspend {
             // Multiple runs on the same candidate are possible,
             // that's why we have to skip already processed stages on the next run.
             // Neither regular `for` loop nor iterating by index don't work here,
             // because we have to start from the next unprocessed stage and mutate `Candidate.passedStages` on every iteration.
-            val resolutionSequence = candidate.callInfo.callKind.resolutionSequence
+            val resolutionSequence = candidate.callInfo.callKind.let {
+                if (runAdditionalStages) it.resolutionSequenceWithAdditionalStages
+                else it.resolutionSequence
+            }
             while (candidate.passedStages < resolutionSequence.size) {
                 context(context, sink) {
                     val nextStage = resolutionSequence[candidate.passedStages++]

@@ -2,6 +2,9 @@ KtDestructuringDeclarationEntry(139,144): 'prop2'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in foo.MyDataClass) operator fun component2(): kotlin.String
+    resolveToSymbols:
       0: (in <local>: usage) val prop2: kotlin.String
       1: (in foo.MyDataClass) operator fun component2(): kotlin.String

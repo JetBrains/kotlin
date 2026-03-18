@@ -7,9 +7,11 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	 true HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      = kotlin/Int
     FIXED TO: kotlin/Int
@@ -23,9 +25,11 @@ CHOSEN for fixation: TypeVariable(W) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: kotlin/Comparable<in TypeVariable(W)!>!
 ********************************
@@ -38,9 +42,11 @@ CHOSEN for fixation: TypeVariable(E) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
@@ -54,9 +60,11 @@ TypeVariable(W) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: kotlin/Comparable<in TypeVariable(W)!>!
      >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
@@ -71,9 +79,11 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: MergeFragment
      = MergeFragment (inferred during fixation)
@@ -87,9 +97,11 @@ TypeVariable(R) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: TypeVariable(E)
      <: TypeVariable(W)!
@@ -110,9 +122,11 @@ TypeVariable(C) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: kotlin/collections/MutableCollection<in TypeVariable(R)>
      >: java/util/TreeSet<TypeVariable(E)>
@@ -125,9 +139,11 @@ TypeVariable(E) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
@@ -144,9 +160,11 @@ TypeVariable(W) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: kotlin/Comparable<in TypeVariable(W)!>!
      >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
@@ -164,9 +182,11 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: MergeFragment
      = MergeFragment (inferred during fixation)
@@ -180,9 +200,11 @@ TypeVariable(R) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: TypeVariable(E)
      <: TypeVariable(W)!
@@ -203,9 +225,11 @@ TypeVariable(C) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: kotlin/collections/MutableCollection<in TypeVariable(R)>
      >: java/util/TreeSet<TypeVariable(E)>
@@ -218,9 +242,11 @@ TypeVariable(E) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
@@ -237,9 +263,11 @@ TypeVariable(W) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: kotlin/Comparable<in TypeVariable(W)!>!
      >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
@@ -247,6 +275,128 @@ TypeVariable(W) --- Readiness(
      >: TypeVariable(R)!
      <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
      <: kotlin/Comparable<TypeVariable(R)!>!
+********************************
+CHOSEN for fixation: TypeVariable(W) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	 true HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     <: kotlin/Comparable<in TypeVariable(W)!>!
+     >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     >: TypeVariable(R)!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<TypeVariable(R)!>!
+     = kotlin/Int!
+     <: kotlin/Comparable<kotlin/Int!>!
+     <: kotlin/Comparable<in kotlin/Int!>!
+    FIXED TO: kotlin/Int!
+TypeVariable(R) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     <: TypeVariable(E)
+     <: TypeVariable(W)!
+     <: kotlin/Comparable<in TypeVariable(W)!>?
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     <: kotlin/Comparable<in TypeVariable(W)!>!
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
+     <: kotlin/Comparable<TypeVariable(R)!>!
+     <: kotlin/Comparable<TypeVariable(R)!>?
+     >: kotlin/Int
+     <: kotlin/Int?
+     <: kotlin/Int!
+     <: kotlin/Comparable<kotlin/Int!>!
+     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Comparable<in kotlin/Int!>?
+     <: kotlin/Comparable<in kotlin/Int!>!
+TypeVariable(C) --- Readiness(
+    	 true ALLOWED
+    	false HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     <: kotlin/collections/MutableCollection<in TypeVariable(R)>
+     >: java/util/TreeSet<TypeVariable(E)>
+TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     <: TypeVariable(W)!
+     <: kotlin/Comparable<in TypeVariable(W)!>?
+     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
+     >: TypeVariable(R)
+     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
+     <: kotlin/Comparable<TypeVariable(R)!>?
+     >: kotlin/Int
+     <: kotlin/Int?
+     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Int!
+     <: kotlin/Comparable<in kotlin/Int!>?
+TypeVariable(_R) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     <: kotlin/collections/Iterable<TypeVariable(R)>
+     >: kotlin/collections/MutableSet<kotlin/Int>
+     <: kotlin/collections/Iterable<kotlin/Int?>
+     <: kotlin/collections/Iterable<kotlin/Int!>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
 ********************************
 CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	 true ALLOWED
@@ -257,15 +407,14 @@ CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: TypeVariable(E)
-     <: TypeVariable(W)!
-     <: kotlin/Comparable<in TypeVariable(W)!>?
      <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
-     <: kotlin/Comparable<in TypeVariable(W)!>!
      <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
      <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
      <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
@@ -289,9 +438,11 @@ TypeVariable(C) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: kotlin/collections/MutableCollection<in TypeVariable(R)>
      >: java/util/TreeSet<TypeVariable(E)>
@@ -305,12 +456,12 @@ TypeVariable(E) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-     <: TypeVariable(W)!
-     <: kotlin/Comparable<in TypeVariable(W)!>?
      <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      >: TypeVariable(R)
      <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
@@ -320,28 +471,6 @@ TypeVariable(E) --- Readiness(
      <: kotlin/Comparable<kotlin/Int!>?
      <: kotlin/Int!
      <: kotlin/Comparable<in kotlin/Int!>?
-TypeVariable(W) --- Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    )
-     <: kotlin/Comparable<in TypeVariable(W)!>!
-     >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
-     >: TypeVariable(R)!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
-     <: kotlin/Comparable<TypeVariable(R)!>!
-     = kotlin/Int!
-     <: kotlin/Comparable<kotlin/Int!>!
-     <: kotlin/Comparable<in kotlin/Int!>!
 TypeVariable(_R) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -351,9 +480,11 @@ TypeVariable(_R) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: kotlin/collections/Iterable<TypeVariable(R)>
      >: kotlin/collections/MutableSet<kotlin/Int>
@@ -363,7 +494,7 @@ TypeVariable(_R) --- Readiness(
      <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
      <: kotlin/collections/Iterable<kotlin/Int> (inferred during fixation)
 ********************************
-CHOSEN for fixation: TypeVariable(_R) --- Readiness(
+CHOSEN for fixation: TypeVariable(E) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -372,89 +503,12 @@ CHOSEN for fixation: TypeVariable(_R) --- Readiness(
     	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-     >: kotlin/collections/MutableSet<kotlin/Int>
-     <: kotlin/collections/Iterable<kotlin/Int?>
-     <: kotlin/collections/Iterable<kotlin/Int!>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
-     <: kotlin/collections/Iterable<kotlin/Int>
-     = kotlin/collections/MutableSet<kotlin/Int> (inferred during fixation)
-    FIXED TO: kotlin/collections/MutableSet<kotlin/Int>
-TypeVariable(C) --- Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    )
-     >: java/util/TreeSet<TypeVariable(E)>
-     <: kotlin/collections/MutableCollection<in kotlin/Int>
-TypeVariable(E) --- Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    )
-     <: TypeVariable(W)!
-     <: kotlin/Comparable<in TypeVariable(W)!>?
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
-     >: kotlin/Int
-     <: kotlin/Int?
-     <: kotlin/Comparable<kotlin/Int!>?
-     <: kotlin/Int!
-     <: kotlin/Comparable<in kotlin/Int!>?
-TypeVariable(W) --- Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    )
-     <: kotlin/Comparable<in TypeVariable(W)!>!
-     >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
-     = kotlin/Int!
-     <: kotlin/Comparable<kotlin/Int!>!
-     <: kotlin/Comparable<in kotlin/Int!>!
-********************************
-CHOSEN for fixation: TypeVariable(E) --- Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    )
-     <: TypeVariable(W)!
-     <: kotlin/Comparable<in TypeVariable(W)!>?
      <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      >: kotlin/Int
      <: kotlin/Int?
@@ -472,32 +526,36 @@ TypeVariable(C) --- Readiness(
     	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: java/util/TreeSet<TypeVariable(E)>
      <: kotlin/collections/MutableCollection<in kotlin/Int>
      >: java/util/TreeSet<kotlin/Int> (inferred during fixation)
-TypeVariable(W) --- Readiness(
+TypeVariable(_R) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
     	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-     <: kotlin/Comparable<in TypeVariable(W)!>!
-     >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
-     = kotlin/Int!
-     <: kotlin/Comparable<kotlin/Int!>!
-     <: kotlin/Comparable<in kotlin/Int!>!
+     >: kotlin/collections/MutableSet<kotlin/Int>
+     <: kotlin/collections/Iterable<kotlin/Int?>
+     <: kotlin/collections/Iterable<kotlin/Int!>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
+     <: kotlin/collections/Iterable<kotlin/Int>
 ********************************
 CHOSEN for fixation: TypeVariable(C) --- Readiness(
     	 true ALLOWED
@@ -508,15 +566,17 @@ CHOSEN for fixation: TypeVariable(C) --- Readiness(
     	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: kotlin/collections/MutableCollection<in kotlin/Int>
      >: java/util/TreeSet<kotlin/Int>
      = java/util/TreeSet<kotlin/Int> (inferred during fixation)
     FIXED TO: java/util/TreeSet<kotlin/Int>
-TypeVariable(W) --- Readiness(
+TypeVariable(_R) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -525,16 +585,20 @@ TypeVariable(W) --- Readiness(
     	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-     <: kotlin/Comparable<in TypeVariable(W)!>!
-     = kotlin/Int!
-     <: kotlin/Comparable<kotlin/Int!>!
-     <: kotlin/Comparable<in kotlin/Int!>!
+     >: kotlin/collections/MutableSet<kotlin/Int>
+     <: kotlin/collections/Iterable<kotlin/Int?>
+     <: kotlin/collections/Iterable<kotlin/Int!>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
+     <: kotlin/collections/Iterable<kotlin/Int>
 ********************************
-CHOSEN for fixation: TypeVariable(W) --- Readiness(
+CHOSEN for fixation: TypeVariable(_R) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -543,13 +607,18 @@ CHOSEN for fixation: TypeVariable(W) --- Readiness(
     	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-     <: kotlin/Comparable<in TypeVariable(W)!>!
-     = kotlin/Int!
-     <: kotlin/Comparable<kotlin/Int!>!
-     <: kotlin/Comparable<in kotlin/Int!>!
-    FIXED TO: kotlin/Int!
+     >: kotlin/collections/MutableSet<kotlin/Int>
+     <: kotlin/collections/Iterable<kotlin/Int?>
+     <: kotlin/collections/Iterable<kotlin/Int!>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
+     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
+     <: kotlin/collections/Iterable<kotlin/Int>
+     = kotlin/collections/MutableSet<kotlin/Int> (inferred during fixation)
+    FIXED TO: kotlin/collections/MutableSet<kotlin/Int>
 ********************************

@@ -177,8 +177,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         ) {
             compileInProcess(messageCollector) to KotlinCompilerExecutionStrategy.IN_PROCESS
         } else {
-            @Suppress("DEPRECATION")
-            compileOutOfProcess() to KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
+            compileInProcess(messageCollector) to KotlinCompilerExecutionStrategy.IN_PROCESS
         }
     }
 
@@ -317,21 +316,6 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
     }
 
-    private fun compileOutOfProcess(): ExitCode {
-        metrics.addAttribute(BuildAttribute.OUT_OF_PROCESS_EXECUTION)
-        cleanOutputsAndLocalState(config.outputFiles, log, metrics, reason = "out-of-process execution strategy is non-incremental")
-
-        return metrics.measure(NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS) {
-            runToolInSeparateProcess(
-                config.compilerArgs,
-                config.compilerClassName,
-                config.compilerFullClasspath,
-                log,
-                config.projectFiles.buildDir,
-            )
-        }
-    }
-
     private fun compileInProcess(messageCollector: MessageCollector): ExitCode {
         metrics.addAttribute(BuildAttribute.IN_PROCESS_EXECUTION)
         cleanOutputsAndLocalState(config.outputFiles, log, metrics, reason = "in-process execution strategy is non-incremental")
@@ -370,25 +354,53 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             Array<String>::class.java
         )
 
-        val res = exec.invoke(compiler.declaredConstructors.single().newInstance(), out, emptyServices, config.compilerArgs)
-        val exitCode = ExitCode.valueOf(res.toString())
-        processCompilerOutput(
-            messageCollector,
-            OutputItemsCollectorImpl(),
-            stream,
-            exitCode
-        )
         try {
-            metrics.measure(CLEAR_JAR_CACHE) {
-                val coreEnvironment = Class.forName("org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment", true, classLoader)
-                val dispose = coreEnvironment.getMethod("disposeApplicationEnvironment")
-                dispose.invoke(null)
+            val res = exec.invoke(compiler.declaredConstructors.single().newInstance(), out, emptyServices, config.compilerArgs)
+            val exitCode = ExitCode.valueOf(res.toString())
+            processCompilerOutput(
+                messageCollector,
+                OutputItemsCollectorImpl(),
+                stream,
+                exitCode
+            )
+            try {
+                metrics.measure(CLEAR_JAR_CACHE) {
+                    val coreEnvironment = Class.forName("org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment", true, classLoader)
+                    val dispose = coreEnvironment.getMethod("disposeApplicationEnvironment")
+                    dispose.invoke(null)
+                }
+            } catch (e: Throwable) {
+                log.warn("Unable to clear jar cache after in-process compilation", e)
             }
-        } catch (e: Throwable) {
-            log.warn("Unable to clear jar cache after in-process compilation", e)
+
+            log.logFinish(KotlinCompilerExecutionStrategy.IN_PROCESS)
+            return exitCode
+        } finally {
+            classLoader.invokeKotlinxCoroutinesDispatcherShutdown()
         }
-        log.logFinish(KotlinCompilerExecutionStrategy.IN_PROCESS)
-        return exitCode
+    }
+
+    private fun ClassLoader.invokeKotlinxCoroutinesDispatcherShutdown() {
+        val dispatcherClass = try {
+            Class.forName("kotlinx.coroutines.Dispatchers", true, this)
+        } catch (_: ClassNotFoundException) {
+            return
+        }
+
+        try {
+            val instanceField = dispatcherClass.getField("INSTANCE")
+            val instance = instanceField.get(null)
+            val shutdownMethod = dispatcherClass.getMethod("shutdown")
+            shutdownMethod.invoke(instance)
+        } catch (e: Throwable) {
+            log.warn(
+                """Unable to shutdown Kotlinx coroutines dispatcher after compiler invocation.
+                    | Please report this issue https://kotl.in/issue ;
+                    | To workaround this don't use 'in-process' compiler execution strategy.
+                    | https://kotlinlang.org/docs/gradle-compilation-and-caches.html#defining-kotlin-compiler-execution-strategy""".trimMargin(),
+                e
+            )
+        }
     }
 
     private fun requestedCompilationResults(): EnumSet<CompilationResultCategory> {

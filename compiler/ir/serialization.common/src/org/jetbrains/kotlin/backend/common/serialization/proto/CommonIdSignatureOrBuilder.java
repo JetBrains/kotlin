@@ -34,11 +34,20 @@ public interface CommonIdSignatureOrBuilder extends
   int getDeclarationFqName(int index);
 
   /**
-   * <code>optional int64 member_uniq_id = 3;</code>
+   * <code>optional int64 member_uniq_id_pre_2_4_0 = 3;</code>
+   */
+  boolean hasMemberUniqIdPre240();
+  /**
+   * <code>optional int64 member_uniq_id_pre_2_4_0 = 3;</code>
+   */
+  long getMemberUniqIdPre240();
+
+  /**
+   * <code>optional fixed64 member_uniq_id = 6;</code>
    */
   boolean hasMemberUniqId();
   /**
-   * <code>optional int64 member_uniq_id = 3;</code>
+   * <code>optional fixed64 member_uniq_id = 6;</code>
    */
   long getMemberUniqId();
 

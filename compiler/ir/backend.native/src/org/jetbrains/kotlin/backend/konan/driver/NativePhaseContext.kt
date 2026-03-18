@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver
 
 import org.jetbrains.kotlin.backend.common.DisposableContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
-import org.jetbrains.kotlin.backend.konan.NativeKlibCompilationConfig
+import org.jetbrains.kotlin.backend.konan.NativeCompilationConfig
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.util.PerformanceManager
 
@@ -34,5 +34,5 @@ interface PerformanceManagerContext {
  * It will take some time to rewrite it properly.
  */
 interface NativePhaseContext : LoggingContext, ErrorReportingContext, DisposableContext, PerformanceManagerContext {
-    val config: NativeKlibCompilationConfig
+    val config: NativeCompilationConfig
 }

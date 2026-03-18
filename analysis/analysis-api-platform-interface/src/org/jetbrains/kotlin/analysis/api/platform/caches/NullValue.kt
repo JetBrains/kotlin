@@ -41,5 +41,8 @@ public inline fun <K : Any, R> ConcurrentMap<K, Any>.getOrPutWithNullableValue(
  * Implements [Cache.getOrPut] with [NullValue] conversion.
  */
 @KaImplementationDetail
-public inline fun <K : Any, R> Cache<K, Any>.getOrPutWithNullableValue(key: K, crossinline compute: (K) -> Any?): R =
-    asMap().getOrPutWithNullableValue(key) { compute(key) }
+public inline fun <K : Any, R> Cache<K, Any>.getOrPutWithNullableValue(key: K, crossinline compute: (K) -> Any?): R {
+    // We should not use `asMap().getOrPutWithNullableValue` here because it would bypass recording Caffeine stats.
+    val value = getOrPut(key) { compute(key) ?: NullValue }
+    return value.nullValueToNull()
+}

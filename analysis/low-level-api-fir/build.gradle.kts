@@ -5,9 +5,8 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
+    id("test-inputs-check")
 }
-
-val scriptingTestDefinition by configurations.creating
 
 dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -70,12 +69,11 @@ dependencies {
     testFixturesApi(testFixtures(project(":plugins:scripting:scripting-tests")))
     testFixturesApi(project(":kotlin-scripting-common"))
     testFixturesImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-psi")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 
     // We use 'api' instead of 'implementation' because other modules might be using these jars indirectly
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
-
-    scriptingTestDefinition(testFixtures(project(":plugins:scripting:test-script-definition")))
 }
 
 sourceSets {
@@ -106,19 +104,37 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
-        dependsOn(":dist")
-        workingDir = rootDir
+        extensions.configure<TestInputsCheckExtension> {
+            allowFlightRecorder = true
+        }
 
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             // Ensure golden tests run first since some LL tests are complementary for the surface tests
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
-
-        addClasspathProperty(scriptingTestDefinition, "kotlin.script.test.script.definition.classpath")
     }
 
+    testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.TestGeneratorKt")
+
+    testData(project.isolated, "testData")
+    testData(project(":analysis:analysis-api").isolated, "testData")
+
     withJvmStdlibAndReflect()
+    withJvmStdlibSources()
+    withStdlibCommon()
+    withJsRuntime()
     withWasmRuntime()
+    withTestJar()
+    withAnnotations()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withScriptRuntime()
+    withScriptingPlugin()
+    withTestScriptDefinition()
+    withPluginSandboxAnnotations()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }
 
 allprojects {
@@ -140,12 +156,13 @@ testsJar()
 
 tasks.register("analysisLowLevelApiFirAllTests") {
     dependsOn(
-        ":analysis:low-level-api-fir:test",
+        ":analysis:low-level-api-fir:check",
+        ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests:check",
     )
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         dependsOn(
-            ":analysis:low-level-api-fir:low-level-api-fir-native:llFirNativeTests",
+            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests:check",
         )
     }
 }

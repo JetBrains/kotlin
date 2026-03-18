@@ -51,6 +51,7 @@ data class BuildOptions(
     val kaptOptions: KaptOptions? = null,
     val androidVersion: String? = null,
     val jsOptions: JsOptions? = JsOptions(),
+    val wasmOptions: WasmOptions? = WasmOptions(),
     val buildReport: List<BuildReportType> = emptyList(),
     val usePreciseJavaTracking: Boolean? = null,
     val useFirJvmRunner: Boolean? = null,
@@ -159,6 +160,10 @@ data class BuildOptions(
         val yarn: Boolean? = null,
     )
 
+    data class WasmOptions(
+        val perModule: Boolean? = null,
+    )
+
     data class NativeOptions(
         val cocoapodsGenerateWrapper: Boolean? = null,
         val cocoapodsPlatform: String? = null,
@@ -255,6 +260,10 @@ data class BuildOptions(
             jsOptions.incrementalJsKlib?.let { arguments.add("-Pkotlin.incremental.js.klib=$it") }
             jsOptions.incrementalJsIr?.let { arguments.add("-Pkotlin.incremental.js.ir=$it") }
             jsOptions.yarn?.let { arguments.add("-Pkotlin.js.yarn=$it") }
+        }
+
+        if (wasmOptions != null) {
+            wasmOptions.perModule?.let { arguments.add("-Pkotlin.internal.wasm.perModule=$it") }
         }
 
         if (androidVersion != null) {
@@ -451,6 +460,17 @@ fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicat
     isolatedProjects =
         if (currentGradleVersion > GradleVersion.version(TestVersions.Gradle.G_8_11)) isolatedProjects
         else IsolatedProjectsMode.DISABLED
+)
+
+// KMP dependencies checker does not work with Gradle isolated projects feature in older Gradle releases
+fun BuildOptions.disableIsolatedProjectsForKmpDependenciesChecker(
+    gradleVersion: GradleVersion
+) = copy(
+    isolatedProjects = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_12)) {
+        IsolatedProjectsMode.DISABLED
+    } else {
+        isolatedProjects
+    }
 )
 
 fun BuildOptions.suppressWarningForOldKotlinVersion(

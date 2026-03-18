@@ -1,0 +1,2 @@
+@kotlin.OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+inline fun <T, R> T.myLet(block: (T) -> R): R

@@ -27,6 +27,6 @@ FILE: enumEntryWithAnnotations.kt
         }
 
         public final static [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
-            public get(): R|kotlin/enums/EnumEntries<MyEnumClass>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnumClass>|
 
     }

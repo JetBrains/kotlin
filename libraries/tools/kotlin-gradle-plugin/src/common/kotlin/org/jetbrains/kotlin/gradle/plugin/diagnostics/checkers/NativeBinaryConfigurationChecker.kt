@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
@@ -25,17 +25,21 @@ internal object NativeBinaryConfigurationChecker : KotlinGradleProjectChecker {
         multiplatformExtension.targets
             .withType(KotlinNativeTarget::class.java)
             .configureEach { target ->
-                project.checkTarget(target, collector)
+                checkTarget(diagnosticsContext, target, collector)
             }
     }
 
-    private fun Project.checkTarget(target: KotlinNativeTarget, collector: KotlinToolingDiagnosticsCollector) {
+    private fun checkTarget(
+        diagnosticsContext: ToolingDiagnosticsContext,
+        target: KotlinNativeTarget,
+        collector: KotlinToolingDiagnosticsCollector,
+    ) {
         target.binaries.configureEach { binary ->
             if (!binary.hasIncompatibleConfiguration) return@configureEach
             collector.reportOncePerGradleProject(
-                project,
+                diagnosticsContext,
                 KotlinToolingDiagnostics.IncompatibleBinaryConfiguration(
-                    path,
+                    diagnosticsContext.projectPath,
                     binary.name,
                     binary.debuggable,
                     binary.optimized

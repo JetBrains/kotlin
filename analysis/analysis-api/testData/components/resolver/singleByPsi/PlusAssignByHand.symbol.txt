@@ -1,2 +1,5 @@
 KtOperationReferenceExpression(195,196): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var variable: test.WithOperator
+    ]

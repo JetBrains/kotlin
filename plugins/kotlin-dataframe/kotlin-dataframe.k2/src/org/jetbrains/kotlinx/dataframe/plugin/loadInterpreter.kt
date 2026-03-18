@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroupInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslNamedGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslReferencePlus
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Aggregate
@@ -134,6 +135,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNa1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNulls1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoinWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNaNs0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNulls0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FilterJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FilterJoinWith
@@ -248,6 +250,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Named1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NestedSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Parse
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ParseDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PathOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile0
@@ -297,6 +301,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeTyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeUntyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedColUntyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ParseString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Require0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum1
@@ -394,6 +400,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "Add" -> Add()
         "From" -> From()
         "Into" -> Into()
+        "AddDslReferencePlus" -> AddDslReferencePlus()
         "AddWithDsl" -> AddWithDsl()
         "And10" -> And10()
         "Convert0" -> Convert0()
@@ -565,6 +572,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "DataFrameBuilderInvoke0" -> DataFrameBuilderInvoke0()
         "ToDataFrameColumn" -> ToDataFrameColumn()
         "FillNulls0" -> FillNulls0()
+        "FillNaNs0" -> FillNaNs0()
         "UpdateWith0" -> UpdateWith0()
         "UpdateNotNull" -> UpdateNotNullWith()
         "UpdateNotNullDefault" -> UpdateNotNull()
@@ -688,6 +696,10 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "StringSelect" -> StringSelect()
         "ColumnPathSelect" -> ColumnPathSelect()
         "PathOf" -> PathOf()
+        "Parse" -> Parse()
+        "ParseString" -> ParseString()
+        "ParseDefault" -> ParseDefault()
+        "Require0" -> Require0()
         else -> if (isTest) error(this) else null
     }
 }

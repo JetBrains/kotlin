@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirFunctionCallRefinementExtension
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
@@ -142,6 +143,7 @@ class FunctionCallTransformer(
     }
 
     override fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall {
+        if (call.calleeReference is FirResolvedErrorReference) return call
         val allReturnTypesAreValid = call.arguments.filterIsInstance<FirAnonymousFunctionExpression>()
             .all { expression ->
                 val expectedReturnType = expression.resolvedType

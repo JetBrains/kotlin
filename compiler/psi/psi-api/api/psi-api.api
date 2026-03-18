@@ -31,6 +31,7 @@ public abstract interface class org/jetbrains/kotlin/KtNodeTypes {
 	public static final field CLASS_INITIALIZER Lcom/intellij/psi/tree/IElementType;
 	public static final field CLASS_LITERAL_EXPRESSION Lcom/intellij/psi/tree/IElementType;
 	public static final field COLLECTION_LITERAL_EXPRESSION Lcom/intellij/psi/tree/IElementType;
+	public static final field COMPANION_BLOCK Lcom/intellij/psi/tree/IElementType;
 	public static final field CONDITION Lcom/intellij/psi/tree/IElementType;
 	public static final field CONSTRUCTOR_CALLEE Lcom/intellij/psi/tree/IElementType;
 	public static final field CONSTRUCTOR_DELEGATION_CALL Lcom/intellij/psi/tree/IElementType;
@@ -213,6 +214,8 @@ public class org/jetbrains/kotlin/kdoc/lexer/KDocToken : org/jetbrains/kotlin/le
 public abstract interface class org/jetbrains/kotlin/kdoc/lexer/KDocTokens {
 	public static final field CODE_BLOCK_TEXT Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
 	public static final field CODE_BLOCK_TEXT_Id I
+	public static final field CODE_SPAN_TEXT Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
+	public static final field CODE_SPAN_TEXT_Id I
 	public static final field CONTENT_TOKENS Lcom/intellij/psi/tree/TokenSet;
 	public static final field END Lorg/jetbrains/kotlin/kdoc/lexer/KDocToken;
 	public static final field END_Id I
@@ -746,8 +749,6 @@ public final class org/jetbrains/kotlin/psi/CreateByPatternKt {
 	public static synthetic fun createExpressionByPattern$default (Lorg/jetbrains/kotlin/psi/KtPsiFactory;Ljava/lang/String;[Ljava/lang/Object;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/psi/KtExpression;
 	public static final fun createValueArgumentListByPattern (Lorg/jetbrains/kotlin/psi/KtPsiFactory;Ljava/lang/String;[Ljava/lang/Object;Z)Lorg/jetbrains/kotlin/psi/KtValueArgumentList;
 	public static synthetic fun createValueArgumentListByPattern$default (Lorg/jetbrains/kotlin/psi/KtPsiFactory;Ljava/lang/String;[Ljava/lang/Object;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/psi/KtValueArgumentList;
-	public static final fun getCREATE_BY_PATTERN_MAY_NOT_REFORMAT ()Z
-	public static final fun setCREATE_BY_PATTERN_MAY_NOT_REFORMAT (Z)V
 }
 
 public final class org/jetbrains/kotlin/psi/EditCommaSeparatedListHelper {
@@ -888,7 +889,7 @@ public class org/jetbrains/kotlin/psi/KtBackingField : org/jetbrains/kotlin/psi/
 	public fun hasInitializer ()Z
 }
 
-public class org/jetbrains/kotlin/psi/KtBinaryExpression : org/jetbrains/kotlin/psi/KtExpressionImpl, org/jetbrains/kotlin/psi/KtOperationExpression {
+public class org/jetbrains/kotlin/psi/KtBinaryExpression : org/jetbrains/kotlin/psi/KtExpressionImpl, org/jetbrains/kotlin/psi/KtOperationExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getLeft ()Lorg/jetbrains/kotlin/psi/KtExpression;
@@ -1241,7 +1242,7 @@ public abstract class org/jetbrains/kotlin/psi/KtConstructor : org/jetbrains/kot
 	public synthetic fun setTypeReference (Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/psi/KtTypeReference;
 }
 
-public class org/jetbrains/kotlin/psi/KtConstructorCalleeExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub {
+public class org/jetbrains/kotlin/psi/KtConstructorCalleeExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
@@ -1415,7 +1416,7 @@ public class org/jetbrains/kotlin/psi/KtDestructuringDeclaration : org/jetbrains
 	public fun isVar ()Z
 }
 
-public class org/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry : org/jetbrains/kotlin/psi/KtVariableDeclaration {
+public class org/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry : org/jetbrains/kotlin/psi/KtVariableDeclaration, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getColon ()Lcom/intellij/psi/PsiElement;
@@ -1635,7 +1636,7 @@ public class org/jetbrains/kotlin/psi/KtFinallySection : org/jetbrains/kotlin/ps
 	public fun getFinalExpression ()Lorg/jetbrains/kotlin/psi/KtBlockExpression;
 }
 
-public class org/jetbrains/kotlin/psi/KtForExpression : org/jetbrains/kotlin/psi/KtLoopExpression {
+public class org/jetbrains/kotlin/psi/KtForExpression : org/jetbrains/kotlin/psi/KtLoopExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getDestructuringDeclaration ()Lorg/jetbrains/kotlin/psi/KtDestructuringDeclaration;
@@ -1796,7 +1797,7 @@ public class org/jetbrains/kotlin/psi/KtInitializerList : org/jetbrains/kotlin/p
 	public fun getInitializers ()Ljava/util/List;
 }
 
-public abstract class org/jetbrains/kotlin/psi/KtInstanceExpressionWithLabel : org/jetbrains/kotlin/psi/KtExpressionWithLabel {
+public abstract class org/jetbrains/kotlin/psi/KtInstanceExpressionWithLabel : org/jetbrains/kotlin/psi/KtExpressionWithLabel, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun getInstanceReference ()Lorg/jetbrains/kotlin/psi/KtReferenceExpression;
 }
@@ -1819,7 +1820,7 @@ public class org/jetbrains/kotlin/psi/KtIsExpression : org/jetbrains/kotlin/psi/
 	public fun isNegated ()Z
 }
 
-public final class org/jetbrains/kotlin/psi/KtLabelReferenceExpression : org/jetbrains/kotlin/psi/KtSimpleNameExpressionImpl, org/jetbrains/kotlin/resolution/KtResolvable {
+public final class org/jetbrains/kotlin/psi/KtLabelReferenceExpression : org/jetbrains/kotlin/psi/KtSimpleNameExpressionImpl {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun getReferencedNameElement ()Lcom/intellij/psi/PsiElement;
 }
@@ -1910,7 +1911,7 @@ public class org/jetbrains/kotlin/psi/KtModifierListOwnerStub : org/jetbrains/ko
 	public fun removeModifier (Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;)V
 }
 
-public final class org/jetbrains/kotlin/psi/KtNameReferenceExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/psi/KtSimpleNameExpression {
+public final class org/jetbrains/kotlin/psi/KtNameReferenceExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/psi/KtSimpleNameExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public static final field Companion Lorg/jetbrains/kotlin/psi/KtNameReferenceExpression$Companion;
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinNameReferenceExpressionStub;)V
@@ -2194,7 +2195,7 @@ public class org/jetbrains/kotlin/psi/KtPropertyAccessor : org/jetbrains/kotlin/
 	public fun mayHaveContract ()Z
 }
 
-public class org/jetbrains/kotlin/psi/KtPropertyDelegate : org/jetbrains/kotlin/psi/KtElementImpl {
+public class org/jetbrains/kotlin/psi/KtPropertyDelegate : org/jetbrains/kotlin/psi/KtElementImpl, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getByKeywordNode ()Lcom/intellij/lang/ASTNode;
@@ -2519,7 +2520,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtPureElement {
 	public abstract fun getPsiOrParent ()Lorg/jetbrains/kotlin/psi/KtElement;
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/KtQualifiedExpression : org/jetbrains/kotlin/psi/KtExpression {
+public abstract interface class org/jetbrains/kotlin/psi/KtQualifiedExpression : org/jetbrains/kotlin/psi/KtExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun getOperationSign ()Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public fun getOperationTokenNode ()Lcom/intellij/lang/ASTNode;
 	public fun getReceiverExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
@@ -2527,7 +2528,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtQualifiedExpression :
 	public fun getSelectorExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/KtReferenceExpression : org/jetbrains/kotlin/psi/KtExpression {
+public abstract interface class org/jetbrains/kotlin/psi/KtReferenceExpression : org/jetbrains/kotlin/psi/KtExpression, org/jetbrains/kotlin/resolution/KtResolvable {
 }
 
 public class org/jetbrains/kotlin/psi/KtReturnExpression : org/jetbrains/kotlin/psi/KtExpressionWithLabel, org/jetbrains/kotlin/psi/KtStatementExpression, org/jetbrains/kotlin/resolution/KtResolvable {
@@ -2869,7 +2870,7 @@ public final class org/jetbrains/kotlin/psi/KtTypeReference : org/jetbrains/kotl
 	public final fun nameForReceiverLabel ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/psi/KtUnaryExpression : org/jetbrains/kotlin/psi/KtExpressionImpl, org/jetbrains/kotlin/psi/KtOperationExpression {
+public abstract class org/jetbrains/kotlin/psi/KtUnaryExpression : org/jetbrains/kotlin/psi/KtExpressionImpl, org/jetbrains/kotlin/psi/KtOperationExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public abstract fun getBaseExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public fun getOperationReference ()Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;
@@ -3809,6 +3810,7 @@ public final class org/jetbrains/kotlin/psi/psiUtil/KtPsiUtilKt {
 	public static final fun getAssignmentByLHS (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/psi/KtBinaryExpression;
 	public static final fun getBinaryWithTypeParent (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/psi/KtBinaryExpressionWithTypeRHS;
 	public static final fun getCallNameExpression (Lorg/jetbrains/kotlin/psi/KtCallElement;)Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;
+	public static final fun getContainingClassOrObject (Lorg/jetbrains/kotlin/psi/KtClassBody;)Lorg/jetbrains/kotlin/psi/KtClassOrObject;
 	public static final fun getContainingClassOrObject (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lorg/jetbrains/kotlin/psi/KtClassOrObject;
 	public static final fun getContentRange (Lorg/jetbrains/kotlin/psi/KtStringTemplateExpression;)Lcom/intellij/openapi/util/TextRange;
 	public static final fun getFileOrScriptDeclarations (Lorg/jetbrains/kotlin/psi/KtFile;)Ljava/util/List;
@@ -4214,6 +4216,7 @@ public abstract class org/jetbrains/kotlin/psi/stubs/elements/KtStubElementType 
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/elements/KtTokenSets {
 	public static final field CONSTANT_EXPRESSIONS Lcom/intellij/psi/tree/TokenSet;
+	public static final field DECLARATION_AND_COMPANION_BLOCK_TYPES Lcom/intellij/psi/tree/TokenSet;
 	public static final field DECLARATION_TYPES Lcom/intellij/psi/tree/TokenSet;
 	public static final field INSIDE_DIRECTIVE_EXPRESSIONS Lcom/intellij/psi/tree/TokenSet;
 	public static final field POSTFIX_OPERATIONS Lcom/intellij/psi/tree/TokenSet;

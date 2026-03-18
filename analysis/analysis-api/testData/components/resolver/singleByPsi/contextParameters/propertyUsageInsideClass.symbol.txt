@@ -1,2 +1,5 @@
 KtNameReferenceExpression(195,209): 'propertyMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val propertyMember: kotlin.String
+    ]

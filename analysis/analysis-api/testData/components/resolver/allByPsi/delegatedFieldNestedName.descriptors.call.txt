@@ -50,7 +50,7 @@ KtAnnotationEntry(31,61): '@Target(AnnotationTarget.TYPE)'
       }
 
 KtConstructorCalleeExpression(32,38): 'Target'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -89,7 +89,7 @@ KtUserType(32,38): 'Target'
   null
 
 KtNameReferenceExpression(32,38): 'Target'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -254,7 +254,7 @@ KtAnnotationEntry(225,241): '@Anno(0 + outer)'
       }
 
 KtConstructorCalleeExpression(226,230): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -293,7 +293,7 @@ KtUserType(226,230): 'Anno'
   null
 
 KtNameReferenceExpression(226,230): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -332,7 +332,7 @@ KtValueArgument(231,240): '0 + outer'
   null
 
 KtBinaryExpression(231,240): '0 + outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -407,7 +407,7 @@ KtOperationReferenceExpression(233,234): '+'
       }
 
 KtNameReferenceExpression(235,240): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -475,7 +475,7 @@ KtAnnotationEntry(247,263): '@Anno(1 + outer)'
       }
 
 KtConstructorCalleeExpression(248,252): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -514,7 +514,7 @@ KtUserType(248,252): 'Anno'
   null
 
 KtNameReferenceExpression(248,252): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -553,7 +553,7 @@ KtValueArgument(253,262): '1 + outer'
   null
 
 KtBinaryExpression(253,262): '1 + outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -628,7 +628,7 @@ KtOperationReferenceExpression(255,256): '+'
       }
 
 KtNameReferenceExpression(257,262): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -696,7 +696,7 @@ KtAnnotationEntry(269,285): '@Anno(2 + outer)'
       }
 
 KtConstructorCalleeExpression(270,274): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -735,7 +735,7 @@ KtUserType(270,274): 'Anno'
   null
 
 KtNameReferenceExpression(270,274): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -774,7 +774,7 @@ KtValueArgument(275,284): '2 + outer'
   null
 
 KtBinaryExpression(275,284): '2 + outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -849,7 +849,7 @@ KtOperationReferenceExpression(277,278): '+'
       }
 
 KtNameReferenceExpression(279,284): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -917,7 +917,7 @@ KtAnnotationEntry(310,326): '@Anno(4 + outer)'
       }
 
 KtConstructorCalleeExpression(311,315): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -956,7 +956,7 @@ KtUserType(311,315): 'Anno'
   null
 
 KtNameReferenceExpression(311,315): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -995,7 +995,7 @@ KtValueArgument(316,325): '4 + outer'
   null
 
 KtBinaryExpression(316,325): '4 + outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1070,7 +1070,7 @@ KtOperationReferenceExpression(318,319): '+'
       }
 
 KtNameReferenceExpression(320,325): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1138,7 +1138,7 @@ KtAnnotationEntry(334,350): '@Anno(5 + outer)'
       }
 
 KtConstructorCalleeExpression(335,339): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1177,7 +1177,7 @@ KtUserType(335,339): 'Anno'
   null
 
 KtNameReferenceExpression(335,339): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1216,7 +1216,7 @@ KtValueArgument(340,349): '5 + outer'
   null
 
 KtBinaryExpression(340,349): '5 + outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1291,7 +1291,7 @@ KtOperationReferenceExpression(342,343): '+'
       }
 
 KtNameReferenceExpression(344,349): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1371,7 +1371,7 @@ KtAnnotationEntry(400,416): '@Anno(6 + inner)'
       }
 
 KtConstructorCalleeExpression(401,405): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1410,7 +1410,7 @@ KtUserType(401,405): 'Anno'
   null
 
 KtNameReferenceExpression(401,405): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1458,7 +1458,7 @@ KtOperationReferenceExpression(408,409): '+'
   null
 
 KtNameReferenceExpression(410,415): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1526,7 +1526,7 @@ KtAnnotationEntry(422,438): '@Anno(7 + inner)'
       }
 
 KtConstructorCalleeExpression(423,427): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1565,7 +1565,7 @@ KtUserType(423,427): 'Anno'
   null
 
 KtNameReferenceExpression(423,427): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1613,7 +1613,7 @@ KtOperationReferenceExpression(430,431): '+'
   null
 
 KtNameReferenceExpression(432,437): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1681,7 +1681,7 @@ KtAnnotationEntry(444,460): '@Anno(8 + inner)'
       }
 
 KtConstructorCalleeExpression(445,449): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1720,7 +1720,7 @@ KtUserType(445,449): 'Anno'
   null
 
 KtNameReferenceExpression(445,449): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1768,7 +1768,7 @@ KtOperationReferenceExpression(452,453): '+'
   null
 
 KtNameReferenceExpression(454,459): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1860,7 +1860,7 @@ KtAnnotationEntry(559,575): '@Anno(9 + inner)'
       }
 
 KtConstructorCalleeExpression(560,564): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1899,7 +1899,7 @@ KtUserType(560,564): 'Anno'
   null
 
 KtNameReferenceExpression(560,564): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1938,7 +1938,7 @@ KtValueArgument(565,574): '9 + inner'
   null
 
 KtBinaryExpression(565,574): '9 + inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2013,7 +2013,7 @@ KtOperationReferenceExpression(567,568): '+'
       }
 
 KtNameReferenceExpression(569,574): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -2083,7 +2083,7 @@ KtAnnotationEntry(583,600): '@Anno(10 + inner)'
       }
 
 KtConstructorCalleeExpression(584,588): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2122,7 +2122,7 @@ KtUserType(584,588): 'Anno'
   null
 
 KtNameReferenceExpression(584,588): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2161,7 +2161,7 @@ KtValueArgument(589,599): '10 + inner'
   null
 
 KtBinaryExpression(589,599): '10 + inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2236,7 +2236,7 @@ KtOperationReferenceExpression(592,593): '+'
       }
 
 KtNameReferenceExpression(594,599): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:

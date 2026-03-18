@@ -26,55 +26,97 @@ KtProperty(34,53): 'val negative = -one'
   null
 
 KtPrefixExpression(49,53): '-one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(49,50): '-'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(50,53): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val one: kotlin.Int
+    ]
 
 KtProperty(58,77): 'val positive = +one'
   null
 
 KtPrefixExpression(73,77): '+one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(73,74): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(74,77): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val one: kotlin.Int
+    ]
 
 KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.not(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtOperationReferenceExpression(83,84): '!'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.not(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
   null
 
 KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtOperationReferenceExpression(85,86): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
   null
 
 KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtOperationReferenceExpression(87,88): '-'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.not(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtCallExpression(88,97): 'MyClass()'
   KaSymbolResolutionSuccess:
@@ -83,7 +125,10 @@ KtCallExpression(88,97): 'MyClass()'
     ]
 
 KtNameReferenceExpression(88,95): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(95,97): '()'
   null
@@ -95,7 +140,10 @@ KtCallExpression(98,110): 'unaryMinus()'
     ]
 
 KtNameReferenceExpression(98,108): 'unaryMinus'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtValueArgumentList(108,110): '()'
   null
@@ -107,7 +155,10 @@ KtCallExpression(111,116): 'not()'
     ]
 
 KtNameReferenceExpression(111,114): 'not'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.not(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtValueArgumentList(114,116): '()'
   null
@@ -137,10 +188,16 @@ KtNameReferenceExpression(169,176): 'MyClass'
   null
 
 KtThisExpression(179,183): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(179,183): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNamedFunction(188,228): 'operator fun unaryPlus(): MyClass = this'
   null
@@ -161,10 +218,16 @@ KtNameReferenceExpression(214,221): 'MyClass'
   null
 
 KtThisExpression(224,228): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(224,228): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNamedFunction(233,267): 'operator fun not(): MyClass = this'
   null
@@ -185,7 +248,13 @@ KtNameReferenceExpression(253,260): 'MyClass'
   null
 
 KtThisExpression(263,267): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(263,267): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]

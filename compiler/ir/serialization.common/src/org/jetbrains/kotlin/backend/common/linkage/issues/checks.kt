@@ -21,10 +21,3 @@ fun MessageCollector.checkNoUnboundSymbols(symbolTable: SymbolTable, whenDetecte
     if (unboundSymbols.isNotEmpty())
         UnexpectedUnboundIrSymbols(unboundSymbols, whenDetected).raiseIssue(this)
 }
-
-// N.B. Always checks for absence of unbound symbols. The condition whether this check should be applied is controlled outside.
-fun CompilerConfiguration.checkNoUnboundSymbols(symbolTable: SymbolTable, whenDetected: String) {
-    val unboundSymbols = symbolTable.descriptorExtension.allUnboundSymbols
-    if (unboundSymbols.isNotEmpty())
-        UnexpectedUnboundIrSymbols(unboundSymbols, whenDetected).raiseIssue(messageCollector)
-}

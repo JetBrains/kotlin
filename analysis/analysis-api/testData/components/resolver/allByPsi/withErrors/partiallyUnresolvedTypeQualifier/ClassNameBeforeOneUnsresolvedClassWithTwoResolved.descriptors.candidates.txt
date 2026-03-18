@@ -170,7 +170,7 @@ KtCallExpression(168,208): 'take {'
     isInBestCandidates = true
 
 KtNameReferenceExpression(168,172): 'take'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

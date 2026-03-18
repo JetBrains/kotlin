@@ -1,2 +1,6 @@
 KtPrefixExpression(80,83): '++f'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var f: Foo,
+      /inc(<extension receiver>: R): R
+    ]

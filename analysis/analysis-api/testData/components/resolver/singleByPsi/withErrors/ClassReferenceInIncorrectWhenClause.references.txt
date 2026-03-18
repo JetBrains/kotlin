@@ -2,5 +2,8 @@ KtNameReferenceExpression(60,69): 'SomeClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class SomeClass

@@ -42,10 +42,10 @@ internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOu
 
 // TODO: We have a Linker.kt file in the shared module.
 internal class Linker(
-        private val config: KonanConfig,
-        private val linkerOutput: LinkerOutputKind,
-        private val outputFiles: OutputFiles,
-        private val tempFiles: TempFiles,
+    private val config: NativeSecondStageCompilationConfig,
+    private val linkerOutput: LinkerOutputKind,
+    private val outputFiles: OutputFiles,
+    private val tempFiles: TempFiles,
 ) {
     private val platform = config.platform
     private val linker = platform.linker

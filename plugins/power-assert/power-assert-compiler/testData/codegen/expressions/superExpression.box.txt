@@ -1,0 +1,15 @@
+test1: ---
+assert(super.a)
+             |
+             false
+---
+test2: ---
+assert(super.b == 2)
+             | |
+             1 false
+---
+test3: ---
+assert(super<Base>.foo())
+                   |
+                   false
+---

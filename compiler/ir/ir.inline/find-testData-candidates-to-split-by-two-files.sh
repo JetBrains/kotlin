@@ -43,6 +43,14 @@ find compiler/testData/codegen/box -name "*.kt" -type f |
     grep -v compiler/testData/codegen/box/inline/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt |
     grep -v compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArgumentsNonJVM.kt |
     grep -v compiler/testData/codegen/box/coroutines/kt56407.kt |
+    grep -v compiler/testData/codegen/box/propertyAccess/privateClassesWithPrivateMembers.kt |
+    grep -v compiler/testData/codegen/box/inline/inlineInInlineWithLambdaPrivate.kt |
+    grep -v compiler/testData/codegen/box/inlineSizeReduction/oneTopLevelReturn.kt |
+    grep -v compiler/testData/codegen/box/reflection/kClassLambda.kt |
+    grep -v compiler/testData/codegen/box/reflection/kClassCompanion.kt |
+    grep -v compiler/testData/codegen/box/reflection/createInstance.kt |
+    grep -v compiler/testData/codegen/box/reflection/kClassSuspendFunction.kt |
+    grep -v compiler/testData/codegen/box/reflection/kClassOnReifiedTypeInLambda.kt |
     while read -r file; do
     if grep -q "inline fun" "$file" &&
       ! grep -q "^// FILE:" "$file" &&

@@ -2,5 +2,6 @@ KDocName(77,91): 'Foo.Nested.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo.Nested) fun foo()

@@ -113,7 +113,10 @@ KtAnnotationEntry(167,183): '@MyAnno((("A")))'
     ]
 
 KtConstructorCalleeExpression(168,174): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): MyAnno
+    ]
 
 KtTypeReference(168,174): 'MyAnno'
   null
@@ -122,7 +125,10 @@ KtUserType(168,174): 'MyAnno'
   null
 
 KtNameReferenceExpression(168,174): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtValueArgumentList(174,183): '((("A")))'
   null
@@ -161,7 +167,10 @@ KtAnnotationEntry(199,223): '@MyAnno(value = (("A")))'
     ]
 
 KtConstructorCalleeExpression(200,206): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): MyAnno
+    ]
 
 KtTypeReference(200,206): 'MyAnno'
   null
@@ -170,7 +179,10 @@ KtUserType(200,206): 'MyAnno'
   null
 
 KtNameReferenceExpression(200,206): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtValueArgumentList(206,223): '(value = (("A")))'
   null
@@ -215,7 +227,10 @@ KtAnnotationEntry(239,269): '@MyAnno((((("A")) as String)))'
     ]
 
 KtConstructorCalleeExpression(240,246): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): MyAnno
+    ]
 
 KtTypeReference(240,246): 'MyAnno'
   null
@@ -224,7 +239,10 @@ KtUserType(240,246): 'MyAnno'
   null
 
 KtNameReferenceExpression(240,246): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtValueArgumentList(246,269): '((((("A")) as String)))'
   null
@@ -284,7 +302,10 @@ KtAnnotationEntry(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A", "B", "C
     ]
 
 KtConstructorCalleeExpression(286,298): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: kotlin.String): MyAnnoVararg
+    ]
 
 KtTypeReference(286,298): 'MyAnnoVararg'
   null
@@ -293,7 +314,10 @@ KtUserType(286,298): 'MyAnnoVararg'
   null
 
 KtNameReferenceExpression(286,298): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoVararg
+    ]
 
 KtValueArgumentList(298,341): '((("A")), "B", *((arrayOf("A", "B", "C"))))'
   null
@@ -338,7 +362,10 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
     ]
 
 KtNameReferenceExpression(316,323): 'arrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
 
 KtValueArgumentList(323,338): '("A", "B", "C")'
   null
@@ -389,7 +416,10 @@ KtAnnotationEntry(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B"))))'
     ]
 
 KtConstructorCalleeExpression(358,370): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: kotlin.String): MyAnnoVararg
+    ]
 
 KtTypeReference(358,370): 'MyAnnoVararg'
   null
@@ -398,7 +428,10 @@ KtUserType(358,370): 'MyAnnoVararg'
   null
 
 KtNameReferenceExpression(358,370): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoVararg
+    ]
 
 KtValueArgumentList(370,403): '(value = ((arrayOf(("A"), "B"))))'
   null
@@ -425,7 +458,10 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
     ]
 
 KtNameReferenceExpression(381,388): 'arrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
 
 KtValueArgumentList(388,400): '(("A"), "B")'
   null
@@ -470,7 +506,10 @@ KtAnnotationEntry(419,453): '@MyAnnoKClass((((String::class))))'
     ]
 
 KtConstructorCalleeExpression(420,432): 'MyAnnoKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.reflect.KClass<*>): MyAnnoKClass
+    ]
 
 KtTypeReference(420,432): 'MyAnnoKClass'
   null
@@ -479,7 +518,10 @@ KtUserType(420,432): 'MyAnnoKClass'
   null
 
 KtNameReferenceExpression(420,432): 'MyAnnoKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoKClass
+    ]
 
 KtValueArgumentList(432,453): '((((String::class))))'
   null
@@ -500,7 +542,10 @@ KtClassLiteralExpression(436,449): 'String::class'
   null
 
 KtNameReferenceExpression(436,442): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtParameterList(462,464): '()'
   null

@@ -41,6 +41,6 @@ FILE: localDeclarationsInEnumEntry.kt
         }
 
         public final static [ContainingClassKey=SomeEnum] val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
-            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<SomeEnum>|
 
     }

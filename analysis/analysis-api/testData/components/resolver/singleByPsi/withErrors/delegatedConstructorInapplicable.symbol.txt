@@ -1,2 +1,6 @@
 KtConstructorCalleeExpression(40,41): 'A'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(x: kotlin.String): A
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>

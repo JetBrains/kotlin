@@ -1,0 +1,42 @@
+FILE: schemaInfoPair.kt
+    public final fun test(): R|kotlin/Unit| {
+        local final fun createPair(): R|kotlin/Pair<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>, kotlin/Int>| {
+            ^createPair R|kotlin/run|<R|kotlin/Pair<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>, kotlin/Int>|>(<L> = run@fun <anonymous>(): R|kotlin/Pair<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>, kotlin/Int>| <inline=Inline, kind=EXACTLY_ONCE>  {
+                lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    local abstract class DataFrameOf_01I : R|kotlin/Any| {
+                        @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Int|
+                            public get(): R|kotlin/Int|
+
+                        public constructor(): R|<local>/DataFrameOf_01I|
+
+                    }
+
+                    local final class Scope0 : R|kotlin/Any| {
+                        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01I>|.a: R|kotlin/Int|
+                            public get(): R|kotlin/Int|
+
+                        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_01I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                        public constructor(): R|<local>/Scope0|
+
+                    }
+
+                    local abstract class DataFrameOf_01 : R|<local>/DataFrameOf_01I| {
+                        @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
+                            public get(): R|<local>/Scope0|
+
+                        public constructor(): R|<local>/DataFrameOf_01|
+
+                    }
+
+                    ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/Int|>(vararg(Int(42))))))
+                }
+                )
+                ^ R|<local>/df|.R|kotlin/to|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>|, R|kotlin/Int|>(Int(1))
+            }
+            )
+        }
+
+        lval res: R|kotlin/Pair<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>, kotlin/Int>| = R|<local>/createPair|()
+    }

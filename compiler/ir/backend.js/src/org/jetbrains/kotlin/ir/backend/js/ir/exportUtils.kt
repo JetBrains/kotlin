@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ir
 
+import org.jetbrains.kotlin.backend.common.suspendFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.promisifiedWrapperFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedMemberWrapper
 import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
@@ -285,6 +287,64 @@ internal val IrConstructor.exportedVisibility: ExportedVisibility
         Modality.FINAL if visibility == DescriptorVisibilities.PROTECTED -> ExportedVisibility.PRIVATE
         else -> visibility.toExportedVisibility()
     }
+
+internal fun IrClass.hasNotExportedAbstractMembers(): Boolean {
+    /**
+     * We only process interfaces because it's impossible to cover the following case:
+     * an abstract class that extends another abstract class which contain an ignored abstract member
+     * but the current inheritor overrides them all and converting them into non-abstract members
+     * Example of code:
+     * ```kotlin
+     * @JsExport
+     * abstract class A {
+     *   @JsExport.Ignore
+     *   abstract fun a(): Int
+     * }
+     *
+     *
+     * @JsExport
+     * interface B {
+     *   @JsExport.Ignore
+     *   fun b(): Int
+     * }
+     *
+     * @JsExport
+     * abstract class ProblemOne : A(), B {
+     *    override fun a(): Int = 1
+     *    // Here we should generate our magic `__doNotUseItOrImplementIt` both as abstract and non-abstract member
+     *    // It's impossible to express in TypeScript
+     * }
+     * ```
+     */
+    if (!isInterface) return false
+    for (declaration in declarations) {
+        val candidate = getExportCandidate(declaration) ?: continue
+
+        if (
+            candidate !is IrOverridableDeclaration<*> ||
+            candidate.isFakeOverride ||
+            candidate.overriddenSymbols.isNotEmpty()
+        ) continue
+
+        // Since we built a lot of bridges for the suspend function export, the check is more complicated
+        if (candidate.origin == IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION) {
+            val originalSuspendFunction = (candidate as IrSimpleFunction).suspendFunction
+                ?.takeIf { it.origin == IrDeclarationOrigin.DEFINED } ?: continue
+
+            if (originalSuspendFunction.promisifiedWrapperFunction == null) {
+                return true
+            } else continue
+        }
+
+
+        if (
+            candidate.isJsExportIgnore() &&
+            candidate.origin == IrDeclarationOrigin.DEFINED
+        ) return true
+    }
+
+    return false
+}
 
 internal fun IrClass.forEachExportedMember(
     context: JsIrBackendContext,

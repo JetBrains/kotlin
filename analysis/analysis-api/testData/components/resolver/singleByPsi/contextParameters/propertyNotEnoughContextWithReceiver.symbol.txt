@@ -1,2 +1,6 @@
 KtNameReferenceExpression(88,91): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      val foo: kotlin.Boolean
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'string: String' found.>

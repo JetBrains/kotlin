@@ -2,5 +2,6 @@ KtNameReferenceExpression(53,61): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <A, B> function(a: A, b: B)

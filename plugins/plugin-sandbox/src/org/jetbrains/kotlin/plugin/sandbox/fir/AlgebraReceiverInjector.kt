@@ -34,13 +34,9 @@ class AlgebraReceiverInjector(session: FirSession) : FirExpressionResolutionExte
         private val ALGEBRA_CLASS_ID = ClassId.topLevel(FqName.topLevel(Name.identifier("Algebra")))
     }
 
-    private object Key : GeneratedDeclarationKey() {
-        override fun toString(): String {
-            return "AlgebraReceiverGeneratorKey"
-        }
-    }
+    private data object AlgebraReceiverGeneratorKey : GeneratedDeclarationKey()
 
-    private val algebraOrigin = FirDeclarationOrigin.Plugin(Key)
+    private val algebraOrigin = FirDeclarationOrigin.Plugin(AlgebraReceiverGeneratorKey)
 
     override fun addNewImplicitReceivers(
         functionCall: FirFunctionCall,

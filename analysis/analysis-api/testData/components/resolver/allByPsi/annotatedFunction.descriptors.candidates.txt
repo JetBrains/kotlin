@@ -72,7 +72,7 @@ KtAnnotationEntry(33,176): '@Target('
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(34,40): 'Target'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -133,7 +133,7 @@ KtUserType(34,40): 'Target'
   NO_CANDIDATES
 
 KtNameReferenceExpression(34,40): 'Target'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -194,7 +194,7 @@ KtValueArgument(46,77): 'AnnotationTarget.TYPE_PARAMETER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -236,7 +236,7 @@ KtValueArgument(83,108): 'AnnotationTarget.FUNCTION'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -278,7 +278,7 @@ KtValueArgument(114,146): 'AnnotationTarget.VALUE_PARAMETER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -320,7 +320,7 @@ KtValueArgument(152,173): 'AnnotationTarget.TYPE'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -432,7 +432,7 @@ KtAnnotationEntry(259,282): '@Anno("function $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(260,264): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -472,7 +472,7 @@ KtUserType(260,264): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(260,264): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -521,7 +521,7 @@ KtSimpleNameStringTemplateEntry(275,280): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(276,280): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -582,7 +582,7 @@ KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(289,293): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -622,7 +622,7 @@ KtUserType(289,293): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(289,293): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -671,7 +671,7 @@ KtSimpleNameStringTemplateEntry(310,315): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(311,315): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -729,7 +729,7 @@ KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(323,327): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -769,7 +769,7 @@ KtUserType(323,327): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(323,327): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -818,7 +818,7 @@ KtSimpleNameStringTemplateEntry(340,345): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(341,345): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -888,7 +888,7 @@ KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(354,358): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -928,7 +928,7 @@ KtUserType(354,358): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(354,358): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -977,7 +977,7 @@ KtSimpleNameStringTemplateEntry(378,383): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(379,383): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1044,7 +1044,7 @@ KtAnnotationUseSiteTarget(396,404): 'receiver'
   NO_CANDIDATES
 
 KtConstructorCalleeExpression(405,409): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1084,7 +1084,7 @@ KtUserType(405,409): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(405,409): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1133,7 +1133,7 @@ KtSimpleNameStringTemplateEntry(420,425): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(421,425): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1185,7 +1185,7 @@ KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(429,433): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1225,7 +1225,7 @@ KtUserType(429,433): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(429,433): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1274,7 +1274,7 @@ KtSimpleNameStringTemplateEntry(449,454): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(450,454): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1344,7 +1344,7 @@ KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(463,467): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1384,7 +1384,7 @@ KtUserType(463,467): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(463,467): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1433,7 +1433,7 @@ KtSimpleNameStringTemplateEntry(490,495): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(491,495): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1503,7 +1503,7 @@ KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(504,508): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1543,7 +1543,7 @@ KtUserType(504,508): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(504,508): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1592,7 +1592,7 @@ KtSimpleNameStringTemplateEntry(538,543): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(539,543): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1659,7 +1659,7 @@ KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(562,566): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1699,7 +1699,7 @@ KtUserType(562,566): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(562,566): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1748,7 +1748,7 @@ KtSimpleNameStringTemplateEntry(578,583): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(579,583): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1806,7 +1806,7 @@ KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(594,598): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1846,7 +1846,7 @@ KtUserType(594,598): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(594,598): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1895,7 +1895,7 @@ KtSimpleNameStringTemplateEntry(615,620): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(616,620): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1965,7 +1965,7 @@ KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(635,639): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2005,7 +2005,7 @@ KtUserType(635,639): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(635,639): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2054,7 +2054,7 @@ KtSimpleNameStringTemplateEntry(663,668): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(664,668): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2124,7 +2124,7 @@ KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(677,681): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2164,7 +2164,7 @@ KtUserType(677,681): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(677,681): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2213,7 +2213,7 @@ KtSimpleNameStringTemplateEntry(712,717): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(713,717): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2280,7 +2280,7 @@ KtAnnotationEntry(735,761): '@Anno("return type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(736,740): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2320,7 +2320,7 @@ KtUserType(736,740): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(736,740): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2369,7 +2369,7 @@ KtSimpleNameStringTemplateEntry(754,759): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(755,759): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2439,7 +2439,7 @@ KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(768,772): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2479,7 +2479,7 @@ KtUserType(768,772): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(768,772): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2528,7 +2528,7 @@ KtSimpleNameStringTemplateEntry(793,798): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(794,798): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2598,7 +2598,7 @@ KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(807,811): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2638,7 +2638,7 @@ KtUserType(807,811): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(807,811): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2687,7 +2687,7 @@ KtSimpleNameStringTemplateEntry(839,844): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(840,844): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2760,7 +2760,7 @@ KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(872,876): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2800,7 +2800,7 @@ KtUserType(872,876): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(872,876): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2849,7 +2849,7 @@ KtSimpleNameStringTemplateEntry(894,899): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(895,899): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2922,7 +2922,7 @@ KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(914,918): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2962,7 +2962,7 @@ KtUserType(914,918): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(914,918): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3011,7 +3011,7 @@ KtSimpleNameStringTemplateEntry(943,948): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(944,948): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

@@ -4,22 +4,38 @@
 
 fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        add(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+        add(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        add(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+    buildList {
+        add([42])
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        add(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-        add(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
+    buildList {
+        add([42])
+        add(["42"])
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        add(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-        add(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
+    buildList {
+        add([])
+        add(["42"])
     }
+
+    buildList {
+        add([42])
+        add(setOf("42"))
+    }
+
+    buildList {
+        add(setOf(42))
+        add(["42"])
+    }
+
+    <!TYPE_MISMATCH!>buildList {
+        add(setOf(42))
+        add(["42"])
+        <!TYPE_MISMATCH!>this[0]<!>.size
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral */

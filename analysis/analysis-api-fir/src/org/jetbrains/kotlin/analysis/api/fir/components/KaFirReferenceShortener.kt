@@ -631,6 +631,7 @@ private class ElementsToShortenCollector(
         is FirNestedClassifierScope -> klass.classId
         is FirNestedClassifierScopeWithSubstitution -> originalScope.correspondingClassIdIfExists()
         is FirClassUseSiteMemberScope -> ownerClassLookupTag.classId
+        is FirNameAwareCompositeScope -> scopes.firstNotNullOf { it.correspondingClassIdIfExists() }
         else -> errorWithAttachment("FirScope ${this::class}` is expected to be one of FirNestedClassifierScope and FirClassUseSiteMemberScope to get ClassId") {
             withEntry("firScope", this@correspondingClassIdIfExists) { it.toString() }
         }
@@ -638,10 +639,11 @@ private class ElementsToShortenCollector(
 
     private fun ClassId.idWithoutCompanion() = if (shortClassName == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) outerClassId else this
 
-    private fun FirScope.isScopeForClass(): Boolean = when {
-        this is FirNestedClassifierScope -> true
-        this is FirNestedClassifierScopeWithSubstitution -> originalScope.isScopeForClass()
-        this is FirClassUseSiteMemberScope -> true
+    private fun FirScope.isScopeForClass(): Boolean = when (this) {
+        is FirNestedClassifierScope -> true
+        is FirNestedClassifierScopeWithSubstitution -> originalScope.isScopeForClass()
+        is FirClassUseSiteMemberScope -> true
+        is FirNameAwareCompositeScope -> scopes.any { it.isScopeForClass() }
         else -> false
     }
 
@@ -743,6 +745,7 @@ private class ElementsToShortenCollector(
                     is FirNestedClassifierScopeWithSubstitution -> originalScope.toPartialOrder()
                     is FirExplicitSimpleImportingScope -> ExplicitSimpleImporting
                     is FirPackageMemberScope -> PackageMember
+                    is FirNameAwareCompositeScope -> scopes.minOf { it.toPartialOrder() }
                     else -> Unclassified
                 }
             }

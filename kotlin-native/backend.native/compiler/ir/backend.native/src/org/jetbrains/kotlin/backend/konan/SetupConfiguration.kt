@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
@@ -56,7 +58,7 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 
 fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments) = with(NativeConfigurationKeys) {
-    val commonSources = arguments.commonSources?.toSet().orEmpty().map { it.absoluteNormalizedFile() }
+    val commonSources = arguments.commonSources.toSet().map { it.absoluteNormalizedFile() }
     val hmppModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
     arguments.freeArgs.forEach {
         addKotlinSourceRoot(it, isCommon = it.absoluteNormalizedFile() in commonSources, hmppModuleStructure?.getModuleNameForSource(it))
@@ -102,7 +104,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.manifestFile?.let { konanManifestAddend = it }
     arguments.runtimeFile?.let { put(RUNTIME_FILE, it) }
     arguments.temporaryFilesDir?.let { put(TEMPORARY_FILES_DIR, it) }
-    put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.orEmpty().toList())
+    put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.toList())
 
     if (arguments.optimization && arguments.debug) {
         report(WARNING, "Unsupported combination of flags: -opt and -g. Please pick one.")
@@ -199,17 +201,16 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     // We need to download dependencies only if we use them ( = there are files to compile).
     put(CHECK_DEPENDENCIES,
             kotlinSourceRoots.isNotEmpty()
-                    || !arguments.includes.isNullOrEmpty()
-                    || !arguments.exportedLibraries.isNullOrEmpty()
-                    || (outputKind == CompilerOutputKind.PROGRAM && arguments.libraries?.isNotEmpty() == true)
+                    || arguments.includes.isNotEmpty()
+                    || arguments.exportedLibraries.isNotEmpty()
+                    || (outputKind == CompilerOutputKind.PROGRAM && arguments.libraries.isNotEmpty())
                     || outputKind.isCache
                     || arguments.checkDependencies
     )
     if (arguments.friendModules != null)
         konanFriendLibraries = arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty)
 
-    if (arguments.refinesPaths != null)
-        konanRefinesModules = arguments.refinesPaths!!.filterNot(String::isEmpty)
+    konanRefinesModules = arguments.refinesPaths.filterNot(String::isEmpty)
 
     put(EXPORTED_LIBRARIES, selectExportedLibraries(this@setupFromArguments, arguments, outputKind))
     konanIncludedLibraries = selectIncludes(this@setupFromArguments, arguments, outputKind)
@@ -233,7 +234,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         report(ERROR, "For incremental compilation both flags should be supplied: " +
                 "-Xenable-incremental-compilation and ${K2NativeCompilerArguments::incrementalCacheDir.cliArgument}")
     incrementalCacheDir?.let { put(INCREMENTAL_CACHE_DIR, it) }
-    arguments.filesToCache?.let { put(FILES_TO_CACHE, it.toList()) }
+    put(FILES_TO_CACHE, arguments.filesToCache.toList())
     put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
     val availableProcessors = Runtime.getRuntime().availableProcessors()
@@ -356,13 +357,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, this@setupFromArguments))
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
 
-    setupPartialLinkageConfig(
-            mode = arguments.partialLinkageMode,
-            logLevel = arguments.partialLinkageLogLevel,
-            compilerModeAllowsUsingPartialLinkage = outputKind != CompilerOutputKind.LIBRARY, // Don't run PL when producing KLIB.
-            onWarning = { report(WARNING, it) },
-            onError = { report(ERROR, it) }
-    )
+    setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_WARNING, KONAN_ARGUMENT_ERROR)
 
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
     putIfNotNull(COMPILE_FROM_BITCODE, parseCompileFromBitcode(arguments, this@setupFromArguments, outputKind))
@@ -371,10 +366,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(SAVE_LLVM_IR_DIRECTORY, arguments.saveLlvmIrDirectory)
     putIfNotNull(KONAN_DATA_DIR, arguments.konanDataDir)
 
-    val manifestNativeTargets = arguments.manifestNativeTargets?.let { parseManifestNativeTargets(it) }
-    if (manifestNativeTargets != null)
-        konanManifestNativeTargets = manifestNativeTargets
-    this@setupFromArguments.targetPlatform = NativePlatforms.nativePlatformByTargets(manifestNativeTargets.orEmpty())
+    val manifestNativeTargets = parseManifestNativeTargets(arguments.manifestNativeTargets)
+    konanManifestNativeTargets = manifestNativeTargets
+    this@setupFromArguments.targetPlatform = NativePlatforms.nativePlatformByTargets(manifestNativeTargets)
 
     putIfNotNull(LLVM_MODULE_PASSES, arguments.llvmModulePasses)
     putIfNotNull(LLVM_LTO_PASSES, arguments.llvmLTOPasses)
@@ -382,22 +376,23 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
 private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()
 
-internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: KonanConfig) = with(NativeConfigurationKeys) {
-    konanTarget = konanConfig.target.toString()
-    put(DEBUG, konanConfig.debug)
-    setupPartialLinkageConfig(konanConfig.partialLinkageConfig)
-    putIfNotNull(EXTERNAL_DEPENDENCIES, konanConfig.externalDependenciesFile?.absolutePath)
-    put(PROPERTY_LAZY_INITIALIZATION, konanConfig.propertyLazyInitialization)
-    put(BinaryOptions.genericSafeCasts, konanConfig.genericSafeCasts)
-    put(BinaryOptions.stripDebugInfoFromNativeLibs, !konanConfig.useDebugInfoInNativeLibs)
-    put(ALLOCATION_MODE, konanConfig.allocationMode)
-    put(BinaryOptions.gc, konanConfig.gc)
-    put(BinaryOptions.gcSchedulerType, konanConfig.gcSchedulerType)
-    put(BinaryOptions.runtimeAssertionsMode, konanConfig.runtimeAssertsMode)
-    put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, konanConfig.threadsCount)
-    putIfNotNull(KONAN_DATA_DIR, konanConfig.distribution.localKonanDir.absolutePath)
-    putIfNotNull(BinaryOptions.minidumpLocation, konanConfig.minidumpLocation)
-    putIfNotNull(BinaryOptions.macabi, konanConfig.macabi)
+internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSecondStageCompilationConfig) = with(NativeConfigurationKeys) {
+    konanTarget = config.target.toString()
+    put(DEBUG, config.debug)
+    setupPartialLinkageConfig(config.partialLinkageConfig)
+    putIfNotNull(EXTERNAL_DEPENDENCIES, config.externalDependenciesFile?.absolutePath)
+    put(PROPERTY_LAZY_INITIALIZATION, config.propertyLazyInitialization)
+    put(BinaryOptions.genericSafeCasts, config.genericSafeCasts)
+    put(BinaryOptions.stripDebugInfoFromNativeLibs, !config.useDebugInfoInNativeLibs)
+    put(ALLOCATION_MODE, config.allocationMode)
+    put(BinaryOptions.gc, config.gc)
+    put(BinaryOptions.gcSchedulerType, config.gcSchedulerType)
+    put(BinaryOptions.runtimeAssertionsMode, config.runtimeAssertsMode)
+    put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, config.threadsCount)
+    putIfNotNull(KONAN_DATA_DIR, config.distribution.localKonanDir.absolutePath)
+    putIfNotNull(BinaryOptions.minidumpLocation, config.minidumpLocation)
+    putIfNotNull(BinaryOptions.macabi, config.macabi)
+    putIfNotNull(BinaryOptions.cCallMode, config.cCallMode)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()
@@ -437,7 +432,7 @@ private fun selectExportedLibraries(
         arguments: K2NativeCompilerArguments,
         outputKind: CompilerOutputKind
 ): List<String> {
-    val exportedLibraries = arguments.exportedLibraries?.toList().orEmpty()
+    val exportedLibraries = arguments.exportedLibraries.toList()
 
     return if (exportedLibraries.isNotEmpty() && outputKind != CompilerOutputKind.FRAMEWORK &&
             outputKind != CompilerOutputKind.STATIC && outputKind != CompilerOutputKind.DYNAMIC) {
@@ -456,7 +451,7 @@ private fun selectIncludes(
         arguments: K2NativeCompilerArguments,
         outputKind: CompilerOutputKind
 ): List<String> {
-    val includes = arguments.includes?.toList().orEmpty()
+    val includes = arguments.includes.toList()
 
     return if (includes.isNotEmpty() && outputKind == CompilerOutputKind.LIBRARY) {
         configuration.report(
@@ -472,7 +467,7 @@ private fun selectIncludes(
 private fun parseCachedLibraries(
         arguments: K2NativeCompilerArguments,
         configuration: CompilerConfiguration
-): Map<String, String> = arguments.cachedLibraries?.asList().orEmpty().mapNotNull {
+): Map<String, String> = arguments.cachedLibraries.asList().mapNotNull {
     val libraryAndCache = it.split(",")
     if (libraryAndCache.size != 2) {
         configuration.report(
@@ -531,7 +526,7 @@ private fun parseShortModuleName(
 private fun parseDebugPrefixMap(
         arguments: K2NativeCompilerArguments,
         configuration: CompilerConfiguration
-): Map<String, String> = arguments.debugPrefixMap?.asList().orEmpty().mapNotNull {
+): Map<String, String> = arguments.debugPrefixMap.asList().mapNotNull {
     val libraryAndCache = it.split("=")
     if (libraryAndCache.size != 2) {
         configuration.report(ERROR, "incorrect debug prefix map format: expected '<old>=<new>', got '$it'")

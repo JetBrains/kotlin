@@ -2,5 +2,6 @@ KDocName(54,73): 'JavaChild.staticFun'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in dependency.JavaBase) open fun staticFun()

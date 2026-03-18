@@ -159,6 +159,7 @@ val cacheMap: Map<String, String> = mapOf(
     "https://dl.google.com/go" to "https://cache-redirector.jetbrains.com/dl.google.com.go",
     "https://clojars.org/repo" to "https://cache-redirector.jetbrains.com/clojars.org/repo",
     "https://nodejs.org/dist" to "https://cache-redirector.jetbrains.com/nodejs.org/dist",
+    "https://github.com/WebAssembly/binaryen/releases/download" to "https://cache-redirector.jetbrains.com/github.com/WebAssembly/binaryen/releases/download",
     "https://jitpack.io" to "https://cache-redirector.jetbrains.com/jitpack.io",
     "https://repo.labs.intellij.net/intellij-nightly-sdk" to "https://cache-redirector.jetbrains.com/www.jetbrains.com/intellij-repository/nightly",
     "https://d1lc5k9lerg6km.cloudfront.net" to "https://cache-redirector.jetbrains.com/www.jetbrains.com/jps-cache/intellij",

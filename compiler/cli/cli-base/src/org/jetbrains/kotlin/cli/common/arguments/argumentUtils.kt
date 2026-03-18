@@ -136,3 +136,5 @@ val KProperty1<out CommonCompilerArguments, *>.cliArgument: String
 fun KProperty1<out CommonCompilerArguments, *>.cliArgument(value: String): String {
     return "$cliArgument=$value"
 }
+
+fun K2NativeCompilerArguments.isNativeSecondStage(): Boolean = produce != "library"

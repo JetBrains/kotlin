@@ -1,0 +1,8 @@
+KtNameReferenceExpression(40,41): 'A'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    symbols:
+      (in A) constructor(x: kotlin.String)

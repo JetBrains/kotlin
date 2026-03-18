@@ -1,0 +1,4 @@
+KtNameReferenceExpression(33,37): 'Fake'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Fake>

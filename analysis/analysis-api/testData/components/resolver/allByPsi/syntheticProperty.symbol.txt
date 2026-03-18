@@ -44,7 +44,10 @@ KtCallExpression(78,104): 'print(javaClass.something)'
     ]
 
 KtNameReferenceExpression(78,83): 'print'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/io/print(message: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(83,104): '(javaClass.something)'
   null
@@ -53,133 +56,249 @@ KtValueArgument(84,103): 'javaClass.something'
   null
 
 KtDotQualifiedExpression(84,103): 'javaClass.something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtNameReferenceExpression(84,93): 'javaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      javaClass: JavaClass
+    ]
 
 KtNameReferenceExpression(94,103): 'something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtBinaryExpression(109,132): 'javaClass.something = 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(109,128): 'javaClass.something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtNameReferenceExpression(109,118): 'javaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      javaClass: JavaClass
+    ]
 
 KtNameReferenceExpression(119,128): 'something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(129,130): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtConstantExpression(131,132): '1'
   null
 
 KtBinaryExpression(137,161): 'javaClass.something += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(137,156): 'javaClass.something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtNameReferenceExpression(137,146): 'javaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      javaClass: JavaClass
+    ]
 
 KtNameReferenceExpression(147,156): 'something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(157,159): '+='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(160,161): '1'
   null
 
 KtPostfixExpression(166,187): 'javaClass.something++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(166,185): 'javaClass.something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtNameReferenceExpression(166,175): 'javaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      javaClass: JavaClass
+    ]
 
 KtNameReferenceExpression(176,185): 'something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(185,187): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtPrefixExpression(192,213): '--javaClass.something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(192,194): '--'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(194,213): 'javaClass.something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtNameReferenceExpression(194,203): 'javaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      javaClass: JavaClass
+    ]
 
 KtNameReferenceExpression(204,213): 'something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtPostfixExpression(219,230): 'something++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(219,228): 'something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(228,230): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtPostfixExpression(235,248): '(something)++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtParenthesizedExpression(235,246): '(something)'
   null
 
 KtNameReferenceExpression(236,245): 'something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(246,248): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtBinaryExpression(253,268): '(something) = 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtParenthesizedExpression(253,264): '(something)'
   null
 
 KtNameReferenceExpression(254,263): 'something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(265,266): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtConstantExpression(267,268): '1'
   null
 
 KtBinaryExpression(273,298): '(javaClass.something) = 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtParenthesizedExpression(273,294): '(javaClass.something)'
   null
 
 KtDotQualifiedExpression(274,293): 'javaClass.something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtNameReferenceExpression(274,283): 'javaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      javaClass: JavaClass
+    ]
 
 KtNameReferenceExpression(284,293): 'something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(295,296): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtConstantExpression(297,298): '1'
   null

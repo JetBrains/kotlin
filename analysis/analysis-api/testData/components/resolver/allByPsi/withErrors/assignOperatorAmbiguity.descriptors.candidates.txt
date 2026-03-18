@@ -476,7 +476,7 @@ KtCallExpression(494,500): 'Test()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(494,498): 'Test'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -500,7 +500,7 @@ KtBinaryExpression(505,513): 'foo += 1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(505,508): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -527,7 +527,7 @@ KtBinaryExpression(518,526): 'foo -= 1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(518,521): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -554,7 +554,7 @@ KtBinaryExpression(531,539): 'foo /= 1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(531,534): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -581,7 +581,7 @@ KtBinaryExpression(544,552): 'foo *= 1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(544,547): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -608,7 +608,7 @@ KtBinaryExpression(557,565): 'foo %= 1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(557,560): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

@@ -104,7 +104,7 @@ KtProperty(133,166): 'var current = this@iterator.start'
   null
 
 KtDotQualifiedExpression(147,166): 'this@iterator.start'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -136,7 +136,7 @@ KtLabelReferenceExpression(151,160): '@iterator'
   null
 
 KtNameReferenceExpression(161,166): 'start'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -165,7 +165,7 @@ KtParameterList(191,193): '()'
   null
 
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -201,7 +201,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
       }
 
 KtNameReferenceExpression(196,203): 'current'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -256,7 +256,7 @@ KtOperationReferenceExpression(204,206): '<='
       }
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -288,7 +288,7 @@ KtLabelReferenceExpression(211,220): '@iterator'
   null
 
 KtNameReferenceExpression(221,224): 'end'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -326,7 +326,7 @@ KtNameReferenceExpression(250,253): 'Int'
   null
 
 KtPostfixExpression(256,265): 'current++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -366,7 +366,7 @@ KtPostfixExpression(256,265): 'current++'
         typeArgumentsMapping = {}
 
 KtNameReferenceExpression(256,263): 'current'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -434,7 +434,53 @@ KtBlockExpression(281,330): '{'
   null
 
 KtForExpression(287,328): 'for (i in IntProgression(1, 10)) {'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = IntProgression(1, 10)
+          isSafeNavigation = false
+          type = f.IntProgression
+        signature = KaFunctionSignature:
+          receiverType = f.IntProgression
+          returnType = kotlin.collections.Iterator<kotlin.Int>
+          symbol = f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+          valueParameters = []
+          contextParameters = []
+          callableId = f/iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
 
 KtParameter(292,293): 'i'
   null
@@ -490,7 +536,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
       }
 
 KtNameReferenceExpression(297,311): 'IntProgression'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

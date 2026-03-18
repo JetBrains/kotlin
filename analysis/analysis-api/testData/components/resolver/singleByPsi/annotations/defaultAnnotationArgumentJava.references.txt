@@ -1,0 +1,7 @@
+KtValueArgument(28,32): '"13"'
+  KtDefaultAnnotationArgumentReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      value: kotlin.String

@@ -42,11 +42,22 @@ fun FileHasher.calculateDirHash(
 ): String? =
     calculateDirHashInternal(dir)
 
+@Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""js""""))
 const val JS = "js"
+
+@Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""mjs""""))
 const val MJS = "mjs"
+
+@Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""wasm""""))
 const val WASM = "wasm"
+
+@Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""js.map""""))
 const val JS_MAP = "js.map"
+
+@Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""meta.js""""))
 const val META_JS = "meta.js"
+
+@Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""html""""))
 const val HTML = "html"
 
 internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File {

@@ -2,5 +2,6 @@ KtNameReferenceExpression(93,97): 'peek'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in F) fun peek(): F

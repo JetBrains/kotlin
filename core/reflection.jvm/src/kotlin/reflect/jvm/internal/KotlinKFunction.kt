@@ -25,7 +25,8 @@ internal abstract class KotlinKFunction(
     override val container: KDeclarationContainerImpl,
     override val signature: String,
     override val rawBoundReceiver: Any?,
-) : KotlinKCallable<Any?>(), ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
+    overriddenStorage: KCallableOverriddenStorage,
+) : KotlinKCallable<Any?>(overriddenStorage), ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
     protected abstract val contextParameters: List<KmValueParameter>
     protected abstract val extensionReceiverType: KmType?
     protected abstract val valueParameters: List<KmValueParameter>
@@ -55,13 +56,15 @@ internal abstract class KotlinKFunction(
     override val overridden: Collection<ReflectKFunction>
         get() {
             require(container is KPackageImpl) {
-                "Only top-level functions are supported for now: $this"
+                "Only top-level functions are supported for now: $container/$name $signature"
             }
             return emptyList()
         }
 
     override val caller: Caller<*> by lazy(PUBLICATION) {
-        require(isConstructor || container is KPackageImpl) { "Only constructors and top-level functions are supported for now: $this" }
+        require(isConstructor || container is KPackageImpl) {
+            "Only constructors and top-level functions are supported for now: $container/$name $signature"
+        }
         val signature = jvmSignature
         val member: Member? =
             if (isConstructor && !container.isInlineClass()) {
@@ -78,7 +81,9 @@ internal abstract class KotlinKFunction(
     }
 
     override val callerWithDefaults: Caller<*>? by lazy(PUBLICATION) {
-        require(isConstructor || container is KPackageImpl) { "Only constructors and top-level functions are supported for now: $this" }
+        require(isConstructor || container is KPackageImpl) {
+            "Only constructors and top-level functions are supported for now: $container/$name $signature"
+        }
         val signature = jvmSignature
         val preventUnboxingForIndices = mutableListOf<Int>()
         val member: Member? =
@@ -111,7 +116,7 @@ internal abstract class KotlinKFunction(
     // However, when the expected dispatch receiver type is an interface,
     // the member belongs to the interface/DefaultImpls, so the receiver should not be unboxed.
     private fun useBoxedBoundReceiver(member: Method): Boolean {
-        require(container is KPackageImpl) { "Only top-level functions are supported for now: $this" }
+        require(container is KPackageImpl) { "Only top-level functions are supported for now: $container/$name $signature" }
         return false
     }
 

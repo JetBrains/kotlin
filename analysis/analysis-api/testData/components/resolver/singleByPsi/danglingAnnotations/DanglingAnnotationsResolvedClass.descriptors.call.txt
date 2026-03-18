@@ -1,5 +1,5 @@
 KtNameReferenceExpression(73,77): 'Ann0'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

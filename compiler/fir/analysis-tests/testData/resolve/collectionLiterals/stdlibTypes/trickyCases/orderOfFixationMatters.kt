@@ -41,9 +41,9 @@ fun test() {
     //
     //   Result: Ambiguity for [].
     myInWithUB([], id([mutableSetOf<Int>()]))
-    myContainsWithUB(id([mutableSetOf<Int>()]), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    myContainsWithUB(id([mutableSetOf<Int>()]), <!AMBIGUOUS_COLLECTION_LITERAL!>[]<!>)
     myInWithUB(id([]), id([mutableSetOf<Int>()]))
-    myContainsWithUB(id([mutableSetOf<Int>()]), id(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>))
+    myContainsWithUB(id([mutableSetOf<Int>()]), id(<!AMBIGUOUS_COLLECTION_LITERAL!>[]<!>))
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, nullableType, starProjection, typeConstraint,

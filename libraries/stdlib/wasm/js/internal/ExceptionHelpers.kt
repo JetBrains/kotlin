@@ -34,7 +34,6 @@ internal fun getKotlinException(v: JsAny?): Throwable {
 }
 
 @Deprecated("Don't use. To be removed after bootstrap.", level = DeprecationLevel.ERROR)
-@Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
 private fun throwJsError(message: String?, wasmTypeName: String?, stack: ExternalInterfaceType?): Nothing {
     js("""
     const error = new Error();

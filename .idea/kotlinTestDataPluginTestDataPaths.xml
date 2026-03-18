@@ -115,7 +115,7 @@
         <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/plugin-sandbox/testData" />
         <option value="$PROJECT_DIR$/plugins/plugins-interactions-testing/testData" />
-        <option value="$PROJECT_DIR$/plugins/power-assert/testData" />
+        <option value="$PROJECT_DIR$/plugins/power-assert/power-assert-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData" />
         <option value="$PROJECT_DIR$/plugins/scripting/scripting-tests/testData" />
         <option value="$PROJECT_DIR$/libraries/tools/kotlinp/jvm/testData" />

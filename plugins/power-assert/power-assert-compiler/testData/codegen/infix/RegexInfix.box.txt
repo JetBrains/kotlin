@@ -1,0 +1,5 @@
+---
+assert("Hello, World" matches "[A-Za-z]+".toRegex())
+                      |                   |
+                      false               [A-Za-z]+
+---

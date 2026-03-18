@@ -72,9 +72,11 @@ The only observable effect is that a custom ABI version is written to KLIB manif
 
     @Argument(
         value = "-Xklib-relative-path-base",
-        description = "Provide a base path to compute the source's relative paths in klib (default is empty).",
+        description = """Relativize all the paths stored in a klib using the given path prefixes.
+The supplied prefixes should be absolute paths to the directories containing the source code files.
+Note: The prefixes are applied in the same order as they are passed in this CLI argument.""",
     )
-    var relativePathBases: Array<String>? = null
+    var relativePathBases: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -90,10 +92,13 @@ The only observable effect is that a custom ABI version is written to KLIB manif
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xpartial-linkage",
         valueDescription = "{enable|disable}",
-        description = "Use partial linkage mode.",
+        description = """This option is deprecated and will be deleted in future versions.
+The partial linkage engine is always turned on.
+If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.""",
     )
     var partialLinkageMode: String? = null
         set(value) {
@@ -103,13 +108,23 @@ The only observable effect is that a custom ABI version is written to KLIB manif
 
     @Argument(
         value = "-Xpartial-linkage-loglevel",
-        valueDescription = "{info|warning|error}",
+        valueDescription = "{silent|info|warning|error}",
         description = "Define the compile-time log level for partial linkage.",
     )
     var partialLinkageLogLevel: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-Xskip-library-special-compatibility-checks",
+        description = "Skip library compatibility checks for stdlib and kotlin.test library.",
+    )
+    var skipLibrarySpecialCompatibilityChecks: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
         }
 
 }

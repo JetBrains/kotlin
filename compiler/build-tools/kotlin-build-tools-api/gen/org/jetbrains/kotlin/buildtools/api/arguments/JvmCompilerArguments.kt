@@ -3,16 +3,29 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
 import kotlin.Int
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.CompatqualAnnotationsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JdkRelease
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 
 /**
  * @since 2.3.0
@@ -97,7 +110,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ABI_STABILITY: JvmCompilerArgument<String?> =
+    public val X_ABI_STABILITY: JvmCompilerArgument<AbiStabilityMode?> =
         JvmCompilerArgument("X_ABI_STABILITY", KotlinReleaseVersion(1, 4, 30))
 
     /**
@@ -107,7 +120,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ADD_MODULES: JvmCompilerArgument<Array<String>?> =
+    public val X_ADD_MODULES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("X_ADD_MODULES", KotlinReleaseVersion(1, 1, 4))
 
     /**
@@ -152,7 +165,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ASSERTIONS: JvmCompilerArgument<String?> =
+    public val X_ASSERTIONS: JvmCompilerArgument<AssertionsMode?> =
         JvmCompilerArgument("X_ASSERTIONS", KotlinReleaseVersion(1, 2, 60))
 
     /**
@@ -250,7 +263,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_FRIEND_PATHS: JvmCompilerArgument<Array<String>?> =
+    public val X_FRIEND_PATHS: JvmCompilerArgument<List<Path>> =
         JvmCompilerArgument("X_FRIEND_PATHS", KotlinReleaseVersion(1, 2, 70))
 
     /**
@@ -323,7 +336,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<Array<String>?> =
+    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<List<Path>> =
         JvmCompilerArgument("X_JAVA_SOURCE_ROOTS", KotlinReleaseVersion(1, 3, 40))
 
     /**
@@ -335,7 +348,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JDK_RELEASE: JvmCompilerArgument<String?> =
+    public val X_JDK_RELEASE: JvmCompilerArgument<JdkRelease?> =
         JvmCompilerArgument("X_JDK_RELEASE", KotlinReleaseVersion(1, 7, 0))
 
     /**
@@ -346,7 +359,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JSPECIFY_ANNOTATIONS: JvmCompilerArgument<String?> =
+    public val X_JSPECIFY_ANNOTATIONS: JvmCompilerArgument<JspecifyAnnotationsMode?> =
         JvmCompilerArgument("X_JSPECIFY_ANNOTATIONS", KotlinReleaseVersion(1, 4, 30))
 
     /**
@@ -410,7 +423,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_KLIB: JvmCompilerArgument<String?> =
+    public val X_KLIB: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_KLIB", KotlinReleaseVersion(1, 4, 0))
 
     /**
@@ -424,7 +437,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_LAMBDAS: JvmCompilerArgument<String?> =
+    public val X_LAMBDAS: JvmCompilerArgument<LambdasMode?> =
         JvmCompilerArgument("X_LAMBDAS", KotlinReleaseVersion(1, 5, 0))
 
     /**
@@ -450,7 +463,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_MODULE_PATH: JvmCompilerArgument<String?> =
+    public val X_MODULE_PATH: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_MODULE_PATH", KotlinReleaseVersion(1, 1, 4))
 
     /**
@@ -579,7 +592,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PROFILE: JvmCompilerArgument<String?> =
+    public val X_PROFILE: JvmCompilerArgument<ProfileCompilerCommand?> =
         JvmCompilerArgument("X_PROFILE", KotlinReleaseVersion(1, 4, 20))
 
     /**
@@ -592,7 +605,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_SAM_CONVERSIONS: JvmCompilerArgument<String?> =
+    public val X_SAM_CONVERSIONS: JvmCompilerArgument<SamConversionsMode?> =
         JvmCompilerArgument("X_SAM_CONVERSIONS", KotlinReleaseVersion(1, 5, 0))
 
     /**
@@ -621,9 +634,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Save the IR to metadata (Experimental).
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_SERIALIZE_IR: JvmCompilerArgument<String> =
         JvmCompilerArgument("X_SERIALIZE_IR", KotlinReleaseVersion(1, 6, 0))
 
@@ -638,7 +654,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_STRING_CONCAT: JvmCompilerArgument<String?> =
+    public val X_STRING_CONCAT: JvmCompilerArgument<StringConcatMode?> =
         JvmCompilerArgument("X_STRING_CONCAT", KotlinReleaseVersion(1, 4, 20))
 
     /**
@@ -649,7 +665,8 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS: JvmCompilerArgument<String?> =
+    public val X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS:
+        JvmCompilerArgument<CompatqualAnnotationsMode?> =
         JvmCompilerArgument("X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS", KotlinReleaseVersion(1, 2, 20))
 
     /**
@@ -780,14 +797,14 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<String?> =
+    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<WhenExpressionsMode?> =
         JvmCompilerArgument("X_WHEN_EXPRESSIONS", KotlinReleaseVersion(2, 2, 20))
 
     /**
      * List of directories and JAR/ZIP archives to search for user class files.
      */
     @JvmField
-    public val CLASSPATH: JvmCompilerArgument<String?> =
+    public val CLASSPATH: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("CLASSPATH", KotlinReleaseVersion(1, 0, 0))
 
     /**
@@ -801,7 +818,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.
      */
     @JvmField
-    public val JDK_HOME: JvmCompilerArgument<String?> =
+    public val JDK_HOME: JvmCompilerArgument<Path?> =
         JvmCompilerArgument("JDK_HOME", KotlinReleaseVersion(1, 0, 3))
 
     /**
@@ -813,7 +830,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * -jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1.
      */
     @JvmField
-    public val JVM_DEFAULT: JvmCompilerArgument<String?> =
+    public val JVM_DEFAULT: JvmCompilerArgument<JvmDefaultMode?> =
         JvmCompilerArgument("JVM_DEFAULT", KotlinReleaseVersion(2, 2, 0))
 
     /**
@@ -855,7 +872,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Script definition template classes.
      */
     @JvmField
-    public val SCRIPT_TEMPLATES: JvmCompilerArgument<Array<String>?> =
+    public val SCRIPT_TEMPLATES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("SCRIPT_TEMPLATES", KotlinReleaseVersion(1, 1, 0))
   }
 }

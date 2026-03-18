@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWi
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -98,7 +99,11 @@ abstract class VariableFixationFinder(
         completionMode: ConstraintSystemCompletionMode,
         topLevelType: KotlinTypeMarker,
     ): VariableForFixation? =
-        findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
+        findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)?.also { variable ->
+            if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                require(!variable.isReady || c.notFixedTypeVariables[variable.variable]?.constraints?.any { !it.isNoInfer } == true)
+            }
+        }
 
     context(c: Context)
     fun typeVariableHasProperConstraint(typeVariable: TypeConstructorMarker): Boolean {
@@ -374,28 +379,35 @@ inline fun KotlinTypeMarker.isProperTypeForFixation(
 
 context(c: TypeSystemInferenceExtensionContext)
 fun KotlinTypeMarker.extractProjectionsForAllCapturedTypes(): Set<KotlinTypeMarker> {
+    return buildSet {
+        extractProjectionsForAllCapturedTypesInternal(this)
+    }
+}
+
+context(c: TypeSystemInferenceExtensionContext)
+private fun KotlinTypeMarker.extractProjectionsForAllCapturedTypesInternal(result: MutableSet<KotlinTypeMarker>) {
     if (isFlexible()) {
         val flexibleType = asFlexibleType()!!
-        return buildSet {
-            addAll(flexibleType.lowerBound().extractProjectionsForAllCapturedTypes())
-            addAll(flexibleType.upperBound().extractProjectionsForAllCapturedTypes())
+        flexibleType.lowerBound().extractProjectionsForAllCapturedTypesInternal(result)
+        if (!c.isTriviallyFlexible(flexibleType)) {
+            flexibleType.upperBound().extractProjectionsForAllCapturedTypesInternal(result)
         }
+        return
     }
     val simpleBaseType = asRigidType()?.asCapturedTypeUnwrappingDnn()
 
-    return buildSet {
-        val projectionType = if (simpleBaseType != null) {
-            val argumentType = simpleBaseType.typeConstructorProjection().getType() ?: return@buildSet
-            argumentType.also(::add)
-        } else {
-            this@extractProjectionsForAllCapturedTypes
-        }
-        val argumentsCount = projectionType.argumentsCount().takeIf { it != 0 } ?: return@buildSet
+    val projectionType = if (simpleBaseType != null) {
+        val argumentType = simpleBaseType.typeConstructorProjection().getType() ?: return
+        if (!result.add(argumentType)) return
+        argumentType
+    } else {
+        this@extractProjectionsForAllCapturedTypesInternal
+    }
+    val argumentsCount = projectionType.argumentsCount().takeIf { it != 0 } ?: return
 
-        for (i in 0 until argumentsCount) {
-            val argumentType = projectionType.getArgument(i).getType() ?: continue
-            addAll(argumentType.extractProjectionsForAllCapturedTypes())
-        }
+    for (i in 0 until argumentsCount) {
+        val argumentType = projectionType.getArgument(i).getType() ?: continue
+        argumentType.extractProjectionsForAllCapturedTypesInternal(result)
     }
 }
 

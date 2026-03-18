@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }

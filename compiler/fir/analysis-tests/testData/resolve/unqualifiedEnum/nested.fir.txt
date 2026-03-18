@@ -13,7 +13,7 @@ FILE: nested.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Outer>|
-            public get(): R|kotlin/enums/EnumEntries<Outer>|
+            public static get(): R|kotlin/enums/EnumEntries<Outer>|
 
     }
     public final enum class Inner : R|kotlin/Enum<Inner>| {
@@ -30,7 +30,7 @@ FILE: nested.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Inner>|
-            public get(): R|kotlin/enums/EnumEntries<Inner>|
+            public static get(): R|kotlin/enums/EnumEntries<Inner>|
 
     }
     public final fun foo(o: R|Outer|, i: R|Inner|): R|kotlin/Int| {

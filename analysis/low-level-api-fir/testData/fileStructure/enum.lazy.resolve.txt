@@ -21,6 +21,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enum.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] val entries: R|kotlin/enums/EnumEntries<Enum>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Enum>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Enum>|
 
     }

@@ -24,5 +24,11 @@ object NativeExpressionCheckers : ExpressionCheckers() {
             FirNativeAtomicReferenceToPrimitiveCallChecker,
             FirNativeAtomicArrayToPrimitiveCallChecker,
             FirNativeIdentityHashCodeCallOnValueTypeObjectChecker,
+            FirNativeVariadicFunctionPointerChecker,
+            FirNativeObjCStringAsVariadicChecker,
+            FirNativeVariadicSpreadChecker,
         )
+    override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = setOf(
+        FirNativeVariadicCallableReferenceChecker,
+    )
 }

@@ -2,6 +2,7 @@ KtForExpression(23,37): 'for(i in f) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in ROOT) operator fun Foo.iterator(): Iterator
       1: (in ROOT) operator fun Iterator.hasNext(): kotlin.Boolean

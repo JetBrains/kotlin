@@ -1,0 +1,44 @@
+KtFile: 'notNullAssertion.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,32): 'fun test(a: String?) {'
+  null
+
+KtParameterList(8,20): '(a: String?)'
+  null
+
+KtParameter(9,19): 'a: String?'
+  null
+
+KtTypeReference(12,19): 'String?'
+  null
+
+KtNullableType(12,19): 'String?'
+  null
+
+KtUserType(12,18): 'String'
+  null
+
+KtNameReferenceExpression(12,18): 'String'
+  null
+
+KtBlockExpression(21,32): '{'
+  null
+
+KtPostfixExpression(27,30): 'a!!'
+  null
+
+KtNameReferenceExpression(27,28): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.String?
+    ]
+
+KtOperationReferenceExpression(28,30): '!!'
+  null

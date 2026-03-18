@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.test.builders
 
-import org.jetbrains.kotlin.test.TestRunner
+import org.jetbrains.kotlin.test.NonGroupingTestRunner
 
-inline fun testRunner(testDataPath: String, crossinline init: TestConfigurationBuilder.() -> Unit): TestRunner {
-    return TestRunner(testConfiguration(testDataPath, init))
+inline fun nonGroupingPhaseTestRunner(testDataPath: String, crossinline init: TestConfigurationBuilder.() -> Unit): NonGroupingTestRunner {
+    return NonGroupingTestRunner(testConfiguration(testDataPath, init))
 }

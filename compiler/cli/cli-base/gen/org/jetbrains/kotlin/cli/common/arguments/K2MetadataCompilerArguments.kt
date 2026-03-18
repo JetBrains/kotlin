@@ -16,7 +16,7 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
         valueDescription = "<path>",
         description = "Paths to output directories for friend modules (modules whose internals should be visible).",
     )
-    var friendPaths: Array<String>? = null
+    var friendPaths: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -47,7 +47,7 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
         valueDescription = "<path>",
         description = "Paths to output directories for refined modules (modules whose expects this module can actualize).",
     )
-    var refinesPaths: Array<String>? = null
+    var refinesPaths: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -57,7 +57,7 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
         value = "-Xtarget-platform",
         description = "Target platform for metadata generation. Possible values: JVM, JS, WasmJs, WasmWasi, Native",
     )
-    var targetPlatform: Array<String>? = null
+    var targetPlatform: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value

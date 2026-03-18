@@ -271,7 +271,7 @@ class TestApiDependenciesCheckerTest {
     companion object {
         private fun Project.assertNoTestApiDependencyWarning() {
             runLifecycleAwareTest {
-                val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project)
+                val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project.path)
                 diagnostics.assertNoDiagnostics(TestApiDependencyWarning)
             }
         }
@@ -280,7 +280,7 @@ class TestApiDependenciesCheckerTest {
             vararg messages: String,
         ) {
             runLifecycleAwareTest {
-                val diagnostics = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project)
+                val diagnostics = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project.path)
 
                 val actualWarning = diagnostics.assertContainsSingleDiagnostic(TestApiDependencyWarning)
 

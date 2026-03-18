@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 // See KT-59030.
 @Tag("partial-linkage")
 @EnforcedHostTarget
-@UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
+@UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
 class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
     // This test relies on static caches. So, run it along with other PL tests but only when caches are enabled.
     @BeforeEach

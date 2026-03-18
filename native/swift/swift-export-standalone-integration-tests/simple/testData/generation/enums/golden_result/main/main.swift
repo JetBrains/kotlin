@@ -20,7 +20,7 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
             return Enum_i_get(self.__externalRCRef())
         }
         set {
-            return Enum_i_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
+            return { Enum_i_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
         }
     }
     public var rawValue: Swift.Int32 {

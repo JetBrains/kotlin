@@ -1,4 +1,4 @@
 KtNameReferenceExpression(69,73): 'Fake'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Fake'.>

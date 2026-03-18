@@ -5,11 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.reflect.Field
-import java.lang.reflect.Member
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
-import java.lang.reflect.Type
+import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
@@ -21,7 +17,8 @@ internal abstract class KotlinKProperty<out V>(
     override val signature: String,
     override val rawBoundReceiver: Any?,
     val kmProperty: KmProperty,
-) : KotlinKCallable<V>(), ReflectKProperty<V> {
+    overriddenStorage: KCallableOverriddenStorage,
+) : KotlinKCallable<V>(overriddenStorage), ReflectKProperty<V> {
     override val name: String get() = kmProperty.name
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
@@ -63,7 +60,7 @@ internal abstract class KotlinKProperty<out V>(
     override val javaField: Field? by lazy(PUBLICATION) {
         if (isLocalDelegated) return@lazy null
         val fieldSignature = kmProperty.fieldSignature ?: return@lazy null
-        require(container is KPackageImpl) { "javaField is only supported for top-level properties for now: $this" }
+        require(container is KPackageImpl) { "javaField is only supported for top-level properties for now: $container/$name $signature" }
         val owner = container.jClass
         try {
             owner.getDeclaredField(fieldSignature.name)
@@ -94,7 +91,9 @@ internal abstract class KotlinKProperty<out V>(
             }
 
             // For annotations in classes, we should also support $annotations methods in DefaultImpls, and properties in companion objects.
-            require(container is KPackageImpl) { "Annotations are only supported for top-level properties for now: $this" }
+            require(container is KPackageImpl) {
+                "Annotations are only supported for top-level properties for now: $container/$name $signature"
+            }
 
             val syntheticMethod = kmProperty.syntheticMethodForAnnotations ?: return emptyList()
             val annotations = container.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)?.annotations?.toList()
@@ -103,7 +102,7 @@ internal abstract class KotlinKProperty<out V>(
         }
 
     abstract class Accessor<out PropertyType, out ReturnType> :
-        KotlinKCallable<ReturnType>(), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
+        KotlinKCallable<ReturnType>(KCallableOverriddenStorage.EMPTY), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
         abstract override val property: KotlinKProperty<PropertyType>
 
         abstract val accessor: KmPropertyAccessorAttributes?
@@ -123,6 +122,11 @@ internal abstract class KotlinKProperty<out V>(
         override val isOperator: Boolean get() = false
         override val isInfix: Boolean get() = false
         override val isSuspend: Boolean get() = false
+
+        final override fun replaceContainerForFakeOverride(
+            container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+        ): ReflectKCallable<ReturnType> =
+            error("Property accessors can only be copied by copying the corresponding property")
 
         override val annotations: List<Annotation>
             get() =
@@ -213,7 +217,7 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
 
     fun isJvmStaticProperty(): Boolean {
         // For class properties, we'll need to check if the synthetic `$annotations` method contains `@JvmStatic`.
-        require(container is KPackageImpl) { "Only top-level properties are supported for now: $this" }
+        require(container is KPackageImpl) { "Only top-level properties are supported for now: $container/$name" }
         return false
     }
 

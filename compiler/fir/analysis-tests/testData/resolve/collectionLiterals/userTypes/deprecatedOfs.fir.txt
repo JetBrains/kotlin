@@ -1,0 +1,96 @@
+FILE: deprecatedOfs.kt
+    public final class AllDeprecated : R|kotlin/Any| {
+        public constructor(): R|AllDeprecated| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|AllDeprecated.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final operator fun of(vararg x: R|kotlin/IntArray|): R|AllDeprecated| {
+                ^of R|/AllDeprecated.AllDeprecated|()
+            }
+
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final operator fun of(): R|AllDeprecated| {
+                ^of R|/AllDeprecated.AllDeprecated|()
+            }
+
+        }
+
+    }
+    public final class OldSetDeprecated : R|kotlin/Any| {
+        public constructor(): R|OldSetDeprecated| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|OldSetDeprecated.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final operator fun of(vararg x: R|kotlin/IntArray|): R|OldSetDeprecated| {
+                ^of R|/OldSetDeprecated.OldSetDeprecated|()
+            }
+
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final operator fun of(): R|OldSetDeprecated| {
+                ^of R|/OldSetDeprecated.OldSetDeprecated|()
+            }
+
+            public final operator fun of(vararg x: R|kotlin/LongArray|): R|OldSetDeprecated| {
+                ^of R|/OldSetDeprecated.OldSetDeprecated|()
+            }
+
+            public final operator fun of(x: R|kotlin/Long|): R|OldSetDeprecated| {
+                ^of R|/OldSetDeprecated.OldSetDeprecated|()
+            }
+
+        }
+
+    }
+    public final fun <T> take(t: R|T|): R|kotlin/Unit| {
+        ^take Q|kotlin/Unit|
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/take<Inapplicable(INAPPLICABLE): /take>#|<R|AllDeprecated|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+        R|/take<Inapplicable(INAPPLICABLE): /take>#|<R|AllDeprecated|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        R|/take|<R|OldSetDeprecated|>(Q|OldSetDeprecated.Companion|.R|/OldSetDeprecated.Companion.of|(vararg(Long(1), Long(2), Long(3))))
+        R|/take|<R|OldSetDeprecated|>(Q|OldSetDeprecated.Companion|.R|/OldSetDeprecated.Companion.of|())
+        lval x: R|kotlin/Any| = when () {
+            Boolean(true) ->  {
+                R|/AllDeprecated.AllDeprecated|()
+            }
+            else ->  {
+                Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+            }
+        }
+
+        lval y: R|OldSetDeprecated| = when () {
+            Boolean(true) ->  {
+                R|/OldSetDeprecated.OldSetDeprecated|()
+            }
+            else ->  {
+                Q|OldSetDeprecated.Companion|.R|/OldSetDeprecated.Companion.of|(vararg(Long(1), Long(2), Long(3)))
+            }
+        }
+
+        lval z: R|OldSetDeprecated| = when () {
+            Boolean(true) ->  {
+                R|/OldSetDeprecated.OldSetDeprecated|()
+            }
+            else ->  {
+                Q|OldSetDeprecated.Companion|.R|/OldSetDeprecated.Companion.of|(Long(42))
+            }
+        }
+
+        lval t: R|OldSetDeprecated| = when () {
+            Boolean(true) ->  {
+                R|/OldSetDeprecated.OldSetDeprecated|()
+            }
+            else ->  {
+                Q|OldSetDeprecated.Companion|.R|/OldSetDeprecated.Companion.of|()
+            }
+        }
+
+    }

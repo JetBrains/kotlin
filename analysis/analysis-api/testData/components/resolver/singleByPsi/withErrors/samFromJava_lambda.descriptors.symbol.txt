@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/pkg/MyHandler.stash(<dispatch receiver>: test.pkg.MyHandler, actor: test.pkg.MyInterface!, actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)): kotlin.Unit
+    ]

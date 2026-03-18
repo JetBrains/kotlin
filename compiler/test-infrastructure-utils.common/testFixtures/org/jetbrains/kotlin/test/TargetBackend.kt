@@ -19,6 +19,7 @@ enum class TargetBackend(
     WASM_WASI(WASM),
     ANDROID(JVM),
     NATIVE,
+    JKLIB(JVM_IR)
     ;
 
     val compatibleWith get() = compatibleWithTargetBackend ?: ANY

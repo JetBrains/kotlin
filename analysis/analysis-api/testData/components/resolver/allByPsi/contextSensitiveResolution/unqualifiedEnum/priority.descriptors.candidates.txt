@@ -83,7 +83,7 @@ KtWhenExpression(168,206): 'when (f) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(174,175): 'f'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -107,7 +107,7 @@ KtWhenConditionWithExpression(183,186): 'ONE'
   NO_CANDIDATES
 
 KtNameReferenceExpression(183,186): 'ONE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -161,7 +161,7 @@ KtWhenExpression(229,270): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(235,236): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -185,7 +185,7 @@ KtWhenConditionWithExpression(244,249): 'THREE'
   NO_CANDIDATES
 
 KtNameReferenceExpression(244,249): 'THREE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

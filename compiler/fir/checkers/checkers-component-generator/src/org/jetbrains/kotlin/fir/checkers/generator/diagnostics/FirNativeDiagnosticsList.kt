@@ -111,5 +111,20 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val IDENTITY_HASH_CODE_ON_VALUE_TYPE by warning<KtElement> {
             parameter<ConeKotlinType>("type")
         }
+        val VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("function")
+        }
+        val OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED by error<KtElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
+            parameter<FirBasedSymbol<*>>("method")
+        }
+        val CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("function")
+        }
+        val CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("function")
+        }
+        val STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS by error<KtElement> {}
+        val VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF by error<KtElement> {}
+        val VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF by error<KtElement> {}
     }
 }

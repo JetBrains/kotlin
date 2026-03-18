@@ -1,2 +1,5 @@
 KtNameReferenceExpression(139,144): 'local'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      local(): kotlin.Unit
+    ]

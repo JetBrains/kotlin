@@ -3,7 +3,7 @@
 
 annotation class Anno(val s: String)
 
-@Anno("Use 'AAA' instead"
+@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"Use 'AAA' instead"
 <!UNRESOLVED_REFERENCE!>open<!> <!EXPRESSION_EXPECTED!>class MyClass : Any() {
     val foo = 24
 
@@ -18,7 +18,7 @@ annotation class Anno(val s: String)
 
         }
     }
-}<!><!SYNTAX, SYNTAX!><!>
+}<!><!><!SYNTAX, SYNTAX!><!>
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, functionDeclaration, integerLiteral,
 localClass, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

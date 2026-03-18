@@ -34,7 +34,7 @@ internal object DWARF {
      */
     const val flagsForwardDeclaration = 4
 
-    fun runtimeVersion(config: KonanConfig) = when (config.debugInfoVersion()) {
+    fun runtimeVersion(config: NativeSecondStageCompilationConfig) = when (config.debugInfoVersion()) {
         2 -> 0
         1 -> 2 /* legacy :/ */
         else -> TODO("unsupported debug info format version")
@@ -44,19 +44,19 @@ internal object DWARF {
      * Note: Kotlin language constant appears in DWARF v6, while modern linker fails to links DWARF other then [2;4],
      * that why we emit version 4 actually.
      */
-    fun dwarfVersion(config: KonanConfig) = when (config.debugInfoVersion()) {
+    fun dwarfVersion(config: NativeSecondStageCompilationConfig) = when (config.debugInfoVersion()) {
         1 -> 2
         2 -> 4 /* likely the most of the future kotlin native debug info format versions will emit DWARF v4 */
         else -> TODO("unsupported debug info format version")
     }
 
-    fun language(config: KonanConfig) = when (config.debugInfoVersion()) {
+    fun language(config: NativeSecondStageCompilationConfig) = when (config.debugInfoVersion()) {
         1 -> DwarfLanguage.DW_LANG_C89.value
         else -> DwarfLanguage.DW_LANG_Kotlin.value
     }
 }
 
-fun KonanConfig.debugInfoVersion(): Int = configuration.debugInfoVersion ?: 1
+fun NativeSecondStageCompilationConfig.debugInfoVersion(): Int = configuration.debugInfoVersion ?: 1
 
 internal class DebugInfo(override val generationState: NativeGenerationState) : ContextUtils {
     private val config = context.config
@@ -300,7 +300,7 @@ internal data class FileAndFolder(val file: String, val folder: String) {
     fun path() = if (this == NOFILE) file else "$folder/$file"
 }
 
-internal fun String?.toFileAndFolder(config: KonanConfig): FileAndFolder {
+internal fun String?.toFileAndFolder(config: NativeSecondStageCompilationConfig): FileAndFolder {
     this ?: return FileAndFolder.NOFILE
     val file = File(this)
     // Note: `parentOrNull` is `null` when the path consists of a single segment, e.g. `foo.kt` and not `bar/foo.kt`.

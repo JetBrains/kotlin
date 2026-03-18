@@ -1,2 +1,6 @@
 KtConstructorCalleeExpression(31,32): 'A'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(): A
+    ]
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>

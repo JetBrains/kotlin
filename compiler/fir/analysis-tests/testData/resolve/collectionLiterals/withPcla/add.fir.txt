@@ -1,0 +1,37 @@
+FILE: add.kt
+    public final fun test(): R|kotlin/Unit| {
+        R|kotlin/collections/buildList<CS errors: kotlin/collections/buildList>#|<<ERROR TYPE REF: Cannot infer argument for type parameter E>>(<L> = buildList@fun R|kotlin/collections/MutableList<ERROR CLASS: Cannot infer argument for type parameter E>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        }
+        )
+        R|kotlin/collections/buildList|<R|kotlin/collections/List<kotlin/Int>|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/collections/List<kotlin/Int>>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+        }
+        )
+        R|kotlin/collections/buildList|<R|kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(42)))
+        }
+        )
+        R|kotlin/collections/buildList|<R|kotlin/collections/List<kotlin/String>|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/collections/List<kotlin/String>>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(42)))
+        }
+        )
+        R|kotlin/collections/buildList|<R|kotlin/collections/Collection<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/collections/Collection<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|kotlin/collections/setOf|<R|kotlin/String|>(String(42)))
+        }
+        )
+        R|kotlin/collections/buildList|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42)))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(42)))
+        }
+        )
+        R|kotlin/collections/buildList<CS errors: kotlin/collections/buildList>#|<R|kotlin/collections/Set<kotlin/String>|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/collections/Set<kotlin/String>>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42)))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(42)))
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/collections/Set<kotlin/String>|><CS errors: kotlin/collections/MutableList.get>#|(Int(0)).R|SubstitutionOverride<kotlin/collections/Set.size: R|kotlin/Int|><Inapplicable(RESOLVED): kotlin/collections/Set.size>#|
+        }
+        )
+    }

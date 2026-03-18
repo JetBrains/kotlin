@@ -59,20 +59,20 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
             return processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL, logger) }
         }
 
-        val processorNames = processors.map {it.javaClass.name}.toSet()
+        val processorNames = processors.map { it.javaClass.name }.toSet()
 
         val processorsInfo: Map<String, DeclaredProcType> = getIncrementalProcessorsFromClasspath(processorNames, classpath)
 
         val nonIncremental = processorNames.filter { !processorsInfo.containsKey(it) }
-        return processors.map {
-            val procType = processorsInfo[it.javaClass.name]?.let {
+        return processors.map { processor ->
+            val procType = processorsInfo[processor.javaClass.name]?.let {
                 if (nonIncremental.isEmpty()) {
                     it
                 } else {
                     DeclaredProcType.INCREMENTAL_BUT_OTHER_APS_ARE_NOT
                 }
             } ?: DeclaredProcType.NON_INCREMENTAL
-            IncrementalProcessor(it, procType, logger)
+            IncrementalProcessor(processor, procType, logger)
         }
     }
 

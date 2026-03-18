@@ -22,7 +22,7 @@ FILE: enumNameWithInit.kt
         }
 
         public final static [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public get(): R|kotlin/enums/EnumEntries<EnumClass>|
+            public static get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
     }
     public final fun box(): R|kotlin/String| {

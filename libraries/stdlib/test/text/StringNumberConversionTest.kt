@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -201,6 +201,45 @@ class StringNumberConversionTest {
 
             assertProduces("0e9999999999999", 0.0)
             assertProduces("-0e9999999999999", -0.0)
+
+            val exponents = listOf(
+                424,
+                Int.MAX_VALUE / 2,
+                Int.MAX_VALUE - 1,
+                Int.MAX_VALUE,
+                Int.MAX_VALUE.toLong() + 1,
+                Int.MAX_VALUE.toLong() * 2
+            )
+            for (exp in exponents) {
+                for (i in listOf(1, 10, 50, 100)) {
+                    val zeros = "0".repeat(i)
+                    assertProduces("1${zeros}e${exp}", Double.POSITIVE_INFINITY)
+                    assertProduces("-1${zeros}e${exp}", Double.NEGATIVE_INFINITY)
+                    assertProduces("1${zeros}e-${exp}", 0.0)
+                    assertProduces("-1${zeros}e-${exp}", -0.0)
+
+                    assertProduces("0.${zeros}1e${exp}", Double.POSITIVE_INFINITY)
+                    assertProduces("-0.${zeros}1e${exp}", Double.NEGATIVE_INFINITY)
+                    assertProduces("0.${zeros}1e-${exp}", 0.0)
+                    assertProduces("-0.${zeros}1e-${exp}", -0.0)
+                }
+            }
+
+            assertProduces("1e308", 1e+308)
+            assertProduces("-1e308", -1e+308)
+            assertProduces("1e309", Double.POSITIVE_INFINITY)
+            assertProduces("-1e309", Double.NEGATIVE_INFINITY)
+            assertProduces("9.9e-324", 9.9e-324)
+            assertProduces("-9.9e-324", -9.9e-324)
+            assertProduces("9.9e-325", 0.0)
+            assertProduces("-9.9e-325", -0.0)
+
+            // JVM is excluded because of a known JDK 8 bug: https://bugs.openjdk.org/browse/JDK-8043740
+            testExceptOn(TestPlatform.Jvm) {
+                assertProduces("0.${"0".repeat(324)}1e324", 0.1)
+                assertProduces("0.${"0".repeat(50)}1e50", 0.1)
+                assertProduces("0.${"0".repeat(1000)}1e1000", 0.1)
+            }
 
             assertFailsOrNull(".")
 

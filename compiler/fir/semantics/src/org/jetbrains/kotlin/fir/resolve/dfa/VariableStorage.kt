@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.isContextParameter
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.fir.unwrapFakeOverridesAccountingForExplicitBackingFields
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 
@@ -146,6 +146,6 @@ class VariableStorage private constructor(
         // And at the same time, checking a field is much faster than a couple of attributes (0.3 secs at MT Full Kotlin)
         if (this.dispatchReceiverType == null) return this
 
-        return this.unwrapFakeOverrides()
+        return unwrapFakeOverridesAccountingForExplicitBackingFields()
     }
 }

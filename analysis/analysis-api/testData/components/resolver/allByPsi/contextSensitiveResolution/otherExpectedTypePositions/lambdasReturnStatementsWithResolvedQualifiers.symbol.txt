@@ -32,7 +32,10 @@ KtSuperTypeCallEntry(122,132): 'MySealed()'
     ]
 
 KtConstructorCalleeExpression(122,130): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MySealed
+    ]
 
 KtTypeReference(122,130): 'MySealed'
   null
@@ -62,7 +65,10 @@ KtSuperTypeCallEntry(153,163): 'MySealed()'
     ]
 
 KtConstructorCalleeExpression(153,161): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MySealed
+    ]
 
 KtTypeReference(153,161): 'MySealed'
   null
@@ -176,7 +182,10 @@ KtCallExpression(267,273): 'TODO()'
     ]
 
 KtNameReferenceExpression(267,271): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(271,273): '()'
   null
@@ -221,7 +230,10 @@ KtCallExpression(297,303): 'TODO()'
     ]
 
 KtNameReferenceExpression(297,301): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(301,303): '()'
   null
@@ -254,10 +266,16 @@ KtDotQualifiedExpression(340,350): 'MySealed.X'
   null
 
 KtNameReferenceExpression(340,348): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(349,350): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtCallExpression(356,433): 'myRunWithMySealed {'
   KaSymbolResolutionSuccess:
@@ -266,7 +284,10 @@ KtCallExpression(356,433): 'myRunWithMySealed {'
     ]
 
 KtNameReferenceExpression(356,373): 'myRunWithMySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
+    ]
 
 KtLambdaArgument(374,433): '{'
   null
@@ -287,7 +308,10 @@ KtContainerNode(388,389): 'b'
   null
 
 KtNameReferenceExpression(388,389): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(391,417): 'return@myRunWithMySealed X'
   null
@@ -308,10 +332,16 @@ KtLabelReferenceExpression(397,415): '@myRunWithMySealed'
     ]
 
 KtNameReferenceExpression(416,417): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(426,427): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtCallExpression(439,524): 'myRunWithMySealed {'
   KaSymbolResolutionSuccess:
@@ -320,7 +350,10 @@ KtCallExpression(439,524): 'myRunWithMySealed {'
     ]
 
 KtNameReferenceExpression(439,456): 'myRunWithMySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
+    ]
 
 KtLambdaArgument(457,524): '{'
   null
@@ -341,7 +374,10 @@ KtContainerNode(471,472): 'b'
   null
 
 KtNameReferenceExpression(471,472): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(474,504): 'return@myRunWithMySealed id(X)'
   null
@@ -368,7 +404,10 @@ KtCallExpression(499,504): 'id(X)'
     ]
 
 KtNameReferenceExpression(499,501): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(501,504): '(X)'
   null
@@ -377,7 +416,10 @@ KtValueArgument(502,503): 'X'
   null
 
 KtNameReferenceExpression(502,503): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtCallExpression(513,518): 'id(Y)'
   KaSymbolResolutionSuccess:
@@ -386,7 +428,10 @@ KtCallExpression(513,518): 'id(Y)'
     ]
 
 KtNameReferenceExpression(513,515): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(515,518): '(Y)'
   null
@@ -395,7 +440,10 @@ KtValueArgument(516,517): 'Y'
   null
 
 KtNameReferenceExpression(516,517): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtCallExpression(530,593): 'myRun<MySealed> {'
   KaSymbolResolutionSuccess:
@@ -404,7 +452,10 @@ KtCallExpression(530,593): 'myRun<MySealed> {'
     ]
 
 KtNameReferenceExpression(530,535): 'myRun'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: () -> T): T
+    ]
 
 KtTypeArgumentList(535,545): '<MySealed>'
   null
@@ -440,7 +491,10 @@ KtContainerNode(560,561): 'b'
   null
 
 KtNameReferenceExpression(560,561): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(563,577): 'return@myRun X'
   null
@@ -461,10 +515,16 @@ KtLabelReferenceExpression(569,575): '@myRun'
     ]
 
 KtNameReferenceExpression(576,577): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(586,587): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtCallExpression(598,682): 'foo('
   KaSymbolResolutionSuccess:
@@ -473,7 +533,10 @@ KtCallExpression(598,682): 'foo('
     ]
 
 KtNameReferenceExpression(598,601): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MySealed): kotlin.Unit
+    ]
 
 KtValueArgumentList(601,682): '('
   null
@@ -488,7 +551,10 @@ KtCallExpression(611,676): 'myRun {'
     ]
 
 KtNameReferenceExpression(611,616): 'myRun'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: () -> T): T
+    ]
 
 KtLambdaArgument(617,676): '{'
   null
@@ -509,7 +575,10 @@ KtContainerNode(635,636): 'b'
   null
 
 KtNameReferenceExpression(635,636): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(638,652): 'return@myRun X'
   null
@@ -530,10 +599,16 @@ KtLabelReferenceExpression(644,650): '@myRun'
     ]
 
 KtNameReferenceExpression(651,652): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(665,666): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtProperty(688,759): 'val z: MySealed = myRun {'
   null
@@ -554,7 +629,10 @@ KtCallExpression(706,759): 'myRun {'
     ]
 
 KtNameReferenceExpression(706,711): 'myRun'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: () -> T): T
+    ]
 
 KtLambdaArgument(712,759): '{'
   null
@@ -575,7 +653,10 @@ KtContainerNode(726,727): 'b'
   null
 
 KtNameReferenceExpression(726,727): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(729,743): 'return@myRun X'
   null
@@ -596,10 +677,16 @@ KtLabelReferenceExpression(735,741): '@myRun'
     ]
 
 KtNameReferenceExpression(742,743): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(752,753): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtCallExpression(765,818): 'myRun {'
   KaSymbolResolutionError:
@@ -609,7 +696,11 @@ KtCallExpression(765,818): 'myRun {'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /myRun>
 
 KtNameReferenceExpression(765,770): 'myRun'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /myRun(b: () -> T): T
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /myRun>
 
 KtLambdaArgument(771,818): '{'
   null
@@ -630,7 +721,10 @@ KtContainerNode(785,786): 'b'
   null
 
 KtNameReferenceExpression(785,786): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(788,802): 'return@myRun X'
   null
@@ -651,10 +745,14 @@ KtLabelReferenceExpression(794,800): '@myRun'
     ]
 
 KtNameReferenceExpression(801,802): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
 KtNameReferenceExpression(811,812): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
 
 KtCallExpression(823,885): 'myRun {'
   KaSymbolResolutionError:
@@ -664,7 +762,11 @@ KtCallExpression(823,885): 'myRun {'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MySealed.Y', but 'MySealed.X' was expected.>
 
 KtNameReferenceExpression(823,828): 'myRun'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /myRun(b: () -> T): T
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MySealed.Y', but 'MySealed.X' was expected.>
 
 KtLambdaArgument(829,885): '{'
   null
@@ -685,7 +787,10 @@ KtContainerNode(843,844): 'b'
   null
 
 KtNameReferenceExpression(843,844): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(846,869): 'return@myRun MySealed.X'
   null
@@ -709,10 +814,19 @@ KtDotQualifiedExpression(859,869): 'MySealed.X'
   null
 
 KtNameReferenceExpression(859,867): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(868,869): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(878,879): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]

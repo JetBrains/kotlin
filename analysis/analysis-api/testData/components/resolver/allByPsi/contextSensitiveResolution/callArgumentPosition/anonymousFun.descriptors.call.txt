@@ -86,7 +86,7 @@ KtSuperTypeCallEntry(257,266): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(257,264): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -110,7 +110,7 @@ KtUserType(257,264): 'MyClass'
   null
 
 KtNameReferenceExpression(257,264): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -173,7 +173,7 @@ KtSuperTypeCallEntry(332,341): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(332,339): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -197,7 +197,7 @@ KtUserType(332,339): 'MyClass'
   null
 
 KtNameReferenceExpression(332,339): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -266,7 +266,7 @@ KtSuperTypeCallEntry(428,435): 'Super()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(428,433): 'Super'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -290,7 +290,7 @@ KtUserType(428,433): 'Super'
   null
 
 KtNameReferenceExpression(428,433): 'Super'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -343,7 +343,7 @@ KtCallExpression(473,479): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(473,477): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -392,7 +392,7 @@ KtCallExpression(529,545): 'InheritorClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(529,543): 'InheritorClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -472,7 +472,42 @@ KtNameReferenceExpression(706,712): 'String'
   null
 
 KtPropertyDelegate(713,725): 'by lazy {""}'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = lazy {""}
+          isSafeNavigation = false
+          type = kotlin.Lazy<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Lazy<kotlin.String>
+          returnType = kotlin.String
+          symbol = kotlin/getValue(<extension receiver>: kotlin.Lazy<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = null
 
 KtCallExpression(716,725): 'lazy {""}'
   KaCallResolutionSuccess:
@@ -510,7 +545,7 @@ KtCallExpression(716,725): 'lazy {""}'
       }
 
 KtNameReferenceExpression(716,720): 'lazy'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -607,7 +642,7 @@ KtCallExpression(799,805): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(799,803): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -720,7 +755,7 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
       }
 
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -743,7 +778,7 @@ KtValueArgument(955,965): 'EnumValue1'
   null
 
 KtNameReferenceExpression(955,965): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
@@ -784,7 +819,7 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
       }
 
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -807,7 +842,7 @@ KtValueArgument(990,1005): 'InheritorObject'
   null
 
 KtNameReferenceExpression(990,1005): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
@@ -848,7 +883,7 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
       }
 
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -871,7 +906,7 @@ KtValueArgument(1029,1040): 'propMyClass'
   null
 
 KtNameReferenceExpression(1029,1040): 'propMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propMyClass>
 
@@ -912,7 +947,7 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
       }
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -935,7 +970,7 @@ KtValueArgument(1065,1069): 'prop'
   null
 
 KtNameReferenceExpression(1065,1069): 'prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
@@ -976,7 +1011,7 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
       }
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -999,7 +1034,7 @@ KtValueArgument(1093,1102): 'constProp'
   null
 
 KtNameReferenceExpression(1093,1102): 'constProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: constProp>
 
@@ -1040,7 +1075,7 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
       }
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1063,7 +1098,7 @@ KtValueArgument(1126,1134): 'lazyProp'
   null
 
 KtNameReferenceExpression(1126,1134): 'lazyProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>
 
@@ -1104,7 +1139,7 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
       }
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1127,7 +1162,7 @@ KtValueArgument(1158,1168): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1158,1168): 'lambdaProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>
 
@@ -1168,7 +1203,7 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
       }
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1191,7 +1226,7 @@ KtValueArgument(1192,1201): 'superProp'
   null
 
 KtNameReferenceExpression(1192,1201): 'superProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
@@ -1232,7 +1267,7 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
       }
 
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1260,7 +1295,7 @@ KtCallExpression(1226,1232): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
 KtNameReferenceExpression(1226,1230): 'func'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
@@ -1304,7 +1339,7 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
       }
 
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1332,7 +1367,7 @@ KtCallExpression(1256,1267): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
 
 KtNameReferenceExpression(1256,1265): 'superFunc'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
 
@@ -1376,7 +1411,7 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
       }
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1399,6 +1434,6 @@ KtValueArgument(1291,1301): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1291,1301): 'lambdaProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>

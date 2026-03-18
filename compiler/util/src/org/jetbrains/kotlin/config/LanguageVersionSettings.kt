@@ -459,7 +459,6 @@ enum class LanguageFeature(
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
     ForbidCaptureInlinableLambdasInJsCode(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-69297"),
     ForbidInitializationBeforeDeclarationInAnonymous(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-290"),
-    ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-358"),
     ForbidPrivateToThisUnboundCallableReferences(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-383"),
     AllowReifiedTypeInCatchClause(KOTLIN_2_4, issue = "KT-54363"),
     ApproximateLocalTypesInPublicDeclarations(KOTLIN_2_4, issue = "KT-82454"),
@@ -479,7 +478,9 @@ enum class LanguageFeature(
     DisableMaxTypeDepthFromInitialConstraints(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-372"),
     JsAllowExportingSuspendFunctions(sinceVersion = KOTLIN_2_4, "KT-56281"),
     ImprovedResolutionInSecondaryConstructors(sinceVersion = KOTLIN_2_4, "KT-77275"),
+    ReportTypeVarianceConflictsInDnnAndFlexible(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KT-84743"),
     CacheLocalVariableScopes(sinceVersion = KOTLIN_2_4, "KT-68606"),
+    ContextParameters(sinceVersion = KOTLIN_2_4, "KT-72222"),
     OverloadResolutionSpecificityForEnhancedJvmPrimitiveWrappers(sinceVersion = KOTLIN_2_4, "KT-9182"),
     ForbidTypeAliasToCompilerRequiredAnnotation(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79369"),
     ForbidArrayLiteralsInNonAnnotationContexts(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-369"),
@@ -489,14 +490,18 @@ enum class LanguageFeature(
     ForbidRootIdePackageInCli(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KT-81357"),
     ReportOptInUsageOnCompanionObjectAccesses(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KT-82524"),
     ChangedIntersectionWithRecursiveCapturedType(KOTLIN_2_4, issue = "KT-65059"),
+    FixedUninitializedEnumCompanionCheck(KOTLIN_2_4, issue = "KT-84860"),
     SkipHiddenObjectsInResolution(KOTLIN_2_4, issue = "KT-82555"),
     JvmEnhancedBridges(KOTLIN_2_4, "KT-82900"),
     DiscriminateNothingAsNullabilityConstraintInInference(KOTLIN_2_4, "KT-81948"),
     ResolveEqualsRhsInDependentContextWithCompletion(KOTLIN_2_4, "KT-81763"),
     IrIntraModuleInlinerBeforeKlibSerialization(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_3, issue = "KT-79717"),
     ImprovedExhaustivenessCheckForSubjectVariable24(KOTLIN_2_4, issue = "KT-83903"),
-    WrapContinuationForTailCallFunctions(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_4, "KT-74051"),
+    DontMakeExplicitNullableJavaTypeArgumentsFlexible(KOTLIN_2_4, "KTLC-284"),
     ProhibitFunctionCallsInDefaultParametersOfInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-83829"),
+    AllowNamedCompanionForJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-82128"),
+    AllowInterfaceNestedClassesInJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-84332"),
+    NativeTestProcessorBeforeSerialization(KOTLIN_2_4, "KT-83807"),
 
     // 2.5
 
@@ -505,6 +510,9 @@ enum class LanguageFeature(
     ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(sinceVersion = KOTLIN_2_5, "KTLC-288"),
     ForbidExternalEnumEntriesAndPrimaryConstructorProperties(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-389"),
     ProperSupportOfInnerClassesInCallableReferenceLHS(sinceVersion = KOTLIN_2_5, "KTLC-388"),
+    ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
+    ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
+    WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
 
     // End of 2.* language features --------------------------------------------------
 
@@ -549,8 +557,7 @@ enum class LanguageFeature(
     // NB: Currently, leads to regression KT-82132
     DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283"),
 
-    DontMakeExplicitJavaTypeArgumentsFlexible(sinceVersion = null, "KTLC-284"),
-    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"),
+    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"), // TODO: consider dropping in 2.5 timeframe (KT-84664)
     DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610"), // Postponed because of KT-82869
 
     // Experimental features
@@ -564,7 +571,6 @@ enum class LanguageFeature(
     ExplicitBackingFields(sinceVersion = null, issue = "KT-14663"),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
-    ContextParameters(sinceVersion = null, "KT-72222"),
     ExplicitContextArguments(sinceVersion = null, issue = "KT-81684"),
     JvmInlineMultiFieldValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
@@ -572,6 +578,7 @@ enum class LanguageFeature(
     AnnotationAllUseSiteTarget(sinceVersion = null, "KT-73256"),
     ImplicitJvmExposeBoxed(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-73466"),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308"),
+    CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true),
     NameBasedDestructuring(sinceVersion = null, "KT-19627"),
     DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
     EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),
@@ -581,8 +588,8 @@ enum class LanguageFeature(
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009"),
     JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802"),
 
-    // K1 support only. We keep it, as we may want to support it also in K2
-    UnitConversionsOnArbitraryExpressions(sinceVersion = null, NO_ISSUE_SPECIFIED),
+    // K1 support only; we keep it because we might want to eventually support it in K2 as well
+    UnitConversionsOnArbitraryExpressions(sinceVersion = null, "KT-84393"),
 
     JsAllowImplementingFunctionInterface(sinceVersion = null, NO_ISSUE_SPECIFIED),
     CustomEqualsInValueClasses(sinceVersion = null, "KT-24874"),
@@ -596,7 +603,7 @@ enum class LanguageFeature(
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276"),
 
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
-    CollectionLiterals(sinceVersion = null, testOnly = true, issue = "KT-80489"),
+    CollectionLiterals(sinceVersion = null, issue = "KT-80489"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
     IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-79717"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
@@ -691,10 +698,6 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     override val isUnsupported: Boolean
         get() = this < FIRST_SUPPORTED
 
-    // TODO: drop after KT-80590
-    val isJvmOnly: Boolean
-        get() = this == KOTLIN_1_9
-
     override val versionString: String = "$major.$minor"
 
     override fun toString() = versionString
@@ -708,12 +711,12 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         // Version status
-        //            1.0..1.8        1.9                       2.0             2.1..2.3    2.4..2.5
-        // Language:  UNSUPPORTED --> DEPRECATED (JVM-only) --> DEPRECATED ---> STABLE ---> EXPERIMENTAL
-        // API:       UNSUPPORTED --> DEPRECATED                           ---> STABLE ---> EXPERIMENTAL
+        //            1.0..1.9          2.0          2.1..2.4         2.5
+        // Language:  UNSUPPORTED --> DEPRECATED ---> STABLE ---> EXPERIMENTAL
+        // API:       UNSUPPORTED --> DEPRECATED ---> STABLE ---> EXPERIMENTAL
 
         @JvmField
-        val FIRST_API_SUPPORTED = KOTLIN_1_9
+        val FIRST_API_SUPPORTED = KOTLIN_2_0
 
         @JvmField
         val FIRST_SUPPORTED = KOTLIN_2_0
@@ -739,7 +742,6 @@ interface LanguageOrApiVersion : DescriptionAware {
         get() = when {
             !isStable -> "$versionString (experimental)"
             isDeprecated -> "$versionString (deprecated)"
-            this is LanguageVersion && isJvmOnly -> "$versionString (deprecated, JVM only)"
             isUnsupported -> "$versionString (unsupported)"
             else -> versionString
         }

@@ -2,5 +2,7 @@ KtNameReferenceExpression(218,221): 'inc'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNSAFE_CALL: Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'Int?'.>
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int

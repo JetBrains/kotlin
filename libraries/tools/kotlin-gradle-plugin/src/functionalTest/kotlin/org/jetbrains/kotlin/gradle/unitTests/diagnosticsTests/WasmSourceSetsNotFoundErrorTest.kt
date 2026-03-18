@@ -54,6 +54,6 @@ class WasmSourceSetsNotFoundErrorTest {
         }
 
         assertFails { project.evaluate() }
-        return project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project).toList()
+        return project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project.path).toList()
     }
 }

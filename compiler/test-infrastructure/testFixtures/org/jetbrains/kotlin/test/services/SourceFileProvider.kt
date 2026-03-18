@@ -147,3 +147,13 @@ fun TestModule.independentSourceDirectoryPath(testServices: TestServices): Strin
     val path = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(this).canonicalPath
     return FileUtil.toSystemIndependentName(path)
 }
+
+fun TestModule.independentSourceDirectoryPathsTransitive(testServices: TestServices): List<String> {
+    return buildList {
+        addAll(transitiveRegularDependencies(includeSelf = true))
+        addAll(transitiveFriendDependencies(includeSelf = false))
+        addAll(transitiveDependsOnDependencies(includeSelf = false))
+    }.map {
+        it.independentSourceDirectoryPath(testServices)
+    }
+}

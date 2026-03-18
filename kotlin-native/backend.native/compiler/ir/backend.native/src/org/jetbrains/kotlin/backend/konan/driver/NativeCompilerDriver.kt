@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
  */
 internal class NativeCompilerDriver(private val performanceManager: PerformanceManager?) {
 
-    fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
+    fun run(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
                 PhaseEngine.startTopLevel(config) { engine ->
@@ -59,7 +59,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
      * - Info.plist
      * - Binary (if -Xomit-framework-binary is not passed).
      */
-    private fun produceObjCFramework(engine: PhaseEngine<NativeBackendPhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceObjCFramework(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
                 ?: return
 
@@ -82,7 +82,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
-    private fun produceCLibrary(engine: PhaseEngine<NativeBackendPhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceCLibrary(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
                 ?: return
 
@@ -104,7 +104,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     /**
      * Produce a single binary artifact.
      */
-    private fun produceBinary(engine: PhaseEngine<NativeBackendPhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceBinary(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
                 ?: return
 
@@ -113,7 +113,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
-    private fun produceBinaryFromBitcode(engine: PhaseEngine<NativeBackendPhaseContext>, config: KonanConfig, bitcodeFilePath: String) {
+    private fun produceBinaryFromBitcode(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, bitcodeFilePath: String) {
         val llvmContext = LLVMContextCreate()!!
         var llvmModule: CPointer<LLVMOpaqueModule>? = null
         try {
@@ -138,7 +138,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
      *
      * See https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/AboutBundles/AboutBundles.html
      */
-    private fun produceBundle(engine: PhaseEngine<NativeBackendPhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceBundle(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
         require(config.target.family.isAppleFamily)
         require(config.produce == CompilerOutputKind.TEST_BUNDLE)
 
@@ -153,7 +153,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     }
 
     private fun createBackendContext(
-            config: KonanConfig,
+            config: NativeSecondStageCompilationConfig,
             frontendOutput: FrontendPhaseOutput.Full,
             linkKlibsOutput: LinkKlibsOutput,
             additionalDataSetter: (Context) -> Unit = {}

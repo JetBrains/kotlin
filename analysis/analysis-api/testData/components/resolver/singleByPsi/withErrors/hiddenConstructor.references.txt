@@ -2,5 +2,7 @@ KtNameReferenceExpression(17,20): 'Obj'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Obj'.>
     symbols:
       Nothing (Unresolved reference)

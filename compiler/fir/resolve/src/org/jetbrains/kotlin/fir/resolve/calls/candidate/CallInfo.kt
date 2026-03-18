@@ -54,8 +54,11 @@ open class CallInfo(
     val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
     val implicitInvokeMode: ImplicitInvokeMode,
 
-    val isCollectionLiteralCall: Boolean = false,
+    val containingCandidateForCollectionLiteral: Candidate? = null,
 ) : AbstractCallInfo() {
+    val isCollectionLiteralCall: Boolean
+        get() = containingCandidateForCollectionLiteral != null
+
     override val isImplicitInvoke: Boolean
         get() = implicitInvokeMode != ImplicitInvokeMode.None
 
@@ -97,12 +100,13 @@ open class CallInfo(
         name: Name = this.name,
         implicitInvokeMode: ImplicitInvokeMode = this.implicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate? = this.candidateForCommonInvokeReceiver,
+        containingCandidateForCollectionLiteral: Candidate? = this.containingCandidateForCollectionLiteral,
     ): CallInfo = CallInfo(
         callSite, callKind, name, explicitReceiver, argumentList,
         isUsedAsGetClassReceiver, typeArguments,
         session, containingFile, containingDeclarations,
         candidateForCommonInvokeReceiver, resolutionMode, origin, implicitInvokeMode,
-        isCollectionLiteralCall,
+        containingCandidateForCollectionLiteral,
     )
 }
 
@@ -126,7 +130,7 @@ class CallableReferenceInfo(
     session, containingFile, containingDeclarations,
     candidateForCommonInvokeReceiver = null, resolutionMode = ResolutionMode.ContextIndependent, origin,
     implicitInvokeMode = ImplicitInvokeMode.None,
-    isCollectionLiteralCall = false,
+    containingCandidateForCollectionLiteral = null,
 ) {
     override fun copy(
         callKind: CallKind,
@@ -136,6 +140,7 @@ class CallableReferenceInfo(
         name: Name,
         implicitInvokeMode: ImplicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate?,
+        containingCandidateForCollectionLiteral: Candidate?,
     ): CallableReferenceInfo = CallableReferenceInfo(
         callSite, name, explicitReceiver,
         session, containingFile, containingDeclarations,

@@ -10,7 +10,7 @@ import java.io.*
 
 class X<K, V> constructor() : Closeable {
 
-    @Throws(IOException::<!UNRESOLVED_REFERENCE!>claut<!><!SYNTAX!>(key: K, value: V) {
+    @Throws(IOException::<!UNRESOLVED_REFERENCE!>claut<!><!SYNTAX!>(<!UNRESOLVED_REFERENCE!>key<!>: K, <!UNRESOLVED_REFERENCE!>value<!>: V) {
     }<!><!SYNTAX!><!>
 
     @Throws(IOException::class)

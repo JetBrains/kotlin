@@ -1,0 +1,22 @@
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: foo/AllOpenGenerated.NestedMyClass
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: AllOpenGenerated
+      symbol: KaNamedClassSymbol(foo/AllOpenGenerated)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: NestedMyClass
+      symbol: KaNamedClassSymbol(foo/AllOpenGenerated.NestedMyClass)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(foo/AllOpenGenerated.NestedMyClass)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+foo.AllOpenGenerated.NestedMyClass

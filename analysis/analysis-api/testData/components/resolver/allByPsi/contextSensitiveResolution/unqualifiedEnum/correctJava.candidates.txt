@@ -29,7 +29,7 @@ KtWhenExpression(56,106): 'when (javaEnum) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(62,70): 'javaEnum'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -53,7 +53,7 @@ KtWhenConditionWithExpression(78,83): 'FIRST'
   NO_CANDIDATES
 
 KtNameReferenceExpression(78,83): 'FIRST'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -83,7 +83,7 @@ KtWhenConditionWithExpression(93,99): 'SECOND'
   NO_CANDIDATES
 
 KtNameReferenceExpression(93,99): 'SECOND'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

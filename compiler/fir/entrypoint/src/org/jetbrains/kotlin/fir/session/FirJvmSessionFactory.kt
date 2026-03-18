@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
@@ -126,6 +127,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             javaModuleResolver = c.projectEnvironment.getJavaModuleResolver(),
             predefinedComponents = c.predefinedJavaComponents,
             registerJvmDeserializationExtension = c.registerJvmDeserializationExtension,
+            inlineConstTracker = c.inlineConstTracker
         )
     }
 
@@ -224,7 +226,8 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         val jvmTarget: JvmTarget,
         val projectEnvironment: AbstractProjectEnvironment,
         val librariesScope: AbstractProjectFileSearchScope,
-        val registerJvmDeserializationExtension: Boolean
+        val registerJvmDeserializationExtension: Boolean,
+        val inlineConstTracker: InlineConstTracker?
     ) {
         constructor(
             configuration: CompilerConfiguration,
@@ -236,6 +239,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             projectEnvironment,
             librariesScope,
             registerJvmDeserializationExtension = registerJvmDeserializationExtension,
+            inlineConstTracker = configuration.inlineConstTracker
         )
 
         val packagePartProviderForLibraries: PackagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)

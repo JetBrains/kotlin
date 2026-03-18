@@ -8,7 +8,7 @@ FILE: [ResolvedTo(IMPORTS)] Interface.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
             LAZY_super<<implicit>>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] Interface.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
             LAZY_super<<implicit>>
         }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] Interface.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
             LAZY_super<<implicit>>
         }
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] Interface.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
             LAZY_super<<implicit>>
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] Interface.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
             LAZY_super<<implicit>>
         }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] Interface.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
             LAZY_super<<implicit>>
         }
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] Interface.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
             LAZY_super<<implicit>>
         }
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] usage.kt
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=/Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aaa] constructor([ResolvedTo(BODY_RESOLVE)] i: R|Interface|): R|Aaa| {
             super<R|kotlin/Any|>()
         }

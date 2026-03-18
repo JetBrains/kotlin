@@ -23,6 +23,10 @@ import java.util.regex.Pattern;
 @UseExtTestCaseGroupProvider()
 @ExtendWith(SwiftExportWithCoroutinesTestSupport.class)
 public class SwiftExportCoroutinesExecutionTestGenerated extends AbstractSwiftExportExecutionTest {
+  private void run(String fileName) {
+    runTest("native/swift/swift-export-standalone-integration-tests/coroutines/testData/execution/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInExecution() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone-integration-tests/coroutines/testData/execution"), Pattern.compile("^([^_](.+))$"), null, false);

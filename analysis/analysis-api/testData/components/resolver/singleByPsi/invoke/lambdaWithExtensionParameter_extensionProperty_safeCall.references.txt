@@ -2,5 +2,6 @@ KtNameReferenceExpression(96,102): 'action'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test) val test.Foo.action: () -> kotlin.Unit

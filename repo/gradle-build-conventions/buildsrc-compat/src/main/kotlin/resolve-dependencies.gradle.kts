@@ -154,7 +154,7 @@ val resolveJsTools by tasks.registering {
  *
  * Useful for populating Gradle dependency cache or updating `verification-metadata.xml` properly.
  *
- * `./gradlew resolveDependencies --write-verification-metadata md5,sha256 -Pkotlin.native.enabled=true`
+ * `./gradlew resolveDependencies --write-verification-metadata sha256 -Pkotlin.native.enabled=true`
  */
 tasks.register("resolveDependencies") {
     description = "Resolves all dependencies, including implicit dependencies, in all projects for dependency verification."

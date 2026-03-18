@@ -21,7 +21,7 @@ class DependenciesVerificationMetadataTest {
     @JacksonXmlRootElement(localName = "verification-metadata")
     private data class VerificationMetadata(
         @field:JacksonXmlElementWrapper(localName = "components")
-        val components: List<Component> = listOf()
+        val components: List<Component> = listOf(),
     )
 
     private data class Component(
@@ -38,8 +38,7 @@ class DependenciesVerificationMetadataTest {
     private data class Artifact(
         @field:JacksonXmlProperty(isAttribute = true)
         val name: String,
-        val md5: Hash?,
-        val sha256: Hash?
+        val sha256: Hash?,
     )
 
     private data class Hash(@field:JacksonXmlProperty(isAttribute = true) val value: String)
@@ -56,9 +55,6 @@ class DependenciesVerificationMetadataTest {
 
         verificationMetadata.components.forEach { component ->
             component.artifact.forEach { artifact ->
-                if (artifact.md5 == null) {
-                    fails.add("${artifact.name} - md5 is missing")
-                }
                 if (artifact.sha256 == null) {
                     fails.add("${artifact.name} - sha256 is missing")
                 }

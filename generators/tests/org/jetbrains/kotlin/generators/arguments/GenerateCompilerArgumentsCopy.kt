@@ -28,6 +28,7 @@ private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
     K2JSCompilerArguments::class,
     K2WasmCompilerArguments::class,
     K2JVMCompilerArguments::class,
+    K2JKlibCompilerArguments::class,
 )
 
 private val PACKAGE_TO_DIR_MAPPING: Map<Package, File> = mapOf(

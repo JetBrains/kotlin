@@ -590,16 +590,31 @@ class ExpressionCodegen(
 
         callGenerator.afterCallEnd()
 
+
+        fun IrFunction.returnTypeMayBeInferred(): Boolean =
+            this is IrSimpleFunction && (returnType.isTypeParameter() || allOverridden().any { it.returnType.isTypeParameter() })
+
         return when {
-            (expression.type.isNothing() || expression.type.isUnit()) && irFunction.shouldContainSuspendMarkers() -> {
-                // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
-                // Also, if the callee is a suspend function with a suspending tail call, the next `resumeWith`
-                // will continue from here, but the value passed to it might not have been `Unit`. An exception
-                // is methods that do not pass through the state machine generating MethodVisitor, since getting
-                // COROUTINE_SUSPENDED here is still possible; luckily, all those methods are bridges.
+            expression.type.isUnit() &&
+                    irFunction.shouldContainSuspendMarkers() &&
+                    callee.suspendFunctionOriginal().returnTypeMayBeInferred() -> {
+                // In some cases of Unit functions with tail-call of another function, we shall overwrite the return value
+                //  with Unit because:
+                // 1. NewInference allows casting `() -> T` to `() -> Unit`, so we cannot trust return lambda types;
+                //    there is the same problem with other cases of generic return types.
+                // 2. In IR, the following cases are currently indistinguishable and are actually "RETURN CALL .." with no checks:
+                //  a) suspend fun foo(f: suspend () -> Unit) { f() }
+                //  b) suspend fun foo(f: suspend () -> Unit) { return f() }
+                // Note that in (2a) it would be incorrect to return non-Unit from `foo` or fail
+                // with CHECKCAST even if `f()` actually returned non-Unit value.
+                //
+                // This is especially important for calls of suspend functions, but is also used for other cases when Unit
+                // functions are generated to non-void bytecode methods. Note that `shouldContainSuspendMarkers()` and
+                // `suspendFunctionOriginal()` calls above work for non-suspend functions too.
+
+                // force POP+Unit instructions to overwrite the value retuned by the call
                 if (callable.asmMethod.returnType != Type.VOID_TYPE)
                     MaterialValue(this, callable.asmMethod.returnType, callable.returnType).discard()
-                // don't generate redundant UNIT/pop instructions
                 unitValue
             }
             callee.parentAsClass.isAnnotationClass && callable.asmMethod.returnType == AsmTypes.JAVA_CLASS_TYPE -> {

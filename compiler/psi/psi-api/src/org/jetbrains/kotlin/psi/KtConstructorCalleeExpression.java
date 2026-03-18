@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
+import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 /**
  * Represents the callee part in a constructor invocation, such as in annotations or super type calls.
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * class Foo
  * }</pre>
  */
-public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtConstructorCalleeExpression>> {
+public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtConstructorCalleeExpression>> implements KtResolvableCall {
     public KtConstructorCalleeExpression(@NotNull ASTNode node) {
         super(node);
     }

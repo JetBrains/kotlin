@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
@@ -103,7 +103,7 @@ open class IncrementalFirJvmCompilerRunner(
 
         // TODO: probably shoudl be passed along with sourcesToCompile
         // TODO: file path normalization
-        val commonSources = args.commonSources?.mapTo(mutableSetOf(), ::File).orEmpty()
+        val commonSources = args.commonSources.mapTo(mutableSetOf(), ::File)
 
         val exitCode = ExitCode.OK
         val allCompiledSources = LinkedHashSet<File>()
@@ -139,14 +139,16 @@ open class IncrementalFirJvmCompilerRunner(
                 setupJvmSpecificArguments(args)
             }
 
-            val paths = computeKotlinPaths(collector, args)
-            if (collector.hasErrors()) return ExitCode.COMPILATION_ERROR to emptyList()
+            val paths = computeKotlinPaths(configuration, args)
+            if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
+                return ExitCode.COMPILATION_ERROR to emptyList()
+            }
 
             // -- plugins
-            val pluginClasspaths = args.pluginClasspaths?.toList() ?: emptyList()
-            val pluginOptions = args.pluginOptions?.toMutableList() ?: ArrayList()
-            val pluginConfigurations = args.pluginConfigurations?.toList() ?: emptyList()
-            val pluginOrderConstraints = args.pluginOrderConstraints?.toList() ?: emptyList()
+            val pluginClasspaths = args.pluginClasspaths.toList()
+            val pluginOptions = args.pluginOptions.toMutableList()
+            val pluginConfigurations = args.pluginConfigurations.toList()
+            val pluginOrderConstraints = args.pluginOrderConstraints.toList()
             // TODO: add scripting support when ready in FIR
             val pluginLoadResult = PluginCliParser.loadPluginsSafe(
                 pluginClasspaths,
@@ -183,8 +185,11 @@ open class IncrementalFirJvmCompilerRunner(
             setIdeaIoUseFallback()
 
             // -AbstractProjectEnvironment-
-            val projectEnvironment =
-                createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
+            val projectEnvironment = createProjectEnvironment(
+                configuration,
+                rootDisposable,
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            )
 
             // -sources
             val allPlatformSourceFiles = linkedSetOf<KtSourceFile>() // TODO: get from caller
@@ -277,7 +282,7 @@ open class IncrementalFirJvmCompilerRunner(
 
             val cycleResult = firIncrementalCycle() ?: return ExitCode.COMPILATION_ERROR to allCompiledSources
 
-            val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
+            val extensions = JvmFir2IrExtensions(configuration)
             val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
             val (irModuleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = cycleResult.convertToIrAndActualizeForJvm(
                 extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
@@ -329,7 +334,7 @@ open class IncrementalFirJvmCompilerRunner(
 private fun CompilerConfiguration.configureBaseRoots(args: K2JVMCompilerArguments) {
 
     var isJava9Module = false
-    args.javaSourceRoots?.forEach {
+    args.javaSourceRoots.forEach {
         val file = File(it)
         val packagePrefix = args.javaPackagePrefix
         addJavaSourceRoot(file, packagePrefix)

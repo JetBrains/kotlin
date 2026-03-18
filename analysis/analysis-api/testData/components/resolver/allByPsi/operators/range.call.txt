@@ -1,0 +1,542 @@
+KtFile: 'range.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,197): 'class A : Comparable<A> {'
+  null
+
+KtSuperTypeList(10,23): 'Comparable<A>'
+  null
+
+KtSuperTypeEntry(10,23): 'Comparable<A>'
+  null
+
+KtTypeReference(10,23): 'Comparable<A>'
+  null
+
+KtUserType(10,23): 'Comparable<A>'
+  null
+
+KtNameReferenceExpression(10,20): 'Comparable'
+  null
+
+KtTypeArgumentList(20,23): '<A>'
+  null
+
+KtTypeProjection(21,22): 'A'
+  null
+
+KtTypeReference(21,22): 'A'
+  null
+
+KtUserType(21,22): 'A'
+  null
+
+KtNameReferenceExpression(21,22): 'A'
+  null
+
+KtClassBody(24,197): '{'
+  null
+
+KtNamedFunction(30,71): 'override fun compareTo(other: A): Int = 0'
+  null
+
+KtDeclarationModifierList(30,38): 'override'
+  null
+
+KtParameterList(52,62): '(other: A)'
+  null
+
+KtParameter(53,61): 'other: A'
+  null
+
+KtTypeReference(60,61): 'A'
+  null
+
+KtUserType(60,61): 'A'
+  null
+
+KtNameReferenceExpression(60,61): 'A'
+  null
+
+KtTypeReference(64,67): 'Int'
+  null
+
+KtUserType(64,67): 'Int'
+  null
+
+KtNameReferenceExpression(64,67): 'Int'
+  null
+
+KtConstantExpression(70,71): '0'
+  null
+
+KtNamedFunction(76,131): 'operator fun rangeTo(other: A): ClosedRange<A> = TODO()'
+  null
+
+KtDeclarationModifierList(76,84): 'operator'
+  null
+
+KtParameterList(96,106): '(other: A)'
+  null
+
+KtParameter(97,105): 'other: A'
+  null
+
+KtTypeReference(104,105): 'A'
+  null
+
+KtUserType(104,105): 'A'
+  null
+
+KtNameReferenceExpression(104,105): 'A'
+  null
+
+KtTypeReference(108,122): 'ClosedRange<A>'
+  null
+
+KtUserType(108,122): 'ClosedRange<A>'
+  null
+
+KtNameReferenceExpression(108,119): 'ClosedRange'
+  null
+
+KtTypeArgumentList(119,122): '<A>'
+  null
+
+KtTypeProjection(120,121): 'A'
+  null
+
+KtTypeReference(120,121): 'A'
+  null
+
+KtUserType(120,121): 'A'
+  null
+
+KtNameReferenceExpression(120,121): 'A'
+  null
+
+KtCallExpression(125,131): 'TODO()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(125,129): 'TODO'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(129,131): '()'
+  null
+
+KtNamedFunction(136,195): 'operator fun rangeUntil(other: A): OpenEndRange<A> = TODO()'
+  null
+
+KtDeclarationModifierList(136,144): 'operator'
+  null
+
+KtParameterList(159,169): '(other: A)'
+  null
+
+KtParameter(160,168): 'other: A'
+  null
+
+KtTypeReference(167,168): 'A'
+  null
+
+KtUserType(167,168): 'A'
+  null
+
+KtNameReferenceExpression(167,168): 'A'
+  null
+
+KtTypeReference(171,186): 'OpenEndRange<A>'
+  null
+
+KtUserType(171,186): 'OpenEndRange<A>'
+  null
+
+KtNameReferenceExpression(171,183): 'OpenEndRange'
+  null
+
+KtTypeArgumentList(183,186): '<A>'
+  null
+
+KtTypeProjection(184,185): 'A'
+  null
+
+KtTypeReference(184,185): 'A'
+  null
+
+KtUserType(184,185): 'A'
+  null
+
+KtNameReferenceExpression(184,185): 'A'
+  null
+
+KtCallExpression(189,195): 'TODO()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(189,193): 'TODO'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(193,195): '()'
+  null
+
+KtNamedFunction(199,264): 'fun test() {'
+  null
+
+KtParameterList(207,209): '()'
+  null
+
+KtBlockExpression(210,264): '{'
+  null
+
+KtProperty(216,227): 'val a = A()'
+  null
+
+KtCallExpression(224,227): 'A()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(224,225): 'A'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(225,227): '()'
+  null
+
+KtProperty(232,243): 'val b = A()'
+  null
+
+KtCallExpression(240,243): 'A()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(240,241): 'A'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(241,243): '()'
+  null
+
+KtBinaryExpression(248,252): 'a..b'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.ranges.ClosedRange<A>
+        symbol = /A.rangeTo(<dispatch receiver>: A, other: A): kotlin.ranges.ClosedRange<A>
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.rangeTo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(248,249): 'a'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = val a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(249,251): '..'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.ranges.ClosedRange<A>
+        symbol = /A.rangeTo(<dispatch receiver>: A, other: A): kotlin.ranges.ClosedRange<A>
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.rangeTo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(251,252): 'b'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = A
+        symbol = val b: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtBinaryExpression(257,262): 'a..<b'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.ranges.OpenEndRange<A>
+        symbol = /A.rangeUntil(<dispatch receiver>: A, other: A): kotlin.ranges.OpenEndRange<A>
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.rangeUntil
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(257,258): 'a'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = val a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(258,261): '..<'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.ranges.OpenEndRange<A>
+        symbol = /A.rangeUntil(<dispatch receiver>: A, other: A): kotlin.ranges.OpenEndRange<A>
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.rangeUntil
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(261,262): 'b'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = A
+        symbol = val b: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}

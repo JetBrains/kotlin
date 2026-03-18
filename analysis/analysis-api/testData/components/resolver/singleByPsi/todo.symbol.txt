@@ -1,2 +1,5 @@
 KtNameReferenceExpression(55,59): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+    ]

@@ -1,2 +1,5 @@
 KtNameReferenceExpression(91,97): 'action'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val action: () -> kotlin.Unit
+    ]

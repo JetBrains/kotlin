@@ -18,9 +18,9 @@ class WasmIrFileMetadata(
 
     override fun toByteArray(): ByteArray {
         val allExportBytes = ExportKind.entries.map { kind ->
-            IrStringWriter(exportNames[kind].orEmpty()).writeIntoMemory()
+            IrStringWriter(exportNames[kind].orEmpty(), false).writeIntoMemory()
         }
-        return IrArrayWriter(allExportBytes).writeIntoMemory()
+        return IrArrayWriter(allExportBytes, false).writeIntoMemory()
     }
 
     companion object {
@@ -30,8 +30,10 @@ class WasmIrFileMetadata(
             val exportArrays = reader.toArray()
 
             val exportNames = ExportKind.entries.associateWith { kind ->
-                val bytes = exportArrays[kind.ordinal]
-                IrArrayReader(bytes).toArray().map(WobblyTF8::decode)
+                val bytes = exportArrays.getOrNull(kind.ordinal)
+                bytes?.let {
+                    IrArrayReader(it).toArray().map(WobblyTF8::decode)
+                } ?: emptyList()
             }
 
             return WasmIrFileMetadata(exportNames)

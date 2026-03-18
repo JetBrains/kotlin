@@ -1,0 +1,33 @@
+FILE: inGenericTypealiasToObject.kt
+    public final object Obj : R|kotlin/Any| {
+        private constructor(): R|Obj| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias TObj<K> = R|Obj|
+    public final typealias TUnit<K> = R|kotlin/Unit|
+    public final fun test(): R|kotlin/Unit| {
+        lval p1: R|Obj| = Q|TObj|
+        lval p2: R|kotlin/Unit| = Q|TUnit|
+        lval p3: R|kotlin/Unit| = Q|TObj|<R|kotlin/Nothing|>
+        lval p4: R|kotlin/Unit| = Q|TUnit|<R|kotlin/Nothing|>
+        lval p5: R|kotlin/Unit| = Q|TObj|<R|kotlin/Int|, R|kotlin/Int|>
+        lval p6: R|kotlin/Unit| = Q|TUnit|<R|kotlin/Int|, R|kotlin/Int|>
+        lval p7: R|kotlin/reflect/KClass<TObj<*>>| = <getClass>(Q|TObj|)
+        lval p8: R|kotlin/reflect/KClass<TUnit<*>>| = <getClass>(Q|TUnit|)
+        lval p9: R|kotlin/reflect/KClass<TObj<kotlin/Int>>| = <getClass>(Q|TObj|<R|kotlin/Int|>)
+        lval p10: R|kotlin/reflect/KClass<TUnit<kotlin/Int>>| = <getClass>(Q|TUnit|<R|kotlin/Int|>)
+        lval p11: R|kotlin/reflect/KFunction0<kotlin/String>| = Q|TObj|::R|kotlin/Any.toString|
+        lval p12: R|kotlin/reflect/KFunction0<kotlin/String>| = Q|TUnit|::R|kotlin/Unit.toString|
+        lval p13: R|kotlin/reflect/KFunction1<TObj<kotlin/Int>, kotlin/String>| = Q|TObj|<R|kotlin/Int|>::R|kotlin/Any.toString|
+        lval p14: <ERROR TYPE REF: Unresolved reference: toString> = Q|TUnit|<R|kotlin/Int|>::<Unresolved reference: toString>#
+        lval p15: R|kotlin/reflect/KFunction1<TObj<kotlin/Int>, kotlin/String>| = Q|TObj|<R|kotlin/Int|, R|kotlin/Int|>::R|kotlin/Any.toString|
+        lval p16: <ERROR TYPE REF: Unresolved reference: toString> = Q|TUnit|<R|kotlin/Int|, R|kotlin/Int|>::<Unresolved reference: toString>#
+        lval p17: R|kotlin/String| = Q|TObj|.R|kotlin/Any.toString|()
+        lval p18: R|kotlin/String| = Q|TUnit|.R|kotlin/Unit.toString|()
+        lval p19: <ERROR TYPE REF: Unresolved name: toString> = Q|TObj|<R|kotlin/Int|>.<Unresolved name: toString>#()
+        lval p20: <ERROR TYPE REF: Unresolved name: toString> = Q|TUnit|<R|kotlin/Int|>.<Unresolved name: toString>#()
+        lval p21: R|kotlin/reflect/KClass<TObj<kotlin/Int, kotlin/Int, kotlin/Int>>| = <getClass>(Q|TObj|<R|kotlin/Int|, R|kotlin/Int|, R|kotlin/Int|>)
+        lval p22: R|kotlin/reflect/KClass<TUnit<kotlin/Int, kotlin/Int, kotlin/Int>>| = <getClass>(Q|TUnit|<R|kotlin/Int|, R|kotlin/Int|, R|kotlin/Int|>)
+    }

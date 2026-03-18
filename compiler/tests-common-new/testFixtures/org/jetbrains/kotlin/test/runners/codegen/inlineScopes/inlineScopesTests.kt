@@ -43,14 +43,6 @@ open class AbstractFirLocalVariableTestWithInlineScopes : AbstractFirLightTreeLo
     }
 }
 
-open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes :
-    AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useInlineScopesNumbers()
-    }
-}
-
 open class AbstractFirSteppingTestWithInlineScopes : AbstractFirLightTreeSteppingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

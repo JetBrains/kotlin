@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.runtime
 
-import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.konan.config.runtimeFile
 import org.jetbrains.kotlin.konan.file.File
 
-class RuntimeModulesConfig(private val config: KonanConfig) {
+class RuntimeModulesConfig(private val config: NativeSecondStageCompilationConfig) {
     /**
      * Returns `true` when the binary will contain [RuntimeModule.DEBUG].
      */

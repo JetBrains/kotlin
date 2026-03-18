@@ -11,7 +11,6 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
 import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
 import org.jetbrains.kotlin.gradle.targets.native.toKotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.gradle.utils.attributeOf
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.property
@@ -332,11 +330,4 @@ class Framework(
      */
     @ExperimentalKotlinGradlePluginApi
     val exportKdoc: Property<Boolean> = project.objects.property(true)
-
-
-    companion object {
-        val frameworkTargets: Attribute<Set<String>> = attributeOf<Set<String>>(
-            "org.jetbrains.kotlin.native.framework.targets"
-        )
-    }
 }

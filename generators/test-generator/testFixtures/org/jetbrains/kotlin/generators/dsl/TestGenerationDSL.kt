@@ -21,14 +21,9 @@ fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
         .forEach(f)
 }
 
-class TestGroupSuite(val mode: Mode) {
-    enum class Mode {
-        LegacyJUnit4, JUnit5
-    }
-
-    private val _testGroups = mutableListOf<TestGroup>()
+class TestGroupSuite(val testInfraRevision: TestInfraRevision, val defaultSkipTestAllFilesCheck: Boolean) {
     val testGroups: List<TestGroup>
-        get() = _testGroups
+        field = mutableListOf<TestGroup>()
 
     fun testGroup(
         testsRoot: String,
@@ -36,11 +31,12 @@ class TestGroupSuite(val mode: Mode) {
         testRunnerMethodName: String = MethodGenerator.DEFAULT_RUN_TEST_METHOD_NAME,
         init: TestGroup.() -> Unit
     ) {
-        _testGroups += TestGroup(
+        testGroups += TestGroup(
             testsRoot,
             testDataRoot,
             testRunnerMethodName,
-            mode,
+            testInfraRevision,
+            defaultSkipTestAllFilesCheck,
         ).apply(init)
     }
 }
@@ -49,12 +45,11 @@ class TestGroup(
     private val testsRoot: String,
     val testDataRoot: String,
     val testRunnerMethodName: String,
-    val mode: TestGroupSuite.Mode,
-    val annotations: List<AnnotationModel> = emptyList(),
+    val testInfraRevision: TestInfraRevision,
+    val defaultSkipTestAllFilesCheck: Boolean,
 ) {
-    private val _testClasses: MutableList<TestClass> = mutableListOf()
     val testClasses: List<TestClass>
-        get() = _testClasses
+        field: MutableList<TestClass> = mutableListOf()
 
     inline fun <reified T> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
@@ -72,7 +67,7 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        _testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, annotations).apply(init)
+        testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, annotations).apply(init)
     }
 
     inner class TestClass(
@@ -134,19 +129,19 @@ class TestGroup(
             targetBackend: TargetBackend? = null,
             excludeDirs: List<String> = listOf(),
             excludeDirsRecursively: List<String> = listOf(),
-            skipTestAllFilesCheck: Boolean = false,
+            skipTestAllFilesCheck: Boolean = defaultSkipTestAllFilesCheck,
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
             require(targetBackend != TargetBackend.ANY) { "TargetBackend.ANY is not allowed, please specify target backend explicitly" }
-            if (mode == TestGroupSuite.Mode.JUnit5) {
+            if (testInfraRevision == TestInfraRevision.StandardJUnit5) {
                 require(targetBackend == null) { "TargetBackend shouldn't be defined for JUnit5" }
             }
             testModels.add(
                 SimpleTestClassModel(
-                    rootFile, recursive, excludeParentDirs,
+                    testInfraRevision, File(testDataRoot), rootFile, recursive, excludeParentDirs,
                     compiledPattern, compiledExcludedPattern, testMethod, className,
                     targetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
                     extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck

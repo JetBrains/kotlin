@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.sir.providers.utils
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -52,3 +54,42 @@ public val KaDeclarationSymbol.throwsAnnotation: Throws?
 
         Throws()
     }
+
+private val ObjCNameClassId = ClassId.topLevel(FqName("kotlin.native.ObjCName"))
+
+public class ObjCNameAnnotation(
+    public val objCName: String?,
+    public val swiftName: String?,
+    public val isExact: Boolean,
+) {
+    /**
+     * The Swift friendly declaration name, this will never be an empty string.
+     */
+    public val name: String? get() = swiftName?.takeIf { it.isNotEmpty() } ?: objCName
+
+    /**
+     * The Swift friendly argument name for this declaration, this might be an empty string.
+     */
+    public val argumentName: String? get() = swiftName ?: objCName
+}
+
+public val KaDeclarationSymbol.objCNameAnnotation: ObjCNameAnnotation?
+    get() = annotations[ObjCNameClassId].firstOrNull()?.let { annotation ->
+        var objCName: String? = null
+        var swiftName: String? = null
+        var isExact: Boolean? = null
+        for (argument in annotation.arguments) {
+            when (argument.name.identifier) {
+                "name" -> objCName = argument.resolveConstantValue<KaConstantValue.StringValue>()?.value
+                "swiftName" -> swiftName = argument.resolveConstantValue<KaConstantValue.StringValue>()?.value
+                "exact" -> isExact = argument.resolveConstantValue<KaConstantValue.BooleanValue>()?.value
+            }
+        }
+        if (swiftName == "_") swiftName = "" // In Swift export we convert empty names to _ where needed
+        ObjCNameAnnotation(objCName, swiftName, isExact ?: false)
+    }
+
+private inline fun <reified T : KaConstantValue> KaNamedAnnotationValue.resolveConstantValue(): T? {
+    val constantValue = expression as? KaAnnotationValue.ConstantValue ?: return null
+    return constantValue.value as? T
+}

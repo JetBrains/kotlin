@@ -35,8 +35,6 @@ pluginApiReference {
     enableForAllGradlePluginVariants()
     failOnWarning = true
 
-    moduleName("The Compose compiler Gradle plugin")
-
     additionalDokkaConfiguration {
         dokkaSourceSets.configureEach {
             includes.from("api-reference-description.md")

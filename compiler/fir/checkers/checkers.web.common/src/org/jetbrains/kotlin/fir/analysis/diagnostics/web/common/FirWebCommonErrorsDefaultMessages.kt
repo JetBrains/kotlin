@@ -90,7 +90,7 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             WRONG_JS_EXPORT_TARGET_VISIBILITY,
-            "'@JsExport' is only allowed for public declarations."
+            "'@JsExport' is only allowed for public declarations. This declaration will not be exported."
         )
 
         map.put(JSCODE_ARGUMENT_NON_CONST_EXPRESSION, "An argument for the 'js()' function must be a constant string expression.")

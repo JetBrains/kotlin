@@ -2,5 +2,7 @@ KtConstructorDelegationReferenceExpression(108,113): 'super'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     symbols:
       (in Base) constructor(p1: kotlin.Int)

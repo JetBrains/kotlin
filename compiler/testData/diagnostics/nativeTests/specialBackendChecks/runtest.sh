@@ -3,10 +3,10 @@
 # Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 #
 
-# Usage: compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtest.sh <t??.kt> <-language-version 1.9>
+# Usage: compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtest.sh <t??.kt>
 
 FILTERED_FILE=/tmp/$(basename $1)
 # Remove diagnostic directives from test source
 cat $1 | sed -e 's/<![a-zA-Z_!]*!>//g' | sed -e 's/<!>//g' > $FILTERED_FILE
 shift
-konanc -opt-in=kotlin.native.internal.InternalForKotlinNative,kotlinx.cinterop.ExperimentalForeignApi "$FILTERED_FILE" "$@"
+kotlin-native/dist/bin/konanc -opt-in=kotlin.native.internal.InternalForKotlinNative,kotlinx.cinterop.ExperimentalForeignApi "$FILTERED_FILE" "$@"

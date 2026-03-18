@@ -128,7 +128,10 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
     ]
 
 KtConstructorCalleeExpression(186,193): 'Base<C>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): one.two.Base<B>
+    ]
 
 KtTypeReference(186,193): 'Base<C>'
   null
@@ -314,7 +317,10 @@ KtCallExpression(392,405): 'NestedClass()'
     ]
 
 KtNameReferenceExpression(392,403): 'NestedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): one.two.Base.NestedClass
+    ]
 
 KtValueArgumentList(403,405): '()'
   null
@@ -323,10 +329,16 @@ KtProperty(410,432): 'val inner = c1.Inner()'
   null
 
 KtDotQualifiedExpression(422,432): 'c1.Inner()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+    ]
 
 KtNameReferenceExpression(422,424): 'c1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      c1: one.two.Child<one.two.Base.NestedClass>
+    ]
 
 KtCallExpression(425,432): 'Inner()'
   KaSymbolResolutionSuccess:
@@ -335,7 +347,10 @@ KtCallExpression(425,432): 'Inner()'
     ]
 
 KtNameReferenceExpression(425,430): 'Inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+    ]
 
 KtValueArgumentList(430,432): '()'
   null

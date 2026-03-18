@@ -1,2 +1,5 @@
 KtNameReferenceExpression(84,89): 'param'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      param: Context
+    ]

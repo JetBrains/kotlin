@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.contextParameters
 import org.jetbrains.kotlin.sir.SirParameter
+import org.jetbrains.kotlin.sir.SirTupleType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirTypeVariance
 import org.jetbrains.kotlin.sir.escaping
@@ -21,28 +23,42 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.translateType
+import org.jetbrains.kotlin.sir.providers.utils.objCNameAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.nodes.SirFunctionFromKtPropertySymbol
 
 @OptIn(KaExperimentalApi::class)
-internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
-    return withSessions {
-        this@translateReturnType.ktSymbol.returnType.translateType(
-            SirTypeVariance.COVARIANT,
-            reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
-            reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
-            processTypeImports = this@translateReturnType.ktSymbol.containingModule.sirModule()::updateImports
-        )
-    }
+internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType = withSessions {
+    this@translateReturnType.ktSymbol.returnType.translateType(
+        SirTypeVariance.COVARIANT,
+        reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
+        reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
+        processTypeImports = this@translateReturnType.ktSymbol.containingModule.sirModule()::updateImports
+    )
+}
+
+@OptIn(KaExperimentalApi::class)
+internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateInvariantType(): SirType = withSessions {
+    this@translateInvariantType.ktSymbol.returnType.translateType(
+        SirTypeVariance.INVARIANT,
+        reportErrorType = { error("Can't translate invariant type in ${ktSymbol.render()}: ${it}") },
+        reportUnsupportedType = { error("Can't translate invariant type in ${ktSymbol.render()}: type is not supported") },
+        processTypeImports = this@translateInvariantType.ktSymbol.containingModule.sirModule()::updateImports
+    )
 }
 
 internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateParameters(): List<SirParameter> {
     return withSessions {
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = createParameterType(ktSymbol, parameter).escaping
+            val objCNameAnnotation = parameter.objCNameAnnotation
+            val argumentName = objCNameAnnotation?.argumentName ?: parameter.name.asString()
+            val parameterName = objCNameAnnotation?.name ?: parameter.name.asString()
             SirParameter(
-                argumentName = parameter.name.asString(),
+                argumentName = argumentName,
+                parameterName = parameterName.takeIf { it != argumentName },
                 type = sirType,
                 origin = KotlinParameterOrigin.ValueParameter(parameter),
                 isVariadic = parameter.isVararg,
@@ -62,6 +78,31 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
             )
         }
     }
+}
+
+internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateContextParameters(): Pair<SirParameter, List<SirParameter>>? {
+    val parameters = withSessions {
+        val symbol = when (this@translateContextParameters) {
+            is SirFunctionFromKtPropertySymbol -> ktPropertySymbol
+            else -> ktSymbol
+        }
+        symbol.contextParameters.map { parameter ->
+            val sirType = createParameterType(ktSymbol, parameter)
+            SirParameter(
+                parameterName = parameter.name.identifierOrNullIfSpecial,
+                type = sirType,
+            )
+        }
+    }
+    if (parameters.isEmpty()) return null
+    val type = when (parameters.size) {
+        1 -> parameters.first().type
+        else -> SirTupleType(parameters.map { it.parameterName to it.type })
+    }
+    return SirParameter(
+        parameterName = "context",
+        type = type,
+    ) to parameters
 }
 
 @OptIn(KaExperimentalApi::class)

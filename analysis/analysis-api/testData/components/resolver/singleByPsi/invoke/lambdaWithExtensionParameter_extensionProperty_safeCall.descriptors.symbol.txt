@@ -1,0 +1,6 @@
+KtNameReferenceExpression(96,102): 'action'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      val action: kotlin.Function0<kotlin.Unit>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNSAFE_CALL_ERROR with invoke>

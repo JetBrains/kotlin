@@ -6,18 +6,19 @@
 package org.jetbrains.kotlin.js.test.converters.incremental
 
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.TestRunner
+import org.jetbrains.kotlin.test.NonGroupingTestRunner
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.RECOMPILE
+import org.jetbrains.kotlin.test.impl.NonGroupingPhaseTestConfigurationImpl
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 
 @Suppress("warnings")
 abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>>(
@@ -36,7 +37,7 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.Js): BinaryArtifacts.Js {
         val filesToRecompile = module.files.filter { RECOMPILE in it.directives }
 
-        val builder = testServices.testConfiguration.originalBuilder
+        val builder = (testServices.testConfiguration as NonGroupingPhaseTestConfigurationImpl).originalBuilder
         val incrementalConfiguration = testConfiguration(builder.testDataPath) {
             assertions = builder.assertions
             testInfo = builder.testInfo
@@ -64,7 +65,7 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
             },
             moduleStructure.originalTestDataFiles
         )
-        val incrementalRunner = TestRunner(incrementalConfiguration)
+        val incrementalRunner = NonGroupingTestRunner(incrementalConfiguration)
         val incrementalArtifactsProvider = testServices.artifactsProvider.copy().also {
             it.unregisterAllArtifacts(module)
         }
@@ -78,7 +79,7 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
 
         val incrementalArtifact = try {
             incrementalRunner.processModule(incrementalModule, incrementalArtifactsProvider)
-            incrementalRunner.reportFailures(incrementalServices)
+            incrementalRunner.reportFailures()
             incrementalArtifactsProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
         } finally {
             disposeRootInWriteAction(incrementalConfiguration.rootDisposable)

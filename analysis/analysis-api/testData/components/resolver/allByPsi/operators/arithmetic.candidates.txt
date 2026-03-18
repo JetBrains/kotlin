@@ -1,0 +1,837 @@
+KtFile: 'arithmetic.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,221): 'class A {'
+  NO_CANDIDATES
+
+KtClassBody(8,221): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(14,51): 'operator fun plus(other: A): A = this'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(14,22): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(31,41): '(other: A)'
+  NO_CANDIDATES
+
+KtParameter(32,40): 'other: A'
+  NO_CANDIDATES
+
+KtTypeReference(39,40): 'A'
+  NO_CANDIDATES
+
+KtUserType(39,40): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(39,40): 'A'
+  NO_CANDIDATES
+
+KtTypeReference(43,44): 'A'
+  NO_CANDIDATES
+
+KtUserType(43,44): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(43,44): 'A'
+  NO_CANDIDATES
+
+KtThisExpression(47,51): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(47,51): 'this'
+  NO_CANDIDATES
+
+KtNamedFunction(56,94): 'operator fun minus(other: A): A = this'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(56,64): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(74,84): '(other: A)'
+  NO_CANDIDATES
+
+KtParameter(75,83): 'other: A'
+  NO_CANDIDATES
+
+KtTypeReference(82,83): 'A'
+  NO_CANDIDATES
+
+KtUserType(82,83): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(82,83): 'A'
+  NO_CANDIDATES
+
+KtTypeReference(86,87): 'A'
+  NO_CANDIDATES
+
+KtUserType(86,87): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(86,87): 'A'
+  NO_CANDIDATES
+
+KtThisExpression(90,94): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(90,94): 'this'
+  NO_CANDIDATES
+
+KtNamedFunction(99,137): 'operator fun times(other: A): A = this'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(99,107): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(117,127): '(other: A)'
+  NO_CANDIDATES
+
+KtParameter(118,126): 'other: A'
+  NO_CANDIDATES
+
+KtTypeReference(125,126): 'A'
+  NO_CANDIDATES
+
+KtUserType(125,126): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(125,126): 'A'
+  NO_CANDIDATES
+
+KtTypeReference(129,130): 'A'
+  NO_CANDIDATES
+
+KtUserType(129,130): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(129,130): 'A'
+  NO_CANDIDATES
+
+KtThisExpression(133,137): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(133,137): 'this'
+  NO_CANDIDATES
+
+KtNamedFunction(142,178): 'operator fun div(other: A): A = this'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(142,150): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(158,168): '(other: A)'
+  NO_CANDIDATES
+
+KtParameter(159,167): 'other: A'
+  NO_CANDIDATES
+
+KtTypeReference(166,167): 'A'
+  NO_CANDIDATES
+
+KtUserType(166,167): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(166,167): 'A'
+  NO_CANDIDATES
+
+KtTypeReference(170,171): 'A'
+  NO_CANDIDATES
+
+KtUserType(170,171): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(170,171): 'A'
+  NO_CANDIDATES
+
+KtThisExpression(174,178): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(174,178): 'this'
+  NO_CANDIDATES
+
+KtNamedFunction(183,219): 'operator fun rem(other: A): A = this'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(183,191): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(199,209): '(other: A)'
+  NO_CANDIDATES
+
+KtParameter(200,208): 'other: A'
+  NO_CANDIDATES
+
+KtTypeReference(207,208): 'A'
+  NO_CANDIDATES
+
+KtUserType(207,208): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(207,208): 'A'
+  NO_CANDIDATES
+
+KtTypeReference(211,212): 'A'
+  NO_CANDIDATES
+
+KtUserType(211,212): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(211,212): 'A'
+  NO_CANDIDATES
+
+KtThisExpression(215,219): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(215,219): 'this'
+  NO_CANDIDATES
+
+KtNamedFunction(223,319): 'fun test() {'
+  NO_CANDIDATES
+
+KtParameterList(231,233): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(234,319): '{'
+  NO_CANDIDATES
+
+KtProperty(240,251): 'val a = A()'
+  NO_CANDIDATES
+
+KtCallExpression(248,251): 'A()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(248,249): 'A'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(249,251): '()'
+  NO_CANDIDATES
+
+KtProperty(256,267): 'val b = A()'
+  NO_CANDIDATES
+
+KtCallExpression(264,267): 'A()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(264,265): 'A'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(): A
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(265,267): '()'
+  NO_CANDIDATES
+
+KtBinaryExpression(272,277): 'a + b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.plus(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(272,273): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = val a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(274,275): '+'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.plus(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(276,277): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = A
+        symbol = val b: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(282,287): 'a - b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.minus(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.minus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(282,283): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = val a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(284,285): '-'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.minus(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.minus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(286,287): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = A
+        symbol = val b: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(292,297): 'a * b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.times(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.times
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(292,293): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = val a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(294,295): '*'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.times(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.times
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(296,297): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = A
+        symbol = val b: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(302,307): 'a / b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.div(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.div
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(302,303): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = val a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(304,305): '/'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.div(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.div
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(306,307): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = A
+        symbol = val b: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(312,317): 'a % b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.rem(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.rem
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(312,313): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = val a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(314,315): '%'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A
+        symbol = /A.rem(<dispatch receiver>: A, other: A): A
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = A
+            symbol = other: A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.rem
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        b -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = A
+          symbol = other: A
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(316,317): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = A
+        symbol = val b: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

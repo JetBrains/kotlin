@@ -2,6 +2,11 @@ KtNameReferenceExpression(98,106): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    public fun function(b: Boolean): Unit defined in root package in file ambiguous.kt
+    public fun function(a: Char): Unit defined in root package in file ambiguous.kt
+    public fun function(c: String): Unit defined in root package in file ambiguous.kt>
     symbols:
       0: (in ROOT) fun function(a: kotlin.Char)
       1: (in ROOT) fun function(b: kotlin.Boolean)
@@ -10,5 +15,6 @@ KtNameReferenceExpression(98,106): 'function'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

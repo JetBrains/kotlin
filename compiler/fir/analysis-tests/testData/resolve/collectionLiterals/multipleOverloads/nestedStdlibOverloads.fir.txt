@@ -1,0 +1,28 @@
+FILE: nestedStdlibOverloads.kt
+    public final fun f1(x: R|kotlin/collections/Set<kotlin/collections/Set<kotlin/Int>>|): R|kotlin/Unit| {
+    }
+    public final fun f1(x: R|kotlin/collections/Set<kotlin/collections/Set<kotlin/String>>|): R|kotlin/Unit| {
+    }
+    public final fun t1(): R|kotlin/Unit| {
+        <Ambiguity: f1, [/f1, /f1]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()))
+        <Ambiguity: f1, [/f1, /f1]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/collections/List<kotlin/String>|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(!))))
+        <Ambiguity: f1, [/f1, /f1]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/collections/List<kotlin/Int>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)), Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(2)), Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(3)))))
+        R|/f1|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(1)), R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(2)), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(3)))))
+        <Ambiguity: f1, [/f1, /f1]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(1)), R|kotlin/collections/setOf|<R|kotlin/Int|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(3)))))
+        R|/f1|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf<Inapplicable(INAPPLICABLE): kotlin/collections/setOf>#|<R|kotlin/Int|>(String(1)), R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(2)), Q|kotlin/collections|.R|kotlin/collections/setOf<Inapplicable(INAPPLICABLE): kotlin/collections/setOf>#|<R|kotlin/Int|>(String(3)))))
+        R|/f1|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/String>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(1)), R|kotlin/collections/setOf|<R|kotlin/String|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(3)))))
+    }
+    public final fun f2(x: R|kotlin/collections/Set<kotlin/collections/Set<kotlin/Int>>|): R|kotlin/Unit| {
+    }
+    public final fun f2(x: R|kotlin/collections/Set<kotlin/collections/Set<kotlin/Any>>|): R|kotlin/Unit| {
+    }
+    public final fun t2(): R|kotlin/Unit| {
+        R|/f2|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>()))
+        R|/f2|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/setOf<Inapplicable(INAPPLICABLE): kotlin/collections/setOf>#|<R|kotlin/Int|>(String(!))))
+        R|/f2|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(1)), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(2)), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(3)))))
+        R|/f2|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(1)), R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(2)), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(3)))))
+        R|/f2|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(1)), R|kotlin/collections/setOf|<R|kotlin/Int|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(3)))))
+        R|/f2|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(1)), R|kotlin/collections/setOf|<R|kotlin/String|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(3)))))
+        R|/f2|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf<Inapplicable(INAPPLICABLE): kotlin/collections/setOf>#|<R|kotlin/Int|>(String(1)), R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(2)), Q|kotlin/collections|.R|kotlin/collections/setOf<Inapplicable(INAPPLICABLE): kotlin/collections/setOf>#|<R|kotlin/Int|>(String(3)))))
+        R|/f2|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/Set<kotlin/String>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(1)), R|kotlin/collections/setOf|<R|kotlin/String|>(String(2)), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(3)))))
+    }

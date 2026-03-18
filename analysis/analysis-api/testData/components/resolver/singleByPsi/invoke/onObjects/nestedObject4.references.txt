@@ -2,5 +2,6 @@ KtNameReferenceExpression(129,135): 'Helper'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.bar.baz.Foo) object Helper

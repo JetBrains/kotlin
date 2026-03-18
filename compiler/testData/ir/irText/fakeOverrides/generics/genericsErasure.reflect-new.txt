@@ -1,37 +1,37 @@
 KClass: class Foo : I1, I2, Any
   members:
     public open operator fun Foo.equals(kotlin.Any?): kotlin.Boolean
-    public final fun Foo.foo1(A): kotlin.Unit
+    public final <A> fun Foo.foo1(A): kotlin.Unit where A : kotlin.Number
     public final fun Foo.foo1(kotlin.Number): kotlin.Unit
-    public open fun Foo.foo2(A!): kotlin.Unit
-    public open fun Foo.foo2(A!): kotlin.Unit
-    public open fun Foo.foo3(A!): kotlin.Unit
-    public final fun Foo.foo3(B): kotlin.Unit
-    public final fun Foo.foo4(A): kotlin.Unit
-    public final fun Foo.foo4(B): kotlin.Unit
+    public open <A> fun Foo.foo2(A!): kotlin.Unit where A : java.io.Serializable!, A : kotlin.CharSequence!
+    public open <A> fun Foo.foo2(A!): kotlin.Unit where A : kotlin.CharSequence!, A : java.io.Serializable!
+    public open <A, B> fun Foo.foo3(A!): kotlin.Unit where A : kotlin.Any!, B : kotlin.Any!
+    public final <A, B> fun Foo.foo3(B): kotlin.Unit
+    public final <A, B> fun Foo.foo4(A): kotlin.Unit
+    public final <B> fun Foo.foo4(B): kotlin.Unit
     public open fun Foo.hashCode(): kotlin.Int
     public open fun Foo.toString(): kotlin.String
   declaredMembers:
-    public final fun Foo.foo1(A): kotlin.Unit
+    public final <A> fun Foo.foo1(A): kotlin.Unit where A : kotlin.Number
     public final fun Foo.foo1(kotlin.Number): kotlin.Unit
-    public final fun Foo.foo3(B): kotlin.Unit
-    public final fun Foo.foo4(A): kotlin.Unit
-    public final fun Foo.foo4(B): kotlin.Unit
+    public final <A, B> fun Foo.foo3(B): kotlin.Unit
+    public final <A, B> fun Foo.foo4(A): kotlin.Unit
+    public final <B> fun Foo.foo4(B): kotlin.Unit
 KClass: abstract interface I1 : Any
   members:
     public open operator fun I1.equals(kotlin.Any?): kotlin.Boolean
-    public open fun I1.foo2(A!): kotlin.Unit
-    public open fun I1.foo3(A!): kotlin.Unit
+    public open <A> fun I1.foo2(A!): kotlin.Unit where A : java.io.Serializable!, A : kotlin.CharSequence!
+    public open <A, B> fun I1.foo3(A!): kotlin.Unit where A : kotlin.Any!, B : kotlin.Any!
     public open fun I1.hashCode(): kotlin.Int
     public open fun I1.toString(): kotlin.String
   declaredMembers:
-    public open fun I1.foo2(A!): kotlin.Unit
-    public open fun I1.foo3(A!): kotlin.Unit
+    public open <A> fun I1.foo2(A!): kotlin.Unit where A : java.io.Serializable!, A : kotlin.CharSequence!
+    public open <A, B> fun I1.foo3(A!): kotlin.Unit where A : kotlin.Any!, B : kotlin.Any!
 KClass: abstract interface I2 : Any
   members:
     public open operator fun I2.equals(kotlin.Any?): kotlin.Boolean
-    public open fun I2.foo2(A!): kotlin.Unit
+    public open <A> fun I2.foo2(A!): kotlin.Unit where A : kotlin.CharSequence!, A : java.io.Serializable!
     public open fun I2.hashCode(): kotlin.Int
     public open fun I2.toString(): kotlin.String
   declaredMembers:
-    public open fun I2.foo2(A!): kotlin.Unit
+    public open <A> fun I2.foo2(A!): kotlin.Unit where A : kotlin.CharSequence!, A : java.io.Serializable!

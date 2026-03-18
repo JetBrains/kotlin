@@ -1,5 +1,5 @@
 KtNameReferenceExpression(93,99): 'action'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleVariableAccessCall:
         contextArguments = []

@@ -1,0 +1,127 @@
+FILE fqName:<root> fileName:/Kotlin1.kt
+  CLASS CLASS name:Kotlin1 modality:OPEN visibility:public superTypes:[<root>.BaseJava]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Kotlin1
+    CONSTRUCTOR visibility:public returnType:<root>.Kotlin1 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.BaseJava'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Kotlin1 modality:OPEN visibility:public superTypes:[<root>.BaseJava]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:doJavaAction visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      overridden:
+        public open fun doJavaAction (): kotlin.Unit declared in <root>.BaseJava
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.BaseJava
+    FUN FAKE_OVERRIDE name:getE visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      overridden:
+        public open fun getE (): kotlin.Int declared in <root>.BaseJava
+    FUN FAKE_OVERRIDE name:getJavaString visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.String? [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      overridden:
+        public open fun getJavaString (): @[FlexibleNullability] kotlin.String? declared in <root>.BaseJava
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.BaseJava
+    FUN FAKE_OVERRIDE name:setE visibility:public/*package*/ modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      overridden:
+        public/*package*/ open fun setE (p0: kotlin.Int): kotlin.Unit declared in <root>.BaseJava
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.BaseJava
+FILE fqName:<root> fileName:/Kotlin2.kt
+  CLASS CLASS name:Kotlin2 modality:OPEN visibility:public superTypes:[<root>.Kotlin1]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Kotlin2
+    CONSTRUCTOR visibility:public returnType:<root>.Kotlin2 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Kotlin1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Kotlin2 modality:OPEN visibility:public superTypes:[<root>.Kotlin1]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:doJavaAction visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      overridden:
+        public open fun doJavaAction (): kotlin.Unit declared in <root>.Kotlin1
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Kotlin1
+    FUN FAKE_OVERRIDE name:getE visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      overridden:
+        public open fun getE (): kotlin.Int declared in <root>.Kotlin1
+    FUN FAKE_OVERRIDE name:getJavaString visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.String? [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      overridden:
+        public open fun getJavaString (): @[FlexibleNullability] kotlin.String? declared in <root>.Kotlin1
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Kotlin1
+    FUN FAKE_OVERRIDE name:setE visibility:public/*package*/ modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      overridden:
+        public/*package*/ open fun setE (p0: kotlin.Int): kotlin.Unit declared in <root>.Kotlin1
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Kotlin1
+FILE fqName:<root> fileName:/Kotlin3.kt
+  CLASS CLASS name:Kotlin3 modality:FINAL visibility:public superTypes:[<root>.Kotlin2]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Kotlin3
+    CONSTRUCTOR visibility:public returnType:<root>.Kotlin3 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Kotlin2'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Kotlin3 modality:FINAL visibility:public superTypes:[<root>.Kotlin2]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:doJavaAction visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      overridden:
+        public open fun doJavaAction (): kotlin.Unit declared in <root>.Kotlin2
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Kotlin2
+    FUN FAKE_OVERRIDE name:getE visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      overridden:
+        public open fun getE (): kotlin.Int declared in <root>.Kotlin2
+    FUN FAKE_OVERRIDE name:getJavaString visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.String? [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      overridden:
+        public open fun getJavaString (): @[FlexibleNullability] kotlin.String? declared in <root>.Kotlin2
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Kotlin2
+    FUN FAKE_OVERRIDE name:setE visibility:public/*package*/ modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BaseJava
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      overridden:
+        public/*package*/ open fun setE (p0: kotlin.Int): kotlin.Unit declared in <root>.Kotlin2
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Kotlin2
+    FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Kotlin3
+      BLOCK_BODY
+        VAR name:x type:kotlin.Int [val]
+          CALL 'public open fun getE (): kotlin.Int declared in <root>.Kotlin3' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: GET_VAR '<this>: <root>.Kotlin3 declared in <root>.Kotlin3.test' type=<root>.Kotlin3 origin=IMPLICIT_ARGUMENT
+        CALL 'public/*package*/ open fun setE (p0: kotlin.Int): kotlin.Unit declared in <root>.Kotlin3' type=kotlin.Unit origin=EQ
+          ARG <this>: GET_VAR '<this>: <root>.Kotlin3 declared in <root>.Kotlin3.test' type=<root>.Kotlin3 origin=IMPLICIT_ARGUMENT
+          ARG p0: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            ARG <this>: GET_VAR 'val x: kotlin.Int declared in <root>.Kotlin3.test' type=kotlin.Int origin=null
+            ARG other: CONST Int type=kotlin.Int value=1
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          CALL 'public open fun getJavaString (): @[FlexibleNullability] kotlin.String? declared in <root>.Kotlin3' type=@[FlexibleNullability] kotlin.String? origin=null
+            ARG <this>: GET_VAR '<this>: <root>.Kotlin3 declared in <root>.Kotlin3.test' type=<root>.Kotlin3 origin=IMPLICIT_ARGUMENT
+        CALL 'public open fun doJavaAction (): kotlin.Unit declared in <root>.Kotlin3' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.Kotlin3 declared in <root>.Kotlin3.test' type=<root>.Kotlin3 origin=IMPLICIT_ARGUMENT

@@ -1,0 +1,29 @@
+test1: ---
+assert(a!!)
+       |
+       false
+---
+test2: ---
+assert(a!!.length == 5)
+       |   |      |
+       |   4      false
+       test
+---
+test3: ---
+assert(a.value!!.length == 5)
+       | |       |      |
+       | Test    4      false
+       Holder
+---
+test4: ---
+assert(a["a"]!! == 43)
+       ||       |
+       |42      false
+       {a=42}
+---
+test5: ---
+assert(a!!.next!!.next != null)
+       |   |      |    |
+       |   Node   null false
+       Node
+---

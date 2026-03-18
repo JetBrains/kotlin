@@ -16,7 +16,8 @@ internal fun Project.launchKotlinGradleProjectCheckers() {
     val context = KotlinGradleProjectCheckerContext(
         project,
         project.kotlinPropertiesProvider,
-        project.multiplatformExtensionOrNull
+        project.multiplatformExtensionOrNull,
+        project.toolingDiagnosticsContext,
     )
     val collector = project.kotlinToolingDiagnosticsCollector
 

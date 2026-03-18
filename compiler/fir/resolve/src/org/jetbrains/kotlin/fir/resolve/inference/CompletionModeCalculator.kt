@@ -31,8 +31,9 @@ fun Candidate.computeCompletionMode(
         // Expected type is present or call is being resolved in independent context
         resolutionMode.forceFullCompletion -> ConstraintSystemCompletionMode.FULL
 
-        // Collection literal's CS is a copy of outer CS, hence we can't force FULL completion for it.
-        callInfo.isCollectionLiteralCall -> ConstraintSystemCompletionMode.PARTIAL
+        callInfo.isCollectionLiteralCall -> {
+            error("Should not run completion for collection literal")
+        }
 
         // This is questionable as null return type can be only for error call
         currentReturnType == null -> ConstraintSystemCompletionMode.PARTIAL

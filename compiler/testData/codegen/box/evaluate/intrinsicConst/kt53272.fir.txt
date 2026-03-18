@@ -22,7 +22,7 @@ FILE: 2.kt
 
         public final static [ContainingClassKey=E] enum entry OK: R|E| = object : R|E| {
             private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                super<R|E|>(R|/E.X|)
+                super<R|E|>(Q|E|.R|/E.X|)
             }
 
         }
@@ -34,6 +34,6 @@ FILE: 2.kt
         }
 
         public final static [ContainingClassKey=E] val entries: R|kotlin/enums/EnumEntries<E>|
-            public get(): R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
 
     }

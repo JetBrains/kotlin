@@ -1,0 +1,56 @@
+FILE: sequenceVsAny.kt
+    public final fun f1(x: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun f1(x: R|kotlin/sequences/Sequence<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun t1(): R|kotlin/Unit| {
+        R|/f1|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>())
+        R|/f1|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+        R|/f1|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(!)))
+        R|/f1|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/UInt|>(UInt(42)))
+        R|/f1|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Long|>(Long(42)))
+    }
+    public final fun f2(x: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun f2(x: R|kotlin/sequences/Sequence<kotlin/Int>?|): R|kotlin/Unit| {
+    }
+    public final fun t2(): R|kotlin/Unit| {
+        <Ambiguity: f2, [/f2, /f2]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        <Ambiguity: f2, [/f2, /f2]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+        R|/f2|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(!)))
+    }
+    public final fun f3(x: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun <T> f3(x: R|kotlin/sequences/Sequence<T>|): R|kotlin/Unit| {
+    }
+    public final fun t3(): R|kotlin/Unit| {
+        R|/f3<CS errors: /f3>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        R|/f3|<R|kotlin/Int|>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>(Int(42)))
+        R|/f3|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(!))))
+    }
+    public final fun f4(x: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/CharSequence|> f4(x: R|kotlin/sequences/Sequence<T>|): R|kotlin/Unit| {
+    }
+    public final fun t4(): R|kotlin/Unit| {
+        R|/f4|<R|kotlin/CharSequence|>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/CharSequence|>())
+        R|/f4|<R|kotlin/String|>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/String|>(String(!)))
+        R|/f4|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+    }
+    public final fun f5(x: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun <T> f5(x: R|kotlin/sequences/Sequence<T>?|): R|kotlin/Unit| {
+    }
+    public final fun t5(): R|kotlin/Unit| {
+        R|/f5<CS errors: /f5>#|(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        R|/f5|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(!)))
+    }
+    public final fun f6(x: R|kotlin/Any?|): R|kotlin/Unit| {
+    }
+    public final fun f6(x: R|kotlin/sequences/Sequence<kotlin/Int>?|): R|kotlin/Unit| {
+    }
+    public final fun t6(): R|kotlin/Unit| {
+        R|/f6|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>())
+        R|/f6|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+        R|/f6|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(!)))
+    }

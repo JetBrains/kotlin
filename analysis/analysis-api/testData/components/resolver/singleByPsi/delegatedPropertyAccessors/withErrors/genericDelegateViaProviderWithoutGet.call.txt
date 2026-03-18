@@ -1,0 +1,4 @@
+KtPropertyDelegate(419,455): 'by ProvideDelegateHolder("provided")'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>

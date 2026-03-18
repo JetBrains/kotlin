@@ -1,0 +1,12 @@
+test1: ---
+assert(1 + 1 == 4)
+         |   |
+         2   false
+---
+test2: ---
+assert(a + b)
+       | | |
+       | | false
+       | false
+       true
+---

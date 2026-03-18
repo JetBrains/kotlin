@@ -6,8 +6,8 @@
  */
 val testedVersion = "1.8.20-dev-4242"
 
-val isSnapshotTest = properties.contains("kgp-idea.snapshot_test")
-val resolvedTestedVersion = if (isSnapshotTest) properties["defaultSnapshotVersion"].toString() else testedVersion
+val isSnapshotTest = hasProperty("kgp-idea.snapshot_test")
+val resolvedTestedVersion = if (isSnapshotTest) property("defaultSnapshotVersion").toString() else testedVersion
 
 //region Download and prepare classpath for specified tested version
 

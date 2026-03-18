@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
@@ -15,8 +18,14 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
     compilerArgument {
         name = "Xklib-relative-path-base"
         compilerName = "relativePathBases"
-        description = "Provide a base path to compute the source's relative paths in klib (default is empty).".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        description = ReleaseDependent(
+            current = """Relativize all the paths stored in a klib using the given path prefixes.
+The supplied prefixes should be absolute paths to the directories containing the source code files.
+Note: The prefixes are applied in the same order as they are passed in this CLI argument.""",
+            KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_3_20 to
+                    "Provide a base path to compute the source's relative paths in klib (default is empty)."
+        )
+        valueType = StringArrayType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
@@ -27,7 +36,7 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         name = "Xklib-normalize-absolute-path"
         compilerName = "normalizeAbsolutePath"
         description = "Normalize absolute paths in klibs.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
@@ -38,7 +47,7 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         name = "Xklib-enable-signature-clash-checks"
         compilerName = "enableSignatureClashChecks"
         description = "Enable signature uniqueness checks.".asReleaseDependent()
-        argumentType = BooleanType.defaultTrue
+        valueType = BooleanType.defaultTrue
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
@@ -48,12 +57,28 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
     compilerArgument {
         name = "Xpartial-linkage"
         compilerName = "partialLinkageMode"
-        description = "Use partial linkage mode.".asReleaseDependent()
-        argumentType = StringType.defaultNull
-        argumentTypeDescription = "{enable|disable}".asReleaseDependent()
+        description = ReleaseDependent(
+            current = """
+                This option is deprecated and will be deleted in future versions.
+                The partial linkage engine is always turned on.
+                If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
+            """.trimIndent(),
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_3_20 to "Use partial linkage mode."
+            )
+
+        )
+
+        valueType = StringType.defaultNull
+
+        valueDescription = "{enable|disable}".asReleaseDependent()
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 
@@ -61,8 +86,11 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         name = "Xpartial-linkage-loglevel"
         compilerName = "partialLinkageLogLevel"
         description = "Define the compile-time log level for partial linkage.".asReleaseDependent()
-        argumentType = StringType.defaultNull
-        argumentTypeDescription = "{info|warning|error}".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = ReleaseDependent(
+            current = "{silent|info|warning|error}",
+            KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_3_20 to "{info|warning|error}"
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
@@ -73,8 +101,8 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         name = "Xklib-duplicated-unique-name-strategy"
         compilerName = "duplicatedUniqueNameStrategy"
         description = "Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.".asReleaseDependent()
-        argumentType = StringType.defaultNull
-        argumentTypeDescription = "{deny|allow-all-with-warning|allow-first-with-warning}".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "{deny|allow-all-with-warning|allow-first-with-warning}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
@@ -91,8 +119,8 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
 - `disabled` mode completely disables the IR inliner
 - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
         """.asReleaseDependent()
-        argumentType = KlibIrInlinerModeType()
-        argumentTypeDescription = ReleaseDependent(
+        valueType = KlibIrInlinerModeType()
+        valueDescription = ReleaseDependent(
             current = KlibIrInlinerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }
         )
 
@@ -107,8 +135,8 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         description = """Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
 Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
 The only observable effect is that a custom ABI version is written to KLIB manifest file.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
-        argumentTypeDescription = "<version>".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "<version>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
@@ -118,12 +146,23 @@ The only observable effect is that a custom ABI version is written to KLIB manif
     compilerArgument {
         name = "Xklib-zip-file-accessor-cache-limit"
         description = "Maximum number of klibs that can be cached during compilation. Default is 64.".asReleaseDependent()
-        argumentType = IntType(
+        valueType = IntType(
             defaultValue = 64.asReleaseDependent()
         )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0
+        )
+    }
+
+    compilerArgument {
+        name = "Xskip-library-special-compatibility-checks"
+        compilerName = "skipLibrarySpecialCompatibilityChecks"
+        description = "Skip library compatibility checks for stdlib and kotlin.test library.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 }

@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.name.FqName
 
 class SubtypeTrackerImpl : SubtypeTracker {
-    private val subtypes = hashMapOf<FqName, MutableSet<FqName>>()
-
     val subtypeMap: Map<FqName, Set<FqName>>
-        get() = subtypes
+        field = hashMapOf<FqName, MutableSet<FqName>>()
 
     override fun report(className: FqName, subtypeName: FqName) {
-        subtypes.getOrPut(className) { hashSetOf() }.add(subtypeName)
+        subtypeMap.getOrPut(className) { hashSetOf() }.add(subtypeName)
     }
 }

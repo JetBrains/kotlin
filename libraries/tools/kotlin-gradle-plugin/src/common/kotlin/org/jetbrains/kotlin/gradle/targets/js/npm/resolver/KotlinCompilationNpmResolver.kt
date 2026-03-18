@@ -97,8 +97,6 @@ class KotlinCompilationNpmResolver(
             it.npmResolutionManager.value(npmResolutionManager)
                 .disallowChanges()
 
-            @Suppress("DEPRECATION_ERROR")
-            it.jsIrCompilation.set(true)
             it.npmProjectName.set(npmProject.name)
             it.npmProjectMain.set(npmProject.main)
             it.npmProjectTypes.set(npmProject.typesFileName)

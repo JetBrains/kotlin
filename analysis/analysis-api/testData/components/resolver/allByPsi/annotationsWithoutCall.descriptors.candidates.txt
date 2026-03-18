@@ -41,7 +41,7 @@ KtAnnotationEntry(36,41): '@Anno'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(37,41): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -65,7 +65,7 @@ KtUserType(37,41): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(37,41): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JKLIB
 fun a() = "string"
 
 class A {

@@ -2,5 +2,6 @@ KtNameReferenceExpression(110,111): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: call) fun x(b: kotlin.Boolean)

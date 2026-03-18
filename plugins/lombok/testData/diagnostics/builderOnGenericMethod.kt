@@ -2,6 +2,7 @@
 // IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
 // ISSUE: KT-84058
+// LANGUAGE: +ForbidUselessTypeArgumentsIn25
 
 // FILE: BuilderOnMethod.java
 import lombok.Builder;
@@ -33,6 +34,6 @@ public class TestBuilders {
 fun box(): String {
     val test1 = BuilderOnMethod.create("OK")
     val test2 = BuilderOnMethod.builder<Int>().name(1).build()
-    val test3 = BuilderOnMethod<Int>.builder<String>().name("").build()
+    val test3 = BuilderOnMethod<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.builder<String>().name("").build()
     return test1.name
 }

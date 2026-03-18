@@ -20,7 +20,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class CustomIsReferenceToTest : AbstractAnalysisApiExecutionTest("analysis/analysis-api/testData/references/customIsReferenceTo") {
+class CustomIsReferenceToTest : AbstractAnalysisApiExecutionTest("../analysis-api/testData/references/customIsReferenceTo") {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
     @Test

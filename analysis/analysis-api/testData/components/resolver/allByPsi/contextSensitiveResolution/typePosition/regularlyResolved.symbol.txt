@@ -125,10 +125,56 @@ KtWhenExpression(255,320): 'when (this) {'
   null
 
 KtThisExpression(261,265): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: MySealed
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(261,265): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: MySealed
+        visibility: PUBLIC
+    ]
 
 KtWhenEntry(273,285): 'is Left -> z'
   null
@@ -146,7 +192,10 @@ KtNameReferenceExpression(276,280): 'Left'
   null
 
 KtNameReferenceExpression(284,285): 'z'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val z: kotlin.String
+    ]
 
 KtWhenEntry(290,303): 'is Right -> y'
   null
@@ -164,7 +213,10 @@ KtNameReferenceExpression(293,298): 'Right'
   null
 
 KtNameReferenceExpression(302,303): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtWhenEntry(308,318): 'else -> ""'
   null

@@ -180,6 +180,11 @@ dependencies {
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     commonCompileOnly("com.gradle:develocity-gradle-plugin:3.19.2")
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
+    commonCompileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json") {
+        version {
+            strictly(GradlePluginVariant.GRADLE_MIN.compatibleKotlinxJsonSerializationVersion)
+        }
+    }
     commonCompileOnly("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
     }
@@ -208,6 +213,15 @@ dependencies {
     embedded(project(":kotlin-gradle-statistics"))
     embedded(libs.intellij.asm) { isTransitive = false }
     embedded(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
+    embedded("org.jetbrains.kotlinx:kotlinx-serialization-json") {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
+        version {
+            strictly(GradlePluginVariant.GRADLE_MIN.compatibleKotlinxJsonSerializationVersion)
+        }
+    }
     embedded(libs.guava) { isTransitive = false }
     embedded(libs.guava.failureaccess) { isTransitive = false }
     embedded(commonDependency("org.jetbrains.teamcity:serviceMessages")) { isTransitive = false }
@@ -338,6 +352,7 @@ tasks {
         relocate("com.github.gundy", "$kotlinEmbeddableRootPackage.com.github.gundy")
         val baseSourcePackage = "org.jetbrains.kotlin"
         val baseTargetPackage = "org.jetbrains.kotlin.gradle.internal"
+        relocate("kotlinx.serialization", baseTargetPackage)
         val packages: Map<String, List<String>> = mapOf(
             "analyzer" to emptyList(),
             "build" to listOf(
@@ -393,9 +408,9 @@ tasks {
             /*
              * This excludes .kotlin_module files for compiler modules from the fat jars.
              * These files are required only at compilation time, but we include the modules only for runtime
-             * Hack for not limiting LV to 1.7 for those modules. To be removed after KT-70247
+             * Hack for not limiting LV to 1.8 for those modules. To be removed after KT-70247
              */
-            pivotVersion = KotlinMetadataPivotVersion(1, 8, 0)
+            pivotVersion = KotlinMetadataPivotVersion(1, 9, 0)
         }
         asmDeprecation {
             val exclusions = listOf(
@@ -485,12 +500,6 @@ gradlePlugin {
             description = "Kotlin Android plugin"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper"
-        }
-        create("kotlinAndroidExtensionsPlugin") {
-            id = "org.jetbrains.kotlin.android.extensions"
-            description = "Kotlin Android Extensions plugin"
-            displayName = description
-            implementationClass = "org.jetbrains.kotlin.gradle.internal.AndroidExtensionsSubpluginIndicator"
         }
         create("kotlinParcelizePlugin") {
             id = "org.jetbrains.kotlin.plugin.parcelize"
@@ -667,7 +676,11 @@ dependencies {
     }
     implementation("org.reflections:reflections:0.10.2")
     implementation(project(":compose-compiler-gradle-plugin"))
-    implementation(libs.kotlinx.serialization.json)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json") {
+        version {
+            strictly(GradlePluginVariant.GRADLE_MIN.compatibleKotlinxJsonSerializationVersion)
+        }
+    }
     implementation(intellijPlatformUtil())
     implementation(libs.junit.jupiter.engine)
 }
@@ -689,4 +702,10 @@ tasks.withType<Jar>().configureEach {
         // FIXME: Entry org/jetbrains/kotlin/cli/common/arguments/CommonCompilerArguments.kt is a duplicate
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
+}
+
+kotlin {
+    target.compilations.getByName("common").configurations.pluginConfiguration.dependencies.add(
+        dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
+    )
 }

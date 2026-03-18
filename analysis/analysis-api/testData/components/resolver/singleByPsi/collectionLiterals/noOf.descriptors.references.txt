@@ -1,0 +1,16 @@
+KtCollectionLiteralExpression(73,88): '["1", "2", "3"]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
+    symbols:
+      (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
+
+KtCallExpression(62,89): 'acceptList(["1", "2", "3"])'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

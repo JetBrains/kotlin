@@ -24,7 +24,7 @@ fun box() = "OK"
 
 // FILE: entry.mjs
 
-import { getCounter, initializeOnExportedFunctionExit, fooRecursive } from "./index.mjs"
+import { getCounter, initializeOnExportedFunctionExit, fooRecursive } from "./index.mjs" // "index" is a value of `const val WASM_BASE_FILE_NAME`
 
 if (getCounter() !== 0) throw "Err0"
 initializeOnExportedFunctionExit()

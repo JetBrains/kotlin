@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.plugin.sandbox.fir.*
+import org.jetbrains.kotlin.plugin.sandbox.fir.CallShapeData
+import org.jetbrains.kotlin.plugin.sandbox.fir.DataFrameLikeCallsRefinementExtension
+import org.jetbrains.kotlin.plugin.sandbox.fir.callShapeData
 
 class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
 
@@ -53,7 +55,11 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
 
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val constructor = createConstructor(context.owner, DataFrameLikeCallsRefinementExtension.Companion.KEY, isPrimary = true) {
+        val constructor = createConstructor(
+            context.owner,
+            DataFrameLikeCallsRefinementExtension.DataFrameLikeCallsRefinementExtensionGeneratorKey,
+            isPrimary = true,
+        ) {
             visibility = Visibilities.Local
         }
         return listOf(constructor.symbol)
@@ -71,7 +77,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
     ): FirProperty {
         return createMemberProperty(
             scopeSymbol,
-            DataFrameLikeCallsRefinementExtension.Companion.KEY,
+            DataFrameLikeCallsRefinementExtension.DataFrameLikeCallsRefinementExtensionGeneratorKey,
             propName,
             session.builtinTypes.intType.coneType
         ) {
@@ -99,7 +105,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
     ): FirProperty {
         return createMemberProperty(
             tokenSymbol,
-            DataFrameLikeCallsRefinementExtension.Companion.KEY,
+            DataFrameLikeCallsRefinementExtension.DataFrameLikeCallsRefinementExtensionGeneratorKey,
             propName,
             session.builtinTypes.intType.coneType
         ) {
@@ -115,7 +121,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
     ): FirProperty {
         return createMemberProperty(
             scopeSymbol,
-            DataFrameLikeCallsRefinementExtension.Companion.KEY,
+            DataFrameLikeCallsRefinementExtension.DataFrameLikeCallsRefinementExtensionGeneratorKey,
             name,
             ConeClassLikeTypeImpl(
                 ConeClassLikeLookupTagWithFixedSymbol(scope, scopeSymbol),

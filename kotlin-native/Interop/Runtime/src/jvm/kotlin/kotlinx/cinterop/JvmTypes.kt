@@ -52,7 +52,7 @@ inline fun <reified T : NativePointed> interpretNullablePointed(ptr: NativePtr):
     if (ptr == nativeNullPtr) {
         return null
     } else {
-        val result = nativeMemUtils.allocateInstance<T>()
+        val result = unsafeAllocateInstance<T>()
         result.rawPtr = ptr
         return result
     }

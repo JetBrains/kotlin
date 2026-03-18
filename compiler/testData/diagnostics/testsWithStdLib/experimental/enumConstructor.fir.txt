@@ -32,7 +32,7 @@ FILE: enumConstructor.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Enum1>|
-            public get(): R|kotlin/enums/EnumEntries<Enum1>|
+            public static get(): R|kotlin/enums/EnumEntries<Enum1>|
 
     }
     public final enum class Enum2 : R|kotlin/Enum<Enum2>| {
@@ -72,7 +72,7 @@ FILE: enumConstructor.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Enum2>|
-            public get(): R|kotlin/enums/EnumEntries<Enum2>|
+            public static get(): R|kotlin/enums/EnumEntries<Enum2>|
 
     }
     public final enum class Enum3 : R|kotlin/Enum<Enum3>| {
@@ -115,6 +115,6 @@ FILE: enumConstructor.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Enum3>|
-            public get(): R|kotlin/enums/EnumEntries<Enum3>|
+            public static get(): R|kotlin/enums/EnumEntries<Enum3>|
 
     }

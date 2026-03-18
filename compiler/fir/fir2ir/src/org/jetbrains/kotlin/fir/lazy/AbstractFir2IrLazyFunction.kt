@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
@@ -32,7 +31,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override val symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     override var isFakeOverride: Boolean,
-) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
+) : IrSimpleFunction(), IrLazyFunctionBase, AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer,
     Fir2IrComponents by c {
     init {
         this.parent = parent
@@ -72,10 +71,9 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         get() = fir.isExpect
         set(_) = mutationNotSupported()
 
-    @Suppress("LeakingThis")
-    override var body: IrBody? by lazyVar(lock) {
-        if (tryLoadIr()) body else null
-    }
+    override var body: IrBody?
+        get() = null
+        set(value) = check(value == null, ::mutationNotSupported)
 
     @Suppress("LeakingThis")
     override var visibility: DescriptorVisibility by lazyVar(lock) {
@@ -104,7 +102,4 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrAnnotation>> {
         return super<AbstractFir2IrLazyDeclaration>.createLazyAnnotations()
     }
-
-    override val isDeserializationEnabled: Boolean
-        get() = extensions.irNeedsDeserialization
 }

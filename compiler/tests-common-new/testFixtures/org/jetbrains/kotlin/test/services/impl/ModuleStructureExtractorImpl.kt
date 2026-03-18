@@ -333,8 +333,9 @@ class ModuleStructureExtractorImpl(
             val moduleName = currentModuleName
                 ?: testServices.defaultDirectives[ModuleStructureDirectives.MODULE].firstOrNull()
                 ?: DEFAULT_MODULE_NAME
+
             val testModule = TestModule(
-                name = moduleName,
+                name = escapeModuleNameIfNeeded(moduleName),
                 files = filesOfCurrentModule,
                 allDependencies = dependenciesOfCurrentModule,
                 directives = moduleDirectives,
@@ -344,6 +345,13 @@ class ModuleStructureExtractorImpl(
             modules += testModule
             firstFileInModule = true
             resetModuleCaches()
+        }
+
+        private fun escapeModuleNameIfNeeded(name: String): String {
+            if (ModuleStructureDirectives.ESCAPE_MODULE_NAME !in testServices.defaultDirectives) return name
+            val (className, methodName, _) = testServices.testInfo
+            val classPart = className.substringAfter("$").replace("$", ".")
+            return "$classPart.$methodName.$name"
         }
 
         private fun finishFile(lineNumber: Int) {

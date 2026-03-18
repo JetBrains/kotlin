@@ -71,10 +71,16 @@ KtBlockExpression(161,253): '{'
   null
 
 KtDotQualifiedExpression(167,185): 'MyAlias.function()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(167,174): 'MyAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyAlias
+    ]
 
 KtCallExpression(175,185): 'function()'
   KaSymbolResolutionSuccess:
@@ -83,19 +89,31 @@ KtCallExpression(175,185): 'function()'
     ]
 
 KtNameReferenceExpression(175,183): 'function'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+    ]
 
 KtValueArgumentList(183,185): '()'
   null
 
 KtDotQualifiedExpression(190,206): 'MyAlias.property'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val property: kotlin.Int
+    ]
 
 KtNameReferenceExpression(190,197): 'MyAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyAlias
+    ]
 
 KtNameReferenceExpression(198,206): 'property'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val property: kotlin.Int
+    ]
 
 KtCallableReferenceExpression(212,229): 'MyAlias::function'
   KaSymbolResolutionSuccess:
@@ -104,10 +122,16 @@ KtCallableReferenceExpression(212,229): 'MyAlias::function'
     ]
 
 KtNameReferenceExpression(212,219): 'MyAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyAlias
+    ]
 
 KtNameReferenceExpression(221,229): 'function'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+    ]
 
 KtCallableReferenceExpression(234,251): 'MyAlias::property'
   KaSymbolResolutionSuccess:
@@ -116,7 +140,13 @@ KtCallableReferenceExpression(234,251): 'MyAlias::property'
     ]
 
 KtNameReferenceExpression(234,241): 'MyAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyAlias
+    ]
 
 KtNameReferenceExpression(243,251): 'property'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val property: kotlin.Int
+    ]

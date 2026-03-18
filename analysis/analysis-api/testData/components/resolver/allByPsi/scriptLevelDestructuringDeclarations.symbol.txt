@@ -80,7 +80,10 @@ KtAnnotationEntry(101,126): '@Anno("a type $constant")'
     ]
 
 KtConstructorCalleeExpression(102,106): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(102,106): 'Anno'
   null
@@ -89,7 +92,10 @@ KtUserType(102,106): 'Anno'
   null
 
 KtNameReferenceExpression(102,106): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(106,126): '("a type $constant")'
   null
@@ -107,7 +113,10 @@ KtSimpleNameStringTemplateEntry(115,124): '$constant'
   null
 
 KtNameReferenceExpression(116,124): 'constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constant: kotlin.String
+    ]
 
 KtNullableType(127,225): 'List<@Anno("a nested type $constant") Collection<@Anno("a nested nested type $constant") String>>?'
   null
@@ -137,7 +146,10 @@ KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
     ]
 
 KtConstructorCalleeExpression(133,137): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(133,137): 'Anno'
   null
@@ -146,7 +158,10 @@ KtUserType(133,137): 'Anno'
   null
 
 KtNameReferenceExpression(133,137): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(137,164): '("a nested type $constant")'
   null
@@ -164,7 +179,10 @@ KtSimpleNameStringTemplateEntry(153,162): '$constant'
   null
 
 KtNameReferenceExpression(154,162): 'constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constant: kotlin.String
+    ]
 
 KtUserType(165,223): 'Collection<@Anno("a nested nested type $constant") String>'
   null
@@ -191,7 +209,10 @@ KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
     ]
 
 KtConstructorCalleeExpression(177,181): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(177,181): 'Anno'
   null
@@ -200,7 +221,10 @@ KtUserType(177,181): 'Anno'
   null
 
 KtNameReferenceExpression(177,181): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(181,215): '("a nested nested type $constant")'
   null
@@ -218,7 +242,10 @@ KtSimpleNameStringTemplateEntry(204,213): '$constant'
   null
 
 KtNameReferenceExpression(205,213): 'constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constant: kotlin.String
+    ]
 
 KtUserType(216,222): 'String'
   null
@@ -242,7 +269,10 @@ KtAnnotationEntry(234,259): '@Anno("b type $constant")'
     ]
 
 KtConstructorCalleeExpression(235,239): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(235,239): 'Anno'
   null
@@ -251,7 +281,10 @@ KtUserType(235,239): 'Anno'
   null
 
 KtNameReferenceExpression(235,239): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(239,259): '("b type $constant")'
   null
@@ -269,7 +302,10 @@ KtSimpleNameStringTemplateEntry(248,257): '$constant'
   null
 
 KtNameReferenceExpression(249,257): 'constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constant: kotlin.String
+    ]
 
 KtNullableType(260,350): 'Array<@Anno("b nested type $constant") List<@Anno("b nested nested type $constant") Int>>?'
   null
@@ -299,7 +335,10 @@ KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
     ]
 
 KtConstructorCalleeExpression(267,271): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(267,271): 'Anno'
   null
@@ -308,7 +347,10 @@ KtUserType(267,271): 'Anno'
   null
 
 KtNameReferenceExpression(267,271): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(271,298): '("b nested type $constant")'
   null
@@ -326,7 +368,10 @@ KtSimpleNameStringTemplateEntry(287,296): '$constant'
   null
 
 KtNameReferenceExpression(288,296): 'constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constant: kotlin.String
+    ]
 
 KtUserType(299,348): 'List<@Anno("b nested nested type $constant") Int>'
   null
@@ -353,7 +398,10 @@ KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
     ]
 
 KtConstructorCalleeExpression(305,309): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(305,309): 'Anno'
   null
@@ -362,7 +410,10 @@ KtUserType(305,309): 'Anno'
   null
 
 KtNameReferenceExpression(305,309): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(309,343): '("b nested nested type $constant")'
   null
@@ -380,7 +431,10 @@ KtSimpleNameStringTemplateEntry(332,341): '$constant'
   null
 
 KtNameReferenceExpression(333,341): 'constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constant: kotlin.String
+    ]
 
 KtUserType(344,347): 'Int'
   null
@@ -413,7 +467,10 @@ KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
     ]
 
 KtConstructorCalleeExpression(377,381): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(377,381): 'Anno'
   null
@@ -422,7 +479,10 @@ KtUserType(377,381): 'Anno'
   null
 
 KtNameReferenceExpression(377,381): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(381,398): '("destr 1 $prop")'
   null
@@ -440,10 +500,16 @@ KtSimpleNameStringTemplateEntry(391,396): '$prop'
   null
 
 KtNameReferenceExpression(392,396): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(404,422): '@Anno("a $prop") a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Pair.component1(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+    ]
 
 KtDeclarationModifierList(404,420): '@Anno("a $prop")'
   null
@@ -455,7 +521,10 @@ KtAnnotationEntry(404,420): '@Anno("a $prop")'
     ]
 
 KtConstructorCalleeExpression(405,409): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(405,409): 'Anno'
   null
@@ -464,7 +533,10 @@ KtUserType(405,409): 'Anno'
   null
 
 KtNameReferenceExpression(405,409): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(409,420): '("a $prop")'
   null
@@ -482,10 +554,16 @@ KtSimpleNameStringTemplateEntry(413,418): '$prop'
   null
 
 KtNameReferenceExpression(414,418): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(424,442): '@Anno("b $prop") b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Pair.component2(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+    ]
 
 KtDeclarationModifierList(424,440): '@Anno("b $prop")'
   null
@@ -497,7 +575,10 @@ KtAnnotationEntry(424,440): '@Anno("b $prop")'
     ]
 
 KtConstructorCalleeExpression(425,429): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(425,429): 'Anno'
   null
@@ -506,7 +587,10 @@ KtUserType(425,429): 'Anno'
   null
 
 KtNameReferenceExpression(425,429): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(429,440): '("b $prop")'
   null
@@ -524,7 +608,10 @@ KtSimpleNameStringTemplateEntry(433,438): '$prop'
   null
 
 KtNameReferenceExpression(434,438): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtCallExpression(446,462): 'Pair(null, null)'
   KaSymbolResolutionSuccess:
@@ -533,7 +620,10 @@ KtCallExpression(446,462): 'Pair(null, null)'
     ]
 
 KtNameReferenceExpression(446,450): 'Pair'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?): util.Pair
+    ]
 
 KtValueArgumentList(450,462): '(null, null)'
   null
@@ -563,7 +653,10 @@ KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
     ]
 
 KtConstructorCalleeExpression(465,469): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(465,469): 'Anno'
   null
@@ -572,7 +665,10 @@ KtUserType(465,469): 'Anno'
   null
 
 KtNameReferenceExpression(465,469): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(469,486): '("destr 1 $prop")'
   null
@@ -590,10 +686,16 @@ KtSimpleNameStringTemplateEntry(479,484): '$prop'
   null
 
 KtNameReferenceExpression(480,484): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(492,510): '@Anno("c $prop") c'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Pair.component1(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+    ]
 
 KtDeclarationModifierList(492,508): '@Anno("c $prop")'
   null
@@ -605,7 +707,10 @@ KtAnnotationEntry(492,508): '@Anno("c $prop")'
     ]
 
 KtConstructorCalleeExpression(493,497): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(493,497): 'Anno'
   null
@@ -614,7 +719,10 @@ KtUserType(493,497): 'Anno'
   null
 
 KtNameReferenceExpression(493,497): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(497,508): '("c $prop")'
   null
@@ -632,10 +740,16 @@ KtSimpleNameStringTemplateEntry(501,506): '$prop'
   null
 
 KtNameReferenceExpression(502,506): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(512,530): '@Anno("d $prop") d'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Pair.component2(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+    ]
 
 KtDeclarationModifierList(512,528): '@Anno("d $prop")'
   null
@@ -647,7 +761,10 @@ KtAnnotationEntry(512,528): '@Anno("d $prop")'
     ]
 
 KtConstructorCalleeExpression(513,517): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(513,517): 'Anno'
   null
@@ -656,7 +773,10 @@ KtUserType(513,517): 'Anno'
   null
 
 KtNameReferenceExpression(513,517): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(517,528): '("d $prop")'
   null
@@ -674,7 +794,10 @@ KtSimpleNameStringTemplateEntry(521,526): '$prop'
   null
 
 KtNameReferenceExpression(522,526): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtCallExpression(534,550): 'Pair(null, null)'
   KaSymbolResolutionSuccess:
@@ -683,7 +806,10 @@ KtCallExpression(534,550): 'Pair(null, null)'
     ]
 
 KtNameReferenceExpression(534,538): 'Pair'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?): util.Pair
+    ]
 
 KtValueArgumentList(538,550): '(null, null)'
   null

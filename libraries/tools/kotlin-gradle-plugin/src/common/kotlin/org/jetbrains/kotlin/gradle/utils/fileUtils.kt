@@ -47,6 +47,15 @@ internal fun String.fileExtensionCasePermutations(): List<String> {
 internal fun File.relativeOrAbsolute(base: File): String =
     relativeToOrNull(base)?.path ?: normalize().absolutePath
 
+/**
+ * Returns an absolute path with `.` and `..` segments resolved lexically, without filesystem I/O.
+ *
+ * Use at configuration time or when the path may not exist on disk.
+ * Does not resolve symlinks. Avoids [java.io.File.getCanonicalFile] (banned per KT-69613).
+ */
+internal fun File.normalizedAbsoluteFile(): File =
+    toPath().toAbsolutePath().normalize().toFile()
+
 internal fun Iterable<File>.pathsAsStringRelativeTo(base: File): String =
     map { it.relativeOrAbsolute(base) }.sorted().joinToString()
 

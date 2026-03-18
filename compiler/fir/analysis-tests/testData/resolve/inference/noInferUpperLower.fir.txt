@@ -1,0 +1,20 @@
+FILE: noInferUpperLower.kt
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_MEMBER), String(INVISIBLE_REFERENCE)) [evaluated = vararg(String(INVISIBLE_MEMBER), String(INVISIBLE_REFERENCE))]) public final fun <T> foo(x: R|In<T>|, y: R|@NoInfer T|, d: R|T|, z: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/z|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/d|)
+    }
+    public abstract interface In<in U> : R|kotlin/Any| {
+    }
+    public abstract interface Base : R|kotlin/Any| {
+    }
+    public abstract interface Derived : R|Base| {
+    }
+    public final fun overload(x: R|Base|): R|kotlin/Unit| {
+    }
+    public final fun overload(x: R|Derived|): R|kotlin/Unit| {
+    }
+    public final fun baz(x: R|In<Base>|, base: R|Base|, derived: R|Derived|): R|kotlin/Unit| {
+        R|/foo<CS errors: /foo>#|<R|Derived|>(R|<local>/x|, R|<local>/base|, R|<local>/derived|, <L> = foo@fun <anonymous>(x: R|Derived|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/overload|(R|<local>/x|)
+        }
+        )
+    }

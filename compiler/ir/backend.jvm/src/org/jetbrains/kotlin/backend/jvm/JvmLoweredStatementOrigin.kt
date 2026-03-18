@@ -17,5 +17,5 @@ object JvmLoweredStatementOrigin {
 
     val WHEN_AS_TYPE_SWITCH by IrStatementOriginImpl
 
-    val DEFAULT_VALUE_OF_INLINABLE_PARAMETER by IrStatementOriginImpl
+    val INLINE_SUSPEND_PARAM_DEFAULT_VALUE by IrStatementOriginImpl
 }

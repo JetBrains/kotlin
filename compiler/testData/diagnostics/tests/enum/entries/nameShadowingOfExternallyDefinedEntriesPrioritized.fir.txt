@@ -9,7 +9,7 @@ FILE: nameShadowingOfExternallyDefinedEntriesPrioritized.fir.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            R|pckg/E.entries*s|.<Unresolved name: length>#
+            Q|pckg/E|.R|pckg/E.entries*s|.<Unresolved name: length>#
             Q|pckg|.R|pckg/entries|.R|kotlin/String.length|
         }
 
@@ -20,7 +20,7 @@ FILE: nameShadowingOfExternallyDefinedEntriesPrioritized.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<pckg/E>|
-            public get(): R|kotlin/enums/EnumEntries<pckg/E>|
+            public static get(): R|kotlin/enums/EnumEntries<pckg/E>|
 
     }
     public final class A : R|kotlin/Any| {
@@ -39,7 +39,7 @@ FILE: nameShadowingOfExternallyDefinedEntriesPrioritized.fir.kt
                 }
 
                 public final fun foo(): R|kotlin/Unit| {
-                    R|pckg/A.E.entries*s|.<Unresolved name: length>#
+                    Q|pckg/A.E|.R|pckg/A.E.entries*s|.<Unresolved name: length>#
                     Q|pckg|.R|pckg/entries|.R|kotlin/String.length|
                 }
 
@@ -67,7 +67,7 @@ FILE: nameShadowingOfExternallyDefinedEntriesPrioritized.fir.kt
             }
 
             public final static val entries: R|kotlin/enums/EnumEntries<pckg/A.E>|
-                public get(): R|kotlin/enums/EnumEntries<pckg/A.E>|
+                public static get(): R|kotlin/enums/EnumEntries<pckg/A.E>|
 
         }
 

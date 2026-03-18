@@ -67,6 +67,20 @@ interface TestDataManagerTask : Task {
     @get:Option(option = "golden-only", description = "Run only golden tests (empty variant chain). If not specified, runs all tests")
     @get:Optional
     val goldenOnly: Property<Boolean>
+
+    /**
+     * When true, only runs variant tests for test data paths that had changes in the golden group.
+     *
+     * This optimizes `--mode=update` by tracking which golden tests actually wrote files
+     * and skipping variant tests for unchanged paths.
+     */
+    @get:Input
+    @get:Option(
+        option = "incremental",
+        description = "Only run variant tests for paths changed in golden group (effective with --mode=update)"
+    )
+    @get:Optional
+    val incremental: Property<Boolean>
 }
 
 /**

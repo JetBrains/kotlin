@@ -205,6 +205,14 @@ internal class KaFirExpressionInformationProvider(
         is KtWhenEntryGuard ->
             parent.getExpression() == child
 
+        // Contract effects don't use their expression
+        is KtContractEffect ->
+            false
+
+        // Contract effect lists don't use children as expressions
+        is KtContractEffectList ->
+            false
+
         !is KtExpression ->
             errorWithAttachment("Unhandled Non-KtExpression parent of KtExpression: ${parent::class}") {
                 withPsiEntry("parent", parent)

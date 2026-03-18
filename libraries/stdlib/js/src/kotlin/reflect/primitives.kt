@@ -66,6 +66,13 @@ internal object PrimitiveClasses {
     @JsName("intArrayClass")
     val intArrayClass = PrimitiveKClassImpl(js("Int32Array").unsafeCast<JsClass<IntArray>>(), "IntArray", { it is IntArray })
 
+    @JsName("bigIntClass")
+    val bigintClass = PrimitiveKClassImpl(
+        (if (jsTypeOf(BigInt) == "undefined") VOID else BigInt).unsafeCast<JsClass<BigInt>>(),
+        "BigInt",
+        { jsTypeOf(it) === "bigint" }
+    )
+
     // NOTE: The PrimitiveKClassImpl instance for LongArray is initialized in either kotlin.js.internal.longAsBigInt or
     // kotlin.js.internal.boxedLong package, depending on whether compiling Long as BigInt is enabled.
     // TODO(KT-70480): Uncomment this after we drop all ES editions except the latest.

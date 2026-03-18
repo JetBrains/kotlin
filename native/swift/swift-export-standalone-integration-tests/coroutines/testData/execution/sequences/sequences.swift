@@ -6,12 +6,69 @@ import Foundation
 @Test
 @MainActor
 func testRegular() async {
-    let expected: [KotlinBase] = [Element1.shared, Element2.shared, Element3.shared]
+    let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
 
-    let task = Task<[KotlinBase], any Error>.detached {
-        var actual: [KotlinBase] = []
+    let task = Task<[Elem], any Error>.detached {
+        var actual: [Elem] = []
         for try await element in testRegular() {
-            actual.append(element as! KotlinBase)
+            actual.append(element)
+        }
+        return actual
+    }
+
+    let actual = await task.result
+
+    #expect(!task.isCancelled)
+    #expect(actual == .success(expected))
+}
+
+@Test
+@MainActor
+func testString() async {
+    let expected: [String] = ["hello", "any", "world"]
+
+    let task = Task<[String], any Error>.detached {
+        var actual: [String] = []
+        for try await element in testString() {
+            actual.append(element)
+        }
+        return actual
+    }
+
+    let actual = await task.result
+
+    #expect(!task.isCancelled)
+    #expect(actual == .success(expected))
+}
+
+@Test
+@MainActor
+func testList() async {
+    let expected: [[Int32]] = [[1], [2], [3]]
+
+    let task = Task<[[Int32]], any Error>.detached {
+        var actual: [[Int32]] = []
+        for try await element in testList() {
+            actual.append(element)
+        }
+        return actual
+    }
+
+    let actual = await task.result
+
+    #expect(!task.isCancelled)
+    #expect(actual == .success(expected))
+}
+
+@Test
+@MainActor
+func testPrimitive() async {
+    let expected: [UInt32] = [1, 2, 3]
+
+    let task = Task<[UInt32], any Error>.detached {
+        var actual: [UInt32] = []
+        for try await element in testPrimitive() {
+            actual.append(element)
         }
         return actual
     }
@@ -42,9 +99,9 @@ func testEmpty() async {
 func testFailing() async {
     let task = Task<Void, any Error>.detached {
         var iterator = testFailing().makeAsyncIterator()
-        let first = try await iterator.next() as! KotlinBase
+        let first = try await iterator.next()
         #expect(first == Element1.shared)
-        let second = try await iterator.next() as! KotlinBase
+        let second = try await iterator.next()
         #expect(second == Element2.shared)
         _ = try await iterator.next()
     }
@@ -69,11 +126,11 @@ func testDiscarding() async {
 
     let discardingAtEnd = Task<Void, any Error>.detached {
         var iterator = testDiscarding().makeAsyncIterator()
-        let first = try await iterator.next() as! KotlinBase
+        let first = try await iterator.next()
         #expect(first == Element1.shared)
-        let second = try await iterator.next() as! KotlinBase
+        let second = try await iterator.next()
         #expect(second == Element2.shared)
-        let third = try await iterator.next() as! KotlinBase
+        let third = try await iterator.next()
         #expect(third == Element3.shared)
     }
     let discardingAtEndResult = await discardingAtEnd.result
@@ -82,7 +139,7 @@ func testDiscarding() async {
 
     let discardingMidway = Task<Void, any Error>.detached {
         var iterator = testDiscarding().makeAsyncIterator()
-        let first = try await iterator.next() as! KotlinBase
+        let first = try await iterator.next()
         #expect(first == Element1.shared)
     }
     let discardingMidwayResult = await discardingMidway.result
@@ -93,15 +150,15 @@ func testDiscarding() async {
 @Test
 @MainActor
 func testStateFlow() async {
-    let expected: [KotlinBase] = [Element1.shared, Element2.shared, Element3.shared]
+    let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
 
     let subject = CurrentSubject.shared
 
-    let collectTask = Task<[KotlinBase], any Error>.detached {
-        var actual: [KotlinBase] = []
+    let collectTask = Task<[Elem], any Error>.detached {
+        var actual: [Elem] = []
         var i = 0;
         for try await element in subject.value {
-            actual.append(element as! KotlinBase)
+            actual.append(element)
             i += 1
             guard i < 3 else { break }
         }

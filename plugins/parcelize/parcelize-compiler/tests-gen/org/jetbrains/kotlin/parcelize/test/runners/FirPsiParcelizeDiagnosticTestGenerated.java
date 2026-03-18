@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/parcelize/parcelize-compiler/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirPsiParcelizeDiagnosticTestGenerated extends AbstractFirPsiParcelizeDiagnosticTest {
+  private void run(String fileName) {
+    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -26,120 +30,120 @@ public class FirPsiParcelizeDiagnosticTestGenerated extends AbstractFirPsiParcel
   @Test
   @TestMetadata("constructors.kt")
   public void testConstructors() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/constructors.kt");
+    run("constructors.kt");
   }
 
   @Test
   @TestMetadata("customCreator.kt")
   public void testCustomCreator() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/customCreator.kt");
+    run("customCreator.kt");
   }
 
   @Test
   @TestMetadata("customParcelers.kt")
   public void testCustomParcelers() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/customParcelers.kt");
+    run("customParcelers.kt");
   }
 
   @Test
   @TestMetadata("customWriteToParcel.kt")
   public void testCustomWriteToParcel() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/customWriteToParcel.kt");
+    run("customWriteToParcel.kt");
   }
 
   @Test
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/dataClass.kt");
+    run("dataClass.kt");
   }
 
   @Test
   @TestMetadata("delegate.kt")
   public void testDelegate() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/delegate.kt");
+    run("delegate.kt");
   }
 
   @Test
   @TestMetadata("deprecatedAnnotations.kt")
   public void testDeprecatedAnnotations() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/deprecatedAnnotations.kt");
+    run("deprecatedAnnotations.kt");
   }
 
   @Test
   @TestMetadata("emptyPrimaryConstructor.kt")
   public void testEmptyPrimaryConstructor() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/emptyPrimaryConstructor.kt");
+    run("emptyPrimaryConstructor.kt");
   }
 
   @Test
   @TestMetadata("ignoredOnParcelDefaultValues.kt")
   public void testIgnoredOnParcelDefaultValues() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/ignoredOnParcelDefaultValues.kt");
+    run("ignoredOnParcelDefaultValues.kt");
   }
 
   @Test
   @TestMetadata("ignoredOnParcelUnsupportedType.kt")
   public void testIgnoredOnParcelUnsupportedType() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/ignoredOnParcelUnsupportedType.kt");
+    run("ignoredOnParcelUnsupportedType.kt");
   }
 
   @Test
   @TestMetadata("kt20062.kt")
   public void testKt20062() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/kt20062.kt");
+    run("kt20062.kt");
   }
 
   @Test
   @TestMetadata("kt47074.kt")
   public void testKt47074() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/kt47074.kt");
+    run("kt47074.kt");
   }
 
   @Test
   @TestMetadata("modality.kt")
   public void testModality() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/modality.kt");
+    run("modality.kt");
   }
 
   @Test
   @TestMetadata("notMagicParcel.kt")
   public void testNotMagicParcel() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/notMagicParcel.kt");
+    run("notMagicParcel.kt");
   }
 
   @Test
   @TestMetadata("properties.kt")
   public void testProperties() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/properties.kt");
+    run("properties.kt");
   }
 
   @Test
   @TestMetadata("simple.kt")
   public void testSimple() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/simple.kt");
+    run("simple.kt");
   }
 
   @Test
   @TestMetadata("unsupportedType.kt")
   public void testUnsupportedType() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/unsupportedType.kt");
+    run("unsupportedType.kt");
   }
 
   @Test
   @TestMetadata("valueParameterUsedInClassBody.kt")
   public void testValueParameterUsedInClassBody() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/valueParameterUsedInClassBody.kt");
+    run("valueParameterUsedInClassBody.kt");
   }
 
   @Test
   @TestMetadata("withoutParcelableSupertype.kt")
   public void testWithoutParcelableSupertype() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/withoutParcelableSupertype.kt");
+    run("withoutParcelableSupertype.kt");
   }
 
   @Test
   @TestMetadata("wrongAnnotationTarget.kt")
   public void testWrongAnnotationTarget() {
-    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/wrongAnnotationTarget.kt");
+    run("wrongAnnotationTarget.kt");
   }
 }

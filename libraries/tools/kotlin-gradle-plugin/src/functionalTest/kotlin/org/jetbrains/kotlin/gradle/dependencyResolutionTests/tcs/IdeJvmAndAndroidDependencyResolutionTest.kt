@@ -37,7 +37,6 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     private fun Project.configureAndroidAndMultiplatform(enableDefaultStdlib: Boolean = false) {
         enableDefaultStdlibDependency(enableDefaultStdlib)
         enableDependencyVerification(false)
-        setMultiplatformAndroidSourceSetLayoutVersion(2)
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
         androidExtension.configureDefaults()
@@ -95,7 +94,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
 
     @Test
     fun `test - project to multiplatform project dependency`() {
-        val root = buildProject { setMultiplatformAndroidSourceSetLayoutVersion(2) }
+        val root = buildProject { }
         val producer = buildProject({ withParent(root).withName("producer") }) { configureAndroidAndMultiplatform() }
         val consumer = buildProject({ withParent(root).withName("consumer") }) { configureAndroidAndMultiplatform() }
 
@@ -179,7 +178,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
 
     @Test
     fun `test - KT-59020 - transitive project dependency to self`() {
-        val root = buildProject { setMultiplatformAndroidSourceSetLayoutVersion(2) }
+        val root = buildProject { }
         val a = buildProject({ withParent(root).withName("a") }) { configureAndroidAndMultiplatform() }
         val b = buildProject({ withParent(root).withName("b") }) { configureAndroidAndMultiplatform() }
 

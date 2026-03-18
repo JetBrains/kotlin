@@ -125,16 +125,28 @@ KtContainerNode(304,329): 'settings == BasicSettings'
   null
 
 KtBinaryExpression(304,329): 'settings == BasicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(304,312): 'settings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      settings: Settings
+    ]
 
 KtOperationReferenceExpression(313,315): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(316,329): 'BasicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.BasicSettings
+    ]
 
 KtContainerNodeForControlStructureBody(331,344): 'work("Basic")'
   null
@@ -146,7 +158,10 @@ KtCallExpression(331,344): 'work("Basic")'
     ]
 
 KtNameReferenceExpression(331,335): 'work'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtValueArgumentList(335,344): '("Basic")'
   null
@@ -167,16 +182,28 @@ KtContainerNode(354,387): 'basicSettings == SpecificSettings'
   null
 
 KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(354,367): 'basicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      basicSettings: Settings.BasicSettings
+    ]
 
 KtOperationReferenceExpression(368,370): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(371,387): 'SpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.SpecificSettings
+    ]
 
 KtContainerNodeForControlStructureBody(389,405): 'work("Specific")'
   null
@@ -188,7 +215,10 @@ KtCallExpression(389,405): 'work("Specific")'
     ]
 
 KtNameReferenceExpression(389,393): 'work'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtValueArgumentList(393,405): '("Specific")'
   null
@@ -209,22 +239,37 @@ KtContainerNode(414,456): 'basicSettings == Settings.SpecificSettings'
   null
 
 KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(414,427): 'basicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      basicSettings: Settings.BasicSettings
+    ]
 
 KtOperationReferenceExpression(428,430): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(431,456): 'Settings.SpecificSettings'
   null
 
 KtNameReferenceExpression(431,439): 'Settings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings
+    ]
 
 KtNameReferenceExpression(440,456): 'SpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.SpecificSettings
+    ]
 
 KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
   null
@@ -236,7 +281,10 @@ KtCallExpression(458,474): 'work("Specific")'
     ]
 
 KtNameReferenceExpression(458,462): 'work'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtValueArgumentList(462,474): '("Specific")'
   null
@@ -275,7 +323,10 @@ KtSuperTypeCallEntry(540,554): 'OpenSettings()'
     ]
 
 KtConstructorCalleeExpression(540,552): 'OpenSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OpenSettings
+    ]
 
 KtTypeReference(540,552): 'OpenSettings'
   null
@@ -305,7 +356,10 @@ KtSuperTypeCallEntry(594,608): 'OpenSettings()'
     ]
 
 KtConstructorCalleeExpression(594,606): 'OpenSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OpenSettings
+    ]
 
 KtTypeReference(594,606): 'OpenSettings'
   null
@@ -365,16 +419,28 @@ KtContainerNode(707,736): 'settings == OpenBasicSettings'
   null
 
 KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(707,715): 'settings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      settings: OpenSettings
+    ]
 
 KtOperationReferenceExpression(716,718): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(719,736): 'OpenBasicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenBasicSettings
+    ]
 
 KtContainerNodeForControlStructureBody(738,751): 'work("Basic")'
   null
@@ -386,7 +452,10 @@ KtCallExpression(738,751): 'work("Basic")'
     ]
 
 KtNameReferenceExpression(738,742): 'work'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtValueArgumentList(742,751): '("Basic")'
   null
@@ -407,16 +476,27 @@ KtContainerNode(761,798): 'basicSettings == OpenSpecificSettings'
   null
 
 KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(761,774): 'basicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      basicSettings: OpenSettings.OpenBasicSettings
+    ]
 
 KtOperationReferenceExpression(775,777): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(778,798): 'OpenSpecificSettings'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OpenSpecificSettings'.>
 
 KtContainerNodeForControlStructureBody(800,816): 'work("Specific")'
   null
@@ -428,7 +508,10 @@ KtCallExpression(800,816): 'work("Specific")'
     ]
 
 KtNameReferenceExpression(800,804): 'work'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtValueArgumentList(804,816): '("Specific")'
   null
@@ -449,22 +532,37 @@ KtContainerNode(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
   null
 
 KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(825,838): 'basicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      basicSettings: OpenSettings.OpenBasicSettings
+    ]
 
 KtOperationReferenceExpression(839,841): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(842,875): 'OpenSettings.OpenSpecificSettings'
   null
 
 KtNameReferenceExpression(842,854): 'OpenSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings
+    ]
 
 KtNameReferenceExpression(855,875): 'OpenSpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenSpecificSettings
+    ]
 
 KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
   null
@@ -476,7 +574,10 @@ KtCallExpression(877,893): 'work("Specific")'
     ]
 
 KtNameReferenceExpression(877,881): 'work'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtValueArgumentList(881,893): '("Specific")'
   null

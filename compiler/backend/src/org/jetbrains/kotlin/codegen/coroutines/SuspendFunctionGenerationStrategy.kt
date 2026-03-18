@@ -28,7 +28,7 @@ class SuspendForInlineCopyingMethodVisitor(
             MethodNode(newAccess, name + FOR_INLINE_SUFFIX, desc, signature, exceptions.toTypedArray())
         }
         val newMethodVisitor = with(newMethodNode) {
-            newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, name, desc, signature, exceptions.toTypedArray())
+            newMethod(JvmDeclarationOrigin.NO_ORIGIN_SUSPEND_FOR_INLINE, access, name, desc, signature, exceptions.toTypedArray())
         }
         methodNode.instructions.resetLabels()
         methodNode.accept(newMethodNode)

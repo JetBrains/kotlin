@@ -33,30 +33,30 @@ class FirConstantEvaluationTransformerAdapter(session: FirSession) : FirTransfor
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
         return withFileAnalysisExceptionWrapping(file) {
-            file.transform(transformer, null)
+            file.transform(transformer, file)
         }
     }
 }
 
-class FirConstantEvaluationBodyResolveTransformer(private val session: FirSession) : FirTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+class FirConstantEvaluationBodyResolveTransformer(private val session: FirSession) : FirTransformer<FirFile>() {
+    override fun <E : FirElement> transformElement(element: E, data: FirFile): E {
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
-        return file.transformDeclarations(this, data)
+    override fun transformFile(file: FirFile, data: FirFile): FirFile {
+        return file.transformDeclarations(this, file)
     }
 
-    override fun transformScript(script: FirScript, data: Nothing?): FirScript {
+    override fun transformScript(script: FirScript, data: FirFile): FirScript {
         return script.transformDeclarations(this, data)
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: FirFile): FirStatement {
         return regularClass.transformDeclarations(this, data)
     }
 
-    override fun transformProperty(property: FirProperty, data: Nothing?): FirStatement {
-        property.evaluatedInitializer = FirExpressionEvaluator.evaluatePropertyInitializer(property, session)
+    override fun transformProperty(property: FirProperty, data: FirFile): FirStatement {
+        property.evaluatedInitializer = FirExpressionEvaluator.evaluatePropertyInitializer(property, session, data)
         return property
     }
 }

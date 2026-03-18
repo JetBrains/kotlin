@@ -10,7 +10,6 @@ import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.createDefaultType
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.CallerImpl
@@ -19,7 +18,7 @@ internal class JavaKConstructor(
     container: KDeclarationContainerImpl,
     constructor: Constructor<*>,
     rawBoundReceiver: Any?,
-) : JavaKFunction(container, constructor, rawBoundReceiver) {
+) : JavaKFunction(container, constructor, rawBoundReceiver, KCallableOverriddenStorage.EMPTY) {
     private val jClass: Class<*> get() = container.jClass
     val jConstructor: Constructor<*> get() = member as Constructor<*>
 
@@ -38,11 +37,11 @@ internal class JavaKConstructor(
     override val isVararg: Boolean
         get() = jConstructor.isVarArgs
 
-    override val typeParameters: List<KTypeParameter> by lazy(PUBLICATION) {
+    override val javaTypeParameters: Array<out TypeVariable<*>> by lazy(PUBLICATION) {
         @Suppress("UNCHECKED_CAST")
         val classTypeParameters = jClass.typeParameters as Array<TypeVariable<*>>
         val constructorTypeParameters = jConstructor.typeParameters
-        (classTypeParameters + constructorTypeParameters).toKTypeParameters()
+        classTypeParameters + constructorTypeParameters
     }
 
     override val returnType: KType by lazy(PUBLICATION) {
@@ -59,4 +58,9 @@ internal class JavaKConstructor(
     }
 
     override val callerWithDefaults: Caller<*>? get() = null
+
+    override fun replaceContainerForFakeOverride(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+    ): ReflectKCallable<Any?> =
+        error("Constructors cannot be copied: $this")
 }

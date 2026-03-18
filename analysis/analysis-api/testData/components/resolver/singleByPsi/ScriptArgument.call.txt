@@ -1,5 +1,5 @@
 KtNameReferenceExpression(16,20): 'args'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

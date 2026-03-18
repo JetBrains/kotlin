@@ -248,10 +248,70 @@ KtWhenExpression(293,353): 'when (this) {'
   null
 
 KtThisExpression(299,303): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: [
+            KaTypeParameterType:
+              annotations: []
+              type: E
+            KaTypeParameterType:
+              annotations: []
+              type: A
+          ]
+          type: Either<E, A>
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(299,303): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: [
+            KaTypeParameterType:
+              annotations: []
+              type: E
+            KaTypeParameterType:
+              annotations: []
+              type: A
+          ]
+          type: Either<E, A>
+        visibility: PUBLIC
+    ]
 
 KtWhenEntry(311,329): 'is Left -> default'
   null
@@ -269,7 +329,10 @@ KtNameReferenceExpression(314,318): 'Left'
   null
 
 KtNameReferenceExpression(322,329): 'default'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      default: A
+    ]
 
 KtWhenEntry(334,351): 'is Right -> value'
   null
@@ -287,4 +350,7 @@ KtNameReferenceExpression(337,342): 'Right'
   null
 
 KtNameReferenceExpression(346,351): 'value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val value: A
+    ]

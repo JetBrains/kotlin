@@ -19,7 +19,7 @@ val removedJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsA
         name = "Xtyped-arrays"
         description = """This option does nothing and is left for compatibility with the legacy backend.
 It is deprecated and will be removed in a future release.""".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_3,
@@ -31,9 +31,9 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
     compilerArgument {
         name = "output"
         compilerName = "outputFile"
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         description = "".asReleaseDependent()
-        argumentTypeDescription = "<filepath>".asReleaseDependent()
+        valueDescription = "<filepath>".asReleaseDependent()
 
         additionalAnnotations(
             Deprecated("It is senseless to use with IR compiler. Only for compatibility."),

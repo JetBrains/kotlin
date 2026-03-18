@@ -1,6 +1,6 @@
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextParameters
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: J.java
@@ -33,5 +33,5 @@ fun test() {
 
 fun foo(j: J) {}
 fun bar(j: J?) {}
-context(J) fun baz() {}
-context(J?) fun qux() {}
+context(_: J) fun baz() {}
+context(_: J?) fun qux() {}

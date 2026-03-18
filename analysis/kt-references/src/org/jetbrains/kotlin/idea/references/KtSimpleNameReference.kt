@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 @SubclassOptInRequired(KtImplementationDetail::class)
-abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
+abstract class KtSimpleNameReference(
+    expression: KtSimpleNameExpression,
+) : KtSimpleReference<KtSimpleNameExpression>(expression) {
     // Extension point used by deprecated android extensions.
     abstract fun isReferenceToViaExtension(element: PsiElement): Boolean
 

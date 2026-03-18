@@ -45,8 +45,6 @@ open class JvmGeneratorExtensionsImpl(
     private val configuration: CompilerConfiguration,
     private val generateFacades: Boolean = true,
 ) : GeneratorExtensions(), JvmGeneratorExtensions {
-    override val irDeserializationEnabled: Boolean = configuration.get(JVMConfigurationKeys.SERIALIZE_IR) != JvmSerializeIrMode.NONE
-
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 
     override val samConversion: SamConversion = JvmSamConversion()
@@ -86,20 +84,11 @@ open class JvmGeneratorExtensionsImpl(
             if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
             facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
             deserializedSource,
-            deserializeIr = { facade -> deserializeClass(facade, stubGenerator, facade.parent) }
         ).also {
             it.createThisReceiverParameter()
             it.classNameOverride = facadeName
         }
     }
-
-    override fun deserializeClass(
-        irClass: IrClass,
-        stubGenerator: DeclarationStubGenerator,
-        parent: IrDeclarationParent,
-    ): Boolean = JvmIrDeserializerImpl().deserializeTopLevelClass(
-        irClass, stubGenerator.irBuiltIns, stubGenerator.symbolTable, listOf(stubGenerator), this
-    )
 
     override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
         descriptor.hasJvmFieldAnnotation()

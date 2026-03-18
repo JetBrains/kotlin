@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstrai
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeSemiFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
@@ -45,13 +44,11 @@ class FirPCLAInferenceSession(
     var currentCommonSystem: NewConstraintSystemImpl = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
         private set
 
-    private val semiFixedVariablesInternal: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = mutableMapOf()
-
     override val semiFixedVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
-        get() = semiFixedVariablesInternal
+        field = mutableMapOf()
 
     override fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? {
-        if (candidate.mightBeAnalyzedAndCompletedIndependently(bodyResolveContext.returnTypeCalculator)) return null
+        if (candidate.mightBeAnalyzedAndCompletedIndependently(bodyResolveContext)) return null
 
         return currentCommonSystem.currentStorage()
     }
@@ -214,7 +211,7 @@ class FirPCLAInferenceSession(
             val variable = variableWithConstraints.typeVariable
             addEqualityConstraint(variable.defaultType(), resultType, ConeSemiFixVariableConstraintPosition(variable))
 
-            semiFixedVariablesInternal[coneTypeVariableTypeConstructor] = resultType
+            semiFixedVariables[coneTypeVariableTypeConstructor] = resultType
             return Pair(coneTypeVariableTypeConstructor, resultType)
         }
     }
@@ -250,7 +247,7 @@ class FirPCLAInferenceSession(
      * TODO: Currently, making it always returning "false" leads to few test failures
      * TODO: due to some corner cases like annotations calls (KT-65465)
      */
-    private fun Candidate.mightBeAnalyzedAndCompletedIndependently(returnTypeCalculator: ReturnTypeCalculator): Boolean {
+    private fun Candidate.mightBeAnalyzedAndCompletedIndependently(bodyResolveContext: BodyResolveContext): Boolean {
         when (callInfo.resolutionMode) {
             // Currently, we handle delegates specifically, not completing them even if they are trivial function calls
             // Thus they are being resolved in the context of outer CS
@@ -274,11 +271,15 @@ class FirPCLAInferenceSession(
         }
 
         val callSite = callInfo.callSite
-        // Annotation calls and collection literals (allowed only inside annotations)
-        // should be completed independently since that can't somehow affect PCLA
-        if (callSite is FirAnnotationCall || callSite is FirCollectionLiteral) return true
+        // Annotation calls should be completed independently since that can't somehow affect PCLA
+        if (callSite is FirAnnotationCall) return true
+        if (callSite is FirCollectionLiteral) {
+            // It's not actually entirely correct thing to do in pre-CollectionLiterals resolve of array literals.
+            // Some usages of collection literals inside PCLA lambdas may still lead to compiler failures there.
+            return !inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
+                    || bodyResolveContext.isInsideAnnotationContext
+        }
 
-        // I'd say that this might be an assertion, but let's do an early return
         if (callSite !is FirResolvable && callSite !is FirVariableAssignment) return false
 
         // We can't analyze independently the calls which have postponed receivers
@@ -291,7 +292,7 @@ class FirPCLAInferenceSession(
         if ((symbol as? FirCallableSymbol)?.hasContextParameters == true) return false
 
         // Accesses to local variables or local functions which return types contain not fixed TVs
-        val returnType = (symbol as? FirCallableSymbol)?.let(returnTypeCalculator::tryCalculateReturnType)
+        val returnType = (symbol as? FirCallableSymbol)?.let(bodyResolveContext.returnTypeCalculator::tryCalculateReturnType)
         if (returnType?.coneType?.containsNotFixedTypeVariables() == true) return false
 
         // Now, we've got some sort of call/variable access/callable reference/synthetic call (see hierarchy of FirResolvable)
@@ -306,7 +307,7 @@ class FirPCLAInferenceSession(
         when (this) {
             // Callable references might be unresolved at this stage, so obtaining `resolvedType` would lead to exceptions
             // Anyway, they should lead to integrated resolution of containing call
-            is FirCallableReferenceAccess -> false
+            is FirCallableReferenceAccess, is FirCollectionLiteral -> false
 
             is FirResolvable -> when (val candidate = candidate()) {
                 null -> !resolvedType.containsNotFixedTypeVariables()

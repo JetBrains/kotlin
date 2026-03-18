@@ -12,6 +12,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enumEntryWithAnnotations.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyEnumClass>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyEnumClass>|
 
     }

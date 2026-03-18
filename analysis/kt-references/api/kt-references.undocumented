@@ -1,0 +1,48 @@
+org.jetbrains.kotlin.idea.references.AbstractKtReference
+org.jetbrains.kotlin.idea.references.AbstractKtReference.canRename()
+org.jetbrains.kotlin.idea.references.AbstractKtReference.expression
+org.jetbrains.kotlin.idea.references.KDocReference
+org.jetbrains.kotlin.idea.references.KtArrayAccessReference
+org.jetbrains.kotlin.idea.references.KtCollectionLiteralReference
+org.jetbrains.kotlin.idea.references.KtConstructorDelegationReference
+org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference.Companion.shouldProduceReference()
+org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
+org.jetbrains.kotlin.idea.references.KtForLoopInReference
+org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
+org.jetbrains.kotlin.idea.references.KtMultiReference
+org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
+org.jetbrains.kotlin.idea.references.KtReference
+org.jetbrains.kotlin.idea.references.KtReference.resolver
+org.jetbrains.kotlin.idea.references.KtReferenceMutateService.bindToElement(KtSimpleNameReference, PsiElement, KtSimpleNameReference.ShorteningMode)
+org.jetbrains.kotlin.idea.references.KtReferenceMutateService.bindToFqName(KtSimpleNameReference, FqName, KtSimpleNameReference.ShorteningMode, PsiElement?)
+org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
+org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING
+org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING
+org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode.NO_SHORTENING
+org.jetbrains.kotlin.idea.references.KtSimpleNameReference.bindToElement(PsiElement, ShorteningMode)
+org.jetbrains.kotlin.idea.references.KtSimpleNameReference.bindToFqName(FqName, ShorteningMode, PsiElement?)
+org.jetbrains.kotlin.idea.references.KtSimpleNameReference.getImportAlias()
+org.jetbrains.kotlin.idea.references.KtSimpleNameReference.isReferenceToViaExtension(PsiElement)
+org.jetbrains.kotlin.idea.references.KtSimpleReference
+org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker
+org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker.Companion.getInstance(Project)
+org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker.readWriteAccessWithFullExpression(KtExpression, Boolean)
+org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker.readWriteAccessWithFullExpressionByResolve(KtBinaryExpression)
+org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
+org.jetbrains.kotlin.idea.references.getCalleeByLambdaArgument()
+org.jetbrains.kotlin.idea.references.isConstructorOf(PsiElement)
+org.jetbrains.kotlin.idea.references.mainReference
+org.jetbrains.kotlin.idea.references.mainReference
+org.jetbrains.kotlin.idea.references.mainReference
+org.jetbrains.kotlin.idea.references.mainReference
+org.jetbrains.kotlin.idea.references.readWriteAccess(Boolean)
+org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression(Boolean)
+org.jetbrains.kotlin.idea.references.unwrappedTargets
+org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
+org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension.Companion.EP_NAME
+org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension.handleElementRename(KtSimpleNameReference, KtPsiFactory, String)
+org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension.isReferenceTo(KtSimpleNameReference, PsiElement)
+org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
+org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.Companion.getService(Project)
+org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.shouldUseExperimentalStrategy()

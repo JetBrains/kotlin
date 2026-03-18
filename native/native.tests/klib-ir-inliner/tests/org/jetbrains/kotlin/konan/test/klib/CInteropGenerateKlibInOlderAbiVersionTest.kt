@@ -61,6 +61,7 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
         ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
+                "-Xccall-mode", "DIRECT",
             )
 
             val cinteropResult = cinteropToLibrary(
@@ -87,16 +88,16 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun oldAbiCompatibilityLevelCanBeUsedOnlyWithAnyCCallMode() {
+    fun oldAbiCompatibilityLevelCanBeUsedOnlyWithDirectCCallMode() {
         class TestData(val abiCompatibilityLevel: String, val cCallMode: String, val isSuccessExpected: Boolean)
 
         fun Good(abiCompatibilityLevel: String, cCallMode: String) = TestData(abiCompatibilityLevel, cCallMode, isSuccessExpected = true)
         fun Bad(abiCompatibilityLevel: String, cCallMode: String) = TestData(abiCompatibilityLevel, cCallMode, isSuccessExpected = false)
 
         listOf(
-            Good("2.3", "INDIRECT"),
+            Bad("2.3", "INDIRECT"),
             Good("2.3", "DIRECT"),
-            Good("2.3", "BOTH"),
+            Bad("2.3", "BOTH"),
             Good("2.4", "INDIRECT"),
             Good("2.4", "DIRECT"),
             Good("2.4", "BOTH"),
@@ -139,6 +140,7 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
         ).forEach { testData ->
             val cinteropArgs = listOf(
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
+                "-Xccall-mode", "DIRECT",
             )
 
             val cinteropResult = cinteropToLibrary(

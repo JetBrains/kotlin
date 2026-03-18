@@ -1,7 +1,7 @@
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
 export declare namespace kotlin.collections {
-    interface KtList<E> /* extends kotlin.collections.Collection<E> */ {
+    interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
         asJsReadonlyArrayView(): ReadonlyArray<E>;
         readonly __doNotUseOrImplementIt: {
             readonly "kotlin.collections.KtList": unique symbol;
@@ -12,7 +12,7 @@ export declare namespace kotlin.collections {
     }
 }
 export declare namespace kotlin {
-    class Pair<A, B> /* implements kotlin.io.Serializable */ {
+    class Pair<out A, out B> /* implements kotlin.io.Serializable */ {
         constructor(first: A, second: B);
         get first(): A;
         get second(): B;

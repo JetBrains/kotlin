@@ -2,5 +2,6 @@ KDocName(22,28): 'b.E.AA'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in b.E) AA

@@ -27,7 +27,7 @@ message IrFile {
   optional FileEntry file_entry = 2; // Required: either `file_entry` or `file_entry_id` is present.
   optional int32 file_entry_id = 7;  // Required: either `file_entry` or `file_entry_id` is present.
   repeated int32 fq_name = 3 [packed=true];
-  repeated IrConstructorCall annotation = 4;
+  repeated IrAnnotation annotation = 4;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
 
   // WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
@@ -40,7 +40,8 @@ message IrFile {
 message CommonIdSignature {
   repeated int32 package_fq_name = 1 [packed=true];
   repeated int32 declaration_fq_name = 2 [packed = true];
-  optional int64 member_uniq_id = 3;
+  optional int64 member_uniq_id_pre_2_4_0 = 3;
+  optional fixed64 member_uniq_id = 6;
   optional int64 flags = 4 [default = 0];
   optional int32 debug_info = 5;
 }
@@ -94,7 +95,7 @@ message IdSignature {
 // If x...xxx00 -> *
 
 message IrSimpleTypeLegacy {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrAnnotation annotation = 1;
   required int64 classifier = 2;
   required bool has_question_mark = 3;
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
@@ -110,7 +111,7 @@ enum IrSimpleTypeNullability {
 }
 
 message IrSimpleType {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrAnnotation annotation = 1;
   required int64 classifier = 2;
   optional IrSimpleTypeNullability nullability = 3 [default=NOT_SPECIFIED];
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
@@ -120,7 +121,7 @@ message IrSimpleType {
 }
 
 message IrDynamicType {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrAnnotation annotation = 1;
 }
 
 message IrDefinitelyNotNullType {
@@ -129,7 +130,7 @@ message IrDefinitelyNotNullType {
 }
 
 message IrErrorType {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrAnnotation annotation = 1;
 }
 
 message IrType {
@@ -169,9 +170,9 @@ message IrInlinedFunctionBlock {
   optional int32 inlined_function_file_entry_id = 6;  // Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
 }
 
-message MemberAccessCommon {
-  // Value argument serialization scheme after 2.2.0
-  repeated NullableIrExpression argument = 6;
+message MemberAccessCommonPre_2_4_0 {
+  // Value argument serialization scheme before 2.4.0
+  repeated NullableIrExpression argument_pre_2_4_0 = 6;
 
   // Value argument serialization scheme before 2.2.0
   optional IrExpression dispatch_receiver = 1;
@@ -186,7 +187,9 @@ message MemberAccessCommon {
 
 message IrCall {
   required int64 symbol = 1;
-  required MemberAccessCommon member_access = 2;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;
+  repeated IrExpression argument = 5;
+  repeated int32 type_argument = 6 [packed=true];
   optional int64 super = 3;
   optional int32 origin_name = 4;
 }
@@ -194,14 +197,28 @@ message IrCall {
 message IrConstructorCall {
   required int64 symbol = 1;
   required int32 constructor_type_arguments_count = 2;
-  required MemberAccessCommon member_access = 3;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 3;
+  repeated IrExpression argument = 5;
+  repeated int32 type_argument = 6 [packed=true];
   optional int32 origin_name = 4;
+}
+
+message IrAnnotation {
+  required int64 symbol = 1;
+  required int32 constructor_type_arguments_count = 2;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 3;
+  repeated IrExpression argument = 5;
+  repeated int32 type_argument = 6 [packed=true];
+  optional int32 origin_name = 4;
+  optional int64 local_coordinates = 7;
 }
 
 message IrFunctionReference {
   required int64 symbol = 1;
   optional int32 origin_name = 2;
-  required MemberAccessCommon member_access = 3;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 3;
+  repeated IrExpression argument = 5;
+  repeated int32 type_argument = 6 [packed=true];
   optional int64 reflection_target_symbol = 4;
 }
 
@@ -218,7 +235,9 @@ message IrPropertyReference {
   optional int64 getter = 2;
   optional int64 setter = 3;
   optional int32 origin_name = 4;
-  required MemberAccessCommon member_access = 5;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 5;
+  repeated IrExpression argument = 7;
+  repeated int32 type_argument = 8 [packed=true];
   required int64 symbol = 6;
 }
 
@@ -271,7 +290,9 @@ message IrContinue {
 
 message IrDelegatingConstructorCall {
   required int64 symbol = 1;
-  required MemberAccessCommon member_access = 2;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;
+  repeated IrExpression argument = 3;
+  repeated int32 type_argument = 4 [packed=true];
 }
 
 message IrDoWhile {
@@ -280,7 +301,9 @@ message IrDoWhile {
 
 message IrEnumConstructorCall {
   required int64 symbol = 1;
-  required MemberAccessCommon member_access = 2;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;
+  repeated IrExpression argument = 3;
+  repeated int32 type_argument = 4 [packed=true];
 }
 
 message IrGetClass {
@@ -342,7 +365,10 @@ message IrSetValue {
 
 message IrSpreadElement {
   required IrExpression expression = 1;
-  required int64 coordinates = 2;
+  // Was required before 2.4.0.
+  // For explanation of the default value, see the comment on IrExpression.coordinates.
+  optional int64 global_coordinates = 2 [default=6148914691236517201];
+  optional int64 local_coordinates = 3;
 }
 
 message IrStringConcat {
@@ -449,9 +475,7 @@ message IrDynamicOperatorExpression {
   repeated IrExpression argument = 3;
 }
 
-// TODO: we need an extension mechanism to accomodate new
-// IR operators in upcoming releases.
-message IrOperation {
+message IrOperationPre_2_4_0 {
   oneof operation {
     IrBlock block = 1;
     IrBreak break = 2;
@@ -511,25 +535,85 @@ enum IrTypeOperator {
   REINTERPRET_CAST = 11;
 }
 
-
 message IrExpression {
-  required IrOperation operation = 1;
-  required int32 type = 2;
-  required int64 coordinates = 3;
+  oneof operation {
+    IrConst op_const = 5;
+    IrGetValue op_get_value = 6;
+    IrSetValue op_set_value = 7;
+    IrCall op_call = 8;
+    IrConstructorCall op_constructor_call = 9;
+    IrBlock op_block = 10;
+    IrReturnableBlock op_returnable_block = 11;
+    IrReturn op_return = 12;
+    IrWhen op_when = 13;
+    IrTypeOp op_type_op = 14;
+    IrGetField op_get_field = 15;
+    IrSetField op_set_field = 16;
+    IrGetObject op_get_object = 17;
+    IrGetClass op_get_class = 18;
+    IrClassReference op_class_reference = 19;
+    IrGetEnumValue op_get_enum_value = 20;
+    IrComposite op_composite = 21;
+    IrBreak op_break = 22;
+    IrContinue op_continue = 23;
+    IrWhile op_while = 24;
+    IrDoWhile op_do_while = 25;
+    IrDelegatingConstructorCall op_delegating_constructor_call = 26;
+    IrEnumConstructorCall op_enum_constructor_call = 27;
+    IrInstanceInitializerCall op_instance_initializer_call = 28;
+    IrStringConcat op_string_concat = 29;
+    IrThrow op_throw = 30;
+    IrTry op_try = 31;
+    IrVararg op_vararg = 32;
+    IrDynamicMemberExpression op_dynamic_member = 33;
+    IrDynamicOperatorExpression op_dynamic_operator = 34;
+    IrLocalDelegatedPropertyReference op_local_delegated_property_reference = 35;
+    IrFunctionExpression op_function_expression = 36;
+    // Error code
+    IrErrorExpression op_error_expression = 37;
+    IrErrorCallExpression op_error_call_expression = 38;
+    // Operations again
+    IrFunctionReference op_function_reference = 39;
+    IrPropertyReference op_property_reference = 40;
+    IrRichFunctionReference op_rich_function_reference = 41;
+    IrRichPropertyReference op_rich_property_reference = 42;
+    IrInlinedFunctionBlock op_inlined_function_block = 43;
+    IrMissingExpression op_missing_expression = 44;
+  }
+
+  optional IrOperationPre_2_4_0 operation_pre_2_4_0 = 1; // Was required before 2.4.0
+  // Was required before 2.4.0.
+  // The default value of -1 is set because this field won't ever be assigned to -1 (it's an index inta a table, so always non-negative).
+  // It means that at all times when this field is set, Protobuf won't elide it to its default value (which would be 0 if not specified),
+  // and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
+  // this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
+  // deserializing, otherwise it would fail.
+  // Additionally, if this optional field was ever forgotten to be set, it prevents us from accidentally defaulting to a random type.
+  optional int32 type = 2 [default=-1];
+  // Was required before 2.4.0.
+  // The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
+  // so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
+  optional int64 global_coordinates = 3 [default=6148914691236517201];
+  optional int64 local_coordinates = 4;
 }
 
 message NullableIrExpression {
   optional IrExpression expression = 1;
 }
 
+message IrMissingExpression {}
+
 /* ------ Declarations --------------------------------------------- */
 
 message IrDeclarationBase {
   required int64 symbol = 1;
   required int32 origin_name = 2;
-  required int64 coordinates = 3;
+  // Was required before 2.4.0.
+  // For explanation of the default value, see the comment on IrExpression.coordinates.
+  optional int64 global_coordinates = 3 [default=6148914691236517201];
+  optional int64 local_coordinates = 6;
   optional int64 flags = 4 [default = 0];
-  repeated IrConstructorCall annotation = 5;
+  repeated IrAnnotation annotation = 5;
 }
 
 message IrFunctionBase {
@@ -679,7 +763,10 @@ message IrSyntheticBody {
 
 // Let's try to map IrElement as well as IrStatement to IrStatement.
 message IrStatement {
-  required int64 coordinates = 1;
+  // Was required before 2.4.0.
+  // For explanation of the default value, see the comment on IrExpression.coordinates.
+  optional int64 global_coordinates = 1 [default=6148914691236517201];
+  optional int64 local_coordinates = 8;
   oneof statement {
     IrDeclaration declaration = 2;
     IrExpression expression = 3;

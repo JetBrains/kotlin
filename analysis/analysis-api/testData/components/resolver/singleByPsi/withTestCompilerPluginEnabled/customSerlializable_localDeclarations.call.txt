@@ -1,4 +1,4 @@
 KtNameReferenceExpression(388,408): 'serializeFirstTarget'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'serializeFirstTarget'.>

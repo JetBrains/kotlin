@@ -39,6 +39,10 @@ public class SwiftExportInIdeTestGenerated extends AbstractSymbolToSirTest {
     );
   }
 
+  private void run(String fileName) {
+    runTest("native/swift/swift-export-ide/testData/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInTestData() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-ide/testData"), Pattern.compile("^(.+)\\.kt$"), null, false);
@@ -47,12 +51,12 @@ public class SwiftExportInIdeTestGenerated extends AbstractSymbolToSirTest {
   @Test
   @TestMetadata("packaged_function.kt")
   public void testPackaged_function() {
-    runTest("native/swift/swift-export-ide/testData/packaged_function.kt");
+    run("packaged_function.kt");
   }
 
   @Test
   @TestMetadata("topLevel_function.kt")
   public void testTopLevel_function() {
-    runTest("native/swift/swift-export-ide/testData/topLevel_function.kt");
+    run("topLevel_function.kt");
   }
 }

@@ -1,2 +1,5 @@
 KtDestructuringDeclarationEntry(120,124): 'val1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /createTuple(a: T, b: Z & Any): ERROR CLASS: Symbol not found for Pair<T, Z & Any>
+    ]

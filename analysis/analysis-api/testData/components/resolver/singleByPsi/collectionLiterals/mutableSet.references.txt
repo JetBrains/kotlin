@@ -2,5 +2,6 @@ KtCollectionLiteralExpression(45,47): '[]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections) inline fun <T> mutableSetOf(): kotlin.collections.MutableSet<T>

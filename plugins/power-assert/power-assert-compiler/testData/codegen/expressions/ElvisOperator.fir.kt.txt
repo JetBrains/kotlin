@@ -1,0 +1,163 @@
+fun box(): String {
+  return test1(str = "TEST", default = 0).plus(other = test1(str = null, default = 0)).plus(other = test2(str = "TEST", fallback = null, default = 0)).plus(other = test2(str = null, fallback = "test", default = 0)).plus(other = test2(str = null, fallback = null, default = 0)).plus(other = test3(str = "TEST")).plus(other = test3(str = null))
+}
+
+fun test1(str: String?, default: Int): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: String? = str
+      val tmp1_Explain: String? = { // BLOCK
+        val tmp_0: String? = tmp0_Explain
+        when {
+          EQEQ(arg0 = tmp_0, arg1 = null) -> null
+          else -> lowercase(/* <this> = tmp_0 /*as String */ */)
+        }
+      }
+      val tmp2_Explain: Int? = { // BLOCK
+        val tmp_1: String? = tmp1_Explain
+        when {
+          EQEQ(arg0 = tmp_1, arg1 = null) -> null
+          else -> tmp_1 /*as String */.<get-length>()
+        }
+      }
+      when {
+        EQEQ(arg0 = tmp2_Explain, arg1 = null) -> { // BLOCK
+          val tmp3_Explain: Int = default
+          val tmp4_Explain: Int = 5
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          assert(value = tmp5_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 323, source = "    assert((str?.lowercase()?.length ?: default) == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 53, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 12, endOffset = 15, displayOffset = 12, value = tmp0_Explain), ValueExpression(startOffset = 12, endOffset = 28, displayOffset = 17, value = tmp1_Explain), ValueExpression(startOffset = 12, endOffset = 36, displayOffset = 30, value = tmp2_Explain), ValueExpression(startOffset = 40, endOffset = 47, displayOffset = 40, value = tmp3_Explain), LiteralExpression(startOffset = 52, endOffset = 53, displayOffset = 52, value = tmp4_Explain), EqualityExpression(startOffset = 11, endOffset = 53, displayOffset = 49, value = tmp5_Explain, lhs = tmp3_Explain, rhs = tmp4_Explain)]))])) */)
+          }
+)
+        }
+        else -> { // BLOCK
+          val tmp6_Explain: Int = 5
+          val tmp7_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp6_Explain)
+          assert(value = tmp7_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 323, source = "    assert((str?.lowercase()?.length ?: default) == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 53, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 12, endOffset = 15, displayOffset = 12, value = tmp0_Explain), ValueExpression(startOffset = 12, endOffset = 28, displayOffset = 17, value = tmp1_Explain), ValueExpression(startOffset = 12, endOffset = 36, displayOffset = 30, value = tmp2_Explain), LiteralExpression(startOffset = 52, endOffset = 53, displayOffset = 52, value = tmp6_Explain), EqualityExpression(startOffset = 11, endOffset = 53, displayOffset = 49, value = tmp7_Explain, lhs = tmp2_Explain, rhs = tmp6_Explain)]))])) */)
+          }
+)
+        }
+      }
+    }
+  }
+)
+}
+
+fun test2(str: String?, fallback: String?, default: Int): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: String? = str
+      val tmp1_Explain: String? = { // BLOCK
+        val tmp_2: String? = tmp0_Explain
+        when {
+          EQEQ(arg0 = tmp_2, arg1 = null) -> null
+          else -> lowercase(/* <this> = tmp_2 /*as String */ */)
+        }
+      }
+      when {
+        EQEQ(arg0 = tmp1_Explain, arg1 = null) -> { // BLOCK
+          val tmp2_Explain: String? = fallback
+          val tmp3_Explain: Int? = { // BLOCK
+            val tmp_3: String? = tmp2_Explain
+            when {
+              EQEQ(arg0 = tmp_3, arg1 = null) -> null
+              else -> tmp_3 /*as String */.<get-length>()
+            }
+          }
+          when {
+            EQEQ(arg0 = tmp3_Explain, arg1 = null) -> { // BLOCK
+              val tmp4_Explain: Int = default
+              val tmp5_Explain: Int = 5
+              val tmp6_Explain: Boolean = EQEQ(arg0 = tmp4_Explain, arg1 = tmp5_Explain)
+              assert(value = tmp6_Explain, lazyMessage = local fun <anonymous>(): String {
+                return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 465, source = "    assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 67, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 13, endOffset = 16, displayOffset = 13, value = tmp0_Explain), ValueExpression(startOffset = 13, endOffset = 29, displayOffset = 18, value = tmp1_Explain), ValueExpression(startOffset = 33, endOffset = 41, displayOffset = 33, value = tmp2_Explain), ValueExpression(startOffset = 13, endOffset = 50, displayOffset = 44, value = tmp3_Explain), ValueExpression(startOffset = 54, endOffset = 61, displayOffset = 54, value = tmp4_Explain), LiteralExpression(startOffset = 66, endOffset = 67, displayOffset = 66, value = tmp5_Explain), EqualityExpression(startOffset = 11, endOffset = 67, displayOffset = 63, value = tmp6_Explain, lhs = tmp4_Explain, rhs = tmp5_Explain)]))])) */)
+              }
+)
+            }
+            else -> { // BLOCK
+              val tmp7_Explain: Int = 5
+              val tmp8_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp7_Explain)
+              assert(value = tmp8_Explain, lazyMessage = local fun <anonymous>(): String {
+                return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 465, source = "    assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 67, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 13, endOffset = 16, displayOffset = 13, value = tmp0_Explain), ValueExpression(startOffset = 13, endOffset = 29, displayOffset = 18, value = tmp1_Explain), ValueExpression(startOffset = 33, endOffset = 41, displayOffset = 33, value = tmp2_Explain), ValueExpression(startOffset = 13, endOffset = 50, displayOffset = 44, value = tmp3_Explain), LiteralExpression(startOffset = 66, endOffset = 67, displayOffset = 66, value = tmp7_Explain), EqualityExpression(startOffset = 11, endOffset = 67, displayOffset = 63, value = tmp8_Explain, lhs = tmp3_Explain, rhs = tmp7_Explain)]))])) */)
+              }
+)
+            }
+          }
+        }
+        else -> { // BLOCK
+          val tmp9_Explain: Int? = { // BLOCK
+            val tmp_4: String? = tmp1_Explain
+            when {
+              EQEQ(arg0 = tmp_4, arg1 = null) -> null
+              else -> tmp_4 /*as String */.<get-length>()
+            }
+          }
+          when {
+            EQEQ(arg0 = tmp9_Explain, arg1 = null) -> { // BLOCK
+              val tmp10_Explain: Int = default
+              val tmp11_Explain: Int = 5
+              val tmp12_Explain: Boolean = EQEQ(arg0 = tmp10_Explain, arg1 = tmp11_Explain)
+              assert(value = tmp12_Explain, lazyMessage = local fun <anonymous>(): String {
+                return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 465, source = "    assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 67, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 13, endOffset = 16, displayOffset = 13, value = tmp0_Explain), ValueExpression(startOffset = 13, endOffset = 29, displayOffset = 18, value = tmp1_Explain), ValueExpression(startOffset = 13, endOffset = 50, displayOffset = 44, value = tmp9_Explain), ValueExpression(startOffset = 54, endOffset = 61, displayOffset = 54, value = tmp10_Explain), LiteralExpression(startOffset = 66, endOffset = 67, displayOffset = 66, value = tmp11_Explain), EqualityExpression(startOffset = 11, endOffset = 67, displayOffset = 63, value = tmp12_Explain, lhs = tmp10_Explain, rhs = tmp11_Explain)]))])) */)
+              }
+)
+            }
+            else -> { // BLOCK
+              val tmp13_Explain: Int = 5
+              val tmp14_Explain: Boolean = EQEQ(arg0 = tmp9_Explain, arg1 = tmp13_Explain)
+              assert(value = tmp14_Explain, lazyMessage = local fun <anonymous>(): String {
+                return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 465, source = "    assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 67, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 13, endOffset = 16, displayOffset = 13, value = tmp0_Explain), ValueExpression(startOffset = 13, endOffset = 29, displayOffset = 18, value = tmp1_Explain), ValueExpression(startOffset = 13, endOffset = 50, displayOffset = 44, value = tmp9_Explain), LiteralExpression(startOffset = 66, endOffset = 67, displayOffset = 66, value = tmp13_Explain), EqualityExpression(startOffset = 11, endOffset = 67, displayOffset = 63, value = tmp14_Explain, lhs = tmp9_Explain, rhs = tmp13_Explain)]))])) */)
+              }
+)
+            }
+          }
+        }
+      }
+    }
+  }
+)
+}
+
+fun test3(str: String?): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: String? = str
+      val tmp1_Explain: String? = { // BLOCK
+        val tmp_5: String? = tmp0_Explain
+        when {
+          EQEQ(arg0 = tmp_5, arg1 = null) -> null
+          else -> lowercase(/* <this> = tmp_5 /*as String */ */)
+        }
+      }
+      val tmp2_Explain: Int? = { // BLOCK
+        val tmp_6: String? = tmp1_Explain
+        when {
+          EQEQ(arg0 = tmp_6, arg1 = null) -> null
+          else -> tmp_6 /*as String */.<get-length>()
+        }
+      }
+      when {
+        EQEQ(arg0 = tmp2_Explain, arg1 = null) -> { // BLOCK
+          val tmp3_Explain: Int = 0
+          val tmp4_Explain: Int = 5
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          assert(value = tmp5_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 588, source = "    assert((str?.lowercase()?.length ?: 0) == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 47, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 12, endOffset = 15, displayOffset = 12, value = tmp0_Explain), ValueExpression(startOffset = 12, endOffset = 28, displayOffset = 17, value = tmp1_Explain), ValueExpression(startOffset = 12, endOffset = 36, displayOffset = 30, value = tmp2_Explain), LiteralExpression(startOffset = 40, endOffset = 41, displayOffset = 40, value = tmp3_Explain), LiteralExpression(startOffset = 46, endOffset = 47, displayOffset = 46, value = tmp4_Explain), EqualityExpression(startOffset = 11, endOffset = 47, displayOffset = 43, value = tmp5_Explain, lhs = tmp3_Explain, rhs = tmp4_Explain)]))])) */)
+          }
+)
+        }
+        else -> { // BLOCK
+          val tmp6_Explain: Int = 5
+          val tmp7_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp6_Explain)
+          assert(value = tmp7_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 588, source = "    assert((str?.lowercase()?.length ?: 0) == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 47, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 12, endOffset = 15, displayOffset = 12, value = tmp0_Explain), ValueExpression(startOffset = 12, endOffset = 28, displayOffset = 17, value = tmp1_Explain), ValueExpression(startOffset = 12, endOffset = 36, displayOffset = 30, value = tmp2_Explain), LiteralExpression(startOffset = 46, endOffset = 47, displayOffset = 46, value = tmp6_Explain), EqualityExpression(startOffset = 11, endOffset = 47, displayOffset = 43, value = tmp7_Explain, lhs = tmp2_Explain, rhs = tmp6_Explain)]))])) */)
+          }
+)
+        }
+      }
+    }
+  }
+)
+}
+

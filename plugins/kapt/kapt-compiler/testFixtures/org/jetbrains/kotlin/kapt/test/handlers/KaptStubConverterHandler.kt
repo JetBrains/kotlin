@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.javac.KaptJavaLogBase
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.EXPECTED_ERROR
-import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.EXPECTED_ERROR_K1
-import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.EXPECTED_ERROR_K2
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.NON_EXISTENT_CLASS
 import org.jetbrains.kotlin.kapt.test.messageCollectorProvider
 import org.jetbrains.kotlin.kapt.util.prettyPrint
@@ -64,11 +62,6 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
         kaptContext: KaptContextForStubGeneration,
         actualStubs: String,
     ) {
-        val expectedErrors = (
-                module.directives[EXPECTED_ERROR] +
-                        module.directives[if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) EXPECTED_ERROR_K2 else EXPECTED_ERROR_K1]
-                ).sorted()
-
         val log = Log.instance(kaptContext.context) as KaptJavaLogBase
 
         val actualErrors = log.reportedDiagnostics
@@ -91,6 +84,7 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
 
         val actualErrorsStr = actualErrors.joinToString(System.lineSeparator()) { it.toDirectiveView() }
 
+        val expectedErrors = module.directives[EXPECTED_ERROR].sorted()
         if (expectedErrors.isNotEmpty() && actualErrorsStr.isEmpty()) {
             assertions.fail { "Kapt finished successfully but errors were expected." }
         } else if (expectedErrors.isEmpty() && actualErrorsStr.isNotEmpty()) {

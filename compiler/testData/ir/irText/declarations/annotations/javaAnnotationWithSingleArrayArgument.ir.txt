@@ -206,8 +206,8 @@ FILE fqName:<root> fileName:/C.kt
         Annos(value = [Anno(token = "OK")] type=kotlin.Array<<root>.Anno> varargElementType=<root>.Anno)
         Strings(value = ["OK"] type=kotlin.Array<kotlin.String> varargElementType=kotlin.String)
         Ints(value = [42] type=kotlin.IntArray varargElementType=kotlin.Int)
-        Enums(value = [GET_ENUM 'ENUM_ENTRY name:EA' type=<root>.E] type=kotlin.Array<<root>.E> varargElementType=<root>.E)
-        Classes(value = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Double>] type=kotlin.Array<kotlin.reflect.KClass<*>> varargElementType=kotlin.reflect.KClass<*>)
+        Enums(value = [E.EA] type=kotlin.Array<<root>.E> varargElementType=<root>.E)
+        Classes(value = [Double::class] type=kotlin.Array<kotlin.reflect.KClass<*>> varargElementType=kotlin.reflect.KClass<*>)
       overridden:
         public open fun test (): kotlin.Unit declared in <root>.A
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]

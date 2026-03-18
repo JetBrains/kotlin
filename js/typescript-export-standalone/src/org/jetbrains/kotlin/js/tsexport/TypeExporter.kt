@@ -21,14 +21,11 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Array
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Function
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedTypeParameter
-import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-internal class TypeExporter(private val config: TypeScriptExportConfig) {
+internal class TypeExporter(private val config: TypeScriptExportConfig, private val scope: TypeParameterScope) {
     /**
      * Memoize already processed types during recursive traversal of a type to avoid stack overflow on self-referential types,
      * like type parameters whose upper bound references the type parameter itself.
@@ -131,46 +128,56 @@ internal class TypeExporter(private val config: TypeScriptExportConfig) {
             }
         }
         if (type is KaTypeParameterType) {
-            return TypeParameterRef(ExportedTypeParameter(type.name.identifier))
+            return scope[type.symbol]?.let(ExportedType::TypeParameterRef)
+                ?: error("Type parameter ${type.symbol.render()} is not in scope")
         }
         if (type is KaClassType) {
-            val symbol = type.symbol
-            val isExported = shouldDeclarationBeExportedImplicitlyOrExplicitly(symbol)
-            return when (symbol) {
-                is KaNamedClassSymbol -> {
-                    val isImplicitlyExported = !isExported && !symbol.isExternal
-                    val isNonExportedExternal = symbol.isExternal && !isExported
-                    val name = symbol
-                        .getExportedFqName(
-                            shouldIncludePackage = !isNonExportedExternal && config.generateNamespacesForPackages,
-                            isEsModules = config.artifactConfiguration.moduleKind == ModuleKind.ES,
-                        )
-                        .asString()
-
-                    // TODO(KT-82340): Approximate to actual supertype
-                    val exportedSupertype = Primitive.Any
-
-                    val classType = ClassType(
-                        name = name,
-                        arguments = type.typeArguments.memoryOptimizedMap { exportTypeArgument(it) },
-                        classId = symbol.classId,
-                    )
-
-                    when (symbol.classKind) {
-                        KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> TypeOf(classType)
-                        KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE -> classType
-                        KaClassKind.ANNOTATION_CLASS -> ErrorType("Annotation classes are not supported")
-                        KaClassKind.ANONYMOUS_OBJECT -> ErrorType("Anonymous objects are not supported")
-                    }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
-                }
-                is KaTypeAliasSymbol -> {
-                    // TODO(KT-49795): Don't expand, export as a type alias reference instead.
-                    exportType(type.fullyExpandedType)
-                }
-                is KaAnonymousObjectSymbol -> ErrorType("Anonymous objects are not supported")
-            }
+            return exportClassType(type)
         }
         error("type must be either KaClassType or KaTypeParameterType. Actual type: ${type.javaClass.name}")
+    }
+
+    context(_: KaSession)
+    private fun exportClassType(type: KaClassType): ExportedType {
+        val symbol = type.symbol
+        val isExported = shouldDeclarationBeExportedImplicitlyOrExplicitly(symbol)
+        return when (symbol) {
+            is KaNamedClassSymbol -> {
+                val isImplicitlyExported = !isExported && !symbol.isExternal
+                val isNonExportedExternal = symbol.isExternal && !isExported
+                val name = symbol
+                    .getExportedFqName(shouldIncludePackage = !isNonExportedExternal && config.generateNamespacesForPackages, config)
+                    .asString()
+
+                // TODO(KT-82340): Approximate to actual supertype
+                val exportedSupertype = Primitive.Any
+
+                val classType = ClassType(
+                    name = name,
+                    arguments = exportAllTypeArguments(type),
+                    classId = symbol.classId,
+                )
+
+                when (symbol.classKind) {
+                    KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> TypeOf(classType)
+                    KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE -> classType
+                    KaClassKind.ANNOTATION_CLASS -> ErrorType("Annotation classes are not supported")
+                    KaClassKind.ANONYMOUS_OBJECT -> ErrorType("Anonymous objects are not supported")
+                }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
+            }
+            is KaTypeAliasSymbol -> {
+                // TODO(KT-49795): Don't expand, export as a type alias reference instead.
+                exportType(type.fullyExpandedType)
+            }
+            is KaAnonymousObjectSymbol -> ErrorType("Anonymous objects are not supported")
+        }
+    }
+
+    context(_: KaSession)
+    private fun exportAllTypeArguments(type: KaClassType): List<ExportedType> = buildList {
+        for (qualifier in type.qualifiers.asReversed()) {
+            qualifier.typeArguments.mapTo(this) { exportTypeArgument(it) }
+        }
     }
 
     @OptIn(KaExperimentalApi::class)

@@ -10,6 +10,6 @@ public final enum class Test : R|kotlin/Enum<test/Test>| {
     }
 
     public final static val entries: R|kotlin/enums/EnumEntries<test/Test>|
-        public get(): R|kotlin/enums/EnumEntries<test/Test>|
+        public static get(): R|kotlin/enums/EnumEntries<test/Test>|
 
 }

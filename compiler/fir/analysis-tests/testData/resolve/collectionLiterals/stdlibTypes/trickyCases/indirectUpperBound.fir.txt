@@ -40,26 +40,26 @@ FILE: indirectUpperBound.kt
             ^@throughDeclaredWithUBOnK2 Unit
         }
         ))
-        R|/throughDeclaredWithUBOnK2|<R|kotlin/collections/MutableSet<kotlin/Int>|, R|kotlin/collections/MutableSet<kotlin/Int>|, R|kotlin/collections/MutableSet<kotlin/Int>|>(<collectionLiteralCall>(), vararg(throughDeclaredWithUBOnK2@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+        R|/throughDeclaredWithUBOnK2<Inapplicable(INAPPLICABLE): /throughDeclaredWithUBOnK2>#|<R|kotlin/collections/MutableSet<kotlin/Int>|, R|kotlin/collections/MutableSet<kotlin/Int>|, R|kotlin/collections/MutableSet<kotlin/Int>|>(<Ambiguous collection literal>#(), vararg(throughDeclaredWithUBOnK2@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@throughDeclaredWithUBOnK2 Unit
         }
         ))
-        R|/select<Inapplicable(INAPPLICABLE): /select>#|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(vararg(R|/select|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(vararg(<collectionLiteralCall>())), <Unresolved name: materializeFromLambdaInput>#(materializeFromLambdaInput@fun <anonymous>(it: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
-            ^@materializeFromLambdaInput Unit
+        R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>())), R|/materializeFromLambdaInputs|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(materializeFromLambdaInputs@fun <anonymous>(it: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@materializeFromLambdaInputs Unit
         }
-        )))
-        R|/select<Inapplicable(INAPPLICABLE): /select>#|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(vararg(R|/select|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(vararg(<collectionLiteralCall>())), <Unresolved name: materializeFromLambdaInput>#(materializeFromLambdaInput@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
-            ^@materializeFromLambdaInput Unit
+        ))))
+        R|/select|<R|kotlin/collections/MutableSet<kotlin/String>|>(vararg(R|/select|<R|kotlin/collections/MutableSet<kotlin/String>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/String|>())), R|/materializeFromLambdaInputs|<R|it(kotlin/collections/MutableSet<kotlin/String> & kotlin/collections/Set<kotlin/Int>)|>(vararg(materializeFromLambdaInputs@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@materializeFromLambdaInputs Unit
         }
-        , materializeFromLambdaInput@fun <anonymous>(it: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
-            ^@materializeFromLambdaInput Unit
+        , materializeFromLambdaInputs@fun <anonymous>(it: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@materializeFromLambdaInputs Unit
         }
-        )))
+        ))))
         R|/select|<R|kotlin/collections/MutableSet<kotlin/String>|>(vararg(R|/select|<R|kotlin/collections/MutableSet<kotlin/String>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/String|>(), R|kotlin/collections/mutableSetOf|<R|kotlin/String|>())), R|/materializeFromLambdaInputs|<R|kotlin/collections/MutableSet<kotlin/String>|>(vararg(materializeFromLambdaInputs@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@materializeFromLambdaInputs Unit
         }
         ))))
-        R|/select|<R|kotlin/collections/Set<kotlin/String>|>(vararg(R|/select|<R|kotlin/collections/MutableSet<kotlin/String>|>(vararg(<collectionLiteralCall>(), R|kotlin/collections/mutableSetOf|<R|kotlin/String|>())), R|/materializeFromLambdaInputs|<R|kotlin/collections/Set<kotlin/String>|>(vararg(materializeFromLambdaInputs@fun <anonymous>(it: R|kotlin/collections/Set<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
+        R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|kotlin/collections/Set<kotlin/String>|>(vararg(R|/select|<R|kotlin/collections/MutableSet<kotlin/String>|>(vararg(<Ambiguous collection literal>#(), R|kotlin/collections/mutableSetOf|<R|kotlin/String|>())), R|/materializeFromLambdaInputs|<R|kotlin/collections/Set<kotlin/String>|>(vararg(materializeFromLambdaInputs@fun <anonymous>(it: R|kotlin/collections/Set<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@materializeFromLambdaInputs Unit
         }
         ))))
@@ -67,7 +67,7 @@ FILE: indirectUpperBound.kt
             ^@materializeFromLambdaInputs Unit
         }
         ))))
-        lval expected2: R|kotlin/collections/Set<kotlin/String>| = R|/select|<R|kotlin/collections/Set<kotlin/String>|>(vararg(R|/select|<R|kotlin/collections/Set<kotlin/String>|>(vararg(<collectionLiteralCall>())), R|/materializeFromLambdaInputs|<R|kotlin/collections/MutableSet<kotlin/String>|>(vararg(materializeFromLambdaInputs@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
+        lval expected2: R|kotlin/collections/Set<kotlin/String>| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|kotlin/collections/Set<kotlin/String>|>(vararg(R|/select|<R|kotlin/collections/Set<kotlin/String>|>(vararg(<Ambiguous collection literal>#())), R|/materializeFromLambdaInputs|<R|kotlin/collections/MutableSet<kotlin/String>|>(vararg(materializeFromLambdaInputs@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@materializeFromLambdaInputs Unit
         }
         ))))

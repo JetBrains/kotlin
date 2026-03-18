@@ -1,3 +1,4 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:1.9
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common

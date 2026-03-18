@@ -1,11 +1,25 @@
-/inDefaultValues.kt:(434,435): error: Initializer type mismatch: expected 'MyList<String>', actual 'MyList<Int>'.
+/inDefaultValues.kt:(437,438): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/inDefaultValues.kt:(525,526): error: Initializer type mismatch: expected 'MyList<T (of class InGenericConstructor<T>)>', actual 'MyList<Int>'.
+/inDefaultValues.kt:(440,441): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+
+/inDefaultValues.kt:(443,444): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+
+/inDefaultValues.kt:(528,529): error: Argument type mismatch: actual type is 'Int', but 'T (of class InGenericConstructor<T>)' was expected.
+
+/inDefaultValues.kt:(531,532): error: Argument type mismatch: actual type is 'Int', but 'T (of class InGenericConstructor<T>)' was expected.
+
+/inDefaultValues.kt:(534,535): error: Argument type mismatch: actual type is 'Int', but 'T (of class InGenericConstructor<T>)' was expected.
 
 /inDefaultValues.kt:(567,571): warning: Unchecked cast of 'Nothing?' to 'T (of class InGenericConstructor<T>)'.
 
-/inDefaultValues.kt:(684,685): error: Initializer type mismatch: expected 'MyList<String>', actual 'MyList<String?>'.
+/inDefaultValues.kt:(687,691): error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> of)'.
 
-/inDefaultValues.kt:(738,747): error: Argument type mismatch: actual type is 'MyList<Int>', but 'MyList<String>' was expected.
+/inDefaultValues.kt:(739,740): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/inDefaultValues.kt:(803,805): error: No 'of' operator is defined for the expected type.
+/inDefaultValues.kt:(742,743): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+
+/inDefaultValues.kt:(745,746): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+
+/inDefaultValues.kt:(803,805): error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'String' was expected.
+
+/inDefaultValues.kt:(803,805): error: Cannot infer type for type parameter 'T'. Specify it explicitly.

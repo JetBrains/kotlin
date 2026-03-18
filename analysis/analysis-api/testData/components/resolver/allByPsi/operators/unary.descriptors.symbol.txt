@@ -1,0 +1,488 @@
+KtFile: 'unary.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,195): 'class A {'
+  null
+
+KtClassBody(8,195): '{'
+  null
+
+KtNamedFunction(14,48): 'operator fun unaryPlus(): A = this'
+  null
+
+KtDeclarationModifierList(14,22): 'operator'
+  null
+
+KtParameterList(36,38): '()'
+  null
+
+KtTypeReference(40,41): 'A'
+  null
+
+KtUserType(40,41): 'A'
+  null
+
+KtNameReferenceExpression(40,41): 'A'
+  null
+
+KtThisExpression(44,48): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNameReferenceExpression(44,48): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNamedFunction(53,88): 'operator fun unaryMinus(): A = this'
+  null
+
+KtDeclarationModifierList(53,61): 'operator'
+  null
+
+KtParameterList(76,78): '()'
+  null
+
+KtTypeReference(80,81): 'A'
+  null
+
+KtUserType(80,81): 'A'
+  null
+
+KtNameReferenceExpression(80,81): 'A'
+  null
+
+KtThisExpression(84,88): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNameReferenceExpression(84,88): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNamedFunction(93,127): 'operator fun not(): Boolean = true'
+  null
+
+KtDeclarationModifierList(93,101): 'operator'
+  null
+
+KtParameterList(109,111): '()'
+  null
+
+KtTypeReference(113,120): 'Boolean'
+  null
+
+KtUserType(113,120): 'Boolean'
+  null
+
+KtNameReferenceExpression(113,120): 'Boolean'
+  null
+
+KtConstantExpression(123,127): 'true'
+  null
+
+KtNamedFunction(132,160): 'operator fun inc(): A = this'
+  null
+
+KtDeclarationModifierList(132,140): 'operator'
+  null
+
+KtParameterList(148,150): '()'
+  null
+
+KtTypeReference(152,153): 'A'
+  null
+
+KtUserType(152,153): 'A'
+  null
+
+KtNameReferenceExpression(152,153): 'A'
+  null
+
+KtThisExpression(156,160): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNameReferenceExpression(156,160): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNamedFunction(165,193): 'operator fun dec(): A = this'
+  null
+
+KtDeclarationModifierList(165,173): 'operator'
+  null
+
+KtParameterList(181,183): '()'
+  null
+
+KtTypeReference(185,186): 'A'
+  null
+
+KtUserType(185,186): 'A'
+  null
+
+KtNameReferenceExpression(185,186): 'A'
+  null
+
+KtThisExpression(189,193): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNameReferenceExpression(189,193): 'this'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+
+KtNamedFunction(197,280): 'fun test() {'
+  null
+
+KtParameterList(205,207): '()'
+  null
+
+KtBlockExpression(208,280): '{'
+  null
+
+KtProperty(214,225): 'var a = A()'
+  null
+
+KtCallExpression(222,225): 'A()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtNameReferenceExpression(222,223): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtValueArgumentList(223,225): '()'
+  null
+
+KtPrefixExpression(230,232): '+a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.unaryPlus(<dispatch receiver>: A): A
+    ]
+
+KtOperationReferenceExpression(230,231): '+'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.unaryPlus(<dispatch receiver>: A): A
+    ]
+
+KtNameReferenceExpression(231,232): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
+
+KtPrefixExpression(237,239): '-a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.unaryMinus(<dispatch receiver>: A): A
+    ]
+
+KtOperationReferenceExpression(237,238): '-'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.unaryMinus(<dispatch receiver>: A): A
+    ]
+
+KtNameReferenceExpression(238,239): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
+
+KtPrefixExpression(244,246): '!a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.not(<dispatch receiver>: A): kotlin.Boolean
+    ]
+
+KtOperationReferenceExpression(244,245): '!'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.not(<dispatch receiver>: A): kotlin.Boolean
+    ]
+
+KtNameReferenceExpression(245,246): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
+
+KtPrefixExpression(251,254): '++a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A,
+      /A.inc(<dispatch receiver>: A): A
+    ]
+
+KtOperationReferenceExpression(251,253): '++'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.inc(<dispatch receiver>: A): A
+    ]
+
+KtNameReferenceExpression(253,254): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
+
+KtPrefixExpression(259,262): '--a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A,
+      /A.dec(<dispatch receiver>: A): A
+    ]
+
+KtOperationReferenceExpression(259,261): '--'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.dec(<dispatch receiver>: A): A
+    ]
+
+KtNameReferenceExpression(261,262): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
+
+KtPostfixExpression(267,270): 'a++'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A,
+      /A.inc(<dispatch receiver>: A): A
+    ]
+
+KtNameReferenceExpression(267,268): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
+
+KtOperationReferenceExpression(268,270): '++'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.inc(<dispatch receiver>: A): A
+    ]
+
+KtPostfixExpression(275,278): 'a--'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A,
+      /A.dec(<dispatch receiver>: A): A
+    ]
+
+KtNameReferenceExpression(275,276): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
+
+KtOperationReferenceExpression(276,278): '--'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.dec(<dispatch receiver>: A): A
+    ]

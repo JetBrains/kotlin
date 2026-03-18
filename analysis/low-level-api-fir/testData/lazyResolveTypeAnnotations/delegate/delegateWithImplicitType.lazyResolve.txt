@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -222,7 +222,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitType.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val prop: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor([ResolvedTo(BODY_RESOLVE)] i: R|OriginalInterface|): R|Derived| {
             super<R|kotlin/Any|>()
         }

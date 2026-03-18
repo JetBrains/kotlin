@@ -47,5 +47,6 @@
     <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.Fe10KDocReference$Provider"/>
     <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10SimpleNameReference$Provider"/>
     <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.Fe10SyntheticPropertyAccessorReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10DefaultAnnotationArgumentReference$Provider"/>
   </extensions>
 </idea-plugin>

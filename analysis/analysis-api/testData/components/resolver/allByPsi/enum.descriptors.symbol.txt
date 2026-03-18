@@ -47,7 +47,10 @@ KtSuperTypeCallEntry(54,57): '(1)'
     ]
 
 KtConstructorCalleeExpression(54,54): ''
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
 
 KtTypeReference(54,54): ''
   null
@@ -83,7 +86,10 @@ KtSuperTypeCallEntry(76,79): '(2)'
     ]
 
 KtConstructorCalleeExpression(76,76): ''
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
 
 KtTypeReference(76,76): ''
   null
@@ -119,7 +125,10 @@ KtBlockExpression(100,125): '{'
   null
 
 KtNameReferenceExpression(114,115): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val i: kotlin.Int
+    ]
 
 KtClass(135,262): 'enum class EnumWithoutConstructor {'
   null
@@ -149,13 +158,64 @@ KtBlockExpression(220,254): '{'
   null
 
 KtDotQualifiedExpression(234,244): 'this.baz()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+    ]
 
 KtThisExpression(234,238): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaEnumEntrySymbol(/EnumWithoutConstructor.EntryWithBody)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: EnumWithoutConstructor.EntryWithBody
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(234,238): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaEnumEntrySymbol(/EnumWithoutConstructor.EntryWithBody)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: EnumWithoutConstructor.EntryWithBody
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtCallExpression(239,244): 'baz()'
   KaSymbolResolutionSuccess:
@@ -164,7 +224,10 @@ KtCallExpression(239,244): 'baz()'
     ]
 
 KtNameReferenceExpression(239,242): 'baz'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+    ]
 
 KtValueArgumentList(242,244): '()'
   null
@@ -191,13 +254,22 @@ KtBlockExpression(301,575): '{'
   null
 
 KtDotQualifiedExpression(307,319): 'with.ordinal'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ordinal: kotlin.Int
+    ]
 
 KtNameReferenceExpression(307,311): 'with'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      with: EnumWithConstructor
+    ]
 
 KtNameReferenceExpression(312,319): 'ordinal'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ordinal: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
   null
@@ -206,10 +278,16 @@ KtNameReferenceExpression(325,344): 'EnumWithConstructor'
   null
 
 KtNameReferenceExpression(345,350): 'Entry'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.Entry
+    ]
 
 KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
   null
@@ -221,7 +299,10 @@ KtNameReferenceExpression(375,380): 'Entry'
   null
 
 KtNameReferenceExpression(381,385): 'name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
   null
@@ -230,10 +311,16 @@ KtNameReferenceExpression(390,409): 'EnumWithConstructor'
   null
 
 KtNameReferenceExpression(410,423): 'EntryWithBody'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.EntryWithBody
+    ]
 
 KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val i: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
   null
@@ -245,16 +332,25 @@ KtNameReferenceExpression(448,461): 'EntryWithBody'
   null
 
 KtNameReferenceExpression(462,463): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val i: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+    ]
 
 KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
   null
 
 KtNameReferenceExpression(492,499): 'entries'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+    ]
 
 KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
   null
@@ -263,7 +359,10 @@ KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
   null
 
 KtNameReferenceExpression(527,532): 'Entry'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor.Entry
+    ]
 
 KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
   null
@@ -272,4 +371,7 @@ KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
   null
 
 KtNameReferenceExpression(560,573): 'EntryWithBody'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor.EntryWithBody
+    ]

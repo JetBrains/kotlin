@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.test.data.manager
 
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.trackUpdatedPaths
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.updatedTestDataPaths
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.*
 
 /**
@@ -20,6 +23,40 @@ import kotlin.io.path.*
  * enforcing the golden-only auto-generation constraint.
  */
 object ManagedTestAssertions {
+
+    /**
+     * Thread-safe set of test data paths (absolute path strings) that were updated during the current run.
+     * Used by incremental mode to determine which variant tests to run.
+     */
+    private val updatedTestDataPaths: MutableSet<String> = ConcurrentHashMap.newKeySet()
+
+    /**
+     * Auto-updates the [updatedTestDataPaths] set if [trackUpdatedPaths] is true.
+     *
+     * This function must wrap all modification actions
+     */
+    private inline fun TestDataFiles.update(block: () -> Unit) {
+        if (trackUpdatedPaths) {
+            updatedTestDataPaths.add(testDataPath.toString())
+        }
+
+        block()
+    }
+
+    /**
+     * When true, file writes in UPDATE mode will record the test data path in [updatedTestDataPaths].
+     */
+    @Volatile
+    internal var trackUpdatedPaths: Boolean = false
+
+    /**
+     * Returns the set of updated test data paths collected so far and clears the internal set.
+     */
+    internal fun drainUpdatedTestDataPaths(): Set<String> {
+        val snapshot = updatedTestDataPaths.toSet()
+        updatedTestDataPaths.clear()
+        return snapshot
+    }
 
     /**
      * Compares actual content with the expected test output file.
@@ -77,20 +114,16 @@ object ManagedTestAssertions {
         val expectedContent = expectedFile.readText()
         val normalizedExpected = normalizeContent(expectedContent)
 
-        // Content comparison
-        if (normalizedActual == normalizedExpected) {
-            // Check and handle redundant write-target file
-            checkAndHandleRedundantFile(testDataFiles, mode)
-            return
+        if (normalizedActual != normalizedExpected) {
+            handleMismatch(
+                testDataFiles = testDataFiles,
+                normalizedActual = normalizedActual,
+                expectedContent = expectedContent,
+                mode = mode,
+            )
         }
 
-        // Content mismatch
-        handleMismatch(
-            testDataFiles = testDataFiles,
-            normalizedActual = normalizedActual,
-            expectedContent = expectedContent,
-            mode = mode,
-        )
+        checkAndHandleRedundantFile(testDataFiles, mode)
     }
 
     private fun handleMissingFile(
@@ -104,19 +137,19 @@ object ManagedTestAssertions {
 
         if (isGoldenTest) {
             when (mode) {
-                TestDataManagerMode.UPDATE -> {
+                TestDataManagerMode.UPDATE -> testDataFiles.update {
                     writeTargetFile.createParentDirectories()
                     writeTargetFile.writeText(normalizedActual)
                 }
 
-                TestDataManagerMode.CHECK -> {
-                    if (TestDataManagerMode.isUnderTeamCity) {
-                        throw AssertionFailedError(
-                            "Expected data file did not exist: $writeTargetFile",
-                            FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
-                            normalizedActual,
-                        )
-                    } else {
+                TestDataManagerMode.CHECK -> when {
+                    TestDataManagerMode.isUnderTeamCity -> throw AssertionFailedError(
+                        "Expected data file did not exist: $writeTargetFile",
+                        FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
+                        normalizedActual,
+                    )
+
+                    else -> testDataFiles.update {
                         writeTargetFile.createParentDirectories()
                         writeTargetFile.writeText(normalizedActual)
                         throw AssertionFailedError(
@@ -152,17 +185,17 @@ object ManagedTestAssertions {
 
         if (writeTargetContent == nextContent) {
             when (mode) {
-                TestDataManagerMode.UPDATE -> {
+                TestDataManagerMode.UPDATE -> testDataFiles.update {
                     writeTargetFile.deleteIfExists()
                 }
 
-                TestDataManagerMode.CHECK -> {
-                    if (TestDataManagerMode.isUnderTeamCity) {
-                        throw AssertionFailedError(
-                            "\"${writeTargetFile.name}\" has the same content as \"${nextExistingFile.name}\". " +
-                                    "Delete the prefixed file."
-                        )
-                    } else {
+                TestDataManagerMode.CHECK -> when {
+                    TestDataManagerMode.isUnderTeamCity -> throw AssertionFailedError(
+                        "\"${writeTargetFile.name}\" has the same content as \"${nextExistingFile.name}\". " +
+                                "Delete the prefixed file."
+                    )
+
+                    else -> testDataFiles.update {
                         writeTargetFile.deleteIfExists()
                         throw AssertionFailedError(
                             "\"${writeTargetFile.name}\" had the same content as \"${nextExistingFile.name}\". " +
@@ -181,24 +214,34 @@ object ManagedTestAssertions {
         mode: TestDataManagerMode,
     ) {
         val writeTargetFile = testDataFiles.writeTargetFile
+        val contentToWrite = preserveEofNewline(normalizedActual, expectedContent)
 
         when (mode) {
-            TestDataManagerMode.UPDATE -> {
+            TestDataManagerMode.UPDATE -> testDataFiles.update {
                 writeTargetFile.createParentDirectories()
-                writeTargetFile.writeText(normalizedActual)
+                writeTargetFile.writeText(contentToWrite)
             }
-            TestDataManagerMode.CHECK -> {
-                throw AssertionFailedError(
-                    "Actual data differs from file content: ${writeTargetFile.name}",
-                    FileInfo(
-                        writeTargetFile.absolutePathString(),
-                        expectedContent.toByteArray(StandardCharsets.UTF_8),
-                    ),
-                    normalizedActual,
-                )
-            }
+
+            TestDataManagerMode.CHECK -> throw AssertionFailedError(
+                "Actual data differs from file content: ${writeTargetFile.name}",
+                FileInfo(
+                    writeTargetFile.absolutePathString(),
+                    contentToWrite.toByteArray(StandardCharsets.UTF_8),
+                ),
+                normalizedActual,
+            )
         }
     }
+
+    /**
+     * Adjusts the trailing newline in [normalizedContent] to match the EOF status of [existingContent].
+     *
+     * [normalizedContent] always ends with `\n` (from [normalizeContent]).
+     * If the existing file had no trailing newline, the trailing `\n` is stripped before writing,
+     * so the update doesn't introduce an unwanted EOF change.
+     */
+    private fun preserveEofNewline(normalizedContent: String, existingContent: String): String =
+        if (!existingContent.endsWith("\n")) normalizedContent.trimEnd('\n') else normalizedContent
 
     internal fun normalizeContent(content: String): String =
         content.trim().convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()

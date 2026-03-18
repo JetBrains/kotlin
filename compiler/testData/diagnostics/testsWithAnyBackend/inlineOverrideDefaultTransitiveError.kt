@@ -1,9 +1,5 @@
 // ISSUE: KT-83904
 // RUN_PIPELINE_TILL: FRONTEND
-// DISABLE_NEXT_PHASE_SUGGESTION
-// ^^^KT-83904: NOT_YET_SUPPORTED_IN_INLINE must be reported, similar to test `inlineOverrideDefaultError.kt`,
-//     and DISABLE_NEXT_PHASE_SUGGESTION must be removed, but the diagnostic is wrongly not perorted.
-//     Cause: FIR checker cannot get `overriddenSymbols[].directOverriddenSymbolsSafe()` across modules, so it does not even try.
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // LANGUAGE: +ForbidOverriddenDefaultParametersInInline
 // FIR_IDENTICAL
@@ -18,9 +14,14 @@ open class Intermediate: I {
     open override fun foo(a: Int): Int = 24
 }
 
-// MODULE: main(intermediate, lib)
-class A(): Intermediate() {
-    inline override <!OVERRIDE_BY_INLINE!>fun foo(a: Int): Int<!> = -42
+// MODULE: lib2(lib)
+interface I2 : I {
+    override fun foo(a: Int): Int
+}
+
+// MODULE: main(intermediate, lib, lib2)
+class A(): Intermediate(), I2 {
+    inline override <!OVERRIDE_BY_INLINE!>fun foo(<!NOT_YET_SUPPORTED_IN_INLINE!>a: Int<!>): Int<!> = -42
 }
 
 fun bar() = A().foo()

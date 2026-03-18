@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.copyAsImplicitInvokeCall
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
-import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.addNonFatalDiagnostics
+import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -63,8 +63,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     private val towerResolver: FirTowerResolver = FirTowerResolver(components, components.resolutionStageRunner)
-) {
-    private val session = components.session
+) : SessionHolder {
+    override val session: FirSession = components.session
     private val overloadByLambdaReturnTypeResolver = FirOverloadByLambdaReturnTypeResolver(components)
 
     private lateinit var transformer: FirExpressionsResolveTransformer
@@ -79,19 +79,19 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(
         functionCall: FirFunctionCall,
         resolutionMode: ResolutionMode,
-        // When resolving collection literal call, the constraint system is a clone of the outer constraint system
-        containingCallCandidateForCL: Candidate? = null,
+        collectionLiteralContext: CollectionLiteralOuterCandidateContext? = null,
     ): FirFunctionCall {
+        val isCollectionLiteralCall = collectionLiteralContext != null
         val name = functionCall.calleeReference.name
         val result = collectCandidates(
             functionCall, name,
             origin = functionCall.origin,
             resolutionMode = resolutionMode,
-            containingCallCandidateForCL = containingCallCandidateForCL
+            collectionLiteralContext = collectionLiteralContext
         )
 
         var forceCandidates: Collection<Candidate>? = null
-        if (result.candidates.isEmpty()) {
+        if (result.candidates.isEmpty() && !isCollectionLiteralCall) {
             val newResult = collectCandidates(
                 functionCall,
                 name,
@@ -116,8 +116,11 @@ class FirCallResolver(
         )
 
         functionCall.replaceCalleeReference(nameReference)
+
+        processContextSensitiveResolutionAlternatives(result)
+
         if (result.forwardedDiagnostics.isNotEmpty()) {
-            functionCall.replaceNonFatalDiagnostics(functionCall.nonFatalDiagnostics + convertForwardedDiagnostics(result))
+            functionCall.appendNonFatalDiagnostics(convertForwardedDiagnostics(result))
         }
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
         candidate?.updateSourcesOfReceivers()
@@ -160,11 +163,48 @@ class FirCallResolver(
             }
         }
 
+    /**
+     * Prevents from resolving the context-sensitive resolution alternatives if some candidates were inapplicable during resolution.
+     * It's necessary because if there are two candidates like
+     * fun foo(x: String) {} // (1)
+     * fun foo(x: MyEnum) {} // (2)
+     *
+     * And the call is `foo(MyEnum.X)`, we discriminate (1) just because `MyEnum.X` is not a String, while we cannot do
+     * the same for a context-sensitive version foo(X) because it wouldn't just work for multiple potential candidates.
+     *
+     * NB1: Its current implementation is very conservative and might lead to some false negatives, i.e., it might
+     * decline some of the alternatives which potentially might be resolved.
+     *
+     * NB2: It should not work just for candidates at the same tower level, but on the previous ones as well:
+     * fun foobar(x: MyEnum3) {}
+     *
+     * fun main() {
+     *     fun foobar(x: String) {}
+     *
+     *     // Do not report DEBUG_INFO_CSR_MIGHT_BE_USED because otherwise we would stop on the local overload as no contradictory constraints
+     *     // are present there.
+     *     foobar(MyEnum3.X)
+     * }
+     */
+    private fun processContextSensitiveResolutionAlternatives(result: ResolutionResult) {
+        if (!AnalysisFlags.ideMode.isSet() || !result.metInapplicableCandidate) return
+        val callee = result.info.callSite as? FirExpression ?: return
+
+        for (candidate in result.candidates) {
+            ConeAtomWithCandidate(callee, candidate).processPostponedAtoms { atom ->
+                if (atom is ConeContextSensitiveAlternativeForQualifierAtom) {
+                    atom.markDiscarded()
+                }
+            }
+        }
+    }
+
     private data class ResolutionResult(
         val info: CallInfo,
         val applicability: CandidateApplicability,
         val candidates: Collection<Candidate>,
         val forwardedDiagnostics: List<ResolutionDiagnostic>,
+        val metInapplicableCandidate: Boolean,
     )
 
     /**
@@ -226,17 +266,29 @@ class FirCallResolver(
         collector: CandidateCollector? = null,
         callSite: FirElement = qualifiedAccess,
         resolutionMode: ResolutionMode,
-        containingCallCandidateForCL: Candidate? = null,
+        collectionLiteralContext: CollectionLiteralOuterCandidateContext? = null,
     ): ResolutionResult {
+        assert(collectionLiteralContext == null || forceCallKind == null) {
+            "We only force call kind in cases we resolve incorrect variable access as though it was function call (or vice versa)," +
+                    " it does not have sense for collection literal"
+        }
+
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
         val typeArguments = if (qualifiedAccess is FirFunctionCall || forceCallKind == CallKind.Function) {
             qualifiedAccess.typeArguments
         } else emptyList()
 
+        val callKind = when {
+            forceCallKind != null -> forceCallKind
+            collectionLiteralContext != null -> CallKind.CollectionLiteral
+            qualifiedAccess is FirFunctionCall -> CallKind.Function
+            else -> CallKind.VariableAccess
+        }
+
         val info = CallInfo(
             callSite,
-            forceCallKind ?: if (qualifiedAccess is FirFunctionCall) CallKind.Function else CallKind.VariableAccess,
+            callKind,
             name,
             explicitReceiver,
             argumentList,
@@ -248,20 +300,34 @@ class FirCallResolver(
             origin = origin,
             resolutionMode = resolutionMode,
             implicitInvokeMode = if (qualifiedAccess is FirImplicitInvokeCall) ImplicitInvokeMode.Regular else ImplicitInvokeMode.None,
-            isCollectionLiteralCall = containingCallCandidateForCL != null
+            containingCandidateForCollectionLiteral = collectionLiteralContext?.containingCandidate,
         )
-        towerResolver.reset()
+        val resultCollector = if (collectionLiteralContext != null) {
+            // collection literals may be resolved during resolve of outer call, hence no resolve and fresh CandidateCollector instance
+            val collectorForCLCall = CandidateCollector(components, components.resolutionStageRunner)
+            val managerForCLCall = TowerResolveManager(collectorForCLCall)
 
-        val candidateFactory = when (containingCallCandidateForCL) {
-            null -> CandidateFactory(resolutionContext, info)
-            else -> CandidateFactory.createForCollectionLiterals(resolutionContext, containingCallCandidateForCL, info)
+            towerResolver.runResolver(
+                info,
+                resolutionContext,
+                collectorForCLCall,
+                managerForCLCall,
+            )
+        } else {
+            towerResolver.reset()
+            towerResolver.runResolver(info, resolutionContext, collector)
         }
 
-        val resultCollector: CandidateCollector = towerResolver.runResolver(info, resolutionContext, collector, candidateFactory)
-        var (reducedCandidates, applicability) = reduceCandidates(resultCollector, explicitReceiver, resolutionContext)
+        var (reducedCandidates, applicability) = reduceCandidates(resultCollector, resolutionContext)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
-        return ResolutionResult(info, applicability, reducedCandidates, resultCollector.forwardedDiagnostics())
+        return ResolutionResult(
+            info,
+            applicability,
+            reducedCandidates,
+            resultCollector.forwardedDiagnostics(),
+            resultCollector.metInapplicableCandidate
+        )
     }
 
     /**
@@ -269,13 +335,11 @@ class FirCallResolver(
      */
     private fun reduceCandidates(
         collector: CandidateCollector,
-        explicitReceiver: FirExpression? = null,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
     ): Pair<Set<Candidate>, CandidateApplicability> {
         fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
             list.singleOrNull()?.let { return setOf(it) }
-            val onSuperReference = explicitReceiver is FirSuperReceiverExpression
-            return conflictResolver.chooseMaximallySpecificCandidates(list, discriminateAbstracts = onSuperReference)
+            return conflictResolver.chooseMaximallySpecificCandidates(list)
         }
 
         val candidates = collector.bestCandidates()
@@ -526,7 +590,7 @@ class FirCallResolver(
             )
         }
 
-        val (reducedCandidates, applicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
+        val (reducedCandidates, applicability) = reduceCandidates(result)
 
         (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.unsetResolvedToCompanionIf(
             reducedCandidates.isEmpty() || !reducedCandidates.all { it.isFromCompanionObjectTypeScope }
@@ -758,7 +822,10 @@ class FirCallResolver(
             scope = null
         )
         val applicability = components.resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext)
-        return ResolutionResult(callInfo, applicability, candidates = listOf(candidate), forwardedDiagnostics = emptyList())
+        return ResolutionResult(
+            callInfo, applicability, candidates = listOf(candidate), forwardedDiagnostics = emptyList(),
+            metInapplicableCandidate = applicability == CandidateApplicability.INAPPLICABLE,
+        )
     }
 
     private fun selectDelegatingConstructorCall(

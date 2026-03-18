@@ -84,3 +84,14 @@ val KotlinBuildProperties.limitPlatformLibsCacheBuildingConcurrency: Boolean
  */
 val KotlinBuildProperties.buildPlatformLibsByBootstrapCompiler: Boolean
     get() = booleanProperty("kotlin.native.platformLibs.bootstrap", false).get()
+
+/**
+ * "versions.kotlin-native" is the version of K/N dist that will be baked into KGP and that KGP will try to resolve to run K/N
+ * compilations (including in KGP integration tests).
+ *
+ * We normally always want the K/N version to be aligned in TC builds. Though by default K/N is currently disabled, so when you run the
+ * builds locally, the K/N version can be unaligned. In some TC builds we just want to run KGP integration tests quickly and check the
+ * local DevX is not broken by stale K/N, so we disable the alignment in these builds.
+ */
+val KotlinBuildProperties.alignKotlinNativeVersionInTCBuilds: Boolean
+    get() = isTeamcityBuild.get() && booleanProperty("kotlin.align.versions.kotlin-native.in.tc.builds", true).get()
