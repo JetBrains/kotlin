@@ -17,6 +17,7 @@ kotlin {
         }
     }
 
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     val platformTarget = when {
         HostManager.hostIsMac -> macosX64("platform")
         HostManager.hostIsMingw -> mingwX64("platform")

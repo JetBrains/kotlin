@@ -69,6 +69,7 @@ kotlin {
     androidTarget {
         compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
     }
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     macosX64("macos")
 
     sourceSets {

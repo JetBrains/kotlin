@@ -11,15 +11,18 @@ kotlin {
     linuxArm64()
     linuxX64()
     macosArm64()
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     macosX64()
     mingwX64()
     tvosArm64()
     tvosSimulatorArm64()
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     tvosX64()
     watchosArm32()
     watchosArm64()
     watchosDeviceArm64()
     watchosSimulatorArm64()
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     watchosX64()
 }
 
