@@ -2210,7 +2210,6 @@ public final class org/jetbrains/kotlin/psi/KtPsiFactory {
 	public fun <init> (Lcom/intellij/openapi/project/Project;)V
 	public fun <init> (Lcom/intellij/openapi/project/Project;Z)V
 	public synthetic fun <init> (Lcom/intellij/openapi/project/Project;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Lcom/intellij/openapi/project/Project;ZLcom/intellij/psi/PsiElement;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lcom/intellij/openapi/project/Project;ZZ)V
 	public synthetic fun <init> (Lcom/intellij/openapi/project/Project;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/KtElement;)V

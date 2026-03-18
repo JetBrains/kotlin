@@ -133,7 +133,6 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 
 public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinCompositeDeclarationProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinCompositeProvider, org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/declarations/KotlinCompositeDeclarationProvider$Companion;
-	public synthetic fun <init> (Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun computePackageNames ()Ljava/util/Set;
 	public fun computePackageNamesWithTopLevelCallables ()Ljava/util/Set;
 	public fun computePackageNamesWithTopLevelClassifiers ()Ljava/util/Set;
@@ -547,7 +546,6 @@ public abstract class org/jetbrains/kotlin/analysis/api/platform/packages/Kotlin
 
 public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinCompositePackageProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinCompositeProvider, org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinCompositePackageProvider$Companion;
-	public synthetic fun <init> (Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun doesKotlinOnlyPackageExist (Lorg/jetbrains/kotlin/name/FqName;)Z
 	public fun doesPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
 	public fun doesPlatformSpecificPackageExist (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
