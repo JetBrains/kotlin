@@ -21,9 +21,12 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm"
         description = "Use the WebAssembly compiler backend.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
-
+        additionalAnnotations(
+            Deprecated("This flag is deprecated. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.")
+        )
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 

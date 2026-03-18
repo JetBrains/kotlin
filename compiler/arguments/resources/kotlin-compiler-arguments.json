@@ -10877,7 +10877,7 @@
                                                 "releaseVersionsMetadata": {
                                                     "introducedVersion": "2.1.20",
                                                     "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
+                                                    "deprecatedVersion": "2.4.0",
                                                     "removedVersion": null
                                                 },
                                                 "argumentType": {
@@ -12557,7 +12557,7 @@
                                                 "releaseVersionsMetadata": {
                                                     "introducedVersion": "2.1.20",
                                                     "stabilizedVersion": null,
-                                                    "deprecatedVersion": null,
+                                                    "deprecatedVersion": "2.4.0",
                                                     "removedVersion": null
                                                 },
                                                 "argumentType": {

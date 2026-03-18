@@ -36,6 +36,7 @@ class K2JSCompiler : KotlinWebCompilerBase<K2JSCompilerArguments>() {
         services: Services,
         basicMessageCollector: MessageCollector,
     ): ExitCode {
+        @Suppress("DEPRECATION")
         return if (arguments.wasm) {
             WasmCliPipeline(defaultPerformanceManager).execute(arguments.toWasmArguments(), services, basicMessageCollector)
         } else {

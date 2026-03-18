@@ -26,6 +26,7 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
         }
 
         super.configureAnalysisFlags(arguments, reporter, languageVersion).apply {
+            @Suppress("DEPRECATION")
             putAnalysisFlag(allowFullyQualifiedNameInKClass, wasm && wasmKClassFqn) //Only enabled WASM BE supports this flag
         }
     }
@@ -39,6 +40,7 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
         result.configureJsLanguageFeatures(this)
         // TODO: Should be removed (see KT-80182)
         result[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED
+        @Suppress("DEPRECATION")
         if (wasm) {
             result[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
         }
