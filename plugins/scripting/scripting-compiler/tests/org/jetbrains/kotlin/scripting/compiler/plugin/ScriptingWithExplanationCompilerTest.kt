@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.scripting.definitions.getEnvironment
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
@@ -20,7 +20,6 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.JvmGetScriptingClass
-import kotlin.test.assertEquals
 
 @KotlinScript(
     displayName = "FakeExplanationScript",
@@ -54,7 +53,7 @@ private class KotlinExplainEvaluationConfiguration : ScriptEvaluationConfigurati
 private class KotlinExplainCompilationConfiguration() : ScriptCompilationConfiguration(
     {
         displayName("Kotlin Scratch")
-        explainField("\$\$explain")
+        explainField($$$"$$explain")
     })
 
 private class KotlinExplainHostConfiguration : ScriptingHostConfiguration(
@@ -67,7 +66,7 @@ private val powerAssertJar = File("dist/kotlinc/lib/power-assert-compiler-plugin
 
 class ScriptingWithExplanationCompilerTest {
     companion object {
-        const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
+        const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData/compiler/explain/"
     }
 
     init {
@@ -76,115 +75,92 @@ class ScriptingWithExplanationCompilerTest {
 
     @Test
     fun scriptShouldFlushExplainInformationAfterEvaluation() {
-        explainAndCheck(
-            "${TEST_DATA_DIR}/compiler/explain/simpleExplain.kts",
-            expectedExplanations = listOf(
-                "a(8, 9) = 1",
-                "b(18, 19) = 1",
-                "b(18, 23) = 6",
-                "result(38, 39) = 1",
-                "result(42, 43) = 6",
-                "result(38, 43) = 7",
-                "(45, 60) = true",
-                "(82, 83) = 1",
-                "(78, 83) = 4",
-                "(74, 83) = kotlin.Unit",
-                "\$\$result(85, 87) = 42",
-            )
-        )
+        runScriptAndValidateExplain("$TEST_DATA_DIR/simpleExplain.kts")
+    }
+
+    @Test
+    fun testUnaryOperator() {
+        runScriptAndValidateExplain("$TEST_DATA_DIR/unaryOperator.kts")
     }
 
     @Test
     fun testScriptExplainShouldCoverNonLastExpressions() {
-        explainAndCheck(
-            "${TEST_DATA_DIR}/compiler/explain/explainWithNonLastExpr.kts",
-            expectedExplanations = listOf(
-                "a(8, 9) = 7", "(11, 16) = 42", "\$\$result(18, 24) = 6"
-            )
-        )
+        runScriptAndValidateExplain("$TEST_DATA_DIR/explainWithNonLastExpr.kts")
     }
 
     @Test
     fun testScriptExplainShouldCoverBodyOfTheExhaustiveIf() {
-        explainAndCheck(
-            "${TEST_DATA_DIR}/compiler/explain/explainWithExhaustiveIf.kts",
-            expectedExplanations = listOf(
-                "(25, 27) = 42",
-                "(32, 45) = kotlin.Unit",
-                "(50, 52) = 44",
-                "v(19, 54) = 44",
-                "\$\$result(64, 65) = 44"
-            ),
-            expectedOut = listOf("43", "44")
-        )
+        runScriptAndValidateExplain("$TEST_DATA_DIR/explainWithExhaustiveIf.kts")
     }
 
     @Test
     fun testScriptExplainShouldCoverBodyOfTheNonExhaustiveIf() {
-        explainAndCheck(
-            "${TEST_DATA_DIR}/compiler/explain/explainWithNonExhaustiveIf.kts",
-            expectedExplanations = listOf(
-                "(17, 19) = 42",
-                "(24, 37) = kotlin.Unit",
-                "(42, 44) = 44",
-                "(11, 46) = kotlin.Unit",
-                "\$\$result(48, 50) = 43"
-            ),
-            expectedOut = listOf("43", "43")
-        )
+        runScriptAndValidateExplain("$TEST_DATA_DIR/explainWithNonExhaustiveIf.kts")
     }
 
     @Test
     fun testScriptExplainShouldSkipBodyOfTheDeadNonExhaustiveIf() {
-        explainAndCheck(
-            "${TEST_DATA_DIR}/compiler/explain/explainWithDeadNonExhaustiveIf.kts",
-            expectedExplanations = listOf(
-                "\$\$result(42, 44) = 43"
-            ),
-            expectedOut = listOf("43")
-        )
+        runScriptAndValidateExplain("$TEST_DATA_DIR/explainWithDeadNonExhaustiveIf.kts")
     }
 
     @Test
     fun testScriptExplainShouldSkipBodyOfTheDeadNonExhaustiveIf2() {
         // Unexpected results - second then body should be skipped in the explanation and in the output
-        explainAndCheck(
-            "${TEST_DATA_DIR}/compiler/explain/explainWithDeadNonExhaustiveIf2.kts",
-            expectedExplanations = listOf(
-                "(63, 65) = 44", "(70, 83) = kotlin.Unit", "(57, 85) = kotlin.Unit", "\$\$result(87, 89) = 46"
-            ),
-            expectedOut = listOf("45", "46")
-        )
+        runScriptAndValidateExplain("$TEST_DATA_DIR/explainWithDeadNonExhaustiveIf2.kts")
     }
 
     @Test
-    fun testScriptExplainSholdHandleLoops() {
-        explainAndCheck(
-            "${TEST_DATA_DIR}/compiler/explain/explainWithLoops.kts",
-            expectedExplanations = listOf(
-                "<iterator>(11, 16) = kotlin.ranges.IntProgressionIterator@",
-                "i(56, 58) = 11",
-                "(104, 110) = kotlin.Unit",
-                "\$\$result(159, 161) = 45"
-            ),
-            expectedOut = (1..10).map { "42"} + (1..11).map { "43" } + (1..12).map { "44" } + "45"
-        )
+    fun testScriptExplainShouldHandleLoops() {
+        runScriptAndValidateExplain("$TEST_DATA_DIR/explainWithLoops.kts")
+    }
+
+    @Test
+    fun testScriptExplainWithReducedList() {
+        runScriptAndValidateExplain("$TEST_DATA_DIR/explainWithReducedList.kts")
+    }
+
+    @Test // KT-85102
+    fun testScriptExplainWithForLoop() {
+        runScriptAndValidateExplain("$TEST_DATA_DIR/forLoop.kts")
+    }
+
+    @Test // KT-85103
+    fun testScriptExplainDestructuringDeclarations() {
+        runScriptAndValidateExplain("$TEST_DATA_DIR/destructuringDecls.kts", expectedExitCode = ExitCode.COMPILATION_ERROR)
+    }
+
+    @Test // KT-85105
+    fun testScriptExplainWithObjectLiteral() {
+        runScriptAndValidateExplain("$TEST_DATA_DIR/destructuringDecls.kts", expectedExitCode = ExitCode.COMPILATION_ERROR)
     }
 }
 
-private val reAddress = Regex("@\\p{XDigit}{4,8}")
+private val hexAddressRegex = Regex("@[0-9a-fA-F]+")
 
-private fun explainAndCheck(scriptPath: String, expectedExplanations: List<String>, expectedExitCode: ExitCode = ExitCode.OK, expectedOut: List<String>? = null) {
-    withTempFile { explainFile ->
-        val (out, err, ret) = captureOutErrRet {
-            runScriptWithExplain(scriptPath, explainFile.absolutePath)
+private val updateTestData = System.getProperty("kotlin.test.update.test.data") == "true"
+
+private fun runScriptAndValidateExplain(
+    scriptPath: String,
+    expectedExitCode: ExitCode = ExitCode.OK,
+) {
+    val scriptFile = File(scriptPath)
+    val baseName = scriptFile.nameWithoutExtension
+    val dir = scriptFile.parentFile
+    val explainExpectedFile = dir.resolve("$baseName.explain")
+
+    withTempFile { tempExplainFile ->
+        val (_, err, ret) = captureOutErrRet {
+            runScriptWithExplain(scriptPath, tempExplainFile.absolutePath)
         }
         assertEquals(expectedExitCode, ret) { "Expected exit code $expectedExitCode, actual $ret\n$err" }
-        if (expectedOut != null) {
-            assertEquals(expectedOut, out.trim().lines())
+
+        val actualExplainLines = tempExplainFile.readLines().map { it.replace(hexAddressRegex, "@") }
+
+        if (updateTestData) {
+            explainExpectedFile.writeText(actualExplainLines.joinToString("\n"))
+        } else {
+            assertEquals(explainExpectedFile.readLines(), actualExplainLines)
         }
-        val lines = explainFile.readLines().map { it.replace(reAddress, "@") }
-        assertEquals(expectedExplanations, lines)
     }
 }
 
