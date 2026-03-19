@@ -3,7 +3,7 @@ FIR element: FirNamedFunctionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
     ^foo Int(1)
 }
 
@@ -19,12 +19,12 @@ FILE: [ResolvedTo(IMPORTS)] functionAsAnnotationArgument.kt
 
     }
     @R|Anno|[Types](i = ERROR_EXPR(Argument is absent) [evaluated = ERROR_EXPR(Argument is absent)]) public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class Check : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Check] constructor(): R|Check| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] var prop: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Check] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }

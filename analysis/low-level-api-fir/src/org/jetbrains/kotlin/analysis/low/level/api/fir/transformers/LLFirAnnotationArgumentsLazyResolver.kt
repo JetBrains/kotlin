@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodie
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.NonLocalAnnotationVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationsAreResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
@@ -25,13 +27,21 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATION_ARGUMENTS) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirAnnotationArgumentsTargetResolver(target)
+
+    override fun postResolveTarget(target: FirElementWithResolveState, containingDeclarations: List<FirDeclaration>) {
+        if (target !is FirDeclaration) return
+        resolveNestedDeclarationsInsideAnnotationArguments(target, containingDeclarations)
+    }
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
         if (target is FirAnnotationContainer) {
@@ -54,6 +64,10 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
             }
 
             is FirTypeAlias -> checkAnnotationsAreResolved(target, target.expandedTypeRef)
+        }
+
+        if (target is FirDeclaration) {
+            checkNestedDeclarationsInsideAnnotationArgumentsAreResolved(target)
         }
     }
 }
@@ -191,6 +205,90 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
             else -> throwUnexpectedFirElementError(target)
         }
     }
+}
+
+private fun resolveNestedDeclarationsInsideAnnotationArguments(target: FirDeclaration, containingDeclarations: List<FirDeclaration>) {
+    val nestedDeclarations = collectNestedDeclarationsInsideAnnotationArguments(target)
+    if (nestedDeclarations.isEmpty()) return
+
+    val resolutionContext = buildList {
+        if (containingDeclarations.firstOrNull() !is FirFile && target !is FirFile) {
+            target.llFirSession.firProvider.getContainingFile(target.symbol)?.let(::add)
+        }
+
+        addAll(containingDeclarations)
+        add(target)
+    }
+
+    for (nestedDeclaration in nestedDeclarations) {
+        resolveToBodyResolve(nestedDeclaration, resolutionContext)
+    }
+}
+
+private fun checkNestedDeclarationsInsideAnnotationArgumentsAreResolved(target: FirDeclaration) {
+    for (nestedDeclaration in collectNestedDeclarationsInsideAnnotationArguments(target)) {
+        nestedDeclaration.checkPhase(FirResolvePhase.BODY_RESOLVE)
+    }
+}
+
+private fun resolveToBodyResolve(
+    target: FirElementWithResolveState,
+    containingDeclarations: List<FirDeclaration>,
+) {
+    var currentPhase = maxOf(target.resolvePhase, FirResolvePhase.IMPORTS)
+    while (currentPhase < FirResolvePhase.BODY_RESOLVE) {
+        currentPhase = currentPhase.next
+        LLFirLazyPhaseResolverByPhase.getByPhase(currentPhase).resolveUnderContainingDeclarations(
+            target,
+            containingDeclarations,
+        )
+    }
+}
+
+private fun collectNestedDeclarationsInsideAnnotationArguments(target: FirDeclaration): List<FirElementWithResolveState> {
+    val annotationCalls = linkedSetOf<FirAnnotationCall>()
+    target.accept(
+        object : NonLocalAnnotationVisitor<MutableSet<FirAnnotationCall>>() {
+            override fun processAnnotation(annotation: FirAnnotation, data: MutableSet<FirAnnotationCall>) {
+                if (annotation is FirAnnotationCall) {
+                    data += annotation
+                }
+            }
+        },
+        annotationCalls,
+    )
+
+    val nestedDeclarations = linkedSetOf<FirElementWithResolveState>()
+    val declarationCollector = object : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            val declaration = element as? FirDeclaration
+            if (declaration != null && shouldResolveNestedDeclaration(declaration)) {
+                nestedDeclarations += declaration
+                return
+            }
+
+            element.acceptChildren(this)
+        }
+    }
+
+    for (annotationCall in annotationCalls) {
+        for (argument in annotationCall.argumentList.arguments) {
+            argument.accept(declarationCollector)
+        }
+    }
+
+    return nestedDeclarations.toList()
+}
+
+private fun shouldResolveNestedDeclaration(declaration: FirDeclaration): Boolean = when (declaration) {
+    is FirValueParameter,
+    is FirReceiverParameter,
+    is FirTypeParameter,
+    is FirPropertyAccessor,
+    is FirBackingField,
+        -> false
+
+    else -> true
 }
 
 internal object AnnotationArgumentsStateKeepers {

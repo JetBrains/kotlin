@@ -267,6 +267,42 @@ internal sealed class LLFirTargetResolver(
         resolveTarget.visit(this)
     }
 
+    fun resolveTargetWithContainingDeclarations(
+        target: FirElementWithResolveState,
+        outerDeclarations: List<FirDeclaration>,
+    ) {
+        checkResolveConsistency()
+        withContainingDeclarations(outerDeclarations, 0) {
+            performResolve(target)
+        }
+    }
+
+    private fun withContainingDeclarations(
+        outerDeclarations: List<FirDeclaration>,
+        index: Int,
+        action: () -> Unit,
+    ) {
+        if (index >= outerDeclarations.size) {
+            action()
+            return
+        }
+
+        when (val declaration = outerDeclarations[index]) {
+            is FirFile -> withFile(declaration) {
+                withContainingDeclarations(outerDeclarations, index + 1, action)
+            }
+            is FirScript -> withScript(declaration) {
+                withContainingDeclarations(outerDeclarations, index + 1, action)
+            }
+            is FirRegularClass -> withRegularClass(declaration) {
+                withContainingDeclarations(outerDeclarations, index + 1, action)
+            }
+            else -> withContainingDeclaration(declaration) {
+                withContainingDeclarations(outerDeclarations, index + 1, action)
+            }
+        }
+    }
+
     final override fun performAction(element: FirElementWithResolveState) {
         performResolve(element)
     }

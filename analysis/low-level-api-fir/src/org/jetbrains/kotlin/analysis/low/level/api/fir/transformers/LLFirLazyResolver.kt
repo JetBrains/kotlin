@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirPartialBodyResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTargetVisitor
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -34,14 +37,38 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
 
         resolver.resolveDesignation()
 
-        if (target !is LLFirPartialBodyResolveTarget) {
-            target.forEachTarget(::checkIsResolved)
-        }
+        postResolveAndCheck(target)
 
         checkCanceled()
     }
 
+    fun resolveUnderContainingDeclarations(
+        target: FirElementWithResolveState,
+        containingDeclarations: List<FirDeclaration>,
+    ) {
+        val resolver = createTargetResolver(LLFirSingleResolveTarget(FirDesignation(target)))
+        requireWithAttachment(
+            resolverPhase == resolver.resolverPhase,
+            {
+                """
+                The resolver phase is ${resolver.resolverPhase}, but $resolverPhase is expected
+                """.trimIndent()
+            },
+        )
+
+        resolver.resolveTargetWithContainingDeclarations(target, containingDeclarations)
+        postResolveTarget(target, containingDeclarations)
+        checkIsResolved(target)
+        checkCanceled()
+    }
+
     protected abstract fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver
+
+    protected open fun postResolveTarget(
+        target: FirElementWithResolveState,
+        containingDeclarations: List<FirDeclaration>,
+    ) {
+    }
 
     fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(resolverPhase)
@@ -100,5 +127,42 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
             if (parameter !is FirTypeParameter) continue
             checkIsResolved(parameter)
         }
+    }
+
+    private fun postResolveAndCheck(resolveTarget: LLFirResolveTarget) {
+        val containingDeclarations = mutableListOf<FirDeclaration>()
+        resolveTarget.visit(
+            object : LLFirResolveTargetVisitor {
+                override fun withFile(firFile: FirFile, action: () -> Unit) {
+                    withContainingDeclaration(firFile, action)
+                }
+
+                override fun withRegularClass(firClass: FirRegularClass, action: () -> Unit) {
+                    withContainingDeclaration(firClass, action)
+                }
+
+                override fun withScript(firScript: FirScript, action: () -> Unit) {
+                    withContainingDeclaration(firScript, action)
+                }
+
+                override fun performAction(element: FirElementWithResolveState) {
+                    postResolveTarget(element, containingDeclarations)
+
+                    if (resolveTarget !is LLFirPartialBodyResolveTarget) {
+                        checkIsResolved(element)
+                    }
+                }
+
+                private inline fun withContainingDeclaration(declaration: FirDeclaration, action: () -> Unit) {
+                    containingDeclarations += declaration
+                    try {
+                        action()
+                    } finally {
+                        val removed = containingDeclarations.removeLast()
+                        require(removed === declaration)
+                    }
+                }
+            }
+        )
     }
 }

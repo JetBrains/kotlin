@@ -178,6 +178,12 @@ public class SourceDiagnosticTraversalCounterTestGenerated extends AbstractSourc
   }
 
   @Test
+  @TestMetadata("functionAsAnnotationArgument.kt")
+  public void testFunctionAsAnnotationArgument() {
+    run("functionAsAnnotationArgument.kt");
+  }
+
+  @Test
   @TestMetadata("functionValueParameter.kt")
   public void testFunctionValueParameter() {
     run("functionValueParameter.kt");
