@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 43 (2026-03-19) |
+| **Last Iteration** | 44 (2026-03-19) |
 | **Box Tests** | 1163/1168 passing (99.6%) |
-| **Phased Tests** | 1396/1443 passing (96.7%) |
-| **Combined** | ~2559/2611 passing, **52 failing** |
+| **Phased Tests** | 1409/1443 passing (97.6%) |
+| **Combined** | ~2572/2611 passing, **39 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -140,6 +140,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 41 | Reference-first audit: JavaValueParameterOverAst.type passes modifier list annotations; JavaTypeParameterOverAst.upperBounds handles TYPE children; annotations reads MODIFIER_LIST | +0 (full suite count same, individual annotation tests pass) |
 | 42 | Fix rawTypeName to exclude annotations from type names (extract identifiers from AST, not text); remove unused JAVA_LANG_TYPES | +1 phased |
 | 43 | ClassId-based resolution (`resolveToClassId`) to fix package vs nested class ambiguity (JLS 6.5.2) | +1 phased |
+| 44 | TYPE_USE annotation filtering fix: type-position annotations returned unconditionally, member annotations callback-filtered | +13 phased |
 
 ---
 

@@ -2,7 +2,45 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-19 (iter 43)
+**Last Updated**: 2026-03-19 (iter 44)
+
+---
+
+## Iteration 44: TYPE_USE Annotation Filtering Fix — 2026-03-19
+
+### Root Cause Analysis
+
+`filterTypeUseAnnotations` was filtering out ALL type annotations including TYPE_USE annotations from type positions (e.g., `List<@NotNull V>`). The callback `isTypeUseAnnotationClass` returned false because `annotations-13.0.jar` doesn't have `TYPE_USE` in `@Target` for `@NotNull`/`@Nullable`. The Kotlin-mapped targets (`FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER`) lost TYPE_USE entirely since Java 8's `ElementType.TYPE_USE` was added after this JAR version.
+
+PSI's default `filterTypeUseAnnotations` returns all annotations (already pre-filtered by PsiType). Java-direct's override used callback-based filtering which failed for binary-loaded annotations.
+
+### Fix
+
+Separated annotations into two categories in `JavaTypeOverAst`:
+1. **Type-position annotations** (`extraAnnotations` from TYPE node, `modifierListAnnotations`, `directAnnotations`): returned unconditionally from `filterTypeUseAnnotations` — they are TYPE_USE by syntactic position
+2. **Member modifier list annotations** (`memberAnnotations` from `createJavaTypeWithAnnotations`): filtered via callback — needed for source-defined TYPE_USE annotations like `@TypeAnn`
+
+Added `memberAnnotations` parameter to `JavaTypeOverAst` and all subclasses. `createJavaTypeWithAnnotations` now passes modifier list annotations as `memberAnnotations` (callback-filtered) instead of `extraAnnotations` (unconditional).
+
+### Test Results
+- **Box tests**: 1163/1168 (unchanged)
+- **Phased tests**: 1409/1443 (was 1396, +13 fixed)
+- **Total failures**: 39 (was 52, **13 tests fixed, 0 regressions**)
+- PSI regression: skipped (only java-direct-specific file modified)
+
+### Tests Fixed
+- `testNotNullTypeParameterWithKotlinNullable` (and 4 variants)
+- `testTypeFromGenericWithAnnotation` (and 3 variants)
+- `testFlexibleConstraints`
+- `testKt41984`
+- `testTypeParameterUse`
+- `testRepeatedAnnotations`
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt` — added `memberAnnotations` parameter, split `filterTypeUseAnnotations` logic
+
+### Key Learning
+The `annotations-13.0.jar` bundled with the Kotlin compiler lacks `ElementType.TYPE_USE` in `@Target` for `@NotNull`/`@Nullable` — it predates Java 8. Callback-based TYPE_USE detection via FIR's annotation class resolution fails for these. Type-position annotations are TYPE_USE by syntactic position and don't need callback verification.
 
 ---
 
