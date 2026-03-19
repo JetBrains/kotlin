@@ -272,6 +272,7 @@ testing {
                     exclude(
                         "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptTemplate.class",
                         "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptCustomExtensionTemplate.class",
+                        "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptMyExtensionTemplate.class",
                         "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptDefinition.class",
                     )
                 }

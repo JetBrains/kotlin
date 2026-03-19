@@ -28,6 +28,13 @@ abstract class GreetScriptCustomExtensionTemplate {
     }
 }
 
+@KotlinScript(fileExtension = "greet.my", compilationConfiguration = GreetScriptDefinition::class)
+abstract class GreetScriptMyExtensionTemplate {
+    fun greet(subject: String) {
+        println("Hello, $subject!")
+    }
+}
+
 object GreetScriptDefinition : ScriptCompilationConfiguration(
     {
         isStandalone(false)

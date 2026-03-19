@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCo
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 import kotlin.io.path.toPath
@@ -180,5 +183,36 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         assertEquals(true, operation1[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES])
         assertEquals(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, operation2[JvmClasspathSnapshottingOperation.GRANULARITY])
         assertEquals(false, operation2[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES])
+    }
+
+    @Disabled("KT-85072")
+    @DisplayName("Modifying DiscoverScriptExtensionsOperation builder after build does not affect the built operation")
+    @DefaultStrategyAgnosticCompilationTest
+    fun testDiscoverScriptExtensionsBuilderImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
+        val classpath = listOf(workingDirectory.resolve("greet-script-template"))
+        val builder = toolchain.jvm.discoverScriptExtensionsOperationBuilder(classpath)
+        val renderer1 = object : CompilerMessageRenderer {
+            override fun render(
+                severity: CompilerMessageRenderer.Severity,
+                message: String,
+                location: CompilerMessageRenderer.SourceLocation?,
+            ): String = "renderer1: $message"
+        }
+        val renderer2 = object : CompilerMessageRenderer {
+            override fun render(
+                severity: CompilerMessageRenderer.Severity,
+                message: String,
+                location: CompilerMessageRenderer.SourceLocation?,
+            ): String = "renderer2: $message"
+        }
+
+        builder[DiscoverScriptExtensionsOperation.COMPILER_MESSAGE_RENDERER] = renderer1
+        val operation1 = builder.build()
+        builder[DiscoverScriptExtensionsOperation.COMPILER_MESSAGE_RENDERER] = renderer2
+        val operation2 = builder.build()
+
+        assertEquals(renderer1, operation1[DiscoverScriptExtensionsOperation.COMPILER_MESSAGE_RENDERER])
+        assertEquals(renderer2, operation2[DiscoverScriptExtensionsOperation.COMPILER_MESSAGE_RENDERER])
     }
 }
