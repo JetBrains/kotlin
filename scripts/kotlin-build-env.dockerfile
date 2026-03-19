@@ -10,7 +10,7 @@ ENV LANG=en_US.utf8
 
 RUN apt-get install -y git \
     && apt-get install -y curl \
-    && apt-get install -y zip \
+    && apt-get install -y zip zstd \
     && apt-get install -y libatomic1 # native library for nodejs
 
 RUN rm -rf /var/lib/apt/lists/*
