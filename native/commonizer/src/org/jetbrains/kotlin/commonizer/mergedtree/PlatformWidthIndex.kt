@@ -35,6 +35,9 @@ object PlatformWidthIndex {
         LeafCommonizerTarget(KonanTarget.MACOS_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.MACOS_ARM64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.LINUX_ARM64) to PlatformIntWidth.LONG,
+        LeafCommonizerTarget(KonanTarget.TIZEN_ARM32) to PlatformIntWidth.INT,
+        LeafCommonizerTarget(KonanTarget.TIZEN_ARM64) to PlatformIntWidth.LONG,
+        LeafCommonizerTarget(KonanTarget.TIZEN_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.LINUX_ARM32_HFP) to PlatformIntWidth.INT,
     )
 
