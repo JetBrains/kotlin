@@ -39,7 +39,7 @@ internal fun <T> CommonToolArguments.getUsingReflection(propertyName: String): T
 internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
 
 @OptIn(ExperimentalCompilerArgument::class)
-internal fun ProfileCompilerCommand.toArgumentValue(): String =
+internal fun ProfileCompilerCommand.fromXprofile(): String =
     "${profilerPath.absolutePathStringOrThrow()}${File.pathSeparator}$command${File.pathSeparator}${outputDir.absolutePathStringOrThrow()}"
 
 @OptIn(ExperimentalCompilerArgument::class)
@@ -51,7 +51,7 @@ internal fun String.toXprofile(): ProfileCompilerCommand {
 }
 
 @OptIn(ExperimentalCompilerArgument::class)
-internal fun List<NullabilityAnnotationConfig>.toArgumentValue(): Array<String> =
+internal fun List<NullabilityAnnotationConfig>.`fromXnullability-annotations`(): Array<String> =
     this.map { item -> "@${item.annotationFqName}:${item.mode.stringValue}" }.toTypedArray()
 
 @OptIn(ExperimentalCompilerArgument::class)

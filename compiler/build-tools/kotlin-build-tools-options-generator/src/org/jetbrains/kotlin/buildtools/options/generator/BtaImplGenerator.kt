@@ -350,7 +350,7 @@ internal class BtaImplGenerator(
                     maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(
                         packageName = targetPackage,
-                        simpleName = "toArgumentValue",
+                        simpleName = "from${argument.name.replaceFirstChar { it.uppercase() }}",
                         isExtension = true
                     )
                 )
