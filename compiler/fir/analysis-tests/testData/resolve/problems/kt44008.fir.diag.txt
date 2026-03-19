@@ -1,0 +1,3 @@
+/kt44008.kt:(210,217): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
+
+/kt44008.kt:(220,222): error: Return type mismatch: expected 'Iterable<uninferred R (of fun <T, R> Iterable<T>.flatMap)>', actual 'String'.
