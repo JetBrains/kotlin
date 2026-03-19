@@ -729,29 +729,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         modifySignature { isExternal = true }
     }
 
-    private fun ClassBuilder.generateCustomEquals() {
-        method {
-            annotations += "Deprecated(\"Provided for binary compatibility\", level = DeprecationLevel.HIDDEN)"
-            annotations += intrinsicConstEvaluationAnnotation
-            expectActual = ExpectActualModifier.Unspecified
-            signature {
-                methodName = "equals"
-                parameter {
-                    name = "other"
-                    type = PrimitiveType.CHAR.capitalized
-                }
-                returnType = PrimitiveType.BOOLEAN.capitalized
-            }
-
-            "this == other".setAsExpressionBody()
-        }
-    }
-
     override fun MethodBuilder.modifyGeneratedHashCode() {
         "return this.code".setAsBlockBody()
-    }
-
-    override fun ClassBuilder.generateAdditionalMethods() {
-        generateCustomEquals()
     }
 }

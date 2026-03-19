@@ -438,11 +438,6 @@ public actual class Byte private constructor() : Number(), Comparable<Byte> {
     public actual override fun equals(other: Any?): Boolean =
         other is Byte && kotlin.native.internal.areEqualByValue(this, other)
 
-    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-    @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Byte): Boolean =
-        kotlin.native.internal.areEqualByValue(this, other)
-
     public actual override fun hashCode(): Int =
         this.toInt()
 }
@@ -869,11 +864,6 @@ public actual class Short private constructor() : Number(), Comparable<Short> {
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean =
         other is Short && kotlin.native.internal.areEqualByValue(this, other)
-
-    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-    @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Short): Boolean =
-        kotlin.native.internal.areEqualByValue(this, other)
 
     public actual override fun hashCode(): Int =
         this.toInt()
@@ -1354,11 +1344,6 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean =
         other is Int && kotlin.native.internal.areEqualByValue(this, other)
-
-    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-    @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Int): Boolean =
-        kotlin.native.internal.areEqualByValue(this, other)
 
     public actual override fun hashCode(): Int =
         this
@@ -1843,11 +1828,6 @@ public actual class Long private constructor() : Number(), Comparable<Long> {
     public actual override fun equals(other: Any?): Boolean =
         other is Long && kotlin.native.internal.areEqualByValue(this, other)
 
-    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-    @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Long): Boolean =
-        kotlin.native.internal.areEqualByValue(this, other)
-
     public actual override fun hashCode(): Int =
         ((this ushr 32) xor this).toInt()
 }
@@ -2249,11 +2229,6 @@ public actual class Float private constructor() : Number(), Comparable<Float> {
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean =
         other is Float && toBits() == other.toBits()
-
-    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-    @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Float): Boolean =
-        toBits() == other.toBits()
 
     public actual override fun hashCode(): Int =
         toBits()
@@ -2662,11 +2637,6 @@ public actual class Double private constructor() : Number(), Comparable<Double> 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean =
         other is Double && toBits() == other.toBits()
-
-    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-    @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Double): Boolean =
-        toBits() == other.toBits()
 
     public actual override fun hashCode(): Int =
         toBits().hashCode()

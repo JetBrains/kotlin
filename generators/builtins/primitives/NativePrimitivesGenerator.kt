@@ -172,31 +172,9 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
     }
 
     override fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {
-        generateCustomEquals(thisKind)
         generateHashCode(thisKind)
         if (thisKind in PrimitiveType.floatingPoint) {
             generateBits(thisKind)
-        }
-    }
-
-    private fun ClassBuilder.generateCustomEquals(thisKind: PrimitiveType) {
-        method {
-            annotations += "Deprecated(\"Provided for binary compatibility\", level = DeprecationLevel.HIDDEN)"
-            annotations += intrinsicConstEvaluationAnnotation
-            expectActual = ExpectActualModifier.Unspecified
-            signature {
-                methodName = "equals"
-                parameter {
-                    name = "other"
-                    type = thisKind.capitalized
-                }
-                returnType = PrimitiveType.BOOLEAN.capitalized
-            }
-
-            when (thisKind) {
-                in PrimitiveType.floatingPoint -> "toBits() == other.toBits()".setAsExpressionBody()
-                else -> "kotlin.native.internal.areEqualByValue(this, other)".setAsExpressionBody()
-            }
         }
     }
 

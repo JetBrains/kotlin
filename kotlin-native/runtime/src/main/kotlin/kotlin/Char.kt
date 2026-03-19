@@ -133,11 +133,6 @@ public actual class Char private constructor() : Comparable<Char> {
         return this.code
     }
 
-    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-    @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Char): Boolean =
-        this == other
-
     @kotlin.native.internal.CanBePrecreated
     public actual companion object {
         /**
