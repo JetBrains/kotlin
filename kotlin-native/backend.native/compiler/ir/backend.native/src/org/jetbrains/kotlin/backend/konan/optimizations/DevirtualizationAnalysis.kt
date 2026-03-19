@@ -12,12 +12,9 @@ import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
-import org.jetbrains.kotlin.backend.konan.util.IntArrayList
+import org.jetbrains.kotlin.backend.konan.util.*
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
-import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
-import org.jetbrains.kotlin.backend.konan.util.LongArrayList
-import org.jetbrains.kotlin.backend.konan.util.LongHashMap
-import org.jetbrains.kotlin.backend.konan.util.LongHashSet
+import org.roaringbitmap.RoaringBitmap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -122,8 +119,8 @@ internal object DevirtualizationAnalysis {
         return (exported + globalInitializers + explicitlyExported + associatedObjectConstructors + leakingThroughFunctionReferences).distinct()
     }
 
-    fun CustomBitSet.format(allTypes: Array<DataFlowIR.Type>): String {
-        return allTypes.withIndex().filter { this[it.index] }.joinToString { it.value.toString() }
+    fun RoaringBitmap.format(allTypes: Array<DataFlowIR.Type>): String {
+        return allTypes.withIndex().filter { this.contains(it.index) }.joinToString { it.value.toString() }
     }
 
     private val VIRTUAL_TYPE_ID = 0 // Id of [DataFlowIR.Type.Virtual].
@@ -140,7 +137,7 @@ internal object DevirtualizationAnalysis {
             var directCastEdges: MutableList<CastEdge>? = null
             var reversedCastEdges: MutableList<CastEdge>? = null
 
-            val types = CustomBitSet()
+            val types = RoaringBitmap()
 
             var priority = -1
 
@@ -181,7 +178,7 @@ internal object DevirtualizationAnalysis {
                 val name = takeName(nameBuilder)
 
                 init {
-                    types.set(typeId)
+                    types.add(typeId)
                 }
 
                 override fun toString(allTypes: Array<DataFlowIR.Type>): String {
@@ -197,7 +194,7 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
-            class CastEdge(val node: Node, val suitableTypes: CustomBitSet)
+            class CastEdge(val node: Node, val suitableTypes: RoaringBitmap)
         }
 
         class Function(val symbol: DataFlowIR.FunctionSymbol, val parameters: Array<Node>, val returns: Node, val throws: Node)
@@ -226,14 +223,14 @@ internal object DevirtualizationAnalysis {
 
         private val constraintGraph = ConstraintGraph()
 
-        private inline fun forEachBitInBoth(first: CustomBitSet, second: CustomBitSet, crossinline block: (Int) -> Unit) {
-            if (first.cardinality() < second.cardinality())
-                first.forEachBit {
-                    if (second[it])
+        private inline fun forEachBitInBoth(first: RoaringBitmap, second: RoaringBitmap, crossinline block: (Int) -> Unit) {
+            if (first.cardinality < second.cardinality)
+                first.forEach {
+                    if (second.contains(it))
                         block(it)
                 }
-            else second.forEachBit {
-                if (first[it])
+            else second.forEach {
+                if (first.contains(it))
                     block(it)
             }
         }
@@ -257,11 +254,11 @@ internal object DevirtualizationAnalysis {
 
         fun logPathToType(reversedEdges: IntArray, node: Node, type: Int) {
             val nodes = constraintGraph.nodes
-            val visited = CustomBitSet()
+            val visited = RoaringBitmap()
             val prev = mutableMapOf<Node, Node>()
             var front = mutableListOf<Node>()
             front.add(node)
-            visited.set(node.id)
+            visited.add(node.id)
             lateinit var source: Node.Source
             bfs@while (front.isNotEmpty()) {
                 val prevFront = front
@@ -270,8 +267,8 @@ internal object DevirtualizationAnalysis {
                     var endBfs = false
                     reversedEdges.forEachEdge(from.id) { toId ->
                         val to = nodes[toId]
-                        if (!visited[toId] && to.types[type]) {
-                            visited.set(toId)
+                        if (!visited.contains(toId) && to.types.contains(type)) {
+                            visited.add(toId)
                             prev[to] = from
                             front.add(to)
                             if (to is Node.Source) {
@@ -286,8 +283,8 @@ internal object DevirtualizationAnalysis {
                     if (reversedCastEdges != null)
                         for (castEdge in reversedCastEdges) {
                             val to = castEdge.node
-                            if (!visited[to.id] && castEdge.suitableTypes[type] && to.types[type]) {
-                                visited.set(to.id)
+                            if (!visited.contains(to.id) && castEdge.suitableTypes.contains(type) && to.types.contains(type)) {
+                                visited.add(to.id)
                                 prev[to] = from
                                 front.add(to)
                                 if (to is Node.Source) {
@@ -316,8 +313,8 @@ internal object DevirtualizationAnalysis {
             val nodesCount = nodes.size
             val order = IntArray(nodesCount)
             val multiNodes = IntArray(nodesCount)
-            val visited = CustomBitSet(nodesCount)
-            val potentialExternalVirtualCall = CustomBitSet(nodesCount)
+            val visited = RoaringBitmap()
+            val potentialExternalVirtualCall = RoaringBitmap()
 
             private fun calculateTopologicalSort() {
                 require(directEdges.size == reversedEdges.size)
@@ -325,8 +322,8 @@ internal object DevirtualizationAnalysis {
                 val nodesStack = IntArray(nodesCount)
                 val edgeIdsStack = IntArray(nodesCount)
                 for (nodeId in 0 until nodesCount) {
-                    if (visited[nodeId]) continue
-                    visited.set(nodeId)
+                    if (visited.contains(nodeId)) continue
+                    visited.add(nodeId)
                     nodesStack[0] = nodeId
                     edgeIdsStack[0] = 0
                     var stackPtr = 0
@@ -338,11 +335,11 @@ internal object DevirtualizationAnalysis {
                             stackPtr--
                         } else {
                             val next = directEdges.getEdge(v, eid)
-                            if (!visited[next]) {
+                            if (!visited.contains(next)) {
                                 ++stackPtr
                                 nodesStack[stackPtr] = next
                                 edgeIdsStack[stackPtr] = 0
-                                visited.set(next)
+                                visited.add(next)
                             }
                         }
                     }
@@ -356,16 +353,16 @@ internal object DevirtualizationAnalysis {
                 var index = 0
                 for (i in order.size - 1 downTo 0) {
                     val nodeIndex = order[i]
-                    if (visited[nodeIndex]) continue
+                    if (visited.contains(nodeIndex)) continue
                     val start = index
                     var cur = start
                     multiNodes[index++] = nodeIndex
-                    visited.set(nodeIndex)
+                    visited.add(nodeIndex)
                     while (cur < index) {
                         reversedEdges.forEachEdge(multiNodes[cur++]) {
-                            if (!visited[it]) {
+                            if (!visited.contains(it)) {
                                 multiNodes[index++] = it
-                                visited.set(it)
+                                visited.add(it)
                             }
                         }
                     }
@@ -430,7 +427,7 @@ internal object DevirtualizationAnalysis {
 
                 // Instead of having an array of boolean and erasing it - just increment the seenColor
                 val seenEdgeTo = IntArray(numberOfNodes)
-                val seenBitSetTo = arrayOfNulls<CustomBitSet?>(numberOfNodes)
+                val seenBitSetTo = arrayOfNulls<RoaringBitmap?>(numberOfNodes)
                 var seenColor = 0
 
                 // Cast edge processing needs to be postponed so that we know when a regular edge shadows the cast edge
@@ -450,7 +447,7 @@ internal object DevirtualizationAnalysis {
                                 if (seenEdgeTo[toRootId] != seenColor) {
                                     val bitSetTo = seenBitSetTo[toRootId]
                                     if (bitSetTo == null) {
-                                        seenBitSetTo[toRootId] = edge.suitableTypes.copy()
+                                        seenBitSetTo[toRootId] = edge.suitableTypes.clone()
                                         // Since root always goes first we can safely add new edge in place
                                         nodes[fromRootId].addCastEdge(Node.CastEdge(nodes[toRootId], edge.suitableTypes))
                                     } else {
@@ -558,7 +555,7 @@ internal object DevirtualizationAnalysis {
             fun squashEquivalentNodes() {
                 // These nodes might receive a final type from external world.
                 constraintGraph.externalVirtualCalls.forEach {
-                    potentialExternalVirtualCall.set(it.returnsNode.root().id)
+                    potentialExternalVirtualCall.add(it.returnsNode.root().id)
                 }
 
                 val random = Random(234239874) // Just some number for reproducibility
@@ -568,14 +565,14 @@ internal object DevirtualizationAnalysis {
 
                 var seenColor = 0
                 val seenEdgeFrom = IntArray(nodes.size)
-                val castEdges = arrayOfNulls<CustomBitSet>(nodes.size)
+                val castEdges = arrayOfNulls<RoaringBitmap>(nodes.size)
 
                 for (i in order.size - 1 downTo 0) {
                     val nodeIndex = order[i]
                     val node = nodes[nodeIndex]
                     if (!node.isRoot) continue
                     if (node is Node.Source) continue
-                    if (potentialExternalVirtualCall[nodeIndex]) continue
+                    if (potentialExternalVirtualCall.contains(nodeIndex)) continue
 
                     if (!node.types.isEmpty) error("Ordinary node types should be empty (${nodeIndex})")
 
@@ -618,7 +615,7 @@ internal object DevirtualizationAnalysis {
                         val r = it.node.root().id
                         if (seenEdgeFrom[r] != seenColor) {
                             seenEdgeFrom[r] = seenColor
-                            signature = signature xor mixHash(nodeRandomIds[r], it.suitableTypes.hashCodeLong())
+                            signature = signature xor mixHash(nodeRandomIds[r], it.suitableTypes.hashCode().toLong())
                             ++totalEdges
                             castEdges[r] = it.suitableTypes
                         }
@@ -698,27 +695,27 @@ internal object DevirtualizationAnalysis {
         }
 
         private fun propagateVirtualType(directEdges: IntArray) {
-            val processedVirtualNodes = CustomBitSet()
+            val processedVirtualNodes = RoaringBitmap()
 
             fun markVirtualNodes(node: Node) {
-                processedVirtualNodes.set(node.id)
-                node.types.set(VIRTUAL_TYPE_ID)
+                processedVirtualNodes.add(node.id)
+                node.types.add(VIRTUAL_TYPE_ID)
 
                 directEdges.forEachEdge(node.id) {
-                    if (!processedVirtualNodes[it]) {
+                    if (!processedVirtualNodes.contains(it)) {
                         markVirtualNodes(constraintGraph.nodes[it])
                     }
                 }
 
                 node.directCastEdges?.forEach {
-                    if (it.suitableTypes[VIRTUAL_TYPE_ID] && !processedVirtualNodes[it.node.id]) {
+                    if (it.suitableTypes.contains(VIRTUAL_TYPE_ID) && !processedVirtualNodes.contains(it.node.id)) {
                         markVirtualNodes(it.node)
                     }
                 }
             }
 
             constraintGraph.nodes.forEach {
-                if (it.types[VIRTUAL_TYPE_ID] && !processedVirtualNodes[it.id]) {
+                if (it.types.contains(VIRTUAL_TYPE_ID) && !processedVirtualNodes.contains(it.id)) {
                     markVirtualNodes(it)
                 }
             }
@@ -728,20 +725,20 @@ internal object DevirtualizationAnalysis {
          * A node is called "useful" if any of the nodes which we are trying to devirtualize is reachable from it.
          * In some cases the number of "useful" nodes is on an order of magnitude less than the total number of nodes.
          */
-        private fun collectUsefulNodes(reversedEdges: IntArray, nodesMap: Map<DataFlowIR.Node, Node>): CustomBitSet {
-            val usefulNodes = CustomBitSet(constraintGraph.nodes.size)
+        private fun collectUsefulNodes(reversedEdges: IntArray, nodesMap: Map<DataFlowIR.Node, Node>): RoaringBitmap {
+            val usefulNodes = RoaringBitmap()
 
             fun markReachableFrom(nodeId: Int) {
-                if (usefulNodes[nodeId]) return
-                usefulNodes.set(nodeId)
+                if (usefulNodes.contains(nodeId)) return
+                usefulNodes.add(nodeId)
 
                 reversedEdges.forEachEdge(nodeId) {
-                    if (!usefulNodes[it]) {
+                    if (!usefulNodes.contains(it)) {
                         markReachableFrom(it)
                     }
                 }
                 constraintGraph.nodes[nodeId].reversedCastEdges?.forEach {
-                    if (!usefulNodes[it.node.id]) {
+                    if (!usefulNodes.contains(it.node.id)) {
                         markReachableFrom(it.node.id)
                     }
                 }
@@ -755,7 +752,7 @@ internal object DevirtualizationAnalysis {
                     val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]?.root()
                             ?: error("virtualCallSiteReceivers were not built for virtual call $virtualCall")
 
-                    if (!receiverNode.types[VIRTUAL_TYPE_ID]) {
+                    if (!receiverNode.types.contains(VIRTUAL_TYPE_ID)) {
                         markReachableFrom(receiverNode.id)
                     }
                 }
@@ -788,7 +785,7 @@ internal object DevirtualizationAnalysis {
                         +"        CAST EDGE: #${it.node.id}z casted to ${it.suitableTypes.format(allTypes)}"
                     }
                     allTypes.forEachIndexed { index, type ->
-                        if (it.types[index])
+                        if (it.types.contains(index))
                             +"        TYPE: $type"
                     }
                 }
@@ -832,8 +829,8 @@ internal object DevirtualizationAnalysis {
                 // that instance of this class could have been created by the call.
                 constraintGraph.externalVirtualCalls.forEach { call ->
                     val returnsNode = call.returnsNode.root()
-                    if (call.receiverNode.root().types[VIRTUAL_TYPE_ID]) { // Called from external world.
-                        returnsNode.types.set(call.returnType.index)
+                    if (call.receiverNode.root().types.contains(VIRTUAL_TYPE_ID)) { // Called from external world.
+                        returnsNode.types.add(call.returnType.index)
                     }
                 }
             }
@@ -878,7 +875,7 @@ internal object DevirtualizationAnalysis {
                     if (node is Node.Source)
                         continue // A source has no incoming edges.
 
-                    if (!usefulNodes[node.id]) continue
+                    if (!usefulNodes.contains(node.id)) continue
 
                     reversedEdges.forEachEdge(node.id) {
                         node.types.or(constraintGraph.nodes[it].types)
@@ -902,14 +899,14 @@ internal object DevirtualizationAnalysis {
 
             // Second phase - do BFS.
             val nodesCount = topologicalOrder.size
-            val marked = CustomBitSet(nodesCount)
+            val marked = RoaringBitmap()
             var front = IntArray(nodesCount)
             var prevFront = IntArray(nodesCount)
             var frontSize = 0
             for ((sourceNode, edge) in badEdges) {
                 val distNode = edge.node
-                if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes) && !marked[distNode.id]) {
-                    marked.set(distNode.id)
+                if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes) && !marked.contains(distNode.id)) {
+                    marked.add(distNode.id)
                     front[frontSize++] = distNode.id
                 }
             }
@@ -921,26 +918,26 @@ internal object DevirtualizationAnalysis {
                 front = prevFront
                 prevFront = temp
                 for (i in 0 until prevFrontSize) {
-                    marked[prevFront[i]] = false
+                    marked.remove(prevFront[i])
                     val node = constraintGraph.nodes[prevFront[i]]
                     directEdges.forEachEdge(node.id) { distNodeId ->
                         val distNode = constraintGraph.nodes[distNodeId]
-                        if (!usefulNodes[distNode.id]) return@forEachEdge
+                        if (!usefulNodes.contains(distNode.id)) return@forEachEdge
 
-                        if (marked[distNode.id])
+                        if (marked.contains(distNode.id))
                             distNode.types.or(node.types)
                         else {
-                            if (distNode.types.orWithFilterHasChanged(node.types) && !marked[distNode.id]) {
-                                marked.set(distNode.id)
+                            if (distNode.types.orWithFilterHasChanged(node.types) && !marked.contains(distNode.id)) {
+                                marked.add(distNode.id)
                                 front[frontSize++] = distNode.id
                             }
                         }
                     }
                     node.directCastEdges?.forEach { edge ->
                         val distNode = edge.node
-                        if (!usefulNodes[distNode.id]) return@forEach
-                        if (distNode.types.orWithFilterHasChanged(node.types, edge.suitableTypes) && !marked[distNode.id]) {
-                            marked.set(distNode.id)
+                        if (!usefulNodes.contains(distNode.id)) return@forEach
+                        if (distNode.types.orWithFilterHasChanged(node.types, edge.suitableTypes) && !marked.contains(distNode.id)) {
+                            marked.add(distNode.id)
                             front[frontSize++] = distNode.id
                         }
                     }
@@ -954,7 +951,7 @@ internal object DevirtualizationAnalysis {
                     +"    Node #${multiNode.id}"
                     allTypes.asSequence()
                             .withIndex()
-                            .filter { multiNode.types[it.index] }.toList()
+                            .filter { multiNode.types.contains(it.index) }.toList()
                             .forEach { +"        ${it.value}" }
                 }
                 +""
@@ -969,7 +966,7 @@ internal object DevirtualizationAnalysis {
                     assert(nodesMap[virtualCall] != null) { "Node for virtual call $virtualCall has not been built" }
                     val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]?.root()
                             ?: error("virtualCallSiteReceivers were not built for virtual call $virtualCall")
-                    if (receiverNode.types[VIRTUAL_TYPE_ID]) {
+                    if (receiverNode.types.contains(VIRTUAL_TYPE_ID)) {
                         context.logMultiple {
                             +"Unable to devirtualize callsite ${virtualCall.debugString()}"
                             +"from ${function.symbol}"
@@ -988,7 +985,7 @@ internal object DevirtualizationAnalysis {
                     val possibleReceivers = mutableListOf<DataFlowIR.Type>()
                     forEachBitInBoth(receiverNode.types, typeHierarchy.inheritorsOf(receiverType)) {
                         val type = allTypes[it]
-                        assert(instantiatingClasses[it]) { "Non-instantiating class $type" }
+                        assert(instantiatingClasses.contains(it)) { "Non-instantiating class $type" }
                         if (type != nothing) {
                             context.logMultiple {
                                 +"Path to type $type"
@@ -1042,7 +1039,7 @@ internal object DevirtualizationAnalysis {
 
         // Both [directEdges] and [reversedEdges] are the array representation of a graph:
         // for each node v the edges of that node are stored in edges[edges[v] until edges[v + 1]].
-        private data class ConstraintGraphBuildResult(val instantiatingClasses: CustomBitSet,
+        private data class ConstraintGraphBuildResult(val instantiatingClasses: RoaringBitmap,
                                                       val directEdges: IntArray, val reversedEdges: IntArray)
 
         // Here we're dividing the build process onto two phases:
@@ -1059,7 +1056,7 @@ internal object DevirtualizationAnalysis {
                     buildReversedEdges(precursor.directEdges, precursor.reversedEdgesCount))
         }
 
-        private class ConstraintGraphPrecursor(val instantiatingClasses: CustomBitSet,
+        private class ConstraintGraphPrecursor(val instantiatingClasses: RoaringBitmap,
                                                val directEdges: IntArray, val reversedEdgesCount: IntArrayList)
 
         private fun buildReversedEdges(directEdges: IntArray, reversedEdgesCount: IntArrayList): IntArray {
@@ -1125,11 +1122,11 @@ internal object DevirtualizationAnalysis {
             private val allTypes = typeHierarchy.allTypes
             private val variables = mutableMapOf<DataFlowIR.Node.Variable, Node>()
             private val typesVirtualCallSites = Array(allTypes.size) { mutableListOf<ConstraintGraphVirtualCall>() }
-            private val suitableTypes = arrayOfNulls<CustomBitSet?>(allTypes.size)
+            private val suitableTypes = arrayOfNulls<RoaringBitmap?>(allTypes.size)
             private val concreteClasses = arrayOfNulls<Node?>(allTypes.size)
             private val consts = arrayOfNulls<Node?>(allTypes.size)
-            private val virtualTypeFilter = CustomBitSet().apply { set(VIRTUAL_TYPE_ID) }
-            val instantiatingClasses = CustomBitSet()
+            private val virtualTypeFilter = RoaringBitmap().apply { add(VIRTUAL_TYPE_ID) }
+            val instantiatingClasses = RoaringBitmap()
 
             val bagOfEdges = LongArrayList()
             // Only filter duplicate edges within a function scope. That covers up to 98% of duplicates in practice.
@@ -1157,7 +1154,7 @@ internal object DevirtualizationAnalysis {
                 return if (type.isAbstract)
                     VIRTUAL_TYPE_ID
                 else {
-                    if (!instantiatingClasses[type.index])
+                    if (!instantiatingClasses.contains(type.index))
                         error("Type $type is not instantiated")
                     type.index
                 }
@@ -1252,7 +1249,7 @@ internal object DevirtualizationAnalysis {
 
                 suitableTypes.forEach {
                     it?.and(instantiatingClasses)
-                    it?.set(VIRTUAL_TYPE_ID)
+                    it?.add(VIRTUAL_TYPE_ID)
                 }
             }
 
@@ -1284,10 +1281,10 @@ internal object DevirtualizationAnalysis {
             }
 
             private fun addInstantiatingClass(type: DataFlowIR.Type) {
-                if (instantiatingClasses[type.index]) return
-                instantiatingClasses.set(type.index)
+                if (instantiatingClasses.contains(type.index)) return
+                instantiatingClasses.add(type.index)
                 context.log { "Adding instantiating class: $type" }
-                checkSupertypes(type, type, CustomBitSet())
+                checkSupertypes(type, type, RoaringBitmap())
             }
 
             private fun processVirtualCall(virtualCall: ConstraintGraphVirtualCall,
@@ -1305,8 +1302,8 @@ internal object DevirtualizationAnalysis {
 
             private fun checkSupertypes(type: DataFlowIR.Type,
                                         inheritor: DataFlowIR.Type,
-                                        seenTypes: CustomBitSet) {
-                seenTypes.set(type.index)
+                                        seenTypes: RoaringBitmap) {
+                seenTypes.add(type.index)
 
                 context.logMultiple {
                     +"Checking supertype $type of $inheritor"
@@ -1329,14 +1326,14 @@ internal object DevirtualizationAnalysis {
                     }
                 }
                 for (superType in type.superTypes) {
-                    if (!seenTypes[superType.index])
+                    if (!seenTypes.contains(superType.index))
                         checkSupertypes(superType, inheritor, seenTypes)
                 }
             }
 
             private fun createCastEdge(node: Node, type: DataFlowIR.Type): Node.CastEdge {
                 if (suitableTypes[type.index] == null)
-                    suitableTypes[type.index] = typeHierarchy.inheritorsOf(type).copy()
+                    suitableTypes[type.index] = typeHierarchy.inheritorsOf(type).clone()
                 return Node.CastEdge(node, suitableTypes[type.index]!!)
             }
 

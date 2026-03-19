@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.lower.getDefaultValueForOverriddenBuiltinFunction
-import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
+import org.roaringbitmap.RoaringBitmap
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -425,14 +425,14 @@ internal object DataFlowIR {
 
     class TypeHierarchy(val allTypes: Array<Type>) {
         private val typesSubTypes = Array(allTypes.size) { mutableListOf<Type>() }
-        private val allInheritors = Array(allTypes.size) { CustomBitSet() }
+        private val allInheritors = Array(allTypes.size) { RoaringBitmap() }
 
         init {
-            val visited = CustomBitSet()
+            val visited = RoaringBitmap()
 
             fun processType(type: Type) {
-                if (visited[type.index]) return
-                visited.set(type.index)
+                if (visited.contains(type.index)) return
+                visited.add(type.index)
                 type.superTypes
                         .forEach { superType ->
                             val subTypes = typesSubTypes[superType.index]
@@ -444,11 +444,11 @@ internal object DataFlowIR {
             allTypes.forEach { processType(it) }
         }
 
-        fun inheritorsOf(type: Type): CustomBitSet {
+        fun inheritorsOf(type: Type): RoaringBitmap {
             val typeId = type.index
             val inheritors = allInheritors[typeId]
             if (!inheritors.isEmpty || type == Type.Virtual) return inheritors
-            inheritors.set(typeId)
+            inheritors.add(typeId)
             for (subType in typesSubTypes[typeId])
                 inheritors.or(inheritorsOf(subType))
             return inheritors

@@ -14,6 +14,7 @@ dependencies {
     implementation(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     implementation(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
     implementation(libs.intellij.fastutil) { isTransitive = false }
+    implementation(libs.roaringBitmap) { isTransitive = false }
     implementation(intellijJDom())
     implementation(intellijCore())
     implementation(project(":compiler:cli"))
