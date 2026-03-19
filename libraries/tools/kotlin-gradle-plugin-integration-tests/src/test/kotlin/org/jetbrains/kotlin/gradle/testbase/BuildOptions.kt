@@ -57,7 +57,7 @@ data class BuildOptions(
     val useFirJvmRunner: Boolean? = null,
     val languageVersion: String? = null,
     val languageApiVersion: String? = null,
-    val freeArgs: List<String> = emptyList(),
+    val freeArgs: List<String> = listOf("-Pkotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic"),
     val statisticsForceValidation: Boolean = true,
     val enableUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
