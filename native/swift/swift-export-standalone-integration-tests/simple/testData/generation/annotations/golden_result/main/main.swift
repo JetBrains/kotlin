@@ -10,6 +10,11 @@ public typealias deprecatedImplicitlyA = Swift.Void
 public typealias obsoletedA = Swift.Void
 @available(*, deprecated, message: "Deprecated. Replacement: renamed")
 public typealias renamedA = Swift.Void
+public protocol InterfaceWithDeprecatedMembers: KotlinRuntime.KotlinBase {
+    @available(*, deprecated, message: "Deprecated")
+    func deprecatedWarningFunction() -> Swift.Void
+    func regularFunction() -> Swift.Void
+}
 public protocol SwiftInterfaceC: KotlinRuntime.KotlinBase {
     func kotlinFunE(
         _ kotlinParamE: Swift.String
@@ -18,8 +23,36 @@ public protocol SwiftInterfaceC: KotlinRuntime.KotlinBase {
         swiftParamD: Swift.String
     ) -> Swift.Void
 }
+@objc(_InterfaceWithDeprecatedMembers)
+package protocol _InterfaceWithDeprecatedMembers {
+}
 @objc(_SwiftInterfaceC)
 package protocol _SwiftInterfaceC {
+}
+public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.KotlinBase, main.InterfaceWithDeprecatedMembers, main._InterfaceWithDeprecatedMembers {
+    public init() {
+        if Self.self != main.ClassWithDeprecatedMembersFromInterface.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassWithDeprecatedMembersFromInterface ") }
+        let __kt = __root___ClassWithDeprecatedMembersFromInterface_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___ClassWithDeprecatedMembersFromInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    @available(*, unavailable, message: "Obsoleted")
+    public func deprecatedErrorFunction() -> Swift.Void {
+        return { ClassWithDeprecatedMembersFromInterface_deprecatedErrorFunction(self.__externalRCRef()); return () }()
+    }
+    @available(*, deprecated, message: "Deprecated")
+    public func deprecatedWarningFunction() -> Swift.Void {
+        return { ClassWithDeprecatedMembersFromInterface_deprecatedWarningFunction(self.__externalRCRef()); return () }()
+    }
+    public func regularFunction() -> Swift.Void {
+        return { ClassWithDeprecatedMembersFromInterface_regularFunction(self.__externalRCRef()); return () }()
+    }
 }
 public final class ObjCObjectB: KotlinRuntime.KotlinBase {
     public static var shared: main.ObjCObjectB {
@@ -653,6 +686,17 @@ public func returnObjectB(
 public func unrenamed() -> Swift.Never {
     return { __root___unrenamed(); fatalError() }()
 }
+extension main.InterfaceWithDeprecatedMembers where Self : KotlinRuntimeSupport._KotlinBridgeable {
+    @available(*, deprecated, message: "Deprecated")
+    public func deprecatedWarningFunction() -> Swift.Void {
+        return { InterfaceWithDeprecatedMembers_deprecatedWarningFunction(self.__externalRCRef()); return () }()
+    }
+    public func regularFunction() -> Swift.Void {
+        return { InterfaceWithDeprecatedMembers_regularFunction(self.__externalRCRef()); return () }()
+    }
+}
+extension main.InterfaceWithDeprecatedMembers {
+}
 extension main.SwiftInterfaceC where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func kotlinFunE(
         _ kotlinParamE: Swift.String
@@ -666,6 +710,8 @@ extension main.SwiftInterfaceC where Self : KotlinRuntimeSupport._KotlinBridgeab
     }
 }
 extension main.SwiftInterfaceC {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithDeprecatedMembers where Wrapped : main._InterfaceWithDeprecatedMembers {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.SwiftInterfaceC where Wrapped : main._SwiftInterfaceC {
 }

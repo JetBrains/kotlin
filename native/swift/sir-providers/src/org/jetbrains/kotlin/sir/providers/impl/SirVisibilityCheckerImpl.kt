@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.components.expandedSymbol
@@ -79,8 +80,12 @@ public class SirVisibilityCheckerImpl(
             visibility.value = SirVisibility.PRIVATE
         }
         // Hidden declarations are, well, hidden.
-        if (ktSymbol.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN) {
+        val deprecatedAnnotation = ktSymbol.deprecatedAnnotation
+        if (deprecatedAnnotation?.level == DeprecationLevel.HIDDEN) {
             visibility.value = SirVisibility.PRIVATE
+        }
+        if (deprecatedAnnotation?.level == DeprecationLevel.ERROR && (ktSymbol.containingDeclaration as? KaNamedClassSymbol)?.classKind == KaClassKind.INTERFACE) {
+            return@withSessions SirAvailability.Unavailable("Protocol members with DeprecationLevel.ERROR are unsupported")
         }
         if (ktSymbol is KaNamedFunctionSymbol && hasUnsupportedInputTypeParameters(ktSymbol)) {
             return@withSessions SirAvailability.Unavailable("Callables with parameters unbound generic types are not supported yet")
