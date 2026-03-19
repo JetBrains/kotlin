@@ -16,10 +16,12 @@ companion fun Array.correct5() {}
 companion fun <!COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS!>C<String><!>.incorrect1() {}
 companion fun <T> <!COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS!>C<T><!>.incorrect2() {}
 companion fun <!COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS!>TA2<String><!>.incorrect3() {}
-companion fun <!COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS!>Array<String><!>.incorrec4() {}
-companion inline fun <reified T> <!COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER!>T<!>.incorrec5() {}
-companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT!>O<!>.incorrec6() {}
+companion fun <!COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS!>Array<String><!>.incorrect4() {}
+companion inline fun <reified T> <!COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER!>T<!>.incorrect5() {}
+companion inline fun <reified T> <!COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER!>(T & Any)<!>.incorrect5_1() {}
+companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT!>O<!>.incorrect6() {}
 companion fun <!COMPANION_EXTENSION_NULLABLE_RECEIVER!>C?<!>.incorrect7() {}
+companion fun <!DYNAMIC_RECEIVER_NOT_ALLOWED, UNSUPPORTED!>dynamic<!>.incorrect8() {}
 
 fun test() {
     C.correct1()

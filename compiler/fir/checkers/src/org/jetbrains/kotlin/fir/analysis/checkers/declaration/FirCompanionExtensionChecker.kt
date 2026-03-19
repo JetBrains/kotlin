@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.unwrapToSimpleTypeUsingLowerBound
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -66,7 +67,7 @@ object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKi
             reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_NULLABLE_RECEIVER)
         }
 
-        val symbol = receiverType.toSymbol() ?: return
+        val symbol = receiverType.unwrapToSimpleTypeUsingLowerBound().toSymbol() ?: return
 
         when (symbol) {
             is FirTypeParameterSymbol ->
