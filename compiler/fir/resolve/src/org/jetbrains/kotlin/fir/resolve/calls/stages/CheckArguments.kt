@@ -81,8 +81,7 @@ internal object CheckArguments : ResolutionStage() {
         val argument = atom.expression
         @OptIn(UnresolvedExpressionTypeAccess::class)
         argument.coneTypeOrNull.ensureResolvedTypeDeclaration(context.session)
-        val expectedType =
-            prepareExpectedType(context.session, callInfo, argument, parameter)
+        val expectedType = prepareExpectedType(callInfo, argument, parameter)
         ArgumentCheckingProcessor.resolveArgumentExpression(
             this,
             atom,
@@ -99,17 +98,16 @@ private val SAM_LOOKUP_NAME: Name = Name.special("<SAM-CONSTRUCTOR>")
 
 context(context: ResolutionContext)
 private fun Candidate.prepareExpectedType(
-    session: FirSession,
     callInfo: CallInfo,
     argument: FirExpression,
     parameter: FirValueParameter?,
 ): ConeKotlinType? {
     if (parameter == null) return null
-    val basicExpectedType = argument.getExpectedType(session, parameter)
+    val basicExpectedType = argument.getExpectedType(context.session, parameter)
 
     val expectedType =
-        getExpectedTypeWithSAMConversion(session, argument, basicExpectedType)?.also {
-            session.lookupTracker?.let { lookupTracker ->
+        getExpectedTypeWithSAMConversion(argument, basicExpectedType)?.also {
+            context.session.lookupTracker?.let { lookupTracker ->
                 parameter.returnTypeRef.coneType.classLikeLookupTagIfAny?.takeIf {
                     it.toSymbol()?.isLocal == false
                 }?.let { lookupTag ->
@@ -124,43 +122,34 @@ private fun Candidate.prepareExpectedType(
                 }
             }
         }
-            ?: getExpectedTypeWithImplicitIntegerCoercion(session, argument, parameter, basicExpectedType)
+            ?: getExpectedTypeWithImplicitIntegerCoercion(context.session, argument, parameter, basicExpectedType)
             ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
 }
 
 context(context: ResolutionContext)
 private fun Candidate.getExpectedTypeWithSAMConversion(
-    session: FirSession,
     argument: FirExpression,
     candidateExpectedType: ConeKotlinType,
 ): ConeKotlinType? {
-    if (candidateExpectedType.isSomeFunctionType(session)) return null
+    if (candidateExpectedType.isSomeFunctionType(context.session)) return null
 
-    val samConversionInfo = context.bodyResolveComponents.samResolver.getSamInfoForPossibleSamType(candidateExpectedType)
-        ?: return null
-    val expectedFunctionType = samConversionInfo.functionalType
+    val samConversionInfo =
+        context.bodyResolveComponents.samResolver.getSamInfoForPossibleSamType(candidateExpectedType)
+            ?: return null
 
-    if (!argument.shouldUseSamConversion(
-            session,
-            candidateExpectedType = candidateExpectedType,
-            expectedFunctionType = expectedFunctionType,
-            this,
-        )
-    ) {
+    if (!argument.shouldUseSamConversion(candidate = this, candidateExpectedType)) {
         return null
     }
 
     setSamConversionOfArgument(argument.unwrapArgument(), samConversionInfo)
-    return expectedFunctionType
+    return samConversionInfo.functionalType
 }
 
 context(context: ResolutionContext)
 private fun FirExpression.shouldUseSamConversion(
-    session: FirSession,
-    candidateExpectedType: ConeKotlinType,
-    expectedFunctionType: ConeKotlinType,
     candidate: Candidate,
+    candidateExpectedType: ConeKotlinType,
 ): Boolean {
     val unwrapped = unwrapArgument()
 
@@ -170,7 +159,7 @@ private fun FirExpression.shouldUseSamConversion(
     }
 
     // Always apply SAM conversion on generic call with nested lambda like `run { {} }`
-    if (unwrapped.isCallWithGenericReturnTypeAndMatchingLambda(session)) {
+    if (unwrapped.isCallWithGenericReturnTypeAndMatchingLambda()) {
         return true
     }
 
@@ -202,7 +191,9 @@ private fun FirExpression.shouldUseSamConversion(
  *
  * In this case, we should treat it analogously to a simple lambda argument (`outerCall {}`) and apply SAM conversion.
  */
-private fun FirExpression.isCallWithGenericReturnTypeAndMatchingLambda(session: FirSession): Boolean {
+context(context: SessionHolder)
+private fun FirExpression.isCallWithGenericReturnTypeAndMatchingLambda(): Boolean {
+    val session = context.session
     val expressionType = resolvedType
     val postponedAtoms = namedReferenceWithCandidate()?.candidate?.postponedAtoms ?: return false
     return postponedAtoms.any {
