@@ -89,7 +89,7 @@ internal object CheckArguments : ResolutionStage() {
             sink,
             context,
             isReceiver,
-            false
+            isDispatch = false
         )
     }
 }
@@ -104,7 +104,7 @@ private fun Candidate.prepareExpectedType(
     parameter: FirValueParameter?,
 ): ConeKotlinType? {
     if (parameter == null) return null
-    val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
+    val basicExpectedType = argument.getExpectedType(session, parameter)
 
     val expectedType =
         getExpectedTypeWithSAMConversion(session, argument, basicExpectedType)?.also {
@@ -231,7 +231,7 @@ private fun getExpectedTypeWithImplicitIntegerCoercion(
     session: FirSession,
     argument: FirExpression,
     parameter: FirValueParameter,
-    candidateExpectedType: ConeKotlinType
+    candidateExpectedType: ConeKotlinType,
 ): ConeKotlinType? {
     if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitSignedToUnsignedIntegerConversion)) return null
 
