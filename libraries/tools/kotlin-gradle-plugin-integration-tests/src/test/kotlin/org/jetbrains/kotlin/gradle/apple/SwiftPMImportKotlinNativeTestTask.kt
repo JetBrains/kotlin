@@ -100,4 +100,71 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `KT-85114 - incremental linkage smoke test`(version: GradleVersion) {
+        project("empty", version) {
+            val packageDependency = projectPath.resolve("PackageDependency").also { it.createDirectories() }.toFile()
+            fun writeTestSource(version: String) = packageDependency.resolve("Sources/PackageDependency/PackageDependency.swift").writeText(
+                """
+                    import Foundation
+                    @objc public class LocalHelper: NSObject {
+                        @objc public static func greeting() -> String {
+                            return "FromSwift: ${version}"
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            runProcess(listOf("swift", "package", "init", "--type", "library"), packageDependency)
+            writeTestSource("1")
+
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+
+                    sourceSets.iosSimulatorArm64Test.get().compileSource(
+                        """
+                        import kotlin.test.*
+                        import swiftPMImport.empty.LocalHelper
+
+                        class Tests {
+                            @Test
+                            fun test() {
+                                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                                println(LocalHelper.greeting())
+                            }
+                        }
+
+                        """.trimIndent()
+                    )
+
+                    swiftPMDependencies {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir("PackageDependency"),
+                            products = listOf("PackageDependency")
+                        )
+                    }
+                }
+            }
+
+            build(":iosSimulatorArm64Test") {
+                assertOutputContains("FromSwift: 1")
+            }
+
+            build(":iosSimulatorArm64Test") {
+                assertTasksUpToDate("iosSimulatorArm64Test")
+            }
+
+            writeTestSource("2")
+
+            build(":iosSimulatorArm64Test", "--rerun") {
+                assertOutputContains("FromSwift: 1")
+            }
+        }
+    }
+
 }
