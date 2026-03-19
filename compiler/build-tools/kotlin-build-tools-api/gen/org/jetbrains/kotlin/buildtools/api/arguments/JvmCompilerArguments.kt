@@ -257,7 +257,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_ENHANCED_COROUTINES_DEBUGGING", KotlinReleaseVersion(2, 2, 0))
 
     /**
-     * Force using lightweight stdlib Reflection implementation even if kotlin-reflect.jar is present in classpath at run time.
+     * Generate callable, class, and type references that always use stdlib-only reflection, even when kotlin-reflect.jar is present at runtime.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */

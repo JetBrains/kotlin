@@ -176,7 +176,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 
     @Argument(
         value = "-Xforce-stdlib-only-reflection",
-        description = "Force using lightweight stdlib Reflection implementation even if kotlin-reflect.jar is present in classpath at run time.",
+        description = "Generate callable, class, and type references that always use stdlib-only reflection, even when kotlin-reflect.jar is present at runtime.",
     )
     var forceStdlibOnlyReflection: Boolean = false
         set(value) {
