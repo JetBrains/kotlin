@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
-import java.util.UUID
 import javax.inject.Inject
 import kotlin.collections.joinToString
 
@@ -120,6 +119,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     """.trimIndent()
                 )
                 ldFilePath(architecture).getFile().writeText("\n")
+                ldFileFingerprintPath(architecture).getFile().writeText("0")
                 frameworkSearchpathFilePath(architecture).getFile().writeText("\n")
                 librarySearchpathFilePath(architecture).getFile().writeText("\n")
             }
@@ -243,6 +243,8 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
             ldFilePath(architecture).getFile()
                 .writeText(parsedLdCall.ldArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
+            ldFileFingerprintPath(architecture).getFile()
+                .writeText(System.currentTimeMillis().toString())
             frameworkSearchpathFilePath(architecture).getFile()
                 .writeText(parsedLdCall.linkTimeFrameworkSearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
             librarySearchpathFilePath(architecture).getFile()
@@ -433,6 +435,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     fun defFilePath(architecture: AppleArchitecture) = defFiles.map { it.file("${architecture.xcodebuildArch}.def") }
     fun ldFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}.ld") }
+    fun ldFileFingerprintPath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}.timestamp.ld") }
     fun frameworkSearchpathFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}_framework_search_paths") }
     fun librarySearchpathFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}_library_search_paths") }
 

@@ -222,6 +222,10 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 val ldArgDumpPath = defFilesAndLdDumpGenerationTask.map {
                     it.ldFilePath(target.konanTarget.appleArchitecture)
                 }
+                val ldArgDumpFingerprintPath = defFilesAndLdDumpGenerationTask.map {
+                    it.ldFileFingerprintPath(target.konanTarget.appleArchitecture)
+                }
+                linkTask.linkerOptionsProducerFingerprint.from(ldArgDumpFingerprintPath)
                 linkTask.dependsOn(defFilesAndLdDumpGenerationTask)
                 linkTask.doFirst {
                     it as KotlinNativeLink

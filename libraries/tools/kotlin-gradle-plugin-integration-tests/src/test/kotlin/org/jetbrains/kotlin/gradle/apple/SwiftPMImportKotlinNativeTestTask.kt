@@ -100,6 +100,7 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
         }
     }
 
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `KT-85114 - incremental linkage smoke test`(version: GradleVersion) {
         project("empty", version) {
@@ -156,13 +157,13 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
             }
 
             build(":iosSimulatorArm64Test") {
-                assertTasksUpToDate("iosSimulatorArm64Test")
+                assertTasksUpToDate(":iosSimulatorArm64Test")
             }
 
             writeTestSource("2")
 
-            build(":iosSimulatorArm64Test", "--rerun") {
-                assertOutputContains("FromSwift: 1")
+            build(":iosSimulatorArm64Test") {
+                assertOutputContains("FromSwift: 2")
             }
         }
     }

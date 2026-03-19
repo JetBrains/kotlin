@@ -234,8 +234,16 @@ constructor(
     @get:Input
     val linkerOpts: List<String> by lazyConvention { binary.linkerOpts }
 
+    /**
+     * FIXME: KT-85118 This @Input annotation is incorrect and will not be part of KotlinNativeLink fingerprint because it is now used to
+     * pass linker options in doFirst
+     */
     @get:Input
     internal val additionalLinkerOpts: MutableList<String> = mutableListOf()
+
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFiles
+    internal abstract val linkerOptionsProducerFingerprint: ConfigurableFileCollection
 
     @get:Input
     val binaryOptions: Map<String, String> by lazy { PropertiesProvider(project).nativeBinaryOptions + binary.binaryOptions }
