@@ -15,7 +15,7 @@ import kotlinx.serialization.encoding.*
 abstract class CustomTypeSerializer<T : Any>(
     private val valueTypeQualifiedNamed: String,
     serialName: String,
-) : KSerializer<TypeDescriptor<T>> {
+) : KSerializer<TypeDescriptor> {
 
     private val propertiesSerializer = ListSerializer(Property.serializer())
 
@@ -26,14 +26,14 @@ abstract class CustomTypeSerializer<T : Any>(
         element("properties", propertiesSerializer.descriptor)
     }
 
-    override fun serialize(encoder: Encoder, value: TypeDescriptor<T>) {
+    override fun serialize(encoder: Encoder, value: TypeDescriptor) {
         encoder.encodeStructure(descriptor) {
             encodeStringElement(descriptor, 0, valueTypeQualifiedNamed)
             encodeSerializableElement(descriptor, 1, propertiesSerializer, value.properties)
         }
     }
 
-    override fun deserialize(decoder: Decoder): TypeDescriptor<T> {
+    override fun deserialize(decoder: Decoder): TypeDescriptor {
         var type = ""
         var properties = emptyList<Property>()
         decoder.decodeStructure(descriptor) {

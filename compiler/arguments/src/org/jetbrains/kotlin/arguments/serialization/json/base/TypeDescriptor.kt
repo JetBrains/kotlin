@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 
-inline fun <reified T : Any> descriptorOf(): TypeDescriptor<T> =
+inline fun <reified T : Any> descriptorOf(): TypeDescriptor =
     TypeDescriptor(
         properties = T::class.memberProperties.map { prop ->
             Property(
@@ -22,7 +22,7 @@ inline fun <reified T : Any> descriptorOf(): TypeDescriptor<T> =
         }
     )
 
-data class TypeDescriptor<T>(
+data class TypeDescriptor(
     val properties: List<Property>,
 )
 
