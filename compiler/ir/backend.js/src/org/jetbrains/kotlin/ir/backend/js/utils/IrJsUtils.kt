@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
@@ -37,6 +38,13 @@ fun IrClass.jsConstructorReference(context: JsIrBackendContext): IrExpression {
 
 fun IrDeclaration.isExportedMember(context: JsIrBackendContext) =
     parentClassOrNull != null && isExported(context)
+
+
+fun IrAnnotationContainer.isJsStaticDeclaration(): Boolean =
+    hasAnnotation(JsStandardClassIds.Annotations.JsStatic) ||
+            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JsStandardClassIds.Annotations.JsStatic) == true ||
+            (this as? IrProperty)?.getter?.hasAnnotation(JsStandardClassIds.Annotations.JsStatic) == true
+
 
 fun IrDeclaration?.isExportedClass(context: JsIrBackendContext) =
     this is IrClass && kind.isClass && isExported(context)
