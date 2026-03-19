@@ -17,6 +17,9 @@ interface KtSourceFile {
     val path: String?
 
     fun getContentsAsStream(): InputStream
+
+    abstract override fun equals(other: Any?): Boolean
+    abstract override fun hashCode(): Int
 }
 
 class KtPsiSourceFile(val psiFile: PsiFile) : KtSourceFile {
@@ -27,6 +30,14 @@ class KtPsiSourceFile(val psiFile: PsiFile) : KtSourceFile {
         get() = psiFile.virtualFile?.path
 
     override fun getContentsAsStream(): InputStream = psiFile.virtualFile.inputStream
+
+    override fun equals(other: Any?): Boolean {
+        return this === other || (other as? KtPsiSourceFile)?.psiFile == psiFile
+    }
+
+    override fun hashCode(): Int {
+        return psiFile.hashCode()
+    }
 }
 
 class KtVirtualFileSourceFile(val virtualFile: VirtualFile) : KtSourceFile {
@@ -37,6 +48,14 @@ class KtVirtualFileSourceFile(val virtualFile: VirtualFile) : KtSourceFile {
         get() = virtualFile.path
 
     override fun getContentsAsStream(): InputStream = virtualFile.inputStream
+
+    override fun equals(other: Any?): Boolean {
+        return this === other || (other as? KtVirtualFileSourceFile)?.virtualFile == virtualFile
+    }
+
+    override fun hashCode(): Int {
+        return virtualFile.hashCode()
+    }
 }
 
 class KtIoFileSourceFile(val file: File) : KtSourceFile {
@@ -46,6 +65,14 @@ class KtIoFileSourceFile(val file: File) : KtSourceFile {
         get() = FileUtilRt.toSystemIndependentName(file.path)
 
     override fun getContentsAsStream(): InputStream = file.inputStream()
+
+    override fun equals(other: Any?): Boolean {
+        return this === other || (other as? KtIoFileSourceFile)?.file == file
+    }
+
+    override fun hashCode(): Int {
+        return file.hashCode()
+    }
 }
 
 class KtInMemoryTextSourceFile(
@@ -54,4 +81,12 @@ class KtInMemoryTextSourceFile(
     val text: CharSequence
 ) : KtSourceFile {
     override fun getContentsAsStream(): InputStream = ByteArrayInputStream(text.toString().toByteArray())
+
+    override fun equals(other: Any?): Boolean {
+        return this === other || (other is KtInMemoryTextSourceFile && other.text == text && other.name == name && other.path == path)
+    }
+
+    override fun hashCode(): Int {
+        return text.hashCode() + 17 * name.hashCode() + 31 * (path?.hashCode() ?: 0)
+    }
 }

@@ -659,9 +659,9 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
             fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {
                 val diagnosticsPerFirFile = buildMap {
-                    for ((filePath, diagnostics) in diagnosticsCollector.diagnosticsByFilePath) {
-                        if (filePath == null) continue
-                        val firFile = allFiles.first { it.sourceFile?.path == filePath }
+                    for ((sourceFile, diagnostics) in diagnosticsCollector.diagnosticsByFile) {
+                        if (sourceFile == null) continue
+                        val firFile = allFiles.first { it.sourceFile == sourceFile }
                         put(firFile, diagnostics)
                     }
                 }
@@ -752,7 +752,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         part: FirOutputPartForDependsOnModule,
         destination: ListMultimap<FirFile, DiagnosticWithKmpCompilationMode>,
     ) {
-        for ((testFile, firFile) in part.firFilesByTestFile) {
+        for ((_, firFile) in part.firFilesByTestFile) {
             val syntaxErrors = if (firFile.psi != null) {
                 AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
                     @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -765,7 +765,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                 }
             } else {
                 reporterForLTSyntaxErrors
-                    .diagnosticsByFilePath["/${testFile.toLightTreeShortName()}"]
+                    .diagnosticsByFile[firFile.sourceFile]
                     .orEmpty()
             }
             destination.putAll(

@@ -5,23 +5,24 @@
 
 package org.jetbrains.kotlin.diagnostics.impl
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 
 class SimpleDiagnosticsCollector : BaseDiagnosticsCollector() {
-    private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
+    private val _diagnosticsByFile: MutableMap<KtSourceFile?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
-        get() = _diagnosticsByFilePath.flatMap { it.value }
-    override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
-        get() = _diagnosticsByFilePath
+        get() = _diagnosticsByFile.flatMap { it.value }
+    override val diagnosticsByFile: Map<KtSourceFile?, List<KtDiagnostic>>
+        get() = _diagnosticsByFile
 
     override var hasErrors = false
         private set
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null) {
-            _diagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.run {
+            _diagnosticsByFile.getOrPut(context.containingFile) { mutableListOf() }.run {
                 add(diagnostic)
                 if (!hasErrors && diagnostic.severity == Severity.ERROR) {
                     hasErrors = true

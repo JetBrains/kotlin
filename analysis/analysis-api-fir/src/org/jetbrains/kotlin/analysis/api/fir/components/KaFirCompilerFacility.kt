@@ -12,7 +12,9 @@ import com.intellij.openapi.vfs.findFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
@@ -350,8 +352,8 @@ internal class KaFirCompilerFacility(
             val lambda = it.expr as? FirAnonymousFunctionExpression ?: return@forEach
 
             val context = object : DiagnosticContext {
-                override val containingFilePath: String?
-                    get() = lambda.psi?.containingFile?.virtualFile?.path
+                override val containingFile: KtSourceFile?
+                    get() = lambda.psi?.containingFile?.let(::KtPsiSourceFile)
 
                 override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic) = false
 

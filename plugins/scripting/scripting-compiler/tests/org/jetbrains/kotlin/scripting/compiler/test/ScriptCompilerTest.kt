@@ -40,6 +40,19 @@ class ScriptCompilerTest {
     }
 
     @Test
+    fun testCompilationError() {
+        val res = compile("val x = 1\nnonsense".toScriptSource("err.kts")) {}
+
+        assertTrue(res is ResultWithDiagnostics.Failure)
+        assertTrue(res.reports.first { it.severity == ScriptDiagnostic.Severity.ERROR }.let {
+            it.message.contains("nonsense") &&
+                    it.sourcePath == "err.kts" &&
+                    it.location?.start?.line == 2 &&
+                    it.location?.end?.col == 9
+        }, "No expected diagnostic found: ${res.reports.joinToString("\n")}")
+    }
+
+    @Test
     fun testDeprecationAnnotation() {
         val res = compile("""
             @Deprecated("BECAUSE")

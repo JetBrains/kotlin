@@ -346,7 +346,7 @@ fun buildRecursionErrorMessage(
     return buildString {
         appendLine("Node has already been visited and could result in infinite recursion.")
         appendLine()
-        append("File Path: ").appendLine(context.containingFilePath)
+        append("File Path: ").appendLine(context.containingFile?.path)
         append("Variable: ").appendLine(symbol.getDebugFqName())
         appendLine("Declarations:")
         problemNode.firstGraphDeclaration()?.let { declaration ->

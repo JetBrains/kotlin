@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 
@@ -19,7 +20,8 @@ interface DiagnosticBaseContext {
 }
 
 interface DiagnosticContext : DiagnosticBaseContext {
-    val containingFilePath: String?
+    val containingFile: KtSourceFile?
+    val containingFilePath: String? get() = containingFile?.path
 
     fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean
 }
@@ -45,12 +47,12 @@ open class KtDiagnosticReporterWithContext(
         diagnosticReporter.checkAndCommitReportsOn(element, context)
     }
 
-    open fun at(sourceElement: AbstractKtSourceElement?, containingFilePath: String): DiagnosticContextImpl =
-        DiagnosticContextImpl(sourceElement, containingFilePath)
+    open fun at(sourceElement: AbstractKtSourceElement?, containingFile: KtSourceFile): DiagnosticContextImpl =
+        DiagnosticContextImpl(sourceElement, containingFile)
 
     open inner class DiagnosticContextImpl(
         val sourceElement: AbstractKtSourceElement?,
-        override val containingFilePath: String
+        override val containingFile: KtSourceFile
     ) : DiagnosticContext {
 
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {

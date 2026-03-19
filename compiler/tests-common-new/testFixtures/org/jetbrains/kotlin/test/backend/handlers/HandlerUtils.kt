@@ -47,8 +47,8 @@ fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosti
     fun processModule(module: TestModule) {
         if (!processedModules.add(module)) return
         for (testFile in module.files) {
-            val ktDiagnostics = testFile.findByPath(testServices) {
-                ktDiagnosticReporter.diagnosticsByFilePath[it]
+            val ktDiagnostics = testFile.findByPath(testServices) { file ->
+                ktDiagnosticReporter.diagnosticsByFile.entries.firstOrNull { it.key?.path == file }?.value
             } ?: continue
             ktDiagnostics.forEach {
                 if (diagnosticsService.shouldRenderDiagnostic(module, it.factoryName, it.severity)) {

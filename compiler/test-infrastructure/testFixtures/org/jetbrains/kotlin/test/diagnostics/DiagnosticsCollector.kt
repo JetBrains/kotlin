@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.diagnostics
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -17,7 +18,7 @@ interface DiagnosticsCollectorHolder {
 class DiagnosticsCollectorStub : BaseDiagnosticsCollector() {
     override val diagnostics: List<KtDiagnostic>
         get() = error("Should not reach here")
-    override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
+    override val diagnosticsByFile: Map<KtSourceFile?, List<KtDiagnostic>>
         get() = error("Should not reach here")
     override val hasErrors: Boolean
         get() = error("Should not reach here")

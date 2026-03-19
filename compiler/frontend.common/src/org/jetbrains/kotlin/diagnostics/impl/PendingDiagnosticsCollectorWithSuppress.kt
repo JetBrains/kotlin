@@ -6,32 +6,33 @@
 package org.jetbrains.kotlin.diagnostics.impl
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.diagnostics.Severity
 
 class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
-    private val pendingDiagnosticsByFilePath: MutableMap<String, MutableList<KtDiagnostic>> = mutableMapOf()
-    private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
+    private val pendingDiagnosticsBySourceFile: MutableMap<KtSourceFile, MutableList<KtDiagnostic>> = mutableMapOf()
+    private val _diagnosticsByFile: MutableMap<KtSourceFile?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
-        get() = _diagnosticsByFilePath.flatMap { it.value }
-    override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
-        get() = _diagnosticsByFilePath
+        get() = _diagnosticsByFile.flatMap { it.value }
+    override val diagnosticsByFile: Map<KtSourceFile?, List<KtDiagnostic>>
+        get() = _diagnosticsByFile
 
     override var hasErrors = false
         private set
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
-            when (val filePath = context.containingFilePath) {
+            when (val containingFile = context.containingFile) {
                 null -> {
-                    val diagnostics = _diagnosticsByFilePath.getOrPut(key = null) { mutableListOf() }
+                    val diagnostics = _diagnosticsByFile.getOrPut(key = null) { mutableListOf() }
                     diagnostics.add(diagnostic)
                     updateHasErrors(diagnostic)
                 }
                 else -> {
-                    val pendingDiagnostics = pendingDiagnosticsByFilePath.getOrPut(filePath) { mutableListOf() }
+                    val pendingDiagnostics = pendingDiagnosticsBySourceFile.getOrPut(containingFile) { mutableListOf() }
                     pendingDiagnostics.add(diagnostic)
                 }
             }
@@ -42,12 +43,12 @@ class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
         element: AbstractKtSourceElement,
         context: DiagnosticContext?
     ) {
-        if (pendingDiagnosticsByFilePath.isEmpty()) return
+        if (pendingDiagnosticsBySourceFile.isEmpty()) return
         val commitEverything = context == null
-        val pendingIterator = pendingDiagnosticsByFilePath.iterator()
+        val pendingIterator = pendingDiagnosticsBySourceFile.iterator()
         while (pendingIterator.hasNext()) {
             val (path, pendingList) = pendingIterator.next()
-            val committedList = _diagnosticsByFilePath.getOrPut(path) { mutableListOf() }
+            val committedList = _diagnosticsByFile.getOrPut(path) { mutableListOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
                 val diagnostic = iterator.next()

@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.cli.common.messages
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiFormatUtil
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -230,8 +232,8 @@ class AnalyzerWithCompilerReport(
                     DiagnosticBaseContext.Default, // syntax errors couldn't be suppressed anyway
                 )
                 val context = object : DiagnosticContext {
-                    override val containingFilePath: String?
-                        get() = file.containingFile.virtualFile?.path
+                    override val containingFile: KtSourceFile
+                        get() = KtPsiSourceFile(file.containingFile)
 
                     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
                         return false

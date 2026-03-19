@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.context
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
@@ -84,8 +85,8 @@ abstract class CheckerContext : DiagnosticContext, SessionAndScopeSessionHolder 
 
     abstract val containingFileSymbol: FirFileSymbol?
 
-    override val containingFilePath: String?
-        get() = containingFileSymbol?.sourceFile?.path
+    override val containingFile: KtSourceFile?
+        get() = containingFileSymbol?.sourceFile
 }
 
 /**

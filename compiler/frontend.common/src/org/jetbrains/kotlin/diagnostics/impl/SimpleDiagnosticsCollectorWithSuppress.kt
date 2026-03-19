@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.diagnostics.impl
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -12,16 +13,17 @@ import org.jetbrains.kotlin.diagnostics.Severity
 class SimpleDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
     private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
-        get() = _diagnosticsByFilePath.flatMap { it.value }
-    override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
-        get() = _diagnosticsByFilePath
+        get() = diagnosticsByFile.flatMap { it.value }
+    private val _diagnosticsByFile = mutableMapOf<KtSourceFile?, MutableList<KtDiagnostic>>()
+    override val diagnosticsByFile: Map<KtSourceFile?, List<KtDiagnostic>>
+        get() = _diagnosticsByFile
 
     override var hasErrors = false
         private set
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
-            _diagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.run {
+            _diagnosticsByFile.getOrPut(context.containingFile) { mutableListOf() }.run {
                 add(diagnostic)
                 if (!hasErrors && diagnostic.severity == Severity.ERROR) {
                     hasErrors = true

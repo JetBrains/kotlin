@@ -12,19 +12,20 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
+import org.jetbrains.kotlin.KtSourceFile
 
 class DeduplicatingDiagnosticReporter(private val inner: DiagnosticReporter) : DiagnosticReporter() {
 
     override val hasErrors: Boolean get() = inner.hasErrors
 
-    private val reported = mutableSetOf<Triple<String?, AbstractKtSourceElement, KtDiagnosticFactoryN>>()
+    private val reported = mutableSetOf<Triple<KtSourceFile?, AbstractKtSourceElement, KtDiagnosticFactoryN>>()
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         when (diagnostic) {
             null -> {}
             is KtDiagnosticWithoutSource -> inner.report(diagnostic, context)
             is KtDiagnosticWithSource -> {
-                if (reported.add(Triple(context.containingFilePath, diagnostic.element, diagnostic.factory))) {
+                if (reported.add(Triple(context.containingFile, diagnostic.element, diagnostic.factory))) {
                     inner.report(diagnostic, context)
                 }
             }

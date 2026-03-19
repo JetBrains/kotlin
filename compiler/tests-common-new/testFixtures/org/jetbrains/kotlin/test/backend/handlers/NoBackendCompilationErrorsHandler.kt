@@ -38,7 +38,7 @@ class NoBackendCompilationErrorsHandler(testServices: TestServices) : AnalysisHa
         val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter as BaseDiagnosticsCollector
         val diagnosticsService = testServices.diagnosticsService
 
-        for ((_, ktDiagnostics) in ktDiagnosticReporter.diagnosticsByFilePath) {
+        for (ktDiagnostics in ktDiagnosticReporter.diagnosticsByFile.values) {
             for (diagnostic in ktDiagnostics) {
                 if (diagnostic.severity == Severity.ERROR) {
                     if (diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factoryName, diagnostic.severity)) {
