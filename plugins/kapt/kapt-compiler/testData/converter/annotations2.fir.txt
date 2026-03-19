@@ -11,6 +11,8 @@ package test;
  *   public constructor(@test/Anno(value = "anno-value") value: kotlin/String)
  *
  *   // getter: value()Ljava/lang/String;
+ *   // synthetic method for annotations: value$annotations()V
+ *   @test/Anno(value = "anno-value")
  *   public final val value: kotlin/String
  *     public final get
  *
@@ -21,6 +23,18 @@ package test;
 public abstract @interface Anno {
 
     public abstract java.lang.String value();
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        @Anno(value = "anno-value")
+        @java.lang.Deprecated()
+        public static void value$annotations() {
+        }
+    }
 }
 
 ////////////////////
@@ -82,6 +96,8 @@ package test;
  *
  *   // field: x:I
  *   // getter: getX()I
+ *   // synthetic method for annotations: getX$annotations()V
+ *   @test/Anno(value = "x")
  *   public final val x: kotlin/Int
  *     public final get
  *
@@ -111,6 +127,11 @@ public enum Enum {
 
     public final int getX() {
         return 0;
+    }
+
+    @Anno(value = "x")
+    @java.lang.Deprecated()
+    public static void getX$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()

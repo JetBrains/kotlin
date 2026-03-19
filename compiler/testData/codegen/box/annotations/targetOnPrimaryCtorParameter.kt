@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 // FIR_DUMP
 // DUMP_IR
 
@@ -42,7 +43,7 @@ fun box(): String {
     val fieldAnnotations = Foo::class.java.getDeclaredField("param").annotations.map { it.annotationClass.simpleName ?: "" }.toSet()
 
     if (parameterAnnotations != setOf("NoTarget", "PropValueField", "ParameterOnly")) return "Parameters:" + parameterAnnotations.joinToString()
-    if (propertyAnnotations != setOf("PropertyOnly", "PropertyOnly2")) return "Property:" + propertyAnnotations.joinToString()
+    if (propertyAnnotations != setOf("NoTarget", "PropValueField", "PropertyOnly", "PropertyOnly2")) return "Property:" + propertyAnnotations.joinToString()
     if (fieldAnnotations != setOf("FieldOnly")) return "Field:" + fieldAnnotations.joinToString()
 
     return "OK"

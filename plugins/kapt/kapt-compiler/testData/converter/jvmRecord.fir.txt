@@ -74,6 +74,8 @@ public abstract interface I {
  *
  *   // field: x:I
  *   // getter: x()I
+ *   // synthetic method for annotations: x$annotations()V
+ *   @A
  *   public final val x: kotlin/Int
  *     public final get
  *
@@ -142,5 +144,10 @@ public final class R<T extends java.lang.Object> extends java.lang.Record implem
     @org.jetbrains.annotations.NotNull()
     public java.lang.String toString() {
         return null;
+    }
+
+    @A()
+    @java.lang.Deprecated()
+    public static void x$annotations() {
     }
 }

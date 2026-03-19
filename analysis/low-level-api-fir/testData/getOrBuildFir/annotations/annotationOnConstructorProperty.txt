@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnConstructorProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var i: R|kotlin/Int| = R|<local>/i|
+        @<ERROR TYPE REF: Symbol not found for Anno>[Types]() public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Abc] get(): R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Abc] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
 

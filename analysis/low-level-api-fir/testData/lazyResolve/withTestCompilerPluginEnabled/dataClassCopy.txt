@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
@@ -257,7 +257,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
@@ -296,7 +296,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
@@ -335,7 +335,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
@@ -374,7 +374,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
@@ -413,7 +413,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/Anno|[Types](LAZY_EXPRESSION) @R|pack/PropertyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
@@ -452,7 +452,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|pack/PropertyAnno|[Types](s = String(str) [evaluated = String(str)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/Anno|[Types](value = Int(1) [evaluated = Int(1)]) @R|pack/PropertyAnno|[Types](s = String(str) [evaluated = String(str)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
@@ -491,7 +491,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|pack/PropertyAnno|[Types](s = String(str) [evaluated = String(str)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/Anno|[Types](value = Int(1) [evaluated = Int(1)]) @R|pack/PropertyAnno|[Types](s = String(str) [evaluated = String(str)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
@@ -530,7 +530,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataClassCopy.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|pack/PropertyAnno|[Types](s = String(str) [evaluated = String(str)]) public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/Anno|[Types](value = Int(1) [evaluated = Int(1)]) @R|pack/PropertyAnno|[Types](s = String(str) [evaluated = String(str)]) public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|

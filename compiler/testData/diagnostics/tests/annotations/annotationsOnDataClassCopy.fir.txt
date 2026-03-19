@@ -1,4 +1,4 @@
-FILE: annotationsOnDataClassCopy.fir.kt
+FILE: annotationsOnDataClassCopy.kt
     public final annotation class NoTarget : R|kotlin/Annotation| {
         public constructor(): R|NoTarget| {
             super<R|kotlin/Any|>()
@@ -28,7 +28,7 @@ FILE: annotationsOnDataClassCopy.fir.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|Prop|() public final val p1: R|kotlin/Int| = R|<local>/p1|
+        @R|NoTarget|() @R|Prop|() @R|Both|() public final val p1: R|kotlin/Int| = R|<local>/p1|
             public get(): R|kotlin/Int|
 
         public final val p2: R|kotlin/String| = R|<local>/p2|

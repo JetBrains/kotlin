@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlin.annotation.AnnotationTarget.*
 
 annotation class NoTarget

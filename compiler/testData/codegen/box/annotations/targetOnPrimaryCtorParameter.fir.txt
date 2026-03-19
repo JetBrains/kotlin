@@ -40,7 +40,7 @@ FILE: targetOnPrimaryCtorParameter.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|PropertyOnly|() @R|PropertyOnly2|() field:@R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
+        @R|NoTarget|() @R|PropValueField|() @R|PropertyOnly|() @R|PropertyOnly2|() field:@R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
@@ -66,7 +66,7 @@ FILE: targetOnPrimaryCtorParameter.kt
         }
 
         when () {
-            !=(R|<local>/propertyAnnotations|, R|kotlin/collections/setOf|<R|kotlin/String|>(vararg(String(PropertyOnly), String(PropertyOnly2)))) ->  {
+            !=(R|<local>/propertyAnnotations|, R|kotlin/collections/setOf|<R|kotlin/String|>(vararg(String(NoTarget), String(PropValueField), String(PropertyOnly), String(PropertyOnly2)))) ->  {
                 ^box String(Property:).R|kotlin/String.plus|(R|<local>/propertyAnnotations|.R|kotlin/collections/joinToString|<R|kotlin/String|>())
             }
         }

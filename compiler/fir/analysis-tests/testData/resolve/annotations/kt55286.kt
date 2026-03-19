@@ -4,13 +4,13 @@
 annotation class Deprecated<T>
 
 open class Base(
-    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@Deprecated<Nested><!> val a: String,
+    @Deprecated<Nested> val a: String,
 ) {
     class Nested
 }
 
 class Derived(
-    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@Deprecated<Nested><!> val b: String,
+    @Deprecated<Nested> val b: String,
 ) : Base("")
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nestedClass, nullableType, primaryConstructor,

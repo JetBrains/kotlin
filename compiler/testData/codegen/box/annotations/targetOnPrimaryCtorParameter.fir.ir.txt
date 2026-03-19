@@ -127,6 +127,8 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Foo
     PROPERTY name:param visibility:public modality:FINAL [var]
       annotations:
+        NoTarget
+        PropValueField
         PropertyOnly
         PropertyOnly2
       FIELD PROPERTY_BACKING_FIELD name:param type:kotlin.Int visibility:private
@@ -300,6 +302,8 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
               ARG arg1: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.String> origin=null
                 TYPE_ARG T: kotlin.String
                 ARG elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                  CONST String type=kotlin.String value="NoTarget"
+                  CONST String type=kotlin.String value="PropValueField"
                   CONST String type=kotlin.String value="PropertyOnly"
                   CONST String type=kotlin.String value="PropertyOnly2"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

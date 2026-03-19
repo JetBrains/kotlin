@@ -70,11 +70,15 @@ public enum Enum1 {
  *
  *   // field: col:Ljava/lang/String;
  *   // getter: getCol()Ljava/lang/String;
+ *   // synthetic method for annotations: getCol$annotations()V
+ *   @Anno1(value = "first")
  *   public final val col: kotlin/String
  *     public final get
  *
  *   // field: col2:I
  *   // getter: getCol2()I
+ *   // synthetic method for annotations: getCol2$annotations()V
+ *   @Anno1(value = "second")
  *   public final val col2: kotlin/Int
  *     public final get
  *
@@ -105,8 +109,18 @@ public enum Enum2 {
         return null;
     }
 
+    @Anno1(value = "first")
+    @java.lang.Deprecated()
+    public static void getCol$annotations() {
+    }
+
     public final int getCol2() {
         return 0;
+    }
+
+    @Anno1(value = "second")
+    @java.lang.Deprecated()
+    public static void getCol2$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()

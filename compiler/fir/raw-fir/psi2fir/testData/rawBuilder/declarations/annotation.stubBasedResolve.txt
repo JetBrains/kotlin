@@ -10,7 +10,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+        @R|base|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=correct] get(): R|kotlin/Int|
 
         @R|base|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=correct] constructor(): R|correct| {
@@ -68,7 +68,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int| = R|<local>/x|
+        @R|derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int| = R|<local>/x|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=correctDerived] get(): R|@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int|
 
         @R|base|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=correctDerived] constructor(): R|correctDerived| {

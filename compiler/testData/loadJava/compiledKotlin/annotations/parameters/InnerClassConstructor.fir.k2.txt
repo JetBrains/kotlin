@@ -10,7 +10,7 @@ public final class Outer : R|kotlin/Any| {
     public constructor(): R|test/Outer|
 
     public final class Nested : R|kotlin/Any| {
-        public final val x: R|kotlin/String|
+        @PROPERTY:R|test/A|(s = String(nested)) public final val x: R|kotlin/String|
             public get(): R|kotlin/String|
 
         public constructor(@R|test/A|(s = String(nested)) x: R|kotlin/String|): R|test/Outer.Nested|
@@ -18,7 +18,7 @@ public final class Outer : R|kotlin/Any| {
     }
 
     public final inner class Inner : R|kotlin/Any| {
-        public final val y: R|kotlin/String|
+        @PROPERTY:R|test/A|(s = String(inner)) public final val y: R|kotlin/String|
             public get(): R|kotlin/String|
 
         public test/Outer.constructor(@R|test/A|(s = String(inner)) y: R|kotlin/String|): R|test/Outer.Inner|

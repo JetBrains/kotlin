@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 
 // MODULE: lib
 // FILE: lib.kt
@@ -46,7 +47,7 @@ fun box(): String {
     val fieldAnnotations = Foo::class.java.getDeclaredField("param").annotations.map { it.annotationClass.simpleName ?: "" }.toSet()
 
     if (parameterAnnotations != setOf("NoTarget", "PropValueField", "ParameterOnly")) return "Parameters:" + parameterAnnotations
-    if (propertyAnnotations != setOf("PropertyOnly")) return "Property:" + propertyAnnotations
+    if (propertyAnnotations != setOf("NoTarget", "PropValueField", "PropertyOnly")) return "Property:" + propertyAnnotations
     if (fieldAnnotations != setOf("FieldOnly")) return "Field:" + fieldAnnotations
 
     return "OK"

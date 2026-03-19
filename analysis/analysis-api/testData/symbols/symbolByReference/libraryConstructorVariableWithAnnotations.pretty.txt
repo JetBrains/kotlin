@@ -1,3 +1,4 @@
+@one.Anno
 var constructorVariableWithAnnotations: kotlin.Long
   @one.Anno
   get()

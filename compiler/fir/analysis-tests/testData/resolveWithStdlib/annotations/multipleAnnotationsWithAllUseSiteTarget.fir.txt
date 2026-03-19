@@ -40,7 +40,7 @@ FILE: multipleAnnotationsWithAllUseSiteTarget.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val x: R|kotlin/Int| = R|<local>/x|
+        @R|A1|() @R|A2|() public final val x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
 
         @R|A4|() public final val y: R|kotlin/Int| = R|<local>/y|

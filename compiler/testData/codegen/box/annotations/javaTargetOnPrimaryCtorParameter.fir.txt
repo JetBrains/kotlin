@@ -4,7 +4,7 @@ FILE: test.kt
             super<R|kotlin/Any|>()
         }
 
-        field:@R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
+        @R|NoTarget|() field:@R|PropValueField|() @R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
@@ -26,7 +26,7 @@ FILE: test.kt
         }
 
         when () {
-            !=(R|<local>/fieldAnnotations|, R|kotlin/collections/setOf|<R|kotlin/String|>(String(FieldOnly))) ->  {
+            !=(R|<local>/fieldAnnotations|, R|kotlin/collections/setOf|<R|kotlin/String|>(vararg(String(PropValueField), String(FieldOnly)))) ->  {
                 ^box String(Field:).R|kotlin/String.plus|(R|<local>/fieldAnnotations|)
             }
         }

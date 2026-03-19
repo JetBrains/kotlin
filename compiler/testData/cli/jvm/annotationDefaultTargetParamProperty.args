@@ -1,4 +1,3 @@
 $TESTDATA_DIR$/annotationDefaultTarget.kt
--Xannotation-default-target=param-property
 -d
 $TEMP_DIR$

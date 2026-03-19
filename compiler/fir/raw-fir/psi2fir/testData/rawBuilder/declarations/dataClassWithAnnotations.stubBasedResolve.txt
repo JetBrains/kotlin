@@ -4,7 +4,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataClassWithAnnotations.kt
             super<@<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Base>>()
         }
 
-        @PROPERTY:<ERROR TYPE REF: Symbol not found for Anno>[Types]() public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/Derived.component1, IsFromPrimaryConstructor=true] val b: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for B> = R|<local>/b|
+        @<ERROR TYPE REF: Symbol not found for Anno>[Types]() @PROPERTY:<ERROR TYPE REF: Symbol not found for Anno>[Types]() public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/Derived.component1, IsFromPrimaryConstructor=true] val b: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for B> = R|<local>/b|
             @PROPERTY_GETTER:<ERROR TYPE REF: Symbol not found for Anno>[Types]() public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] get(): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for B>
 
         public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/Derived.component2, IsFromPrimaryConstructor=true] val c: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for C> = R|<local>/c|

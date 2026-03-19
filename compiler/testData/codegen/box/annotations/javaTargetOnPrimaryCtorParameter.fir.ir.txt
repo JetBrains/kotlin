@@ -2,8 +2,11 @@ FILE fqName:<root> fileName:/test.kt
   CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Foo
     PROPERTY name:param visibility:public modality:FINAL [var]
+      annotations:
+        NoTarget
       FIELD PROPERTY_BACKING_FIELD name:param type:kotlin.Int visibility:private
         annotations:
+          PropValueField
           FieldOnly
         EXPRESSION_BODY
           GET_VAR 'param: kotlin.Int declared in <root>.Foo.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -136,9 +139,11 @@ FILE fqName:<root> fileName:/test.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               ARG arg0: GET_VAR 'val fieldAnnotations: kotlin.collections.Set<kotlin.String> declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
-              ARG arg1: CALL 'public final fun setOf <T> (element: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.String> origin=null
+              ARG arg1: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.String> origin=null
                 TYPE_ARG T: kotlin.String
-                ARG element: CONST String type=kotlin.String value="FieldOnly"
+                ARG elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                  CONST String type=kotlin.String value="PropValueField"
+                  CONST String type=kotlin.String value="FieldOnly"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
               ARG <this>: CONST String type=kotlin.String value="Field:"

@@ -82,6 +82,8 @@ public final class C : kotlin/Any {
 
   // field: constructorValWithAnnotation:Ljava/lang/String;
   // getter: getConstructorValWithAnnotation()Ljava/lang/String;
+  // synthetic method for annotations: getConstructorValWithAnnotation$annotations()V
+  @Ann
   public final val constructorValWithAnnotation: kotlin/String
     public final get
 
@@ -99,6 +101,8 @@ public final class C : kotlin/Any {
   // field: constructorVarWithAnnotation:Ljava/lang/String;
   // getter: getConstructorVarWithAnnotation()Ljava/lang/String;
   // setter: setConstructorVarWithAnnotation(Ljava/lang/String;)V
+  // synthetic method for annotations: getConstructorVarWithAnnotation$annotations()V
+  @Ann
   public final var constructorVarWithAnnotation: kotlin/String
     public final get
     public final set

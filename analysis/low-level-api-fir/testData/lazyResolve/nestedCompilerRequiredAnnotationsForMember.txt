@@ -380,7 +380,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+        @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -393,7 +393,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): R|kotlin/Int|
 
             @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -441,7 +441,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+        @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -454,7 +454,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): R|kotlin/Int|
 
             @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -502,7 +502,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+        @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -515,7 +515,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): R|kotlin/Int|
 
             @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -563,7 +563,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+        @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -576,7 +576,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): R|kotlin/Int|
 
             @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -624,7 +624,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+        @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -637,7 +637,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): R|kotlin/Int|
 
             @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -685,7 +685,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+        @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -698,7 +698,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): R|kotlin/Int|
 
             @R|kotlin/Deprecated|[Types](message = String(memberFunction) [evaluated = String(memberFunction)]) @R|Anno|[Types](s = String(memberFunction) [evaluated = String(memberFunction)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -746,7 +746,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+        @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -759,7 +759,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](String(constructorProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): R|kotlin/Int|
 
             @R|kotlin/Deprecated|[Types](message = String(memberFunction) [evaluated = String(memberFunction)]) @R|Anno|[Types](s = String(memberFunction) [evaluated = String(memberFunction)]) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {
@@ -808,7 +808,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedCompilerRequiredAnnotationsForMember.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(constructorProperty) [evaluated = String(constructorProperty)]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+        @R|kotlin/Deprecated|[Types](message = String(constructorProperty) [evaluated = String(constructorProperty)]) @R|Anno|[Types](s = String(constructorProperty) [evaluated = String(constructorProperty)]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
 
         @R|kotlin/Deprecated|[Types](message = String(memberFunction) [evaluated = String(memberFunction)]) @R|Anno|[Types](s = String(memberFunction) [evaluated = String(memberFunction)]) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {
@@ -822,7 +822,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedCompilerRequiredAnnotationsForMember.kt
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(constructorProperty) [evaluated = String(constructorProperty)]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            @R|kotlin/Deprecated|[Types](message = String(constructorProperty) [evaluated = String(constructorProperty)]) @R|Anno|[Types](s = String(constructorProperty) [evaluated = String(constructorProperty)]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedClass] get(): R|kotlin/Int|
 
             @R|kotlin/Deprecated|[Types](message = String(memberFunction) [evaluated = String(memberFunction)]) @R|Anno|[Types](s = String(memberFunction) [evaluated = String(memberFunction)]) public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit| {

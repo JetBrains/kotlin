@@ -1,5 +1,8 @@
 KaKotlinPropertySymbol:
-  annotations: []
+  annotations: [
+    one/Anno()
+      psi: null
+  ]
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null

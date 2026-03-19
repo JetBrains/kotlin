@@ -15,14 +15,15 @@ public final class MyClass /* MyClass*/ {
   @FieldAnnotation()
   private final int x1;
 
+  @ParameterOrFieldAnnotation()
+  private final int x4;
+
   @UniversalAnnotation()
   private final int x6;
 
   private final int x2;
 
   private final int x3;
-
-  private final int x4;
 
   private final int x7;
 
