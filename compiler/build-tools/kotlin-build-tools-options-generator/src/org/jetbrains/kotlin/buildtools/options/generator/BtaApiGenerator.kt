@@ -154,7 +154,7 @@ internal class BtaApiGenerator(
                         }
                         is NullabilityAnnotationListType -> {
                             generatedEnumType(NullabilityAnnotationMode::class)
-                            LIST.parameterizedBy(generatedCustomType(NullabilityAnnotation::class))
+                            LIST.parameterizedBy(generatedCustomType(NullabilityAnnotationConfig::class))
                         }
                         else -> {
                             argumentType.asTypeName()

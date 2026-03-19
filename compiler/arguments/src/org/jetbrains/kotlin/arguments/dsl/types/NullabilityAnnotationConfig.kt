@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
 import org.jetbrains.kotlin.arguments.serialization.json.KotlinNullabilityAnnotationModeAsNameSerializer
 
 @Serializable
-class NullabilityAnnotation(
+class NullabilityAnnotationConfig(
     val annotationFqName: String,
     val mode: NullabilityAnnotationMode,
 )

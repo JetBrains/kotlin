@@ -18,7 +18,7 @@ import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
-internal class NullabilityAnnotationsConversionTest : BaseArgumentTest<Array<String>>("Xnullability-annotations") {
+internal class NullabilityAnnotationConfigConversionTest : BaseArgumentTest<Array<String>>("Xnullability-annotations") {
 
     @DisplayName("NullabilityAnnotations is converted to '-Xnullability-annotations' argument")
     @Test

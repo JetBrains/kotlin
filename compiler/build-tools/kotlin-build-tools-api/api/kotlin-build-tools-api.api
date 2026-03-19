@@ -699,7 +699,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpre
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
 }
 
-public final class org/jetbrains/kotlin/buildtools/api/arguments/types/NullabilityAnnotation {
+public final class org/jetbrains/kotlin/buildtools/api/arguments/types/NullabilityAnnotationConfig {
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode;)V
 	public final fun getAnnotationFqName ()Ljava/lang/String;
 	public final fun getMode ()Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode;

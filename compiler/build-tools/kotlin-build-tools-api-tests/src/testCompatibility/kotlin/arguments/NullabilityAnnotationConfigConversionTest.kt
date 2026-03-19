@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.NullabilityAnnotationMode
-import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotation
+import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotationConfig
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -17,14 +17,14 @@ import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
-internal class NullabilityAnnotationsConversionTest : BaseArgumentTest<List<NullabilityAnnotation>>("Xnullability-annotations") {
+internal class NullabilityAnnotationConfigConversionTest : BaseArgumentTest<List<NullabilityAnnotationConfig>>("Xnullability-annotations") {
 
     @DisplayName("NullabilityAnnotations is converted to '-Xnullability-annotations' argument")
     @BtaVersionsOnlyCompilationTest
     fun testNullabilityAnnotationsToArgumentString(toolchain: KotlinToolchains) {
         val annotations = listOf(
-            NullabilityAnnotation("javax.annotation.Nullable", NullabilityAnnotationMode.STRICT),
-            NullabilityAnnotation("javax.annotation.Nonnull", NullabilityAnnotationMode.WARN),
+            NullabilityAnnotationConfig("javax.annotation.Nullable", NullabilityAnnotationMode.STRICT),
+            NullabilityAnnotationConfig("javax.annotation.Nonnull", NullabilityAnnotationMode.WARN),
         )
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
             compilerArguments[X_NULLABILITY_ANNOTATIONS] = annotations
@@ -55,8 +55,8 @@ internal class NullabilityAnnotationsConversionTest : BaseArgumentTest<List<Null
     @BtaVersionsOnlyCompilationTest
     fun testNullabilityAnnotationsGetWhenSet(toolchain: KotlinToolchains) {
         val expectedAnnotations = listOf(
-            NullabilityAnnotation("javax.annotation.Nullable", NullabilityAnnotationMode.STRICT),
-            NullabilityAnnotation("javax.annotation.Nonnull", NullabilityAnnotationMode.WARN),
+            NullabilityAnnotationConfig("javax.annotation.Nullable", NullabilityAnnotationMode.STRICT),
+            NullabilityAnnotationConfig("javax.annotation.Nonnull", NullabilityAnnotationMode.WARN),
         )
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
             compilerArguments[X_NULLABILITY_ANNOTATIONS] = expectedAnnotations
@@ -84,8 +84,8 @@ internal class NullabilityAnnotationsConversionTest : BaseArgumentTest<List<Null
     @BtaVersionsOnlyCompilationTest
     fun testRawArgumentsNullabilityAnnotationsConversion(toolchain: KotlinToolchains) {
         val expectedAnnotations = listOf(
-            NullabilityAnnotation("javax.annotation.Nullable", NullabilityAnnotationMode.STRICT),
-            NullabilityAnnotation("javax.annotation.Nonnull", NullabilityAnnotationMode.WARN),
+            NullabilityAnnotationConfig("javax.annotation.Nullable", NullabilityAnnotationMode.STRICT),
+            NullabilityAnnotationConfig("javax.annotation.Nonnull", NullabilityAnnotationMode.WARN),
         )
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
@@ -119,10 +119,10 @@ internal class NullabilityAnnotationsConversionTest : BaseArgumentTest<List<Null
         return listOf("-$argumentName=$value")
     }
 
-    override fun getValueString(argument: List<NullabilityAnnotation>?): String? =
+    override fun getValueString(argument: List<NullabilityAnnotationConfig>?): String? =
         argument?.joinToString(",") { "@${it.annotationFqName}:${it.mode.stringValue}" }
 
-    private fun assertListEquals(expectedList: List<NullabilityAnnotation>, actualList: List<NullabilityAnnotation>) {
+    private fun assertListEquals(expectedList: List<NullabilityAnnotationConfig>, actualList: List<NullabilityAnnotationConfig>) {
         assertEquals(expectedList.size, actualList.size)
 
         expectedList.forEachIndexed { index, expected ->

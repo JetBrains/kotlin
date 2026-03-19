@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.NullabilityAnnotation
  * @since 2.4.0
  */
 @ExperimentalCompilerArgument
-public class NullabilityAnnotation(
+public class NullabilityAnnotationConfig(
   public val annotationFqName: String,
   public val mode: NullabilityAnnotationMode,
 )

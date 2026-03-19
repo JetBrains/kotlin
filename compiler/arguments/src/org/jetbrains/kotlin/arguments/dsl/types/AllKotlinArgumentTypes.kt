@@ -72,8 +72,8 @@ class AllKotlinArgumentTypes {
     @Serializable(with = ProfileCompilerCommandSerializer::class)
     val profileCompilerCommand = descriptorOf<ProfileCompilerCommand>()
 
-    @Serializable(with = NullabilityAnnotationSerializer::class)
-    val nullabilityAnnotation = descriptorOf<NullabilityAnnotation>()
+    @Serializable(with = NullabilityAnnotationConfigSerializer::class)
+    val nullabilityAnnotationConfig = descriptorOf<NullabilityAnnotationConfig>()
 
     @Serializable(with = AllDetailsNullabilityAnnotationModeSerializer::class)
     val nullabilityAnnotationMode = NullabilityAnnotationMode.entries.toSet()

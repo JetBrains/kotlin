@@ -120,7 +120,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotation
+import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotationConfig
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -489,7 +489,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_NO_UNIFIED_NULL_CHECKS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_NO_UNIFIED_NULL_CHECKS")
 
-    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotation>> =
+    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotationConfig>> =
         JvmCompilerArgument("X_NULLABILITY_ANNOTATIONS")
 
     public val X_OUTPUT_BUILTINS_METADATA: JvmCompilerArgument<Boolean> =

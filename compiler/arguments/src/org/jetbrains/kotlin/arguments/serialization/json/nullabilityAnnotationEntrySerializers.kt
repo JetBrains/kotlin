@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.arguments.serialization.json
 
-import org.jetbrains.kotlin.arguments.dsl.types.NullabilityAnnotation
+import org.jetbrains.kotlin.arguments.dsl.types.NullabilityAnnotationConfig
 import org.jetbrains.kotlin.arguments.dsl.types.NullabilityAnnotationListType
 import org.jetbrains.kotlin.arguments.dsl.types.NullabilityAnnotationMode
 import org.jetbrains.kotlin.arguments.serialization.json.base.*
 
-object NullabilityAnnotationSerializer : CustomTypeSerializer<NullabilityAnnotation>(
+object NullabilityAnnotationConfigSerializer : CustomTypeSerializer<NullabilityAnnotationConfig>(
     NullabilityAnnotationListType::class.qualifiedName!!,
-    NullabilityAnnotation::class.qualifiedName!!
+    NullabilityAnnotationConfig::class.qualifiedName!!
 )
 
 object KotlinNullabilityAnnotationModeAsNameSerializer : NamedTypeSerializer<NullabilityAnnotationMode>(

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
-import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotation
+import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotationConfig
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.io.File
@@ -429,7 +429,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
         JvmCompilerArguments.X_NULLABILITY_ANNOTATIONS -> {
             if (value == null) return emptyArray<String>() as V
 
-            val listValue = value as List<NullabilityAnnotation>
+            val listValue = value as List<NullabilityAnnotationConfig>
             listValue.map { item -> "@${item.annotationFqName}:${item.mode.stringValue}" }.toTypedArray() as V
         }
 
@@ -587,7 +587,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
             }
 
             JvmCompilerArguments.X_NULLABILITY_ANNOTATIONS -> {
-                if (value == null) return emptyList<NullabilityAnnotation>() as T
+                if (value == null) return emptyList<NullabilityAnnotationConfig>() as T
 
                 val arrayValue = value as Array<String>
                 arrayValue.map {
@@ -597,7 +597,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     val nullabilityAnnotationMode =
                         NullabilityAnnotationMode.values().firstOrNull { entry -> entry.stringValue == parts[1] }
                             ?: throw CompilerArgumentsParseException("Unknown -Xnullability-annotations mode: $it")
-                    NullabilityAnnotation(parts[0].removePrefix("@"), nullabilityAnnotationMode)
+                    NullabilityAnnotationConfig(parts[0].removePrefix("@"), nullabilityAnnotationMode)
                 } as T
             }
 

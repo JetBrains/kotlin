@@ -361,14 +361,14 @@ class VerifyIrModeType : EnumType<VerifyIrMode>(ReleaseDependent(true)) {
 }
 
 /**
- *  A value which accepts a list of [NullabilityAnnotation] type.
+ *  A value which accepts a list of [NullabilityAnnotationConfig] type.
  */
 @Serializable
-class NullabilityAnnotationListType : KotlinArgumentValueType<List<NullabilityAnnotation>> {
+class NullabilityAnnotationListType : KotlinArgumentValueType<List<NullabilityAnnotationConfig>> {
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false)
-    override val defaultValue: ReleaseDependent<List<NullabilityAnnotation>?> = ReleaseDependent(emptyList())
+    override val defaultValue: ReleaseDependent<List<NullabilityAnnotationConfig>?> = ReleaseDependent(emptyList())
 
-    override fun stringRepresentation(value: List<NullabilityAnnotation>?): String? {
+    override fun stringRepresentation(value: List<NullabilityAnnotationConfig>?): String? {
         if (value == null) return null
 
         return value.joinToString { item -> "\"@${item.annotationFqName}:${item.mode.modeName}\"" }
