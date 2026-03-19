@@ -21,27 +21,25 @@ public sealed interface SirAttribute {
     class Available(
         val message: String?,
         val deprecated: Boolean = false,
-        val obsoleted: Boolean = false,
         val unavailable: Boolean = false,
         val renamed: String = ""
     ) : SirAttribute {
         init {
-            require(obsoleted || deprecated || unavailable) { "Positive availability is not supported" }
-            require((obsoleted || deprecated) != unavailable) { "Declaration can not be both deprecated/obsolete and unavailable" }
+            require(deprecated || unavailable) { "Positive availability is not supported" }
+            require(deprecated != unavailable) { "Declaration can not be both deprecated and unavailable" }
         }
 
         override val identifier: String get() = "available"
 
         override val arguments: List<SirArgument> get() = listOfNotNull(
                 SirArgument("*"),
-                SirArgument("deprecated").takeIf { deprecated && !unavailable },
-                SirArgument("obsoleted", "1.0").takeIf { obsoleted && !unavailable },
+                SirArgument("deprecated").takeIf { deprecated },
                 SirArgument("unavailable").takeIf { unavailable },
                 renamed.takeIf { it.isNotEmpty() }?.let { SirArgument("renamed", SirExpression.StringLiteral(renamed)) },
                 message?.let { SirArgument("message", SirExpression.StringLiteral(message)) },
             )
 
-        val isUnusable = unavailable || obsoleted
+        val isUnusable = unavailable
     }
 
     object NonOverride : SirAttribute {
