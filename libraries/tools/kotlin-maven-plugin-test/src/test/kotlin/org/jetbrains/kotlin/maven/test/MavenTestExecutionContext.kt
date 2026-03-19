@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.maven.test
 import org.jetbrains.kotlin.maven.test.jdk.CompositeJdkProvider
 import org.jetbrains.kotlin.maven.test.jdk.JavaHomeFallbackJdkProvider
 import org.jetbrains.kotlin.maven.test.jdk.JdkProvider
+import org.jetbrains.kotlin.maven.test.jdk.SystemPropertiesJdkProvider
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
@@ -34,9 +35,11 @@ private fun systemPropertyOrDefault(
 fun createMavenTestExecutionContext(
     tmpDir: Path
 ): MavenTestExecutionContext {
-    val jdkProvider = JavaHomeFallbackJdkProvider(
-        mainProvider = CompositeJdkProvider
-    )
+    val jdkProvider =
+        // use CompositeJdkProvider only for Local, non-TeamCity runs for better DX with tests.
+        // on TC it should be strict.
+        if (isTeamCityRun) SystemPropertiesJdkProvider
+        else JavaHomeFallbackJdkProvider(mainProvider = CompositeJdkProvider)
 
     val testProjectsDir = systemPropertyOrDefault(
         "kotlin.it.testDirs",
