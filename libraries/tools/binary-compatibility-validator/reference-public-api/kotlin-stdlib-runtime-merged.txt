@@ -3888,17 +3888,18 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	protected final field receiver Ljava/lang/Object;
 	public fun <init> ()V
 	protected fun <init> (Ljava/lang/Object;)V
-	protected fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Z)V
+	protected fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun call ([Ljava/lang/Object;)Ljava/lang/Object;
 	public fun callBy (Ljava/util/Map;)Ljava/lang/Object;
 	public fun compute ()Lkotlin/reflect/KCallable;
-	protected abstract fun computeReflected ()Lkotlin/reflect/KCallable;
+	protected abstract fun computeReflected (Z)Lkotlin/reflect/KCallable;
 	public fun findJavaDeclaration ()Ljava/lang/reflect/GenericDeclaration;
 	public fun getAnnotations ()Ljava/util/List;
 	public fun getBoundReceiver ()Ljava/lang/Object;
 	public fun getName ()Ljava/lang/String;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
 	public fun getParameters ()Ljava/util/List;
+	public fun getRawBoundReceiver ()Ljava/lang/Object;
 	protected fun getReflected ()Lkotlin/reflect/KCallable;
 	public fun getReturnType ()Lkotlin/reflect/KType;
 	public fun getSignature ()Ljava/lang/String;
@@ -3908,6 +3909,15 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	public fun isFinal ()Z
 	public fun isOpen ()Z
 	public fun isSuspend ()Z
+}
+
+protected final class kotlin/jvm/internal/CallableReference$Flag : java/lang/Enum {
+	public static final field STDLIB_ONLY_REFLECTION Lkotlin/jvm/internal/CallableReference$Flag;
+	public static final field SYNTHETIC_JAVA_PROPERTY Lkotlin/jvm/internal/CallableReference$Flag;
+	public static final field TOP_LEVEL Lkotlin/jvm/internal/CallableReference$Flag;
+	public fun isSet (I)Z
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/jvm/internal/CallableReference$Flag;
+	public static fun values ()[Lkotlin/jvm/internal/CallableReference$Flag;
 }
 
 public final class kotlin/jvm/internal/CharCompanionObject {
@@ -4076,13 +4086,14 @@ public abstract class kotlin/jvm/internal/FunctionImpl : java/io/Serializable, k
 	public fun invokeVararg ([Ljava/lang/Object;)Ljava/lang/Object;
 }
 
-public class kotlin/jvm/internal/FunctionReference : kotlin/jvm/internal/CallableReference, kotlin/jvm/internal/FunctionBase, kotlin/reflect/KFunction {
+public class kotlin/jvm/internal/FunctionReference : kotlin/jvm/internal/CallableReference, kotlin/jvm/internal/FunctionBase, kotlin/jvm/internal/KFunctionWithEqualityData {
 	public fun <init> (I)V
 	public fun <init> (ILjava/lang/Object;)V
 	public fun <init> (ILjava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
-	protected fun computeReflected ()Lkotlin/reflect/KCallable;
+	protected fun computeReflected (Z)Lkotlin/reflect/KCallable;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getArity ()I
+	public synthetic fun getOwner ()Ljava/lang/Object;
 	protected synthetic fun getReflected ()Lkotlin/reflect/KCallable;
 	protected fun getReflected ()Lkotlin/reflect/KFunction;
 	public fun hashCode ()I
@@ -4171,6 +4182,19 @@ public class kotlin/jvm/internal/Intrinsics {
 public class kotlin/jvm/internal/Intrinsics$Kotlin {
 }
 
+public abstract interface class kotlin/jvm/internal/KCallableEqualityData {
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getOwner ()Ljava/lang/Object;
+	public abstract fun getRawBoundReceiver ()Ljava/lang/Object;
+	public abstract fun getSignature ()Ljava/lang/String;
+}
+
+public abstract interface class kotlin/jvm/internal/KFunctionWithEqualityData : kotlin/jvm/internal/KCallableEqualityData, kotlin/reflect/KFunction {
+}
+
+public abstract interface class kotlin/jvm/internal/KPropertyWithEqualityData : kotlin/jvm/internal/KCallableEqualityData, kotlin/reflect/KProperty {
+}
+
 public abstract interface class kotlin/jvm/internal/KTypeBase : kotlin/reflect/KType {
 	public abstract fun getJavaType ()Ljava/lang/reflect/Type;
 }
@@ -4201,6 +4225,7 @@ public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/
 public class kotlin/jvm/internal/LocalVariableReference : kotlin/jvm/internal/PropertyReference0 {
 	public fun <init> ()V
 	public fun get ()Ljava/lang/Object;
+	public synthetic fun getOwner ()Ljava/lang/Object;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
 }
 
@@ -4240,6 +4265,7 @@ public class kotlin/jvm/internal/MagicApiIntrinsics {
 public class kotlin/jvm/internal/MutableLocalVariableReference : kotlin/jvm/internal/MutablePropertyReference0 {
 	public fun <init> ()V
 	public fun get ()Ljava/lang/Object;
+	public synthetic fun getOwner ()Ljava/lang/Object;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
 	public fun set (Ljava/lang/Object;)V
 }
@@ -4254,7 +4280,7 @@ public abstract class kotlin/jvm/internal/MutablePropertyReference0 : kotlin/jvm
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Object;)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
-	protected fun computeReflected ()Lkotlin/reflect/KCallable;
+	protected fun computeReflected (Z)Lkotlin/reflect/KCallable;
 	public fun getDelegate ()Ljava/lang/Object;
 	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public fun getGetter ()Lkotlin/reflect/KProperty0$Getter;
@@ -4275,7 +4301,7 @@ public abstract class kotlin/jvm/internal/MutablePropertyReference1 : kotlin/jvm
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Object;)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
-	protected fun computeReflected ()Lkotlin/reflect/KCallable;
+	protected fun computeReflected (Z)Lkotlin/reflect/KCallable;
 	public fun getDelegate (Ljava/lang/Object;)Ljava/lang/Object;
 	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public fun getGetter ()Lkotlin/reflect/KProperty1$Getter;
@@ -4295,7 +4321,7 @@ public class kotlin/jvm/internal/MutablePropertyReference1Impl : kotlin/jvm/inte
 public abstract class kotlin/jvm/internal/MutablePropertyReference2 : kotlin/jvm/internal/MutablePropertyReference, kotlin/reflect/KMutableProperty2 {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
-	protected fun computeReflected ()Lkotlin/reflect/KCallable;
+	protected fun computeReflected (Z)Lkotlin/reflect/KCallable;
 	public fun getDelegate (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public fun getGetter ()Lkotlin/reflect/KProperty2$Getter;
@@ -4311,7 +4337,10 @@ public class kotlin/jvm/internal/MutablePropertyReference2Impl : kotlin/jvm/inte
 	public fun set (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
 }
 
-public final class kotlin/jvm/internal/PackageReference : kotlin/jvm/internal/ClassBasedDeclarationContainer {
+public abstract interface class kotlin/jvm/internal/PackageDeclarationContainer : kotlin/jvm/internal/ClassBasedDeclarationContainer {
+}
+
+public final class kotlin/jvm/internal/PackageReference : kotlin/jvm/internal/PackageDeclarationContainer {
 	public fun <init> (Ljava/lang/Class;Ljava/lang/String;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getJClass ()Ljava/lang/Class;
@@ -4330,12 +4359,13 @@ public abstract class kotlin/jvm/internal/PrimitiveSpreadBuilder {
 	protected final fun toArray (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 }
 
-public abstract class kotlin/jvm/internal/PropertyReference : kotlin/jvm/internal/CallableReference, kotlin/reflect/KProperty {
+public abstract class kotlin/jvm/internal/PropertyReference : kotlin/jvm/internal/CallableReference, kotlin/jvm/internal/KPropertyWithEqualityData {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Object;)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun compute ()Lkotlin/reflect/KCallable;
 	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getOwner ()Ljava/lang/Object;
 	protected synthetic fun getReflected ()Lkotlin/reflect/KCallable;
 	protected fun getReflected ()Lkotlin/reflect/KProperty;
 	public fun hashCode ()I
@@ -4348,7 +4378,7 @@ public abstract class kotlin/jvm/internal/PropertyReference0 : kotlin/jvm/intern
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Object;)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
-	protected fun computeReflected ()Lkotlin/reflect/KCallable;
+	protected fun computeReflected (Z)Lkotlin/reflect/KCallable;
 	public fun getDelegate ()Ljava/lang/Object;
 	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public fun getGetter ()Lkotlin/reflect/KProperty0$Getter;
@@ -4366,7 +4396,7 @@ public abstract class kotlin/jvm/internal/PropertyReference1 : kotlin/jvm/intern
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Object;)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
-	protected fun computeReflected ()Lkotlin/reflect/KCallable;
+	protected fun computeReflected (Z)Lkotlin/reflect/KCallable;
 	public fun getDelegate (Ljava/lang/Object;)Ljava/lang/Object;
 	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public fun getGetter ()Lkotlin/reflect/KProperty1$Getter;
@@ -4383,7 +4413,7 @@ public class kotlin/jvm/internal/PropertyReference1Impl : kotlin/jvm/internal/Pr
 public abstract class kotlin/jvm/internal/PropertyReference2 : kotlin/jvm/internal/PropertyReference, kotlin/reflect/KProperty2 {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
-	protected fun computeReflected ()Lkotlin/reflect/KCallable;
+	protected fun computeReflected (Z)Lkotlin/reflect/KCallable;
 	public fun getDelegate (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public fun getGetter ()Lkotlin/reflect/KProperty2$Getter;

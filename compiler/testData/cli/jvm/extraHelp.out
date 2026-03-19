@@ -32,7 +32,7 @@ where advanced options include:
   -Xenhanced-coroutines-debugging
                              Generate additional linenumber instruction for compiler-generated code
                              inside suspend functions and lambdas to distinguish them from user code by debugger.
-  -Xforce-stdlib-only-reflection Force using lightweight stdlib Reflection implementation even if kotlin-reflect.jar is present in classpath at run time.
+  -Xforce-stdlib-only-reflection Generate callable, class, and type references that always use stdlib-only reflection, even when kotlin-reflect.jar is present at runtime.
   -Xfriend-paths=<path>      Paths to output directories for friend modules (modules whose internals should be visible).
   -Xgenerate-strict-metadata-version
                              Generate metadata with strict version semantics (see the KDoc entry on 'Metadata.extraInt').
