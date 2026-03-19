@@ -9,19 +9,28 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_IGNORED_ANNOTATIONS_FOR_BRIDGES
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 // TODO(KT-85093) Resolve Forward Compatibility Test Blocker for X_IGNORED_ANNOTATIONS_FOR_BRIDGES
 @OptIn(ExperimentalCompilerArgument::class)
 internal class IgnoredAnnotationsForBridgesConversionTest : BaseArgumentTest<List<String>>("Xignored-annotations-for-bridges") {
 
+    private lateinit var toolchain: KotlinToolchains
+
+    @BeforeEach
+    fun setup() {
+        toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+    }
+
     @DisplayName("IgnoredAnnotationsForBridges is converted to '-Xignored-annotations-for-bridges' argument")
-    @BtaVersionsOnlyCompilationTest
-    fun testIgnoredAnnotationsForBridgesToArgumentString(toolchain: KotlinToolchains) {
+    @Test
+    fun testIgnoredAnnotationsForBridgesToArgumentString() {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val annotations = listOf("com.example.MyAnnotation", "*")
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
@@ -37,8 +46,8 @@ internal class IgnoredAnnotationsForBridgesConversionTest : BaseArgumentTest<Lis
     }
 
     @DisplayName("'-Xignored-annotations-for-bridges' has the default value when IgnoredAnnotationsForBridges is not set")
-    @BtaVersionsOnlyCompilationTest
-    fun testIgnoredAnnotationsForBridgesNotSetByDefault(toolchain: KotlinToolchains) {
+    @Test
+    fun testIgnoredAnnotationsForBridgesNotSetByDefault() {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).build()
 
@@ -51,8 +60,8 @@ internal class IgnoredAnnotationsForBridgesConversionTest : BaseArgumentTest<Lis
     }
 
     @DisplayName("IgnoredAnnotationsForBridges can be set and retrieved")
-    @BtaVersionsOnlyCompilationTest
-    fun testIgnoredAnnotationsForBridgesGetWhenSet(toolchain: KotlinToolchains) {
+    @Test
+    fun testIgnoredAnnotationsForBridgesGetWhenSet() {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val expectedAnnotations = listOf("com.example.MyAnnotation", "*")
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
@@ -65,8 +74,8 @@ internal class IgnoredAnnotationsForBridgesConversionTest : BaseArgumentTest<Lis
     }
 
     @DisplayName("IgnoredAnnotationsForBridges has the default value when not set")
-    @BtaVersionsOnlyCompilationTest
-    fun testIgnoredAnnotationsForBridgesGetWhenNull(toolchain: KotlinToolchains) {
+    @Test
+    fun testIgnoredAnnotationsForBridgesGetWhenNull() {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).build()
 
@@ -79,8 +88,8 @@ internal class IgnoredAnnotationsForBridgesConversionTest : BaseArgumentTest<Lis
     }
 
     @DisplayName("Raw argument strings '-Xignored-annotations-for-bridges=<value>' are converted to IgnoredAnnotationsForBridges")
-    @BtaVersionsOnlyCompilationTest
-    fun testRawArgumentsIgnoredAnnotationsForBridgesConversion(toolchain: KotlinToolchains) {
+    @Test
+    fun testRawArgumentsIgnoredAnnotationsForBridgesConversion() {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val expectedAnnotations = listOf("com.example.MyAnnotation", "*")
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
@@ -99,8 +108,8 @@ internal class IgnoredAnnotationsForBridgesConversionTest : BaseArgumentTest<Lis
     }
 
     @DisplayName("IgnoredAnnotationsForBridges has the default value when no raw arguments are applied")
-    @BtaVersionsOnlyCompilationTest
-    fun testNoRawArgumentsIgnoredAnnotationsForBridges(toolchain: KotlinToolchains) {
+    @Test
+    fun testNoRawArgumentsIgnoredAnnotationsForBridges() {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
