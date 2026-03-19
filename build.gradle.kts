@@ -293,11 +293,20 @@ val fe10CompilerModules = arrayOf(
     ":compiler:backend.common.jvm",
 ).also { extra["fe10CompilerModules"] = it }
 
+val includeJklibModules = kotlinBuildProperties.booleanProperty("kotlin.build.include.jklib").get()
+
+val jklibModules = if (includeJklibModules) {
+    arrayOf(":compiler:cli-jklib", ":compiler:ir.serialization.jklib")
+} else {
+    emptyArray()
+}
+
 extra["compilerModules"] =
     irCompilerModules +
             fe10CompilerModules +
-            commonCompilerModules +
-            firAllCompilerModules
+            commonCompilerModules + 
+            firAllCompilerModules +
+            jklibModules
 
 /**
  * An array of projects used in the IntelliJ Kotlin Plugin.
