@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":core:language.version-settings"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:deserialization.common.jvm"))

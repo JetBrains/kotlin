@@ -282,12 +282,22 @@
 /compiler/test-security-manager/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /compiler/tests-spec/ "Kotlin Frontend"
 /compiler/util/ "Kotlin Frontend"
-/compiler/util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
 /compiler/util-io/ "Kotlin Common Backend"
 /compiler/util-klib/ "Kotlin Common Backend"
 /compiler/util-klib-abi/ "Kotlin Common Backend" filipp.zhinkin@jetbrains.com
 /compiler/util-klib-metadata/ "Kotlin Common Backend"
 
+/core/names/ "Kotlin Frontend"
+/core/language.model/ "Kotlin Frontend"
+/core/language.targets/ "Kotlin Frontend"
+/core/language.targets.jvm/ "Kotlin Frontend"
+/core/language.version-settings/ "Kotlin Frontend"
+/core/language.version-settings/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
+/core/names/api/names-api.foreign "Kotlin Analysis API"
+/core/language.model/api/psi-utils-api.foreign "Kotlin Analysis API"
+/core/language.targets/api/language-targets-api.foreign "Kotlin Analysis API"
+/core/language.targets.jvm/api/language-targets-jvm-api.foreign "Kotlin Analysis API"
+/core/language.version-settings/api/language-version-settings-api.foreign "Kotlin Analysis API"
 /core/compiler.common/ "Kotlin Frontend"
 /core/compiler.common.jvm/ "Kotlin Frontend"
 /core/compiler.common.js/ "Kotlin Frontend"

@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":core:language.version-settings"))
     api(project(":core:metadata"))
     api(project(":core:compiler.common"))
     api(project(":compiler:util"))

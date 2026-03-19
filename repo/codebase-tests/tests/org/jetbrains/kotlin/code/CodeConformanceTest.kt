@@ -28,7 +28,7 @@ class CodeConformanceTest : TestCase() {
                 "compiler/build",
                 "compiler/fir/lightTree/testData",
                 "compiler/psi/psi-impl/testData/psi/kdoc/TwoTags.kt",
-                "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
+                "core/language.version-settings/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
                 "dependencies",
                 "dependencies/protobuf/protobuf-relocated/build",
                 "dist",
