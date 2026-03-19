@@ -2806,6 +2806,12 @@ public class DecompiledJsTextTestGenerated extends AbstractDecompiledJsTextTest 
     public void testShortPositionBasedDestructuringErrors() {
       run("shortPositionBasedDestructuringErrors.kt");
     }
+
+    @Test
+    @TestMetadata("variableNamedValueInSquareBrackets.kt")
+    public void testVariableNamedValueInSquareBrackets() {
+      run("variableNamedValueInSquareBrackets.kt");
+    }
   }
 
   @Nested

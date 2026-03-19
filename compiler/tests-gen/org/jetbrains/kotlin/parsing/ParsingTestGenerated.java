@@ -2384,6 +2384,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       public void testShortPositionBasedDestructuringErrors() {
         runTest("compiler/testData/psi/destructuring/shortPositionBasedDestructuringErrors.kt");
       }
+
+      @TestMetadata("variableNamedValueInSquareBrackets.kt")
+      public void testVariableNamedValueInSquareBrackets() {
+        runTest("compiler/testData/psi/destructuring/variableNamedValueInSquareBrackets.kt");
+      }
     }
 
     @TestMetadata("compiler/testData/psi/examples")

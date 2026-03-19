@@ -3,5 +3,25 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationOnFullNameBasedDes
   partSimpleName: "AnnotationOnFullNameBasedDestructuringKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
+  CLASS[classId=/Box, fqName=Box, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Box, superNames=[]]
+    MODIFIER_LIST[data]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Box]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=Box.first, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=first]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=/Ann, fqName=Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Ann]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=Ann.x, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=x]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
   FUN[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test1]
     VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Box]

@@ -3,55 +3,19 @@ KtFile: fullPositionBasedDestructuring.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +NameBasedDestructuring')
   PsiWhiteSpace('\n\n')
-  FUN
-    PsiElement(fun)('fun')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(data)('data')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('declaration')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+    PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    BLOCK
-      PsiElement(LBRACE)('{')
-      PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        PsiElement(LBRACKET)('[')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('first')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('second')
-        PsiElement(COMMA)(',')
-        PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-      PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        PsiElement(LBRACKET)('[')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('first')
-        PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-      PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        PsiElement(LBRACKET)('[')
-        DESTRUCTURING_DECLARATION_ENTRY
+    PsiElement(IDENTIFIER)('Box')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('first')
@@ -61,12 +25,135 @@ KtFile: fullPositionBasedDestructuring.kt
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
-        PsiElement(RBRACKET)(']')
+        PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('second')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('declaration')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Box')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              PsiElement(LBRACKET)('[')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(var)('var')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('second')
+              PsiElement(COMMA)(',')
+              PsiElement(RBRACKET)(']')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              PsiElement(LBRACKET)('[')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(var)('var')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
+              PsiElement(RBRACKET)(']')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              PsiElement(LBRACKET)('[')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
+                PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('String')
+              PsiElement(RBRACKET)(']')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -76,6 +163,22 @@ KtFile: fullPositionBasedDestructuring.kt
     PsiElement(IDENTIFIER)('loop')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('List')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Box')
+              PsiElement(GT)('>')
       PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     BLOCK
@@ -182,6 +285,39 @@ KtFile: fullPositionBasedDestructuring.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('f')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_PARAMETER
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Box')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Unit')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')

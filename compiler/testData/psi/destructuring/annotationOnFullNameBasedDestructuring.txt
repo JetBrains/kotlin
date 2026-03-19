@@ -3,7 +3,57 @@ KtFile: annotationOnFullNameBasedDestructuring.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(data)('data')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Box')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('first')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Ann')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            PsiElement(CLOSING_QUOTE)('"')
+        PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')
@@ -11,181 +61,294 @@ KtFile: annotationOnFullNameBasedDestructuring.kt
     PsiElement(IDENTIFIER)('test1')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Box')
       PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        MODIFIER_LIST
-          ANNOTATION_ENTRY
-            PsiElement(AT)('@')
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Ann')
+      IF
+        PsiElement(if)('if')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('first')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-      PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        MODIFIER_LIST
-          ANNOTATION_ENTRY
-            PsiElement(AT)('@')
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Ann')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('first')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-      PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        MODIFIER_LIST
-          ANNOTATION_ENTRY
-            PsiElement(AT)('@')
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Ann')
-            VALUE_ARGUMENT_LIST
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Ann')
+              PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(var)('var')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
               PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      IF
+        PsiElement(if)('if')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('first')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-      PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        MODIFIER_LIST
-          ANNOTATION_ENTRY
-            PsiElement(AT)('@')
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Ann')
-            VALUE_ARGUMENT_LIST
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Ann')
               PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                STRING_TEMPLATE
-                  PsiElement(OPEN_QUOTE)('"')
-                  PsiElement(CLOSING_QUOTE)('"')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(var)('var')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
               PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      IF
+        PsiElement(if)('if')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(var)('var')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('first')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-      PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        MODIFIER_LIST
-          ANNOTATION_ENTRY
-            PsiElement(AT)('@')
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Ann')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('first')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-      PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        MODIFIER_LIST
-          ANNOTATION_ENTRY
-            PsiElement(AT)('@')
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Ann')
-            VALUE_ARGUMENT_LIST
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Ann')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(var)('var')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
               PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('first')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      DESTRUCTURING_DECLARATION
-        MODIFIER_LIST
-          ANNOTATION_ENTRY
-            PsiElement(AT)('@')
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Ann')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                STRING_TEMPLATE
-                  PsiElement(OPEN_QUOTE)('"')
-                  PsiElement(CLOSING_QUOTE)('"')
-              PsiElement(RPAR)(')')
+      IF
+        PsiElement(if)('if')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        DESTRUCTURING_DECLARATION_ENTRY
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('first')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Ann')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(var)('var')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      IF
+        PsiElement(if)('if')
         PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Ann')
+              PsiElement(LPAR)('(')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Ann')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Ann')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
+              DESTRUCTURING_DECLARATION_ENTRY
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('first')
+              PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

@@ -1,0 +1,31 @@
+Box.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final data class Box public constructor(first: kotlin.String, second: kotlin.String) {
+      public final val first: kotlin.String /* compiled code */
+
+      public final val second: kotlin.String /* compiled code */
+
+      public final operator fun component1(): kotlin.String { /* compiled code */ }
+
+      public final operator fun component2(): kotlin.String { /* compiled code */ }
+
+      public final fun copy(first: kotlin.String = COMPILED_CODE, second: kotlin.String = COMPILED_CODE): Box { /* compiled code */ }
+
+      public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+      public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+      public open fun toString(): kotlin.String { /* compiled code */ }
+  }
+
+ShortPositionBasedDestructuringKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public fun declaration(x: Box): kotlin.Unit { /* compiled code */ }
+
+  public fun loop(x: kotlin.collections.List<Box>): kotlin.Unit { /* compiled code */ }
+
+  public fun lambda(): kotlin.Unit { /* compiled code */ }

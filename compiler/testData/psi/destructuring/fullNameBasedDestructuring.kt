@@ -1,14 +1,16 @@
-// COMPILATION_ERRORS
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 
-fun declaration() {
-    (val first, var second,) = x
-    (var first) = x
-    (val first: String) = x
-    (val aa = first) = x
-    (val aa: String = first) = x
+data class Box(val first: String, val second: String)
+
+fun declaration(x: Box) {
+    if (true) { (val first, var second,) = x }
+    if (true) { (var first) = x }
+    if (true) { (val first: String) = x }
+    if (true) { (val aa = first) = x }
+    if (true) { (val aa: String = first) = x }
 }
 
-fun loop() {
+fun loop(x: List<Box>) {
     for ((val first, val second,) in x) {}
     for ((val first) in x) {}
     for ((val first: String) in x) {}
@@ -17,6 +19,8 @@ fun loop() {
 }
 
 fun lambda() {
+    fun foo(f: (Box) -> Unit) {}
+
     foo { (val first, val second,) -> }
     foo { (val first) -> }
     foo { (val first: String) -> }

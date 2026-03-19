@@ -1,11 +1,15 @@
-// COMPILATION_ERRORS
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 
-fun test1() {
-    @Ann (var first) = x
-    @Ann(var first) = x
-    @Ann() (var first) = x
-    @Ann("") (var first) = x
-    @Ann(val first) = x
-    @Ann() (val first) = x
-    @Ann("") (val first) = x
+data class Box(val first: String)
+
+annotation class Ann(val x: String = "")
+
+fun test1(x: Box) {
+    if (true) { @Ann (var first) = x }
+    if (true) { @Ann(var first) = x }
+    if (true) { @Ann() (var first) = x }
+    if (true) { @Ann("") (var first) = x }
+    if (true) { @Ann(val first) = x }
+    if (true) { @Ann() (val first) = x }
+    if (true) { @Ann("") (val first) = x }
 }

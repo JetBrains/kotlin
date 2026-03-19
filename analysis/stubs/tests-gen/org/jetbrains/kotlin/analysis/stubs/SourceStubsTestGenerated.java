@@ -2812,6 +2812,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     public void testShortPositionBasedDestructuringErrors() {
       run("shortPositionBasedDestructuringErrors.kt");
     }
+
+    @Test
+    @TestMetadata("variableNamedValueInSquareBrackets.kt")
+    public void testVariableNamedValueInSquareBrackets() {
+      run("variableNamedValueInSquareBrackets.kt");
+    }
   }
 
   @Nested
