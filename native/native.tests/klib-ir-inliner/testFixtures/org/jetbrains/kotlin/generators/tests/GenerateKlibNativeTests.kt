@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializa
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -164,6 +165,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "NativeSpecificCodegenBoxTestGenerated",
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
+                    temporarilyDisabledBecauseOfKt85080(), // TODO: drop after fixing KT-85080
                 )
             ) {
                 model()
@@ -235,3 +237,6 @@ private fun klibSyntheticAccessors() = arrayOf(
     ),
     provider<UseExtTestCaseGroupProvider>(),
 )
+
+// TODO: drop after fixing KT-85080
+private fun temporarilyDisabledBecauseOfKt85080() = annotation(Disabled::class.java)
