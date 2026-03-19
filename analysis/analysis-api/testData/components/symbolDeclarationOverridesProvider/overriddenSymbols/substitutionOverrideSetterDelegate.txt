@@ -1,3 +1,5 @@
 ALL:
+  test/Foo.obj: T
 DIRECT:
+  test/Foo.obj: T
 INTERSECTION:

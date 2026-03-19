@@ -1,3 +1,10 @@
 ALL:
+  /B.foo: Int
+  /C.foo: Int
+  /D.foo: Int
 DIRECT:
+  /B.foo: Int
+  /C.foo: Int
 INTERSECTION:
+  /B.foo: Int
+  /C.foo: Int

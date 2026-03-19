@@ -60,6 +60,38 @@ internal fun <T : KaCallableSymbol> getDirectlyOverriddenSymbols(callableSymbol:
         .asSequence()
 }
 
+context(relationProvider: KaFirSymbolRelationProvider)
+internal fun getAllOverriddenAccessorSymbols(accessorSymbol: KaPropertyAccessorSymbol): Sequence<KaCallableSymbol> =
+    getOverriddenAccessorSymbols(accessorSymbol) { propertySymbol ->
+        with(analysisSession) { propertySymbol.allOverriddenSymbols }
+    }
+
+context(relationProvider: KaFirSymbolRelationProvider)
+internal fun getDirectlyOverriddenAccessorSymbols(accessorSymbol: KaPropertyAccessorSymbol): Sequence<KaCallableSymbol> =
+    getOverriddenAccessorSymbols(accessorSymbol) { propertySymbol ->
+        with(analysisSession) { propertySymbol.directlyOverriddenSymbols }
+    }
+
+context(relationProvider: KaFirSymbolRelationProvider)
+internal fun getIntersectionOverriddenAccessorSymbols(accessorSymbol: KaPropertyAccessorSymbol): List<KaCallableSymbol> =
+    getOverriddenAccessorSymbols(accessorSymbol) { propertySymbol ->
+        with(analysisSession) { propertySymbol.intersectionOverriddenSymbols.asSequence() }
+    }.toList()
+
+context(relationProvider: KaFirSymbolRelationProvider)
+private inline fun getOverriddenAccessorSymbols(
+    accessorSymbol: KaPropertyAccessorSymbol,
+    overriddenProperties: (KaPropertySymbol) -> Sequence<KaCallableSymbol>,
+): Sequence<KaCallableSymbol> {
+    val propertySymbol = with(analysisSession) { accessorSymbol.containingDeclaration } as? KaPropertySymbol ?: return emptySequence()
+    val overriddenProperties = overriddenProperties(propertySymbol)
+    return if (accessorSymbol is KaPropertyGetterSymbol) {
+        overriddenProperties
+    } else {
+        overriddenProperties.takeWhile { it is KaPropertySymbol && it.setter != null }
+    }
+}
+
 private fun FirTypeScope.processCallableByName(declaration: FirDeclaration) = when (declaration) {
     is FirNamedFunction -> processFunctionsByName(declaration.name) { }
     is FirProperty -> processPropertiesByName(declaration.name) { }

@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.getAllOverriddenSymbolsForParameter
-import org.jetbrains.kotlin.analysis.api.impl.base.components.getDirectlyOverriddenSymbolsForParameter
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
@@ -55,6 +53,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi
@@ -406,20 +406,18 @@ internal class KaFirSymbolRelationProvider(
 
     override val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
         get() = withValidityAssertion {
-            if (this is KaValueParameterSymbol) {
-                return getAllOverriddenSymbolsForParameter(this)
-            }
-
-            getAllOverriddenSymbols(this)
+            handleOverriddenSymbols(
+                forAccessorSymbol = { getAllOverriddenAccessorSymbols(it) },
+                fallback = { getAllOverriddenSymbols(it) },
+            )
         }
 
     override val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
         get() = withValidityAssertion {
-            if (this is KaValueParameterSymbol) {
-                return getDirectlyOverriddenSymbolsForParameter(this)
-            }
-
-            getDirectlyOverriddenSymbols(this)
+            handleOverriddenSymbols(
+                forAccessorSymbol = { getDirectlyOverriddenAccessorSymbols(it) },
+                fallback = { getDirectlyOverriddenSymbols(it) },
+            )
         }
 
     override fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean = withValidityAssertion {
@@ -430,10 +428,66 @@ internal class KaFirSymbolRelationProvider(
         return isDirectSubClassOf(this, superClass)
     }
 
+    private inline fun KaCallableSymbol.handleOverriddenSymbols(
+        forAccessorSymbol: (KaPropertyAccessorSymbol) -> Sequence<KaCallableSymbol>,
+        fallback: (KaCallableSymbol) -> Sequence<KaCallableSymbol>,
+    ): Sequence<KaCallableSymbol> = when (this) {
+        is KaValueParameterSymbol -> this.generatedPrimaryConstructorProperty?.let(fallback).orEmpty()
+        is KaPropertyAccessorSymbol -> forAccessorSymbol(this)
+        is KaNamedFunctionSymbol -> getSyntheticJavaPropertyAccessor(this)?.let(forAccessorSymbol) ?: fallback(this)
+        else -> fallback(this)
+    }
+
     override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
         get() = withValidityAssertion {
-            getIntersectionOverriddenSymbols(this)
+            handleOverriddenSymbols(
+                forAccessorSymbol = { getIntersectionOverriddenAccessorSymbols(it).asSequence() },
+                fallback = { getIntersectionOverriddenSymbols(it).asSequence() },
+            ).toList()
         }
+
+    /**
+     * Finds the synthetic property accessor corresponding to the given Java getter or setter method.
+     *
+     * When Kotlin accesses Java classes, it synthesizes properties from Java getter/setter method pairs
+     * (e.g., `getField()`/`setField()` become a synthetic `field` property). This function performs
+     * the reverse lookup: given a Java method symbol, it finds the corresponding accessor of the
+     * synthetic property.
+     *
+     * This is used to compute overridden symbols for Java methods that participate in
+     * synthetic property generation, and the synthetic property overrides a real Kotlin property.
+     *
+     * @param functionSymbol A function symbol representing a Java getter or setter method
+     * @return The getter or setter of the synthetic property that wraps the given Java method, or `null` if not applicable
+     */
+    private fun getSyntheticJavaPropertyAccessor(functionSymbol: KaNamedFunctionSymbol): KaPropertyAccessorSymbol? {
+        val origin = functionSymbol.origin
+        if (origin != KaSymbolOrigin.JAVA_SOURCE && origin != KaSymbolOrigin.JAVA_LIBRARY) return null
+
+        val accessorName = functionSymbol.name
+        val accessorNameAsString = accessorName.asString()
+        val isGetter = JvmAbi.isGetterName(accessorNameAsString)
+        val isSetter = JvmAbi.isSetterName(accessorNameAsString)
+        if (!isGetter && !isSetter) return null
+
+        with(analysisSession) {
+            val containingClass = functionSymbol.containingDeclaration as? KaClassSymbol ?: return null
+            val propertyNames = getPropertyNamesCandidatesByAccessorName(accessorName)
+            for (propertyName in propertyNames) {
+                for (callable in containingClass.combinedDeclaredMemberScope.callables(propertyName)) {
+                    val propertySymbol = callable as? KaSyntheticJavaPropertySymbol ?: continue
+
+                    if (isGetter && propertySymbol.javaGetterSymbol == functionSymbol) {
+                        return propertySymbol.getter
+                    } else if (isSetter && propertySymbol.javaSetterSymbol == functionSymbol) {
+                        return propertySymbol.setter
+                    }
+                }
+            }
+        }
+
+        return null
+    }
 
     override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
         withValidityAssertion {
