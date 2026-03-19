@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.name.render
 
 sealed class WhenMissingCase {
     abstract val branchConditionText: String
