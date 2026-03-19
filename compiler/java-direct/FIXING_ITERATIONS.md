@@ -145,24 +145,36 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 
 ## Recommended Approach
 
-**Preferred: Area Audit (faster than ad-hoc)**
+### Step 0: Triage (MANDATORY before every iteration)
+
+Run full suite, categorize ALL 52 failures by error pattern, pick the largest cluster. See AGENT_INSTRUCTIONS.md "Mandatory Triage" section.
+
+### Approach A: Area Audit (for clusters of failures sharing a code area)
 
 1. **Pick a java-direct file** — `JavaClassOverAst.kt`, `JavaMemberOverAst.kt`, `JavaTypeOverAst.kt`, etc.
 2. **Open the reference** — `TreeBasedClass.kt` / `TreeBasedField.kt` / `TreeBasedMethod.kt` (javac-wrapper) or `JavaClassImpl.java` / `JavaMemberImpl.java` (PSI)
 3. **Compare every property** — list ALL differences, not just the first failing test
 4. **Fix all discrepancies together** — one iteration instead of three
-5. **Run the full suite once** to confirm net improvement
+5. **Run the full suite once** to confirm net improvement with ZERO regressions
 
-**For shared files**: Always run `git show origin/master:<file>` first — upstream may already have the correct pattern.
-
-**Ad-hoc (for isolated exceptions):**
+### Approach B: Ad-hoc (for isolated exceptions)
 
 1. **Pick exception** from `grep "FAILED" /tmp/jd_test.txt` — non-AssertionError first
-2. **Debug 2-3 representative tests** — verify root cause
+2. **Debug 2-3 representative tests** — verify root cause with exception-based debugging
 3. **Check reference implementation** — javac-wrapper or PSI
 4. **Implement fix** — target verified root cause only
 5. **Run PSI regression tests** if shared FIR files modified
 6. **Document in `ITERATION_RESULTS.md`**
+
+### For shared file changes
+
+Always run `git show origin/master:<file>` first — upstream may already have the correct pattern. Run PSI regression BEFORE and AFTER. See AGENT_INSTRUCTIONS.md "Shared vs Java-Direct Files".
+
+### Hard rules
+
+- **Zero-regression policy**: If a fix introduces ANY new failure, revert immediately
+- **30-minute stuck rule**: If stuck on a single issue for 30 min, stop and ask the user
+- **No "infrastructure issue" excuses**: If test count doesn't change, investigate why — don't move on
 
 ---
 

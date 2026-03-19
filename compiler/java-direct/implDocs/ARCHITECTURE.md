@@ -15,14 +15,16 @@ Java Model provides names (`classifierQualifiedName`), FIR resolves them via `se
 
 **CRITICAL**: Always prefer callback-based resolution over hardcoded lists.
 
-`resolve(tryResolve: (String) -> Boolean)` in `JavaClassifierType` allows Java Model to implement Java resolution rules while FIR validates existence.
+`resolve(tryResolve: (ClassId) -> Boolean): ClassId?` in `JavaClassifierType` allows Java Model to implement Java resolution rules (imports, scope, JLS priority) while FIR validates existence via the callback.
+
+**Key insight (iter 43)**: Resolution returns `ClassId` directly, not a string. This avoids the ambiguity where `"a.b"` could mean either `ClassId("a","b")` (package a, class b) or `ClassId("","a.b")` (nested class a.b). See `implDocs/RESOLUTION_PIPELINE.md`.
 
 **Established callback patterns** (use these as templates for new features):
 
 | Feature | Interface Method | FIR Callback |
 |---------|-----------------|--------------|
-| Type resolution | `JavaClassifierType.resolve(tryResolve)` | `symbolProvider.getClassLikeSymbolByClassId` |
-| Annotation resolution | `JavaAnnotation.resolveAnnotation(tryResolve)` | `symbolProvider.getClassLikeSymbolByClassId` |
+| Type resolution | `JavaClassifierType.resolve(tryResolve: (ClassId) -> Boolean): ClassId?` | `symbolProvider.getClassLikeSymbolByClassId` |
+| Annotation resolution | `JavaAnnotation.resolveAnnotation(tryResolve: (ClassId) -> Boolean): ClassId?` | `symbolProvider.getClassLikeSymbolByClassId` |
 | Enum class resolution | `JavaEnumValueAnnotationArgument.resolveEnumClass(tryResolve)` | `findClassId()` in `JavaTypeConversion.kt` |
 | TYPE_USE filtering | `JavaType.filterTypeUseAnnotations(isTypeUse)` | `isTypeUseAnnotationClass()` |
 | Constant evaluation | `JavaField.resolveInitializerValue(resolveReference)` | `resolveExternalFieldValue()` in `FirJavaFacade.kt` |

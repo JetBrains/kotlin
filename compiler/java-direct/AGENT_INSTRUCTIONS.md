@@ -17,6 +17,7 @@
 - **Run PSI tests after any shared file or test data changes** — see "Shared Files" section below
 - **Keep JavaParsingTest green** — run after core changes to JavaTypeOverAst, JavaClassOverAst, JavaResolutionContext
 - **Check `git diff` for unintended test data changes** after every test run — especially after using `-Pkotlin.test.update.test.data=true`
+- **NEVER run `-Pkotlin.test.update.test.data=true`** — this modifies shared test data in TWO directories (`compiler/testData/` AND `compiler/fir/analysis-tests/testData/`) and will corrupt PSI test expectations. Use `--info` and grep for assertion messages instead.
 
 ### Test Data Is Ground Truth
 Test data files (`compiler/testData/`) reflect the **correct behavior as defined by javac and the PSI-based implementation**. They are shared between java-direct and PSI test runners.
@@ -36,6 +37,37 @@ Modifying test data to match java-direct output will break the PSI-based tests, 
 ### Default Assumptions
 - **When a fix doesn't work**: assume the implementation is wrong, not that there's an external/systemic blocker. Debug further before concluding the issue is outside java-direct.
 - **Baseline diffs are real bugs** until proven otherwise by verifying the same test passes with PSI-based FIR.
+
+### Revert-First Policy
+- **If a fix introduces ANY regression** (new test failures that weren't failing before), **revert immediately**. Do not try to patch the regression on top of the fix — this leads to cascading complexity.
+- After reverting, document what went wrong and why, then take a different approach.
+- A net improvement of +3 fixed / -2 regressed is NOT acceptable. Aim for zero regressions.
+
+---
+
+## Resolution Pipeline (MUST READ before resolution fixes)
+
+**Read `implDocs/RESOLUTION_PIPELINE.md`** before making any changes to type resolution, import resolution, annotation resolution, or any code in `JavaResolutionContext.kt`, `JavaTypeConversion.kt`, or `javaTypes.kt`.
+
+Key principle: **When string-based resolution is ambiguous (same string maps to multiple ClassIds), return `ClassId` directly to preserve the package/class boundary.** This was learned the hard way in iteration 43.
+
+---
+
+## Mandatory Triage Before Each Iteration
+
+**Before diving into a fix, categorize ALL remaining failures:**
+
+1. Run both test suites ONCE, save output to `/tmp/jdb_test.txt` and `/tmp/jdp_test.txt`
+2. Extract ALL failing test names: `grep "FAILED" /tmp/jdb_test.txt /tmp/jdp_test.txt | sort -u`
+3. For each failure, extract the FIRST exception/assertion line:
+   ```bash
+   grep -A5 "FAILED" /tmp/jdp_test.txt | grep -E "IllegalState|NoSuch|Exception|Error:|UNRESOLVED|MISSING|Actual data" | head -60
+   ```
+4. Group failures by error pattern (not test name) — same error pattern often shares a root cause
+5. Pick the LARGEST group and debug 2-3 tests from it to confirm shared root cause
+6. Only then start implementing a fix
+
+**Why**: Without triage, you'll pick a random 1-test failure and spend an iteration on it while a 10-test cluster waits. Triage maximizes tests-fixed-per-iteration.
 
 ---
 
@@ -81,10 +113,18 @@ This takes seconds vs. 30+ minutes of FIR2IR tracing.
 - `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt`
 - `core/compiler.common.jvm/src/.../load/java/structure/*.kt`
 
-**After modifying shared files or test data**, always run PSI regression tests:
+**BEFORE modifying shared files**, run PSI regression tests to establish a baseline:
 ```bash
 ./gradlew :compiler:fir:analysis-tests:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" -q
 ```
+
+**AFTER modifying shared files**, run PSI regression tests again and compare. If ANY new PSI failures appear, **revert immediately** — do not try to fix the PSI regression on top.
+
+**Pre-flight checklist for shared file changes:**
+- [ ] PSI regression baseline captured (BEFORE making changes)
+- [ ] `git show origin/master:<file>` compared to see upstream state
+- [ ] Change is minimal and targeted — no speculative refactoring in shared files
+- [ ] PSI regression re-run AFTER changes shows zero new failures
 
 ---
 
@@ -150,22 +190,77 @@ git show origin/master:compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/Fi
 
 ---
 
+## Debugging Recipes
+
+### Quick: See what java-direct produces vs what PSI produces
+Add a temporary exception throw in the java-direct code path:
+```kotlin
+// In the relevant OverAst class:
+throw IllegalStateException("DEBUG: propertyName=$value, classifierQualifiedName=$classifierQualifiedName")
+```
+Then run a SINGLE test: `./gradlew :compiler:java-direct:test --tests "*testName*" -q --rerun`
+
+The exception message appears in the test failure output. This is the **only** reliable way to see runtime values — `println()` is swallowed by Gradle.
+
+### Quick: See the AST structure for a Java construct
+```kotlin
+throw IllegalStateException("DEBUG AST:\n${node.dump()}")
+// where dump() is defined in INVESTIGATION_TECHNIQUES.md
+```
+
+### Quick: Understand why a type resolves to the wrong class
+Add debug in `JavaResolutionContext.resolve()`:
+```kotlin
+if (name == "a.b") { // match the specific type you're investigating
+    throw IllegalStateException("DEBUG resolve: name=$name, result=$result")
+}
+```
+
+### File-based logging (when exception debugging is too disruptive)
+```kotlin
+java.io.File("/tmp/java_direct_debug.log").appendText("DEBUG: $message\n")
+```
+Useful when you need to trace multiple calls without crashing the test.
+
+---
+
 ## What NOT to Do
 
 - **Don't modify test data** to make java-direct tests pass — fix the implementation instead
+- **Don't run `-Pkotlin.test.update.test.data=true`** — it silently corrupts shared test data in multiple directories
 - **Don't hardcode lists** for resolution/filtering — use callback pattern
-- **Don't modify shared FIR files or test data** without running PSI regression tests
+- **Don't modify shared FIR files or test data** without running PSI regression BEFORE and AFTER
 - **Don't assume AST token names** — always dump and verify via exception debugging
 - **Don't estimate fix counts without debugging** — verify root cause with 2-3 tests first
 - **Don't implement partial interfaces** — e.g., `JavaAnnotationArgument` requires value subinterfaces, not just `name`
 - **Don't create git commits** — user reviews all changes first
-- **Don't persist a failing approach** — if a fix causes net regressions, revert it and document the limitation
+- **Don't persist a failing approach** — if a fix causes ANY net regressions, revert immediately and document
 - **Don't parse XML test result files** — they are stale and unreliable; use Gradle text output
 - **Don't rerun Gradle to get a different view of results** — run once, save with `tee /tmp/jd_test.txt` (use distinkt file name for each test suite), then grep the file for any slice you need
 - **Don't run PSI regression tests after java-direct-only changes** — if no shared FIR files or test data were modified, PSI results cannot change; skip the run
 - **Don't run `FirLightTreeBlackBoxCodegenTestGenerated.*testName*` to verify PSI behavior** — the nested `$` class filter silently matches nothing and wastes time; use `git show origin/master:...` instead
 - **Don't trace deep FIR2IR internals before checking upstream** — for any shared file, compare `git show origin/master:` first; fixes are often already there
 - **Don't fix one implicit-Java-rule corner case at a time** — when a fix involves implicit Java modifiers (visibility, static, final, abstract), audit the ENTIRE file against the reference and fix all discrepancies at once
+- **Don't change `findClassId` probe order in `JavaTypeConversion.kt`** — it's shared with PSI. Fix resolution priority in `JavaResolutionContext.resolve()` instead
+- **Don't return ambiguous strings from resolution** — when a qualified name like `"a.b"` could mean either `ClassId("a","b")` or `ClassId("","a.b")`, use `ClassId`-based resolution that encodes the boundary. See `implDocs/RESOLUTION_PIPELINE.md`
+- **Don't handwave "no net change" as a test infrastructure issue** — if your fix is correct but the test count doesn't change, there's a bug. Either the fix doesn't reach the failing tests, or it fixes some and breaks others. Investigate.
+
+---
+
+## Iteration Process
+
+Each iteration should be **short and focused** — target 1 specific root cause, not a vague "area":
+
+1. **Triage** — categorize all failures, pick the largest group (see Mandatory Triage above)
+2. **Debug** — confirm root cause with 2-3 representative tests using exception-based debugging
+3. **Check reference** — read the PSI/javac-wrapper equivalent before writing any fix
+4. **Implement** — minimal, targeted fix for the confirmed root cause
+5. **Verify** — run full suite. If ANY regressions: **revert immediately**, document, take a different approach
+6. **Document** — update ITERATION_RESULTS.md with root cause, fix, and exact test counts
+
+**If the fix doesn't change test counts**: do NOT move on. Investigate WHY — the fix either doesn't reach the failing code path, or it fixes some tests while breaking others. Both cases need understanding.
+
+**If you're stuck after 30 minutes on a single issue**: stop, document what you've tried and what you've learned, and ask the user for guidance. Don't keep trying variations of the same approach.
 
 ---
 
@@ -173,6 +268,7 @@ git show origin/master:compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/Fi
 
 | Document | When to consult |
 |----------|----------------|
+| `implDocs/RESOLUTION_PIPELINE.md` | **MUST READ** before any resolution fix — type/annotation/import resolution call chain |
 | `implDocs/ARCHITECTURE.md` | Callback patterns, key files, reference implementations, common fixes |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging techniques, categorization script, AST inspection |
 | `FIXING_ITERATIONS.md` | Current state, remaining categories, next iteration plans |
@@ -182,4 +278,4 @@ git show origin/master:compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/Fi
 
 ---
 
-*Last updated: 2026-03-16 (iter 36 retrospective)*
+*Last updated: 2026-03-19 (post iter-43 retrospective)*

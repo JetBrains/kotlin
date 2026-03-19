@@ -417,6 +417,20 @@ for key in sorted(failures.keys(), key=lambda k: -len(failures[k])):
 
 ---
 
+## File-Based Logging (when exception debugging is too disruptive)
+
+When you need to trace many calls without crashing each test:
+
+```kotlin
+java.io.File("/tmp/java_direct_debug.log").appendText(
+    "DEBUG resolve: name=$name, result=$result, pkg=$packageFqName\n"
+)
+```
+
+Run the test, then `cat /tmp/java_direct_debug.log`. Remember to remove the logging before committing.
+
+---
+
 ## Lessons Learned
 
 1. **Exception-based debugging is essential** - Only reliable way to see output in Gradle tests
@@ -434,3 +448,11 @@ for key in sorted(failures.keys(), key=lambda k: -len(failures[k])):
 7. **Check input node type first** - Before calling `findChildByType()`, verify the node isn't already the target type
 
 8. **Parser token names != library constant names** - The parser library may define e.g. `SEALED_KEYWORD` but produce `SEALED` in AST. Always verify via exception-based AST dumping before implementing.
+
+9. **String-based resolution is ambiguous** - `"a.b"` could be package `a` class `b` OR class `a` nested class `b`. Always use `ClassId` to encode the boundary. See `RESOLUTION_PIPELINE.md`.
+
+10. **Shared file changes have blast radius** - `findClassId` order change in `JavaTypeConversion.kt` broke PSI tests. Always run PSI regression BEFORE and AFTER.
+
+11. **`update.test.data=true` corrupts test data** - It modifies files in BOTH `compiler/testData/` and `compiler/fir/analysis-tests/testData/`. Never use it.
+
+12. **Binary class finder can return wrong-package classes** - When requesting `ClassId("", "NotNull")`, PSI binary finder may return `org.jetbrains.annotations.NotNull`. Always verify FQN matches requested ClassId.
