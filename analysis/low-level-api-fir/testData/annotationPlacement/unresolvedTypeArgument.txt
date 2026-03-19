@@ -1,0 +1,3 @@
+kotlin/collections/List<@R|Foo|()  ERROR CLASS: Symbol not found for UnresolvedType>
+
+SmallStack[0, -1, -1] for Foo

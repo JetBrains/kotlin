@@ -319,6 +319,10 @@ fun main(args: Array<String>) {
             testClass<AbstractCombinedPackageDelegationSymbolProviderTest> {
                 model("symbolProviders/combinedPackageDelegationSymbolProvider")
             }
+
+            testClass<AbstractSourceTypeArgumentAnnotationCollectionTest> {
+                model("annotationPlacement", pattern = TestGeneratorUtil.KT)
+            }
         }
 
         testGroup("analysis/low-level-api-fir/tests-gen", "analysis/analysis-api/testData") {

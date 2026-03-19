@@ -1,0 +1,3 @@
+@R|Foo|()  kotlin/String
+
+No annotations

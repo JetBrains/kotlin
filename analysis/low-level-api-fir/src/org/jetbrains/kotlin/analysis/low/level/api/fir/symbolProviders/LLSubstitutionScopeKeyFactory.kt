@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.fir.types.typeAnnotations
  * [ANNOTATION_ARGUMENTS][org.jetbrains.kotlin.fir.declarations.FirResolvePhase.ANNOTATION_ARGUMENTS] phase. Scope lookups happen
  * earlier, so argument values are unavailable.
  */
-internal class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) : SubstitutionScopeKeyFactory {
+@LLFirInternals
+class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) : SubstitutionScopeKeyFactory {
     override fun createKey(
         substitutor: ConeSubstitutor,
         dispatchReceiverLookupTag: ConeClassLikeLookupTag,
@@ -77,14 +79,14 @@ internal class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) 
         val substitutedTypes = memberOwnerClass.typeParameterSymbols
             .map { substitutor.substituteOrNull(it.toConeType()) }
 
-        if (substitutedTypes.none { it != null && isAnnotated(it) }) {
-            return emptyList()
-        }
-
         return collectPlacedAnnotations(substitutedTypes)
     }
 
-    private fun collectPlacedAnnotations(types: List<ConeKotlinType?>): List<TypeArgumentAnnotation> {
+    fun collectPlacedAnnotations(types: List<ConeKotlinType?>): List<TypeArgumentAnnotation> {
+        if (types.none { it != null && isAnnotated(it) }) {
+            return emptyList()
+        }
+
         val result = ArrayList<TypeArgumentAnnotation>()
         val stack = Stack()
         for ((index, type) in types.withIndex()) {
@@ -189,7 +191,7 @@ internal class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) 
      * The position is the path of type-argument indices from the top-level substituted type argument down to the annotated type
      * (e.g., path `[1, 0]` means the first nested type argument of the second top-level type argument).
      */
-    private interface TypeArgumentAnnotation {
+    interface TypeArgumentAnnotation {
         val lookupTag: ConeClassLikeLookupTag?
     }
 

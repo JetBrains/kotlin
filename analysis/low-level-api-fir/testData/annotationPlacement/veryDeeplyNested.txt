@@ -1,0 +1,8 @@
+kotlin/collections/List<kotlin/collections/Map<@R|A|()  kotlin/String, @R|B|()  kotlin/collections/List<@R|C|()  kotlin/collections/Map<kotlin/String, @R|D|()  kotlin/collections/Map<kotlin/Int, @R|E|()  kotlin/collections/List<@R|F|()  kotlin/Long>>>>>>
+
+SmallStack[0, 0, -1] for A
+SmallStack[0, 1, -1] for B
+SmallStack[0, 1, 0] for C
+LargeStack[0, 1, 0, 1] for D
+LargeStack[0, 1, 0, 1, 1] for E
+LargeStack[0, 1, 0, 1, 1, 0] for F
