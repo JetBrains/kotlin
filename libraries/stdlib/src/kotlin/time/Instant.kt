@@ -94,7 +94,7 @@ import kotlin.time.Duration.Companion.seconds
  * ```
  *
  * [parse] and [toString] methods can be used to obtain an [Instant] from and convert it to a string in the
- * (ISO 8601 extended format)[https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations],
+ * [ISO 8601 extended format](https://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations),
  * which includes a time zone designator.
  *
  * ```
