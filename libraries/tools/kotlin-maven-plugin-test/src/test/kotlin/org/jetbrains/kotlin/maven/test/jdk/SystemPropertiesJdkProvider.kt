@@ -8,7 +8,7 @@ import kotlin.io.path.isDirectory
 
 object SystemPropertiesJdkProvider : JdkProvider {
     override fun getJavaHome(version: TestVersions.Java): Path? {
-        val propertyName = "jdk${version.numericVersion}"
+        val propertyName = "jdk${version.numericVersion}Home"
         val propertyValue = System.getProperty(propertyName) ?: return null
         val javaHome = Path(propertyValue)
         return javaHome.takeIf { it.exists() && it.isDirectory() }
