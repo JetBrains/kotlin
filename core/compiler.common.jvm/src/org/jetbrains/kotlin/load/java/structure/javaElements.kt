@@ -61,10 +61,10 @@ interface JavaAnnotation : JavaElement {
      * Resolves the annotation class using the provided callback.
      * Used by java-direct to resolve unqualified annotation names via java.lang and star imports.
      *
-     * @param tryResolve callback that returns true if the given fully qualified name exists
-     * @return the resolved fully qualified name, or null if not resolved
+     * @param tryResolve callback that returns true if the given ClassId exists
+     * @return the resolved ClassId, or null if not resolved
      */
-    fun resolveAnnotation(tryResolve: (String) -> Boolean): String? = classId?.asSingleFqName()?.asString()
+    fun resolveAnnotation(tryResolve: (ClassId) -> Boolean): ClassId? = classId
 }
 
 interface MapBasedJavaAnnotationOwner : JavaAnnotationOwner {

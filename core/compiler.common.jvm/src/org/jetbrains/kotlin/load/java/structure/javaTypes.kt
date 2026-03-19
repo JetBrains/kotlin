@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.structure
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.name.ClassId
 
 interface JavaType : ListBasedJavaAnnotationOwner {
     /**
@@ -58,7 +59,18 @@ interface JavaClassifierType : JavaType {
     val isResolved: Boolean
         get() = true
 
-    fun resolve(tryResolve: (String) -> Boolean): String? = null
+    /**
+     * Resolves the type to a ClassId using the provided callback.
+     * 
+     * This method allows precise resolution where the callback receives a ClassId
+     * (with explicit package/class split) rather than a string that could be ambiguous.
+     * For example, "a.b" could mean either package "a" with class "b", or root package
+     * with nested class "a.b". Using ClassId avoids this ambiguity.
+     * 
+     * @param tryResolve callback that checks if a ClassId exists. Returns true if found.
+     * @return the resolved ClassId, or null if resolution failed
+     */
+    fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? = null
 }
 
 interface JavaPrimitiveType : JavaType {

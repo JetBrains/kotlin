@@ -38,7 +38,7 @@ class JavaAnnotationOverAst(
         get() {
             val reference = annotationName ?: return null
 
-            // If already qualified (contains dot), use as-is
+            // If already qualified (contains dot), parse as qualified name
             if (reference.contains('.')) {
                 return ClassId.topLevel(FqName(reference))
             }
@@ -68,22 +68,9 @@ class JavaAnnotationOverAst(
      * Resolves this annotation's class using the provided callback.
      * Uses the same resolution logic as types: same package, java.lang, star imports.
      */
-    override fun resolveAnnotation(tryResolve: (String) -> Boolean): String? {
+    override fun resolveAnnotation(tryResolve: (ClassId) -> Boolean): ClassId? {
         val reference = annotationName ?: return null
-
-        // If already qualified, return as-is (but verify it exists)
-        if (reference.contains('.')) {
-            return if (tryResolve(reference)) reference else null
-        }
-
-        // Try to resolve via explicit imports
-        val imported = resolutionContext.getSimpleImport(reference)
-        if (imported != null) {
-            return imported.asString()
-        }
-
-        // Use the same resolution logic as types: same package, java.lang, star imports
-        return resolutionContext.resolveWithCallback(reference, tryResolve)
+        return resolutionContext.resolve(reference, tryResolve)
     }
 
     override fun resolve(): JavaClass? = null
@@ -351,29 +338,9 @@ class JavaEnumValueAnnotationArgumentOverAst(
             }
         }
 
-    override fun resolveEnumClass(tryResolve: (String) -> Boolean): ClassId? {
+    override fun resolveEnumClass(tryResolve: (ClassId) -> Boolean): ClassId? {
         val className = className ?: return null
-
-        // Try to resolve via explicit imports first
-        val imported = resolutionContext.getSimpleImport(className)
-        if (imported != null) {
-            return ClassId.topLevel(imported)
-        }
-
-        // Use the resolution context's callback-based resolution
-        // This handles nested classes like "NLS.Capitalization" correctly
-        val resolved = resolutionContext.resolveWithCallback(className, tryResolve)
-        if (resolved != null) {
-            return fqNameToClassId(resolved)
-        }
-
-        // Special case: if in default package and resolution failed, try the simple name directly
-        // This handles cases like: default package, @Foo(KotlinClass.CONST) where KotlinClass is also in default package
-        if (resolutionContext.packageFqName.isRoot && tryResolve(className)) {
-            return ClassId.topLevel(FqName(className))
-        }
-
-        return null
+        return resolutionContext.resolve(className, tryResolve)
     }
 
     override val entryName: Name?
@@ -419,35 +386,3 @@ class JavaUnknownAnnotationArgumentOverAst(
     override val name: Name?,
 ) : JavaUnknownAnnotationArgument
 
-/**
- * Converts a fully qualified name (which may contain nested classes) to a ClassId.
- * For "org.example.Outer.Inner", creates ClassId with package "org.example" and
- * relative class name "Outer.Inner".
- *
- * This is needed because the resolution callback returns FQNs where nested classes
- * are separated by dots, but ClassId needs to know which part is the package
- * and which is the class hierarchy.
- *
- * The heuristic used: the package is the longest prefix where all parts start with lowercase,
- * and the class part starts with an uppercase letter.
- */
-private fun fqNameToClassId(fqName: String): ClassId {
-    val parts = fqName.split('.')
-    
-    // Find where the class name starts (first part starting with uppercase)
-    var classStartIndex = 0
-    for (i in parts.indices) {
-        if (parts[i].firstOrNull()?.isUpperCase() == true) {
-            classStartIndex = i
-            break
-        }
-    }
-    
-    val packageParts = parts.subList(0, classStartIndex)
-    val classParts = parts.subList(classStartIndex, parts.size)
-    
-    val packageFqName = if (packageParts.isEmpty()) FqName.ROOT else FqName(packageParts.joinToString("."))
-    val relativeClassName = FqName(classParts.joinToString("."))
-    
-    return ClassId(packageFqName, relativeClassName, isLocal = false)
-}

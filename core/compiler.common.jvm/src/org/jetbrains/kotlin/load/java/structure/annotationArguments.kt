@@ -45,10 +45,10 @@ interface JavaEnumValueAnnotationArgument : JavaAnnotationArgument {
      * Resolves the enum class using the provided callback.
      * Called when [isResolved] is false or [enumClassId] may be incorrect for nested classes.
      *
-     * @param tryResolve callback that checks if a fully qualified class name exists
+     * @param tryResolve callback that checks if a ClassId exists
      * @return the resolved ClassId, or null if resolution fails
      */
-    fun resolveEnumClass(tryResolve: (String) -> Boolean): ClassId? = enumClassId
+    fun resolveEnumClass(tryResolve: (ClassId) -> Boolean): ClassId? = enumClassId
 }
 
 interface JavaClassObjectAnnotationArgument : JavaAnnotationArgument {

@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 42 (2026-03-17) |
-| **Box Tests** | 1161/1168 passing (99.4%) |
-| **Phased Tests** | 1394/1442 passing (96.7%) |
-| **Combined** | ~2555/2611 passing, **~55-56 failing** |
+| **Last Iteration** | 43 (2026-03-19) |
+| **Box Tests** | 1163/1168 passing (99.6%) |
+| **Phased Tests** | 1396/1443 passing (96.7%) |
+| **Combined** | ~2559/2611 passing, **52 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -139,6 +139,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 40 | isObjectMethodInInterface for unresolved Object; rawTypeName strips generics through dots; typeArguments uses collectAllRefParamLists + resolves outer type params | +1 box, +2 phased |
 | 41 | Reference-first audit: JavaValueParameterOverAst.type passes modifier list annotations; JavaTypeParameterOverAst.upperBounds handles TYPE children; annotations reads MODIFIER_LIST | +0 (full suite count same, individual annotation tests pass) |
 | 42 | Fix rawTypeName to exclude annotations from type names (extract identifiers from AST, not text); remove unused JAVA_LANG_TYPES | +1 phased |
+| 43 | ClassId-based resolution (`resolveToClassId`) to fix package vs nested class ambiguity (JLS 6.5.2) | +1 phased |
 
 ---
 

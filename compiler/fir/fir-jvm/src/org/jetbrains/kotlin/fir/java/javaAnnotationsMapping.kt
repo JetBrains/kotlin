@@ -194,8 +194,8 @@ internal fun JavaAnnotationArgument.toFirExpression(
             // Resolve the enum class, using callback if not already resolved
             val classId = if (!isResolved) {
                 // Use callback-based resolution for nested enum classes
-                resolveEnumClass { fqName ->
-                    findClassId(fqName, session) != null
+                resolveEnumClass { candidateClassId ->
+                    session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
                 }
             } else {
                 enumClassId
@@ -418,11 +418,10 @@ private fun buildFirAnnotation(
 ): AnnotationData {
     val classId = if (!javaAnnotation.isResolved) {
         // Resolve unqualified annotation names via java.lang and star imports
-        val resolvedFqn = javaAnnotation.resolveAnnotation { candidateFqn ->
-            val candidateClassId = ClassId.topLevel(FqName(candidateFqn))
+        val resolvedClassId = javaAnnotation.resolveAnnotation { candidateClassId ->
             session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
         }
-        resolvedFqn?.let { ClassId.topLevel(FqName(it)) } ?: javaAnnotation.classId
+        resolvedClassId ?: javaAnnotation.classId
     } else {
         javaAnnotation.classId
     }

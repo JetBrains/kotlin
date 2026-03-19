@@ -28,7 +28,22 @@ class CombinedJavaClassFinder(
     override fun findClass(request: JavaClassFinder.Request): JavaClass? {
         val fromSource = sourceFinder.findClass(request)
         if (fromSource != null) return fromSource
-        return binaryFinder.findClass(request)
+        val fromBinary = binaryFinder.findClass(request)
+
+        // TODO: recheck this place, the reasonin is suspicious
+        // Verify the returned class's FQN matches the requested classId.
+        // Some class finders (e.g., PSI-based) may return classes from different packages
+        // when matching by simple name alone. This would cause FIR to create symbols with
+        // wrong classIds, breaking annotation resolution.
+        if (fromBinary != null) {
+            val expectedFqName = request.classId.asSingleFqName()
+            val actualFqName = fromBinary.fqName
+            if (actualFqName != expectedFqName) {
+                return null
+            }
+        }
+
+        return fromBinary
     }
 
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> {

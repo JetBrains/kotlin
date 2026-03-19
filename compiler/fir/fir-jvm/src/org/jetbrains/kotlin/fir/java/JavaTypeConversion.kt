@@ -113,9 +113,12 @@ private fun JavaType?.toConeTypeProjection(
     val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
         // Filter to only include TYPE_USE annotations using the callback-based approach.
         // This allows java-direct to resolve annotation classes via FIR's symbol provider.
-        val isTypeUseAnnotation: (String) -> Boolean = { fqName -> isTypeUseAnnotationClass(fqName, session) }
+        val isTypeUseAnnotation: (String) -> Boolean = { fqName ->
+            isTypeUseAnnotationClass(fqName, session)
+        }
         
         val typeUseAnnotations = filterTypeUseAnnotations(isTypeUseAnnotation)
+        
         val additionalTypeUseAnnotations = additionalAnnotations?.filter { annotation ->
             val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
             isTypeUseAnnotation(fqName)
@@ -359,16 +362,15 @@ private fun resolveTypeName(
     session: FirSession,
     source: KtSourceElement?
 ): ClassId {
-    // Try to resolve the type name using the Java type's resolve callback.
-    // The callback will try different package/class combinations and return
-    // the fully qualified name if found (e.g., "java.util.Map.Entry").
-    val resolvedFqn = javaType.resolve { candidateFqn ->
-        // Try to find the class by probing different package/class boundaries
-        findClassId(candidateFqn, session) != null
+    // Try ClassId-based resolution which avoids package/class ambiguity.
+    // The callback checks if a ClassId exists in the symbol provider.
+    val resolvedClassId = javaType.resolve { candidateClassId ->
+        session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
     }
-    
-    val fqnToUse = resolvedFqn ?: name
-    return findClassId(fqnToUse, session) ?: ClassId.topLevel(FqName(fqnToUse))
+    if (resolvedClassId != null) return resolvedClassId
+
+    // Fall back to probing different package/class boundaries for the raw name
+    return findClassId(name, session) ?: ClassId.topLevel(FqName(name))
 }
 
 /**
@@ -448,8 +450,16 @@ private fun isTypeUseAnnotationClass(fqName: String, session: FirSession): Boole
     val classId = findClassId(fqName, session) ?: ClassId.topLevel(FqName(fqName))
     
     // Resolve the annotation class
-    val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
-        as? FirRegularClass ?: return false
+    val symbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
+    
+    // Verify the symbol's classId matches our request. Some class finders may return
+    // classes from different packages when the requested package doesn't contain the class.
+    // This happens with PSI-based finders that match by simple name alone.
+    if (symbol != null && symbol.classId != classId) {
+        return false
+    }
+    
+    val annotationClass = symbol?.fir as? FirRegularClass ?: return false
     
     // Find @Target annotation on the annotation class
     // It could be java.lang.annotation.Target or kotlin.annotation.Target (mapped)

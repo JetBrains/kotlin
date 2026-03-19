@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -34,12 +35,9 @@ abstract class JavaTypeOverAst(
     /**
      * Filters annotations to only include TYPE_USE annotations using the provided callback.
      * 
-     * Unlike javac-wrapper which filters at the Java structure level, java-direct passes
-     * all annotations and relies on FIR to filter them using this callback. The callback
-     * resolves annotation classes and checks their @Target annotation.
-     * 
-     * Extra annotations (from method modifier list) are filtered using the callback.
-     * Direct annotations on the type node are TYPE_USE by definition (syntactically on the type).
+     * All annotations (from extraAnnotations, modifier list, and direct children) are filtered
+     * through the callback. For unresolved annotations (e.g., star imports), we resolve them
+     * first using the callback which checks both existence and TYPE_USE target.
      */
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
         val modifierListAnnotations = node.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
@@ -49,15 +47,26 @@ abstract class JavaTypeOverAst(
         val directAnnotations = node.getChildrenByType("ANNOTATION")
             .map { JavaAnnotationOverAst(it, resolutionContext) }
 
-        // Filter extra annotations (from method modifier list) using the callback
-        val filteredExtraAnnotations = extraAnnotations.filter { annotation ->
-            val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
+        val allAnnotations = extraAnnotations + modifierListAnnotations + directAnnotations
+
+        // Filter all annotations using the callback.
+        // For resolved annotations, use the callback directly.
+        // For unresolved annotations (star imports), try to resolve them first.
+        return allAnnotations.filter { annotation ->
+            val fqName = if (annotation.isResolved) {
+                annotation.classId?.asSingleFqName()?.asString()
+            } else {
+                // For unresolved annotations (star imports), we need to resolve first.
+                // The callback `isTypeUseAnnotation` checks BOTH existence AND TYPE_USE target.
+                // If it returns true for a candidate, that candidate exists and is TYPE_USE.
+                val resolved = annotation.resolveAnnotation { candidateClassId ->
+                    val candidateFqName = candidateClassId.asSingleFqName().asString()
+                    isTypeUseAnnotation(candidateFqName)
+                }
+                resolved?.asSingleFqName()?.asString()
+            } ?: return@filter false
             isTypeUseAnnotation(fqName)
         }
-
-        // Direct annotations on the type are TYPE_USE by definition
-        // Modifier list annotations within the type node are also TYPE_USE
-        return filteredExtraAnnotations + modifierListAnnotations + directAnnotations
     }
 
     override val isDeprecatedInJavaDoc: Boolean get() = false
@@ -259,8 +268,8 @@ class JavaClassifierTypeOverAst(
             return false
         }
 
-    override fun resolve(tryResolve: (String) -> Boolean): String? {
-        return resolutionContext.resolveWithCallback(rawTypeName, tryResolve)
+    override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
+        return resolutionContext.resolve(rawTypeName, tryResolve)
     }
 }
 
@@ -282,7 +291,11 @@ class JavaClassifierTypeForEnumEntry(
 
     // Already resolved - we have direct reference to the class
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
+    override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
+        val fqName = enumClass.fqName ?: return null
+        val classId = ClassId.topLevel(fqName)
+        return if (tryResolve(classId)) classId else null
+    }
 }
 
 class JavaPrimitiveTypeOverAst(
@@ -338,7 +351,7 @@ class JavaTypeParameterTypeOverAst(
 
     // Type parameter references are always resolved
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
+    // Type parameters don't resolve to ClassId - they're handled specially by FIR
 }
 
 fun createJavaType(
@@ -495,7 +508,10 @@ class EnumSupertypeForJavaDirect(
 
     // java.lang.Enum is always resolved (it's a well-known class)
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
+    override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
+        val classId = ClassId.topLevel(FqName(classifierQualifiedName))
+        return if (tryResolve(classId)) classId else null
+    }
 
     /**
      * The type argument for Enum<E> - represents the enum class itself.
@@ -511,7 +527,11 @@ class EnumSupertypeForJavaDirect(
         override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
         override val isResolved: Boolean get() = true
-        override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
+        override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
+            val fqName = enumClass.fqName ?: return null
+            val classId = ClassId.topLevel(fqName)
+            return if (tryResolve(classId)) classId else null
+        }
     }
 }
 
@@ -532,5 +552,8 @@ class SimpleClassifierType(
 
     // Well-known classes are always resolved
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
+    override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
+        val classId = ClassId.topLevel(FqName(classifierQualifiedName))
+        return if (tryResolve(classId)) classId else null
+    }
 }

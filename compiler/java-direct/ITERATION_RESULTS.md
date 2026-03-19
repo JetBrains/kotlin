@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-17 (iter 41)
+**Last Updated**: 2026-03-19 (iter 43)
 
 ---
 
@@ -422,6 +422,83 @@ Also removed unused `JAVA_LANG_TYPES` constant (dead code since iteration 31).
 ### Key Learnings
 - TYPE_USE annotations can appear inline within type references in the AST (not just in MODIFIER_LIST)
 - Always extract semantic content (identifiers) from AST structure, not raw text
+
+---
+
+## Iteration 43: ClassId-Based Resolution + TYPE_USE Annotation Fixes — 2026-03-18 to 2026-03-19
+
+### Part 1: ClassId-Based Resolution for Package vs Nested Class
+
+**Problem**: Qualified type names like `a.b` are ambiguous — they could mean:
+1. Package `a`, class `b` → `ClassId(FqName("a"), FqName("b"))`
+2. Class `a`, nested class `b` → `ClassId(FqName.ROOT, FqName("a.b"))`
+
+Per JLS 6.5.2, nested class interpretation takes priority when both are valid.
+
+**How PSI/javac-wrapper handle it**: Both resolve the type first (via `psi.resolveGenerics()` or `javac.resolve()`), then derive `classifierQualifiedName` from the resolved classifier. The resolution is done by the underlying system (IntelliJ for PSI, javac for javac-wrapper), which correctly implements JLS 6.5.2.
+
+**java-direct's issue**: `resolve((String) -> Boolean)` returned a string like `"a.b"`, which lost the package/class boundary information. When FIR's `findClassId` received this string, it tried package interpretations before nested class interpretations (iterating from longest package to shortest), violating JLS 6.5.2.
+
+**Fix**: Added new `resolveToClassId(tryResolve: (ClassId) -> Boolean): ClassId?` method that returns a `ClassId` directly, encoding the package/class boundary explicitly.
+
+**Files modified**:
+1. `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaTypes.kt` — Added `resolveToClassId` to `JavaClassifierType` interface
+2. `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt` — Implemented `resolveToClassId` in `JavaClassifierTypeOverAst`
+3. `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt` — Added `resolveToClassId`, `resolveNestedClassToClassId`, `resolveSimpleNameToClassId`
+4. `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt` — Updated `resolveTypeName` to try `resolveToClassId` first
+
+**Tests FIXED (1)**: `testTopLevelClassVsPackage`
+
+### Part 2: TYPE_USE Annotation Resolution for Star Imports
+
+**Problem**: 5 TYPE_USE annotation tests failing after ClassId changes. Tests expected `NullPointerException` when `@NotNull` annotation is on type arguments (e.g., `Iterator<@NotNull Integer>`), but the exception wasn't thrown.
+
+**Root cause**: Three interconnected issues:
+1. **Star-imported annotations** (`import org.jetbrains.annotations.*;`) weren't being resolved correctly — the ClassId `/NotNull` (empty package) was being used instead of `org.jetbrains.annotations/NotNull`
+2. **Binary class finder returned wrong package classes** — When requested `ClassId("", "NotNull")`, PSI-based binary finder returned `org.jetbrains.annotations.NotNull` from a different package, matching by simple name alone
+3. **FIR symbol provider uses requested ClassId** — FIR creates symbols with the ClassId passed to `getClassLikeSymbolByClassId`, not the actual class's ClassId, so wrong ClassId → wrong symbol identity → annotations not recognized
+
+**Debug findings**:
+```
+DEBUG CombinedClassFinder.findClass: classId=/NotNull, fromSource=null, fromBinary=org.jetbrains.annotations.NotNull
+DEBUG knownClassNamesInPackage: packageFqName=<root>, fromSources=[J], fromBinaries={J, NotNull}
+```
+
+**Fixes applied**:
+
+1. **`compiler/java-direct/src/org/jetbrains/kotlin/java/direct/CombinedJavaClassFinder.kt`**
+   - Added FQN verification in `findClass()` — reject classes where `actualFqName != expectedFqName`
+   - Prevents binary finder from returning classes from wrong packages
+
+2. **`compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`**
+   - Modified `filterTypeUseAnnotations` to filter ALL annotations (not just `extraAnnotations`) through the callback
+   - For unresolved annotations, attempts resolution using the callback as validator
+   - Changed from filtering only extra annotations to: `allAnnotations.filter { annotation -> ... isTypeUseAnnotation(fqName) }`
+
+3. **`compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt`**
+   - Added ClassId verification in `isTypeUseAnnotationClass()` — reject symbols where `symbol.classId != classId`
+   - Prevents using symbols created with wrong ClassIds
+
+**Tests FIXED (4)**:
+- `testJavaIteratorOfNotNullFailFast`
+- `testJavaIteratorOfNotNullFailFast2`
+- `testJavaIteratorOfNotNullFailFastIndexed`
+- `testJavaIteratorOfNotNullFailFastOtherType`
+
+### Combined Test Results
+- **Box tests**: 1163/1168 passing (+2 from 1161)
+- **Phased tests**: 1396/1443 passing (+2 from 1394, total tests +1)
+- **Total failures**: 56 → 52 (5 tests fixed: 1 from Part 1, 4 from Part 2)
+- **PSI regression tests**: All passing ✅
+
+### Key Learnings
+- String-based resolution loses information about package/class boundaries — `ClassId` encodes this boundary explicitly
+- JLS 6.5.2 requires nested class interpretation when the outer class is in scope
+- Star-imported annotations require resolution before filtering — the ClassId must be resolved to actual FQN
+- Binary class finders may match by simple name alone — always verify FQN matches requested ClassId
+- FIR symbol provider uses the REQUESTED ClassId, not the class's actual ClassId — wrong request → wrong symbol identity
+- TYPE_USE annotation filtering must apply to ALL annotation sources, not just extra annotations
+- Both `resolve` and `resolveToClassId` are needed: `resolveToClassId` for precise ClassId resolution, `resolve` for annotation resolution where string FQN is sufficient
 
 ---
 

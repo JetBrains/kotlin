@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -362,11 +363,11 @@ class JavaParsingTest {
         assert(!fieldType.isResolved) { "Expected isResolved=false for unqualified Object" }
         assert(fieldType.classifier == null) { "Expected classifier=null for external type" }
 
-        val resolved = fieldType.resolve { candidateFqn ->
-            candidateFqn == "java.lang.Object"
+        val resolved = fieldType.resolve { candidateClassId ->
+            candidateClassId == ClassId.topLevel(FqName("java.lang.Object"))
         }
 
-        assert(resolved == "java.lang.Object") { "Expected resolution to 'java.lang.Object', got '$resolved'" }
+        assert(resolved == ClassId.topLevel(FqName("java.lang.Object"))) { "Expected resolution to 'java.lang.Object', got '$resolved'" }
     }
 
     @Test
@@ -411,11 +412,11 @@ class JavaParsingTest {
         assert(!paramType.isResolved) { "Object should not be pre-resolved" }
         assert(paramType.classifier == null) { "Object should have null classifier (external type)" }
 
-        val resolved = paramType.resolve { candidateFqn ->
-            candidateFqn == "java.lang.Object"
+        val resolved = paramType.resolve { candidateClassId ->
+            candidateClassId == ClassId.topLevel(FqName("java.lang.Object"))
         }
 
-        assert(resolved == "java.lang.Object") { "Expected 'java.lang.Object', got '$resolved'" }
+        assert(resolved == ClassId.topLevel(FqName("java.lang.Object"))) { "Expected 'java.lang.Object', got '$resolved'" }
     }
 
     @Test
@@ -1675,6 +1676,300 @@ class JavaParsingTest {
         assert(barReturnType.annotations.size == 1) { "bar's return type should have 1 annotation (@Nullable), got ${barReturnType.annotations.size}" }
         assert(barReturnType.annotations.first().classId?.shortClassName?.asString() == "Nullable") {
             "Expected @Nullable annotation on bar's return type"
+        }
+    }
+
+    @Test
+    fun testQualifiedTypeResolutionClassVsPackage() {
+        // When a qualified name like "a.b" could refer to either:
+        // - package a, class b
+        // - class a, nested class b
+        // Java resolves to "class a, nested class b" (class takes priority)
+        val source = """
+            // This simulates class a with nested class b
+            public class a {
+                public class b {
+                    public void nestedMethod() {}
+                }
+            }
+        """.trimIndent()
+        
+        val (root, context) = parseSource(source)
+        val classA = JavaClassOverAst(root.children.first { it.type.toString() == "CLASS" }, context)
+        
+        // Verify we can find nested class b
+        val nestedB = classA.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("b"))
+        assert(nestedB != null) { "Should find nested class b in class a" }
+        assert(nestedB!!.fqName?.asString() == "a.b") { "Nested class fqName should be 'a.b', got ${nestedB.fqName}" }
+        
+        // Now test resolution of "a.b" as a type reference in another class (same file)
+        val source2 = """
+            public class c2 {
+                public a.b getB() { return null; }
+            }
+            
+            public class a {
+                public class b {}
+            }
+        """.trimIndent()
+        
+        val (root2, context2) = parseSource(source2)
+        val classes = root2.children.filter { it.type.toString() == "CLASS" }
+        val c2Class = JavaClassOverAst(classes.first { it.findChildByType("IDENTIFIER")?.text == "c2" }, context2)
+        
+        val getBMethod = c2Class.methods.first { it.name.asString() == "getB" }
+        val returnType = getBMethod.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        println("Return type classifierQualifiedName: ${returnType.classifierQualifiedName}")
+        println("Return type classifier: ${returnType.classifier}")
+        println("Return type isResolved: ${returnType.isResolved}")
+        
+        // The return type "a.b" should resolve to nested class a.b (class a has priority over package a)
+        assert(returnType.classifier != null) { "Return type 'a.b' should resolve to local nested class" }
+        assert(returnType.classifier?.name?.asString() == "b") { "Classifier should be 'b'" }
+    }
+
+    @Test
+    fun testQualifiedTypeResolutionCrossFile() {
+        // Test cross-file scenario: c2.java references a.b where class a is in another file
+        // This is the scenario that fails in TopLevelClassVsPackage test
+        
+        // c2.java - uses qualified a.b, class a is NOT in this file
+        val sourceC2 = """
+            public class c2 {
+                public a.b getB() { return null; }
+            }
+        """.trimIndent()
+        
+        val (rootC2, contextC2) = parseSource(sourceC2)
+        val c2Class = JavaClassOverAst(
+            rootC2.children.first { it.type.toString() == "CLASS" }, 
+            contextC2
+        )
+        
+        val getBMethod = c2Class.methods.first { it.name.asString() == "getB" }
+        val returnType = getBMethod.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        println("Cross-file test:")
+        println("  classifierQualifiedName: ${returnType.classifierQualifiedName}")
+        println("  classifier: ${returnType.classifier}")
+        println("  isResolved: ${returnType.isResolved}")
+        
+        // When class 'a' is NOT in the same file, classifier should be null (external)
+        // and isResolved should be false (needs FIR resolution)
+        assert(returnType.classifier == null) { "Classifier should be null for external type" }
+        assert(!returnType.isResolved) { "Should not be resolved when class 'a' is in different file" }
+        assert(returnType.classifierQualifiedName == "a.b") { "classifierQualifiedName should be 'a.b'" }
+        
+        // The key question: what does resolve() return when FIR calls it?
+        // It should try both "class a with nested b" AND "package a with class b"
+        // and let FIR determine which one exists
+        
+        var resolvedClassIds = mutableListOf<ClassId>()
+        val resolved = returnType.resolve { candidateClassId ->
+            resolvedClassIds.add(candidateClassId)
+            // Simulate: both a.b (package.class) and a.b (outer.nested) could exist
+            // FIR would check which one actually exists
+            false // Don't resolve, just collect candidates
+        }
+        
+        println("  Candidates tried: $resolvedClassIds")
+        
+        // The resolve() should try "a.b" in some form
+        assert(resolvedClassIds.isNotEmpty()) { "resolve() should try at least one candidate" }
+    }
+
+    @Test
+    fun testStarImportAnnotationResolution() {
+        val source = """
+            import org.jetbrains.annotations.*;
+            
+            public class J {
+                public static java.util.Iterator<@NotNull Integer> iteratorOfNotNull() {
+                    return null;
+                }
+            }
+        """.trimIndent()
+
+        val (root, context) = parseSource(source)
+        
+        // Check that star import is extracted
+        val starCandidate = context.getFirstStarImportCandidate("NotNull")
+        assert(starCandidate != null) { "Expected star import candidate for NotNull" }
+        assert(starCandidate?.packageFqName?.asString() == "org.jetbrains.annotations") {
+            "Expected package org.jetbrains.annotations, got ${starCandidate?.packageFqName}"
+        }
+        
+        // Find the class and method
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, context)
+        val method = javaClass.methods.first { it.name.asString() == "iteratorOfNotNull" }
+        val returnType = method.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        // Get the type argument (Integer with @NotNull)
+        val typeArg = returnType.typeArguments.firstOrNull() as? org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(typeArg != null) { "Expected type argument on Iterator" }
+        
+        val allAnnotations = typeArg!!.annotations.toList()
+        assert(allAnnotations.size == 1) { "Expected 1 annotation on type argument, got ${allAnnotations.size}: ${allAnnotations.map { it.classId }}" }
+        
+        val ann = allAnnotations.first()
+        assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull annotation, got ${ann.classId}" }
+        assert(!ann.isResolved) { "Annotation should be unresolved (star import)" }
+        
+        // Try resolving via resolveAnnotation
+        val candidates = mutableListOf<ClassId>()
+        val resolved = ann.resolveAnnotation { candidateClassId ->
+            candidates.add(candidateClassId)
+            // Simulate: accept org.jetbrains.annotations.NotNull
+            candidateClassId.asSingleFqName().asString() == "org.jetbrains.annotations.NotNull"
+        }
+        
+        assert(candidates.isNotEmpty()) { "resolveAnnotation should try candidates" }
+        assert(resolved != null) { "resolveAnnotation should resolve to org.jetbrains.annotations.NotNull, candidates tried: $candidates" }
+        assert(resolved?.asSingleFqName()?.asString() == "org.jetbrains.annotations.NotNull") {
+            "Expected org.jetbrains.annotations.NotNull, got ${resolved?.asSingleFqName()}"
+        }
+        
+        // Test filterTypeUseAnnotations
+        val callbackFqNames = mutableListOf<String>()
+        val filtered = typeArg.filterTypeUseAnnotations { fqName ->
+            callbackFqNames.add(fqName)
+            fqName == "org.jetbrains.annotations.NotNull"
+        }
+        
+        assert(filtered.size == 1) { 
+            "Expected 1 TYPE_USE annotation, got ${filtered.size}. Callback received: $callbackFqNames" 
+        }
+    }
+
+    @Test
+    fun testExactTestDataFormat() {
+        // Test the exact format from javaIteratorOfNotNullFailFast.kt
+        // J.java has no package and uses star import
+        val source = """
+            import java.util.*;
+            import org.jetbrains.annotations.*;
+            
+            public class J {
+                public static Iterator<@NotNull Integer> iteratorOfNotNull() {
+                    return Collections.<Integer>singletonList(null).iterator();
+                }
+            }
+        """.trimIndent()
+
+        val (root, context) = parseSource(source)
+        
+        // Verify star imports are extracted
+        val starCandidate1 = context.getFirstStarImportCandidate("Iterator")
+        assert(starCandidate1?.packageFqName?.asString() == "java.util") {
+            "First star import should be java.util, got ${starCandidate1?.packageFqName}"
+        }
+        
+        // Check if org.jetbrains.annotations is in star imports
+        val starCandidate2 = context.getFirstStarImportCandidate("NotNull")
+        // Note: getFirstStarImportCandidate returns the FIRST star import package
+        // We need to check if org.jetbrains.annotations is also there
+        
+        // Find the class and method
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, context)
+        val method = javaClass.methods.first { it.name.asString() == "iteratorOfNotNull" }
+        val returnType = method.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        // Get the type argument (Integer with @NotNull)
+        assert(returnType.typeArguments.size == 1) { "Expected 1 type arg, got ${returnType.typeArguments.size}" }
+        val typeArg = returnType.typeArguments.first() as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        val allAnnotations = typeArg.annotations.toList()
+        assert(allAnnotations.size == 1) { "Expected 1 annotation on type argument, got ${allAnnotations.size}" }
+        
+        val ann = allAnnotations.first()
+        assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull, got ${ann.classId}" }
+        assert(!ann.isResolved) { "Annotation should be unresolved" }
+        
+        // Test resolution - simulate what FIR does
+        // FIR's isTypeUseAnnotationClass will accept org.jetbrains.annotations.NotNull
+        val candidatesTried = mutableListOf<String>()
+        val resolved = ann.resolveAnnotation { candidateClassId ->
+            val fqn = candidateClassId.asSingleFqName().asString()
+            candidatesTried.add(fqn)
+            fqn == "org.jetbrains.annotations.NotNull"
+        }
+        
+        assert(candidatesTried.contains("org.jetbrains.annotations.NotNull")) {
+            "Should have tried org.jetbrains.annotations.NotNull, tried: $candidatesTried"
+        }
+        assert(resolved != null) { "Should resolve to org.jetbrains.annotations.NotNull" }
+        
+        // Test filterTypeUseAnnotations
+        val filteredAnnotations = typeArg.filterTypeUseAnnotations { fqName ->
+            fqName == "org.jetbrains.annotations.NotNull"
+        }
+        assert(filteredAnnotations.size == 1) { "Expected 1 filtered annotation, got ${filteredAnnotations.size}" }
+    }
+
+    @Test
+    fun testMultiFileClassFinder(@TempDir tempDir: Path) {
+        // Simulate the test scenario: J.java uses star import for org.jetbrains.annotations.*
+        // NotNull.java defines the annotation in that package
+        
+        // Create NotNull.java in org/jetbrains/annotations/
+        val annotationsDir = tempDir.resolve("org/jetbrains/annotations")
+        annotationsDir.toFile().mkdirs()
+        annotationsDir.resolve("NotNull.java").writeText("""
+            package org.jetbrains.annotations;
+            
+            import java.lang.annotation.*;
+            
+            @Documented
+            @Retention(RetentionPolicy.CLASS)
+            @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.TYPE_USE})
+            public @interface NotNull {
+            }
+        """.trimIndent())
+        
+        // Create J.java in root (default package)
+        tempDir.resolve("J.java").writeText("""
+            import java.util.*;
+            import org.jetbrains.annotations.*;
+            
+            public class J {
+                public static Iterator<@NotNull Integer> iteratorOfNotNull() {
+                    return Collections.<Integer>singletonList(null).iterator();
+                }
+            }
+        """.trimIndent())
+        
+        // Create class finder with tempDir as source root
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        
+        // Verify NotNull.java is indexed
+        val annotationPackageClasses = finder.knownClassNamesInPackage(FqName("org.jetbrains.annotations"))
+        assert(annotationPackageClasses != null) { "org.jetbrains.annotations package should be indexed" }
+        assert("NotNull" in annotationPackageClasses!!) { 
+            "NotNull should be in org.jetbrains.annotations, found: $annotationPackageClasses" 
+        }
+        
+        // Verify we can find the annotation class
+        val notNullClassId = ClassId(FqName("org.jetbrains.annotations"), org.jetbrains.kotlin.name.Name.identifier("NotNull"))
+        val notNullClass = finder.findClass(org.jetbrains.kotlin.load.java.JavaClassFinder.Request(notNullClassId))
+        assert(notNullClass != null) { "Should find NotNull class" }
+        assert(notNullClass!!.isAnnotationType) { "NotNull should be an annotation type" }
+        
+        // Check that NotNull has @Target annotation with TYPE_USE
+        val allAnnotations = notNullClass.annotations.toList()
+        assert(allAnnotations.isNotEmpty()) { 
+            "NotNull should have annotations, but found none" 
+        }
+        
+        val targetAnnotation = allAnnotations.find { 
+            val classId = it.classId
+            classId?.shortClassName?.asString() == "Target" || 
+            classId?.asSingleFqName()?.asString() == "java.lang.annotation.Target"
+        }
+        assert(targetAnnotation != null) { 
+            "NotNull should have @Target annotation, found: ${allAnnotations.map { it.classId }}" 
         }
     }
 }
