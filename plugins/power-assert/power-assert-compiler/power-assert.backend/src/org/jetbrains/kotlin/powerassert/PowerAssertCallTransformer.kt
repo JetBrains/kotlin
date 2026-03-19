@@ -35,13 +35,14 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.powerassert.PowerAssertDiagnostics.POWER_ASSERT_CAPABLE_OVERLOAD_MISSING
 import org.jetbrains.kotlin.powerassert.PowerAssertDiagnostics.POWER_ASSERT_CONSTANT
 import org.jetbrains.kotlin.powerassert.PowerAssertDiagnostics.POWER_ASSERT_FUNCTION_NOT_TRANSFORMED
 import org.jetbrains.kotlin.powerassert.PowerAssertDiagnostics.POWER_ASSERT_RUNTIME_UNAVAILABLE
+import org.jetbrains.kotlin.powerassert.PowerAssertNames.POWER_ASSERT_CLASS_ID
+import org.jetbrains.kotlin.powerassert.PowerAssertNames.POWER_ASSERT_IGNORE_CLASS_ID
 import org.jetbrains.kotlin.powerassert.builder.call.CallBuilder
 import org.jetbrains.kotlin.powerassert.builder.call.LambdaCallBuilder
 import org.jetbrains.kotlin.powerassert.builder.call.SamConversionLambdaCallBuilder
@@ -70,7 +71,7 @@ class PowerAssertCallTransformer(
             // Never transform calls to super instance of the same function. TODO is there a better check for this?
             expression.superQualifierSymbol != null && expression.symbol in currentFunction?.overriddenSymbols.orEmpty() -> expression
             // Called function is annotated with @PowerAssert so should be transformed with CallExplanation.
-            function.hasAnnotationOrOverridden(PowerAssertBuiltIns.powerAssertClassId) -> buildForAnnotated(expression, function)
+            function.hasAnnotationOrOverridden(POWER_ASSERT_CLASS_ID) -> buildForAnnotated(expression, function)
             // Call has no parameters to transform.
             function.parameters.isEmpty() -> expression
             // Called function is part of configuration so should be transformed with raw string diagram.
@@ -162,8 +163,8 @@ class PowerAssertCallTransformer(
 
             // Check if the parameter or parameter type should be ignored.
             if (
-                parameter.hasAnnotation(PowerAssertBuiltIns.powerAssertIgnoreClassId) ||
-                parameter.type.getClass()?.hasAnnotation(PowerAssertBuiltIns.powerAssertIgnoreClassId) == true
+                parameter.hasAnnotation(POWER_ASSERT_IGNORE_CLASS_ID) ||
+                parameter.type.getClass()?.hasAnnotation(POWER_ASSERT_IGNORE_CLASS_ID) == true
             ) {
                 val root = RootNode(parameter)
                 if (argument != null) root.addChild(HiddenNode(argument))
@@ -299,14 +300,3 @@ class PowerAssertCallTransformer(
         }
     }
 }
-
-val IrFunction.callableId: CallableId
-    get() {
-        val parentClass = parent as? IrClass
-        val classId = parentClass?.classId
-        return if (classId != null && !parentClass.isFileClass) {
-            CallableId(classId, name)
-        } else {
-            CallableId(parent.kotlinFqName, name)
-        }
-    }

@@ -3,7 +3,7 @@
 // MODULE: lib
 // FILE: A.kt
 
-import kotlinx.powerassert.*
+import kotlin.powerassert.*
 
 interface TypeA {
     fun describe(value: Any): String?

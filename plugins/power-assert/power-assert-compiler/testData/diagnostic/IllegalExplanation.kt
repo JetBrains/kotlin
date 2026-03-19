@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-import kotlinx.powerassert.*
+import kotlin.powerassert.*
 
 fun powerAssert() {
     <!POWER_ASSERT_ILLEGAL_EXPLANATION_ACCESS!>PowerAssert.explanation<!>

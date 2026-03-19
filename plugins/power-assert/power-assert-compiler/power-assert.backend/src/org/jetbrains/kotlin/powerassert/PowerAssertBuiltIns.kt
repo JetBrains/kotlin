@@ -17,7 +17,13 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.invokeFun
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.powerassert.PowerAssertNames.CALL_EXPLANATION_CLASS_ID
+import org.jetbrains.kotlin.powerassert.PowerAssertNames.POWER_ASSERT_CLASS_ID
+import org.jetbrains.kotlin.powerassert.PowerAssertNames.POWER_ASSERT_PACKAGE_FQ_NAME
 
 class PowerAssertBuiltIns private constructor(
     irBuiltIns: IrBuiltIns,
@@ -27,7 +33,7 @@ class PowerAssertBuiltIns private constructor(
     companion object {
         fun from(context: IrPluginContext): PowerAssertBuiltIns? {
             val finder = context.finderForBuiltins()
-            finder.findClass(powerAssertClassId) ?: return null
+            finder.findClass(POWER_ASSERT_CLASS_ID) ?: return null
             return PowerAssertBuiltIns(
                 context.irBuiltIns,
                 finder,
@@ -46,13 +52,13 @@ class PowerAssertBuiltIns private constructor(
         }
 
         private fun classId(identifier: String): ClassId =
-            ClassId(packageFqName, Name.identifier(identifier))
+            ClassId(POWER_ASSERT_PACKAGE_FQ_NAME, Name.identifier(identifier))
 
         private fun classId(parent: ClassId, identifier: String): ClassId =
             parent.createNestedClassId(Name.identifier(identifier))
 
         private fun callableId(identifier: String): CallableId =
-            CallableId(packageFqName, Name.identifier(identifier))
+            CallableId(POWER_ASSERT_PACKAGE_FQ_NAME, Name.identifier(identifier))
 
 
         private fun DeclarationFinder.findClassOrError(classId: ClassId): IrClassSymbol =
@@ -64,16 +70,7 @@ class PowerAssertBuiltIns private constructor(
         private val IrClassSymbol.primaryConstructorOrError: IrConstructorSymbol
             get() = owner.primaryConstructor?.symbol ?: dependencyError()
 
-
-        val packageFqName = FqName("kotlinx.powerassert")
-
-        val powerAssertFqName = packageFqName.child(Name.identifier("PowerAssert"))
-        val powerAssertClassId = ClassId.topLevel(powerAssertFqName)
-        val powerAssertIgnoreClassId = classId(powerAssertClassId, "Ignore")
-
-        private val callExplanationFqName = packageFqName.child(Name.identifier("CallExplanation"))
-        private val callExplanationClassId = ClassId.topLevel(callExplanationFqName)
-        private val argumentClassId = classId(callExplanationClassId, "Argument")
+        private val argumentClassId = classId(CALL_EXPLANATION_CLASS_ID, "Argument")
         private val kindClassId = classId(argumentClassId, "Kind")
     }
 
@@ -89,7 +86,7 @@ class PowerAssertBuiltIns private constructor(
     val equalityExpressionClass = finder.findClassOrError(classId("EqualityExpression"))
     val equalityExpressionConstructor = equalityExpressionClass.primaryConstructorOrError
 
-    val callExplanationClass = finder.findClassOrError(callExplanationClassId)
+    val callExplanationClass = finder.findClassOrError(CALL_EXPLANATION_CLASS_ID)
     val callExplanationType = callExplanationClass.defaultType
     val callExplanationConstructor = callExplanationClass.primaryConstructorOrError
     val function0CallExplanationType = irBuiltIns.functionN(0).typeWith(callExplanationType)

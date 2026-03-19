@@ -58,7 +58,7 @@ fun TestConfigurationBuilder.configurePlugin() {
         +WITH_STDLIB
 
         DIAGNOSTICS + "-POWER_ASSERT_CONSTANT"
-        OPT_IN + "kotlinx.powerassert.ExperimentalPowerAssert"
+        OPT_IN + "kotlin.powerassert.ExperimentalPowerAssert"
     }
     useDirectives(PowerAssertConfigurationDirectives)
 

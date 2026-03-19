@@ -1,96 +1,44 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     kotlin("multiplatform")
 }
 
-val MODULE_NAME = "kotlin-power-assert-runtime"
-fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
-    freeCompilerArgs.add("-Xreturn-value-checker=full")
-}
-
 description = "Kotlin Power-Assert Runtime"
-base.archivesName = MODULE_NAME
 
 kotlin {
     explicitApi()
 
-    targets.all {
-        compilations.all {
-            compileTaskProvider.configure {
-                compilerOptions {
-                    optIn.add("kotlin.contracts.ExperimentalContracts")
-                }
-            }
-        }
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-Xreturn-value-checker=full",
+            "-Xallow-kotlin-package",
+        )
     }
 
-    metadata { // For common sources in IDE
-        compilations.all {
-            compileTaskProvider.configure {
-                compilerOptions.addReturnValueCheckerInfo()
-            }
-        }
-    }
+    metadata() // For common sources in IDE
 
-    jvm {
-        compilations["main"].compileTaskProvider.configure {
-            compilerOptions.addReturnValueCheckerInfo()
-        }
-    }
+    jvm()
 
     js {
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {}
-        }
-        nodejs {}
-        compilations["main"].compileTaskProvider.configure {
-            compilerOptions.freeCompilerArgs.addAll(
-                "-Xklib-ir-inliner=intra-module",
-                "-Xir-module-name=$MODULE_NAME",
-            )
-            compilerOptions.addReturnValueCheckerInfo()
-        }
+        browser()
+        nodejs()
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         nodejs()
-        (this as KotlinJsTargetDsl).compilerOptions {
-            freeCompilerArgs.addAll(
-                "-Xklib-ir-inliner=intra-module",
-                "-source-map=false",
-                "-source-map-embed-sources=",
-            )
-        }
-        compilations["main"].compileTaskProvider.configure {
-            compilerOptions.freeCompilerArgs.add("-Xir-module-name=$MODULE_NAME")
-            compilerOptions.addReturnValueCheckerInfo()
-        }
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         nodejs()
-        (this as KotlinJsTargetDsl).compilerOptions {
-            freeCompilerArgs.addAll(
-                "-Xklib-ir-inliner=intra-module",
-                "-source-map=false",
-                "-source-map-embed-sources=",
-            )
-        }
-        compilations["main"].compileTaskProvider.configure {
-            compilerOptions.freeCompilerArgs.add("-Xir-module-name=$MODULE_NAME")
-            compilerOptions.addReturnValueCheckerInfo()
-        }
     }
 
     if (kotlinBuildProperties.isInIdeaSync.get()) {
-        // this magic is needed because of explicit dependency of common
-        // source set on the stdlib
+        // This is required because of the common source set dependency on a local stdlib.
+        // Only these targets are added in the stdlib project during IDEA sync.
         when {
             HostManager.hostIsMac -> @Suppress("DEPRECATION") macosX64("native")
             HostManager.hostIsMingw -> mingwX64("native")

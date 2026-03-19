@@ -1,4 +1,4 @@
-import kotlinx.powerassert.*
+import kotlin.powerassert.*
 import kotlin.test.*
 
 @PowerAssert

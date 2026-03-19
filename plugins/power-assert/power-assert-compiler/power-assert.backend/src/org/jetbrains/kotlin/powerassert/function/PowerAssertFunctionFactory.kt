@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.powerassert.PowerAssertNames.POWER_ASSERT_FQ_NAME
 
 var IrSimpleFunction.powerAssertDispatchSymbol: IrSimpleFunctionSymbol? by irAttribute(copyByDefault = false)
 
@@ -50,7 +51,7 @@ class PowerAssertFunctionFactory(
         powerAssertFunction.apply {
             origin = FUNCTION_FOR_POWER_ASSERT
             name = Name.identifier("${originalFunction.name.identifier}\$powerassert")
-            annotations = annotations.filter { !it.isAnnotation(PowerAssertBuiltIns.powerAssertFqName) }
+            annotations = annotations.filter { !it.isAnnotation(POWER_ASSERT_FQ_NAME) }
             annotations += createJvmSyntheticAnnotation()
             val explanationParameter = addValueParameter {
                 name = Name.identifier("\$explanation")

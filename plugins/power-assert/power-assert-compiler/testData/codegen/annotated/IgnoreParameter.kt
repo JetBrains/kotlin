@@ -1,6 +1,6 @@
 // DUMP_KT_IR
 
-import kotlinx.powerassert.*
+import kotlin.powerassert.*
 
 @PowerAssert
 fun assertEquals(expected: Any?, actual: Any?, @PowerAssert.Ignore message: String? = null) {

@@ -1,6 +1,6 @@
 // DUMP_KT_IR
 
-import kotlinx.powerassert.*
+import kotlin.powerassert.*
 
 fun box(): String {
     return explain("OK") ?: "FAIL"

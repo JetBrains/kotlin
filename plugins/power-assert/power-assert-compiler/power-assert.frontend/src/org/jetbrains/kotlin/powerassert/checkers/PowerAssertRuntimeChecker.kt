@@ -14,20 +14,15 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.powerassert.PowerAssertDiagnostics
+import org.jetbrains.kotlin.powerassert.PowerAssertNames.POWER_ASSERT_CLASS_ID
 
 internal object PowerAssertRuntimeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    private val powerAssertClassId: ClassId =
-        ClassId(FqName("kotlinx.powerassert"), Name.identifier("PowerAssert"))
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val function = expression.calleeReference.toResolvedFunctionSymbol() ?: return
-        if (!function.hasAnnotation(powerAssertClassId, context.session)) return
-        if (powerAssertClassId.toSymbol() == null) {
+        if (!function.hasAnnotation(POWER_ASSERT_CLASS_ID, context.session)) return
+        if (POWER_ASSERT_CLASS_ID.toSymbol() == null) {
             reporter.reportOn(
                 expression.source,
                 PowerAssertDiagnostics.POWER_ASSERT_RUNTIME_UNAVAILABLE,

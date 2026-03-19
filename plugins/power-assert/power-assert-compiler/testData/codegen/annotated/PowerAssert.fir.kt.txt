@@ -18,7 +18,7 @@ fun box(): String {
       val tmp2_Explain: List<String> = emptyList<String>()
       val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
       explain$powerassert(value = tmp3_Explain, $explanation = local fun <anonymous>(): CallExplanation {
-        return CallExplanation(offset = 107, source = "           explain(reallyLongList.reversed() == emptyList<String>())", arguments = listOf<Argument>(elements = [Argument(startOffset = 19, endOffset = 67, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 19, endOffset = 33, displayOffset = 19, value = tmp0_Explain), ValueExpression(startOffset = 19, endOffset = 44, displayOffset = 34, value = tmp1_Explain), ValueExpression(startOffset = 48, endOffset = 67, displayOffset = 48, value = tmp2_Explain), EqualityExpression(startOffset = 19, endOffset = 67, displayOffset = 45, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)]))]))
+        return CallExplanation(offset = 106, source = "           explain(reallyLongList.reversed() == emptyList<String>())", arguments = listOf<Argument>(elements = [Argument(startOffset = 19, endOffset = 67, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 19, endOffset = 33, displayOffset = 19, value = tmp0_Explain), ValueExpression(startOffset = 19, endOffset = 44, displayOffset = 34, value = tmp1_Explain), ValueExpression(startOffset = 48, endOffset = 67, displayOffset = 48, value = tmp2_Explain), EqualityExpression(startOffset = 19, endOffset = 67, displayOffset = 45, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)]))]))
       }
 )
     }

@@ -14,7 +14,7 @@ fun box(): String {
     val tmp_1: String? = { // BLOCK
       val tmp0_Explain: String = "OK"
       explain$powerassert(value = tmp0_Explain, $explanation = local fun <anonymous>(): CallExplanation {
-        return CallExplanation(offset = 65, source = "           explain(\"OK\")", arguments = listOf<Argument>(elements = [Argument(startOffset = 19, endOffset = 23, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 19, endOffset = 23, displayOffset = 19, value = tmp0_Explain)]))]))
+        return CallExplanation(offset = 64, source = "           explain(\"OK\")", arguments = listOf<Argument>(elements = [Argument(startOffset = 19, endOffset = 23, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 19, endOffset = 23, displayOffset = 19, value = tmp0_Explain)]))]))
       }
 )
     }

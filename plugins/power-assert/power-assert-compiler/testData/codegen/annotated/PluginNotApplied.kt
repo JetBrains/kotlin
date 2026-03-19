@@ -4,7 +4,7 @@
 // DISABLE_PLUGIN
 // FILE: A.kt
 
-import kotlinx.powerassert.*
+import kotlin.powerassert.*
 
 @PowerAssert
 fun describe(value: Any): String? {

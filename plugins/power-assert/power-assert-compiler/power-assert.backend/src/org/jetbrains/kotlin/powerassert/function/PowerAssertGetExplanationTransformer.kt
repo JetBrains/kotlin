@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.util.callableId
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.powerassert.PowerAssertNames.POWER_ASSERT_EXPLANATION_GETTER_CALLABLE_ID
 
 /**
  * Replaces all calls to `PowerAssert.explanation` with either `null` or a parameter access.
@@ -23,8 +24,8 @@ class PowerAssertGetExplanationTransformer(
     private val parameter: IrValueParameter?,
 ) : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
-        return when (expression.symbol.owner.kotlinFqName) {
-            PowerAssertGetExplanation -> when (parameter) {
+        return when (expression.symbol.owner.callableId) {
+            POWER_ASSERT_EXPLANATION_GETTER_CALLABLE_ID -> when (parameter) {
                 null -> IrConstImpl.constNull(expression.startOffset, expression.endOffset, builtIns.callExplanationType.makeNullable())
                 else -> {
                     val callee = builtIns.function0invoke
