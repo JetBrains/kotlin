@@ -102,6 +102,7 @@ class SwiftFlowIterator<T> private constructor(
 ): FlowCollector<T> {
     private object Retry
     private class Throw(val exception: Throwable)
+    inner class Value(val value: T)
 
     private sealed interface State {
         // State transitions:
@@ -158,7 +159,7 @@ class SwiftFlowIterator<T> private constructor(
                         if (!this@SwiftFlowIterator.state.compareAndSet(state, newState)) {
                             continuation.resume(Retry) // state changed; continue the outer loop
                         } else {
-                            state.continuation.resume(value) // continue the consumer
+                            state.continuation.resume(Value(value)) // continue the consumer
                         }
                     }.handleActions<Unit> { continue@loop }
                 }
@@ -171,7 +172,7 @@ class SwiftFlowIterator<T> private constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    public suspend fun next(): T? {
+    public suspend fun next(): Value? {
         loop@while (true) {
             when (val state = this@SwiftFlowIterator.state.load()) {
                 is State.Ready<*> -> {
@@ -183,7 +184,7 @@ class SwiftFlowIterator<T> private constructor(
                         } else {
                             this.launch(state.flow)
                         }
-                    }?.handleActions<T> { continue@loop }
+                    }?.handleActions<Value> { continue@loop }
                 }
                 is State.AwaitingConsumer -> {
                     return suspendCancellableCoroutine<Any?> { continuation ->
@@ -193,7 +194,7 @@ class SwiftFlowIterator<T> private constructor(
                         } else {
                             state.continuation.resume(Unit) // continue the producer
                         }
-                    }?.handleActions<T> { continue@loop }
+                    }?.handleActions<Value> { continue@loop }
                 }
                 is State.AwaitingProducer -> {
                     error("KotlinFlowIterator doesn't support concurrent receivers")
@@ -233,9 +234,10 @@ public fun SwiftFlowIterator_cancel(self: kotlin.native.internal.NativePtr): Uni
 public fun SwiftFlowIterator_next(self: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SwiftFlowIterator<kotlin.Any?>
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(continuation);
-        { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.Boolean, kotlin.native.internal.NativePtr)->Unit>(continuation);
+        { arg0: kotlin.Boolean, arg1: kotlin.Any? ->
+            val _arg1 = if (arg1 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg1)
+            val _result = kotlinFun(arg0, _arg1)
             _result
         }
     }
@@ -250,7 +252,11 @@ public fun SwiftFlowIterator_next(self: kotlin.native.internal.NativePtr, contin
     CoroutineScope(__cancellation + Dispatchers.Default).launch(start = CoroutineStart.UNDISPATCHED) {
         try {
             val _result = __self.next()
-            __continuation(_result)
+            if (_result == null) {
+                __continuation(false, null)
+            } else {
+                __continuation(true, _result.value)
+            }
         } catch (error: CancellationException) {
             __cancellation.cancel()
             __exception(null)

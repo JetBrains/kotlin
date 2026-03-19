@@ -11,7 +11,7 @@ void __root___SwiftJob_cancelExternally(void *);
 
 void _kotlin_swift_SwiftFlowIterator_cancel(void * self);
 
-void _kotlin_swift_SwiftFlowIterator_next(void * self, int32_t (^continuation)(void * _Nullable ), int32_t (^exception)(void * _Nullable ), void * cancellation);
+void _kotlin_swift_SwiftFlowIterator_next(void * self, int32_t (^continuation)(bool, void * _Nullable ), int32_t (^exception)(void * _Nullable ), void * cancellation);
 
 void *_kotlin_swift_SwiftFlowIterator_init_allocate();
 

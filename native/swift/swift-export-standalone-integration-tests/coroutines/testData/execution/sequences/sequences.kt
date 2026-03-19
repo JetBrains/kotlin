@@ -27,6 +27,8 @@ object CurrentSubject {
 
 fun testRegular(): Flow<Elem> = flowOf(Element1, Element2, Element3)
 
+fun testNullable(): Flow<Elem?> = flowOf(Element1, null, Element2, null, Element3)
+
 fun testEmpty(): Flow<Elem> = flowOf()
 
 fun testString(): Flow<String> = flowOf("hello", "any", "world")

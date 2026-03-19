@@ -162,9 +162,14 @@ public final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, AsyncI
                         }
                         cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
 
-                        let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), { arg0 in
+                        let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), { arg0, arg1 in
                                 return {
-                                    continuation(arg0.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element?);
+                                    if arg0 {
+                                        let element = arg1.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element
+                                        continuation(.some(element))
+                                    } else {
+                                        continuation(.none)
+                                    }
                                     return 0
                                 }()
                         }, { arg0 in

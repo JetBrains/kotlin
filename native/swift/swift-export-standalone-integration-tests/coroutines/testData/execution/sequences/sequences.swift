@@ -24,6 +24,25 @@ func testRegular() async {
 
 @Test
 @MainActor
+func testNullable() async {
+    let expected: [Elem?] = [Element1.shared, nil, Element2.shared, nil, Element3.shared]
+
+    let task = Task<[Elem?], any Error>.detached {
+        var actual: [Elem?] = []
+        for try await element in testNullable().asAsyncSequence() {
+            actual.append(element)
+        }
+        return actual
+    }
+
+    let actual = await task.result
+
+    #expect(!task.isCancelled)
+    #expect(actual == .success(expected))
+}
+
+@Test
+@MainActor
 func testString() async {
     let expected: [String] = ["hello", "any", "world"]
 
