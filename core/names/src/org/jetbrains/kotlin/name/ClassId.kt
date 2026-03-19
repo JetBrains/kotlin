@@ -15,8 +15,6 @@
  */
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
-
 /**
  * A class name which is used to uniquely identify a Kotlin class.
  *
@@ -41,8 +39,9 @@ data class ClassId(val packageFqName: FqName, val relativeClassName: FqName, @pr
         DeprecationLevel.WARNING,
     )
     val parentClassId: ClassId?
-        get() = runIf(isNestedClass) {
-            ClassId(packageFqName, relativeClassName.parent(), isLocal)
+        get() {
+            if (!isNestedClass) return null
+            return ClassId(packageFqName, relativeClassName.parent(), isLocal)
         }
 
     val shortClassName: Name
@@ -51,7 +50,8 @@ data class ClassId(val packageFqName: FqName, val relativeClassName: FqName, @pr
     val outerClassId: ClassId?
         get() {
             val parent = relativeClassName.parent()
-            return runIf(!parent.isRoot) { ClassId(packageFqName, parent, isLocal) }
+            if (parent.isRoot) return null
+            return ClassId(packageFqName, parent, isLocal)
         }
 
     val outermostClassId: ClassId

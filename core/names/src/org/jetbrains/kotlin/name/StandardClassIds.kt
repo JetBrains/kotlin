@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.kotlin.builtins.StandardNames
-
 object StandardClassIds {
     val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
@@ -280,7 +278,7 @@ object StandardClassIds {
 
             val suppressNames = Name.identifier("names")
 
-            val parameterNameName = StandardNames.NAME
+            val parameterNameName = Name.identifier("name")
         }
     }
 

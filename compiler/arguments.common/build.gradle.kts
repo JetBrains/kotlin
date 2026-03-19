@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
+    api(project(":core:language.version-settings"))
 }
 
 sourceSets {

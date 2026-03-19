@@ -27,6 +27,16 @@
           <option value=":analysis:kt-references:testCodebase" />
           <option value=":analysis:kt-references:updateKotlinAbi" />
           <option value=":analysis:kt-references:checkForeignClassUsage" />
+          <option value=":core:names:updateKotlinAbi" />
+          <option value=":core:names:checkForeignClassUsage" />
+          <option value=":core:language.model:updateKotlinAbi" />
+          <option value=":core:language.model:checkForeignClassUsage" />
+          <option value=":core:language.targets:updateKotlinAbi" />
+          <option value=":core:language.targets:checkForeignClassUsage" />
+          <option value=":core:language.targets.jvm:updateKotlinAbi" />
+          <option value=":core:language.targets.jvm:checkForeignClassUsage" />
+          <option value=":core:language.version-settings:updateKotlinAbi" />
+          <option value=":core:language.version-settings:checkForeignClassUsage" />
         </list>
       </option>
       <option name="vmOptions" />

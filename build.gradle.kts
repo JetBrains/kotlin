@@ -200,6 +200,11 @@ val commonCompilerModules = arrayOf(
     ":core:compiler.common.wasm",
     ":core:compiler.common.web",
     ":core:util.runtime",
+    ":core:names",
+    ":core:language.model",
+    ":core:language.targets",
+    ":core:language.targets.jvm",
+    ":core:language.version-settings",
     ":compiler:frontend.common.jvm",
     ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
     ":analysis:analysis-internal-utils",
@@ -970,6 +975,11 @@ tasks {
         dependsOn(":compiler:multiplatform-parsing:jvmTest")
         dependsOn(":compiler:fir:modularized-tests:test")
         dependsOn(":compiler:util:test")
+        dependsOn(":core:names:check")
+        dependsOn(":core:language.model:check")
+        dependsOn(":core:language.targets:check")
+        dependsOn(":core:language.targets.jvm:check")
+        dependsOn(":core:language.version-settings:check")
     }
 
     register("miscTest") {

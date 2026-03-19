@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-
 enum class AnnotationUseSiteTarget(renderName: String? = null) {
     ALL,
     FIELD,
@@ -30,5 +28,5 @@ enum class AnnotationUseSiteTarget(renderName: String? = null) {
     SETTER_PARAMETER("setparam"),
     PROPERTY_DELEGATE_FIELD("delegate");
 
-    val renderName: String = renderName ?: name.toLowerCaseAsciiOnly()
+    val renderName: String = renderName ?: name.lowercase()
 }

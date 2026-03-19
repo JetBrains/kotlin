@@ -1,0 +1,71 @@
+public abstract class org/jetbrains/kotlin/platform/JsPlatform : org/jetbrains/kotlin/platform/SimplePlatform, org/jetbrains/kotlin/platform/PotentiallyWebPlatform {
+	public fun <init> ()V
+	public fun getOldFashionedDescription ()Ljava/lang/String;
+	public fun isWeb ()Z
+}
+
+public final class org/jetbrains/kotlin/platform/JsPlatformKt {
+	public static final fun isJs (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+}
+
+public abstract class org/jetbrains/kotlin/platform/NativePlatform : org/jetbrains/kotlin/platform/SimplePlatform {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/platform/PlatformUtilKt {
+	public static final fun getOldFashionedDescription (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/lang/String;
+	public static final fun getPresentableDescription (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/lang/String;
+	public static final fun has (Lorg/jetbrains/kotlin/platform/TargetPlatform;Lkotlin/reflect/KClass;)Z
+	public static final fun subplatformsOfType (Lorg/jetbrains/kotlin/platform/TargetPlatform;Ljava/lang/Class;)Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/platform/PotentiallyWebPlatform {
+	public abstract fun isWeb ()Z
+}
+
+public abstract class org/jetbrains/kotlin/platform/SimplePlatform {
+	public fun <init> (Ljava/lang/String;)V
+	public abstract fun getOldFashionedDescription ()Ljava/lang/String;
+	public final fun getPlatformName ()Ljava/lang/String;
+	public fun getTargetName ()Ljava/lang/String;
+	public fun getTargetPlatformVersion ()Lorg/jetbrains/kotlin/platform/TargetPlatformVersion;
+	public fun toString ()Ljava/lang/String;
+}
+
+public class org/jetbrains/kotlin/platform/TargetPlatform : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> (Ljava/util/Set;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getComponentPlatforms ()Ljava/util/Set;
+	public final fun getSize ()I
+	public fun hashCode ()I
+	public fun iterator ()Ljava/util/Iterator;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/platform/TargetPlatformKt {
+	public static final fun isCommon (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public static final fun isMultiPlatform (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public static final fun isMultiplatformWeb (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+	public static final fun serializeToString (Lorg/jetbrains/kotlin/platform/SimplePlatform;)Ljava/lang/String;
+	public static final fun toTargetPlatform (Lorg/jetbrains/kotlin/platform/SimplePlatform;)Lorg/jetbrains/kotlin/platform/TargetPlatform;
+}
+
+public abstract interface class org/jetbrains/kotlin/platform/TargetPlatformVersion {
+	public abstract fun getDescription ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/platform/TargetPlatformVersion$NoVersion : org/jetbrains/kotlin/platform/TargetPlatformVersion {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/platform/TargetPlatformVersion$NoVersion;
+	public fun getDescription ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/platform/WasmPlatform : org/jetbrains/kotlin/platform/SimplePlatform, org/jetbrains/kotlin/platform/PotentiallyWebPlatform {
+	public fun <init> (Ljava/lang/String;)V
+	public fun getOldFashionedDescription ()Ljava/lang/String;
+	public fun isWeb ()Z
+}
+
+public final class org/jetbrains/kotlin/platform/WasmPlatformKt {
+	public static final fun isWasm (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+}
+
