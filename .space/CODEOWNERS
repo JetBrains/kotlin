@@ -283,7 +283,7 @@
 /compiler/util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
 /compiler/util-io/ "Kotlin Common Backend"
 /compiler/util-klib/ "Kotlin Common Backend"
-/compiler/util-klib-abi/ "Kotlin Common Backend"
+/compiler/util-klib-abi/ "Kotlin Common Backend" filipp.zhinkin@jetbrains.com
 /compiler/util-klib-metadata/ "Kotlin Common Backend"
 
 /core/compiler.common/ "Kotlin Frontend"
