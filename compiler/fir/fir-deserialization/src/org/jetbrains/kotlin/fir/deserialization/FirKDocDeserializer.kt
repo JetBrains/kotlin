@@ -41,7 +41,7 @@ val FirSession.effectiveKdocDeserializer: FirKDocDeserializer
 private var FirDeclarationAttributes.kdocText: String?
         by FirDeclarationDataRegistry.attributesAccessor(KDocTextKey)
 
-internal fun FirDeclarationBuilder.applyKDoc(text: String?) {
+fun FirDeclarationBuilder.applyKDoc(text: String?) {
     if (text != null) {
         attributes.kdocText = text
     }

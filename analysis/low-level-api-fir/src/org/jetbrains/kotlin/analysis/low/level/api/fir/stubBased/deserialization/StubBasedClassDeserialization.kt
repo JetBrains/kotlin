@@ -9,7 +9,6 @@ import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -22,7 +21,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.addCloneForArrayIfNeeded
+import org.jetbrains.kotlin.fir.deserialization.applyKDoc
 import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
+import org.jetbrains.kotlin.fir.deserialization.kdocText
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -75,13 +76,10 @@ internal val KtDeclaration.modality: Modality
  *
  * @return compiled stub
  */
-@KaImplementationDetail
-inline val <T, reified S> T.compiledStub: S where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*>
+internal inline val <T, reified S> T.compiledStub: S where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*>
     get() = (this.greenStub ?: calculateStub()) as S
 
-@PublishedApi
-@KaImplementationDetail
-internal fun <S, T> T.calculateStub(): Stub where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*> {
+private fun <S, T> T.calculateStub(): Stub where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*> {
     val ktFile = containingKtFile
     requireWithAttachment(ktFile.isCompiled, { "Expected compiled file" }) {
         withPsiEntry("ktFile", ktFile)
@@ -159,6 +157,9 @@ internal fun deserializeClassToSymbol(
             symbol,
             initialOrigin
         )
+
+    val classStub: KotlinClassStubImpl? = (classOrObject as? KtClass)?.compiledStub
+
     buildRegularClass {
         source = KtRealPsiSourceElement(classOrObject)
         this.moduleData = moduleData
@@ -261,9 +262,12 @@ internal fun deserializeClassToSymbol(
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
         contextParameters.addAll(memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
+
+        if (classStub != null) {
+            applyKDoc(classStub.kdocText)
+        }
     }.apply {
-        if (classOrObject is KtClass) {
-            val classStub: KotlinClassStubImpl = classOrObject.compiledStub
+        if (classStub != null) {
             if (isInlineOrValue) {
                 valueClassRepresentation = classStub.deserializeValueClassRepresentation(this)
             }
