@@ -1,0 +1,5 @@
+ALL:
+  test/A.x.<no name>: T
+DIRECT:
+  test/A.x.<no name>: T
+INTERSECTION:

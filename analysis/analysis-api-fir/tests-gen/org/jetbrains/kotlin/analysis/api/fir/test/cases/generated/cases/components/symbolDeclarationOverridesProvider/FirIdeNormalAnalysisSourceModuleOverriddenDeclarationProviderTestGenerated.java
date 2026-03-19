@@ -86,6 +86,18 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
   }
 
   @Test
+  @TestMetadata("getterDiamondOverride.kt")
+  public void testGetterDiamondOverride() {
+    run("getterDiamondOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("getterIntersectionOverride.kt")
+  public void testGetterIntersectionOverride() {
+    run("getterIntersectionOverride.kt");
+  }
+
+  @Test
   @TestMetadata("getterWithMissedOverride.kt")
   public void testGetterWithMissedOverride() {
     run("getterWithMissedOverride.kt");
@@ -152,6 +164,48 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
   }
 
   @Test
+  @TestMetadata("javaGetterImplementingKotlinProperty_AccessorMode.kt")
+  public void testJavaGetterImplementingKotlinProperty_AccessorMode() {
+    run("javaGetterImplementingKotlinProperty_AccessorMode.kt");
+  }
+
+  @Test
+  @TestMetadata("javaGetterImplementingKotlinProperty_MethodMode.kt")
+  public void testJavaGetterImplementingKotlinProperty_MethodMode() {
+    run("javaGetterImplementingKotlinProperty_MethodMode.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSetterImplementingKotlinProperty_AccessorMode.kt")
+  public void testJavaSetterImplementingKotlinProperty_AccessorMode() {
+    run("javaSetterImplementingKotlinProperty_AccessorMode.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSetterImplementingKotlinProperty_MethodMode.kt")
+  public void testJavaSetterImplementingKotlinProperty_MethodMode() {
+    run("javaSetterImplementingKotlinProperty_MethodMode.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinJavaKotlinHierarchyGetter.kt")
+  public void testKotlinJavaKotlinHierarchyGetter() {
+    run("kotlinJavaKotlinHierarchyGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinJavaKotlinHierarchySetter.kt")
+  public void testKotlinJavaKotlinHierarchySetter() {
+    run("kotlinJavaKotlinHierarchySetter.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinJavaKotlinHierarchyVarOverridesVal.kt")
+  public void testKotlinJavaKotlinHierarchyVarOverridesVal() {
+    run("kotlinJavaKotlinHierarchyVarOverridesVal.kt");
+  }
+
+  @Test
   @TestMetadata("linkedHashSet.kt")
   public void testLinkedHashSet() {
     run("linkedHashSet.kt");
@@ -185,6 +239,36 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
   @TestMetadata("sequenceOfOverrides.kt")
   public void testSequenceOfOverrides() {
     run("sequenceOfOverrides.kt");
+  }
+
+  @Test
+  @TestMetadata("setter.kt")
+  public void testSetter() {
+    run("setter.kt");
+  }
+
+  @Test
+  @TestMetadata("setterDiamondOverride.kt")
+  public void testSetterDiamondOverride() {
+    run("setterDiamondOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("setterIntersectionOverride.kt")
+  public void testSetterIntersectionOverride() {
+    run("setterIntersectionOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("setterOverridesValProperty.kt")
+  public void testSetterOverridesValProperty() {
+    run("setterOverridesValProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("setterWithMissedOverride.kt")
+  public void testSetterWithMissedOverride() {
+    run("setterWithMissedOverride.kt");
   }
 
   @Test
@@ -224,6 +308,24 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
   }
 
   @Test
+  @TestMetadata("substitutionOverrideGetter.kt")
+  public void testSubstitutionOverrideGetter() {
+    run("substitutionOverrideGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideGetterDelegate.kt")
+  public void testSubstitutionOverrideGetterDelegate() {
+    run("substitutionOverrideGetterDelegate.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideGetterTransitive.kt")
+  public void testSubstitutionOverrideGetterTransitive() {
+    run("substitutionOverrideGetterTransitive.kt");
+  }
+
+  @Test
   @TestMetadata("substitutionOverrideProperty.kt")
   public void testSubstitutionOverrideProperty() {
     run("substitutionOverrideProperty.kt");
@@ -245,6 +347,24 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
   @TestMetadata("substitutionOverridePropertyTransitiveSameType.kt")
   public void testSubstitutionOverridePropertyTransitiveSameType() {
     run("substitutionOverridePropertyTransitiveSameType.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideSetter.kt")
+  public void testSubstitutionOverrideSetter() {
+    run("substitutionOverrideSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideSetterDelegate.kt")
+  public void testSubstitutionOverrideSetterDelegate() {
+    run("substitutionOverrideSetterDelegate.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideSetterTransitive.kt")
+  public void testSubstitutionOverrideSetterTransitive() {
+    run("substitutionOverrideSetterTransitive.kt");
   }
 
   @Test
