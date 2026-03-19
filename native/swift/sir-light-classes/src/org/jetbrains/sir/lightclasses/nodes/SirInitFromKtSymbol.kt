@@ -5,6 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.components.defaultType
 import org.jetbrains.kotlin.analysis.api.components.isArrayOrPrimitiveArray
@@ -138,7 +139,9 @@ internal class SirRegularInitFromKtSymbol(
                             producingType,
                             SirTypeNamer.KotlinNameType.PARAMETRIZED
                         )
-                    }>(${args.joinToString()})"
+                    }>(${args.joinToString()})${
+                        if ((ktSymbol.containingDeclaration as KaNamedClassSymbol).isInline) " as Any?" else ""
+                    }"
                 }.orEmpty()
             )
             if (origin is InnerInitSource) {

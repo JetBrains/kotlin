@@ -632,7 +632,7 @@ public fun ignored_VALUE_CLASS_hashCode(self: kotlin.native.internal.NativePtr):
 
 @ExportedBridge("ignored_VALUE_CLASS_init_allocate")
 public fun ignored_VALUE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<ignored.VALUE_CLASS>() }
+    val _result = run { kotlin.native.internal.createUninitializedInstance<ignored.VALUE_CLASS>() as Any? }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
