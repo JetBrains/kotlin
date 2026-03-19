@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
 import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotationConfig
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
+import org.jetbrains.kotlin.buildtools.api.arguments.types.WarningLevelConfig
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -259,6 +260,17 @@ internal class KotlinWrapperPre2_4_0(
                     arrayValue.toList() as V
                 }
 
+                CommonCompilerArguments.X_WARNING_LEVEL -> {
+                    val raw = delegate[CommonCompilerArguments.CommonCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)]
+                    (raw?.map {
+                        val parts = it.split(":", limit = 2)
+                        require(parts.size == 2) { "Invalid -Xwarning-level format: $it" }
+                        val level = WarningLevel.values().firstOrNull { entry -> entry.stringValue == parts[1] }
+                            ?: throw CompilerArgumentsParseException("Unknown -Xwarning-level level: $it")
+                        WarningLevelConfig(parts[0], level)
+                    } ?: emptyList()) as V
+                }
+
                 CommonCompilerArguments.OPT_IN -> {
                     @Suppress("SENSELESS_COMPARISON")
                     if (delegate[key] == null) return emptyList<String>() as V
@@ -386,6 +398,14 @@ internal class KotlinWrapperPre2_4_0(
                     val arrayValue = listValue?.toTypedArray()
                     val arrayKey = CommonCompilerArguments.CommonCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
 
+                    delegate[arrayKey] = arrayValue
+                }
+
+                CommonCompilerArguments.X_WARNING_LEVEL -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue = value as List<WarningLevelConfig>
+                    val arrayValue = listValue.map { item -> "${item.warningName}:${item.level.stringValue}" }.toTypedArray()
+                    val arrayKey = CommonCompilerArguments.CommonCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
                     delegate[arrayKey] = arrayValue
                 }
 

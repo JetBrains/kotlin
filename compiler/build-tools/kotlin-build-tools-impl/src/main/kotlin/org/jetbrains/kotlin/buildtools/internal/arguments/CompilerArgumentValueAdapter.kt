@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
 import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotationConfig
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
+import org.jetbrains.kotlin.buildtools.api.arguments.types.WarningLevelConfig
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.io.File
 import java.nio.file.Path
@@ -142,6 +143,13 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 listValue.toTypedArray() as V
             }
 
+            CommonCompilerArguments.X_WARNING_LEVEL -> {
+                if (value == null) return emptyArray<String>() as V
+
+                val listValue: List<WarningLevelConfig> = value as List<WarningLevelConfig>
+                listValue.map { item -> "${item.warningName}:${item.level.stringValue}" }.toTypedArray() as V
+            }
+
             CommonCompilerArguments.OPT_IN -> {
                 if (value == null) return emptyArray<String>() as V
 
@@ -243,6 +251,20 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
 
                 val arrayValue = value as Array<String>
                 arrayValue.toList() as T
+            }
+
+            CommonCompilerArguments.X_WARNING_LEVEL -> {
+                if (value == null) return emptyList<WarningLevelConfig>() as T
+
+                val arrayValue = value as Array<String>
+                arrayValue.map {
+                    val parts = it.split(":", limit = 2)
+                    require(parts.size == 2) { "Invalid -Xwarning-level format: $it" }
+
+                    val level = WarningLevel.entries.firstOrNull { entry -> entry.stringValue == parts[1] }
+                        ?: throw CompilerArgumentsParseException("Unknown -Xwarning-level level: $it")
+                    WarningLevelConfig(parts[0], level)
+                } as T
             }
 
             CommonCompilerArguments.OPT_IN -> {

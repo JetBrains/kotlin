@@ -156,6 +156,10 @@ internal class BtaApiGenerator(
                             generatedEnumType(NullabilityAnnotationMode::class)
                             LIST.parameterizedBy(generatedCustomType(NullabilityAnnotationConfig::class))
                         }
+                        is WarningLevelConfigListType -> {
+                            generatedEnumType(WarningLevel::class)
+                            LIST.parameterizedBy(generatedCustomType(WarningLevelConfig::class))
+                        }
                         else -> {
                             argumentType.asTypeName()
                         }

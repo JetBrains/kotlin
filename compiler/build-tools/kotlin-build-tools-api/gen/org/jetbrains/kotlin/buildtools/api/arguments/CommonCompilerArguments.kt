@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
+import org.jetbrains.kotlin.buildtools.api.arguments.types.WarningLevelConfig
 
 /**
  * @since 2.3.0
@@ -797,7 +798,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_WARNING_LEVEL: CommonCompilerArgument<Array<String>?> =
+    public val X_WARNING_LEVEL: CommonCompilerArgument<List<WarningLevelConfig>> =
         CommonCompilerArgument("X_WARNING_LEVEL", KotlinReleaseVersion(2, 2, 0))
 
     /**

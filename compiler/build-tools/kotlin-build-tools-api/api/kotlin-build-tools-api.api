@@ -691,6 +691,15 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrM
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/WarningLevel : java/lang/Enum {
+	public static final field DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WarningLevel;
+	public static final field ERROR Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WarningLevel;
+	public static final field WARNING Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WarningLevel;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WarningLevel;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WarningLevel;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode : java/lang/Enum {
 	public static final field INDY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
 	public static final field INLINE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
@@ -710,6 +719,12 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/types/ProfileCo
 	public final fun getCommand ()Ljava/lang/String;
 	public final fun getOutputDir ()Ljava/nio/file/Path;
 	public final fun getProfilerPath ()Ljava/nio/file/Path;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/types/WarningLevelConfig {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WarningLevel;)V
+	public final fun getLevel ()Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WarningLevel;
+	public final fun getWarningName ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriFileIdToPathDataDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {

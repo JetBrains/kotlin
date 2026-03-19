@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.dsl.types.NullabilityAnnotationListType
 import org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommandType
+import org.jetbrains.kotlin.arguments.dsl.types.WarningLevelConfigListType
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import kotlin.math.max
 import kotlin.reflect.KClass
@@ -77,7 +78,8 @@ internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().rep
     }
 }
 
-internal val customArgumentTypeAccessors = mutableSetOf(ProfileCompilerCommandType::class, NullabilityAnnotationListType::class)
+internal val customArgumentTypeAccessors =
+    mutableSetOf(ProfileCompilerCommandType::class, NullabilityAnnotationListType::class, WarningLevelConfigListType::class)
 
 internal fun KClass<*>.toBtaEnumClassName(): ClassName = ClassName(API_ENUMS_PACKAGE, simpleName!!)
 internal fun KClass<*>.toBtaCustomClassName(): ClassName = ClassName(API_TYPES_PACKAGE, simpleName!!)

@@ -5,8 +5,10 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.NullabilityAnnotationMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.WarningLevel
 import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotationConfig
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
+import org.jetbrains.kotlin.buildtools.api.arguments.types.WarningLevelConfig
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.konan.file.File
 import java.nio.file.Path
@@ -64,6 +66,22 @@ internal fun Array<String>?.`toXnullability-annotations`(): List<NullabilityAnno
             NullabilityAnnotationMode.entries.firstOrNull { entry -> entry.stringValue == parts[1] }
                 ?: throw CompilerArgumentsParseException("Unknown -Xnullability-annotations mode: $it")
         NullabilityAnnotationConfig(parts[0].removePrefix("@"), nullabilityAnnotationMode)
+    } ?: emptyList()
+
+@Suppress("NOTHING_TO_INLINE")
+@OptIn(ExperimentalCompilerArgument::class)
+internal inline fun List<WarningLevelConfig>.`fromXwarning-level`(): Array<String> =
+    this.map { item -> "${item.warningName}:${item.level.stringValue}" }.toTypedArray()
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal fun Array<String>?.`toXwarning-level`(): List<WarningLevelConfig> =
+    this?.map {
+        val parts = it.split(":", limit = 2)
+        require(parts.size == 2) { "Invalid -Xwarning-level format: $it" }
+
+        val level = WarningLevel.entries.firstOrNull { entry -> entry.stringValue == parts[1] }
+            ?: throw CompilerArgumentsParseException("Unknown -Xwarning-level level: $it")
+        WarningLevelConfig(parts[0], level)
     } ?: emptyList()
 
 internal fun <T> Array<out T>?.toListOrEmpty(): List<T> = this?.toList() ?: emptyList()

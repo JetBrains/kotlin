@@ -1443,6 +1443,53 @@
                     }
                 }
             ]
+        },
+        "warningLevelConfig": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.WarningLevelConfigListType",
+            "properties": [
+                {
+                    "name": "level",
+                    "type": "org.jetbrains.kotlin.arguments.dsl.types.WarningLevel",
+                    "isNullable": false
+                },
+                {
+                    "name": "warningName",
+                    "type": "kotlin.String",
+                    "isNullable": false
+                }
+            ]
+        },
+        "warningLevel": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.WarningLevel",
+            "values": [
+                {
+                    "name": "error",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "warning",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "disabled",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -5600,13 +5647,13 @@
                             "removedVersion": null
                         },
                         "argumentType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
-                            "defaultValue": {
-                                "current": null,
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.WarningLevelConfigListType",
+                            "isNullable": {
+                                "current": false,
                                 "valueInVersions": []
                             },
-                            "isNullable": {
-                                "current": true,
+                            "defaultValue": {
+                                "current": [],
                                 "valueInVersions": []
                             }
                         }

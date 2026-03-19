@@ -202,6 +202,9 @@ internal class BtaImplGenerator(
                         is NullabilityAnnotationListType -> {
                             LIST.parameterizedBy(NullabilityAnnotationConfig::class.toBtaCustomClassName())
                         }
+                        is WarningLevelConfigListType -> {
+                            LIST.parameterizedBy(WarningLevelConfig::class.toBtaCustomClassName())
+                        }
                         else -> {
                             type.asTypeName()
                         }

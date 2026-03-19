@@ -78,4 +78,10 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsNullabilityAnnotationModeSerializer::class)
     val nullabilityAnnotationMode = NullabilityAnnotationMode.entries.toSet()
 
+    @Serializable(with = WarningLevelConfigSerializer::class)
+    val warningLevelConfig = descriptorOf<WarningLevelConfig>()
+
+    @Serializable(with = AllDetailsWarningLevelSerializer::class)
+    val warningLevel = WarningLevel.entries.toSet()
+
 }

@@ -375,6 +375,21 @@ class NullabilityAnnotationListType : KotlinArgumentValueType<List<NullabilityAn
     }
 }
 
+/**
+ *  A value which accepts a list of [WarningLevelConfig] type.
+ */
+@Serializable
+class WarningLevelConfigListType : KotlinArgumentValueType<List<WarningLevelConfig>> {
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false)
+    override val defaultValue: ReleaseDependent<List<WarningLevelConfig>?> = ReleaseDependent(emptyList())
+
+    override fun stringRepresentation(value: List<WarningLevelConfig>?): String? {
+        if (value == null) return null
+
+        return value.joinToString { item -> "\"${item.warningName}:${item.level.level}\"" }
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 
