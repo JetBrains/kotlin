@@ -151,3 +151,12 @@ public interface WithDefaultSuspend {
 
 @JsExport
 public class WithDefaultSuspendImpl : WithDefaultSuspend
+
+// KT-85038
+@JsExport
+sealed external interface ExternalInterfaceWithCompanion {
+    @JsExport.Ignore
+    companion object {
+        @JsStatic val x: String
+    }
+}

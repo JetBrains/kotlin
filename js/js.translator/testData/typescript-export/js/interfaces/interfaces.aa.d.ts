@@ -198,5 +198,10 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => WithDefaultSuspendImpl;
             }
         }
+        interface ExternalInterfaceWithCompanion {
+        }
+        namespace ExternalInterfaceWithCompanion {
+            const x: string;
+        }
     }
 }

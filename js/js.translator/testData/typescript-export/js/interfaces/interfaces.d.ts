@@ -8,6 +8,11 @@ declare namespace JS_TESTS {
         }
         interface ExportedParentInterface {
         }
+        interface ExternalInterfaceWithCompanion {
+        }
+        namespace ExternalInterfaceWithCompanion {
+            const x: string;
+        }
     }
     namespace foo {
         interface TestInterface {
