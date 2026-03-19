@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
+import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
 
 internal object CheckArguments : ResolutionStage() {
@@ -154,6 +155,7 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     return expectedFunctionType
 }
 
+context(context: ResolutionContext)
 private fun FirExpression.shouldUseSamConversion(
     session: FirSession,
     candidateExpectedType: ConeKotlinType,
@@ -173,40 +175,22 @@ private fun FirExpression.shouldUseSamConversion(
     }
 
     val expressionType = resolvedType
-    if (expressionType is ConeIntegerLiteralType) {
-        return false
-    }
-
     // Expression type is a subtype of expected type, no need for SAM conversion.
     val substitutedExpectedType = candidate.substitutor.substituteOrSelf(candidateExpectedType)
     if (candidate.csBuilder.isSubtypeConstraintCompatible(expressionType, substitutedExpectedType)) {
         return false
     }
 
-    if (expressionType.isSomeFunctionType(session)) {
-        return true
-    }
-
-    // If the expression type is compatible with the expected function type, apply SAM conversion
-    val substitutedExpectedFunctionType = candidate.substitutor.substituteOrSelf(expectedFunctionType)
-    if (candidate.csBuilder.isSubtypeConstraintCompatible(expressionType, substitutedExpectedFunctionType)) {
-        return true
-    }
-
-    // If the expected function type is a non-basic function type, check if the expression type is compatible with its basic version
-    // If yes, apply SAM conversion (with function kind conversion).
-    if (!substitutedExpectedFunctionType.isBasicFunctionOrKFunctionType(session)) {
-        val expectedFunctionTypeAsSimpleFunctionType = substitutedExpectedFunctionType
-            .lowerBoundIfFlexible()
-            // converts SuspendFunction/[Custom]Function -> Function
-            .customFunctionTypeToSimpleFunctionType(session)
-
-        if (candidate.csBuilder.isSubtypeConstraintCompatible(expressionType, expectedFunctionTypeAsSimpleFunctionType)) {
-            return true
+    // After the `if` above, we know that the argument type is anyway not a subtype of the original SAM type,
+    // thus if we proceed without the conversion, it would be an INAPPLICABLE candidate anyway.
+    // So we might return `true` here unconditionally, but we check if there's some hope for proper SAM conversion
+    // to report better diagnostics otherwise.
+    return context(context.typeContext) {
+        expressionType.anySuperTypeConstructor {
+            require(it is ConeKotlinType)
+            it.isSomeFunctionType(context.session)
         }
     }
-
-    return false
 }
 
 /**
