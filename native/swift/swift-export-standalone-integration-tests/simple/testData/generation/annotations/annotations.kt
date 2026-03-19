@@ -274,6 +274,32 @@ open class hiddenChildT : hiddenT() {
     override val deprecationRestatedV: Unit get() = Unit
 }
 
+interface InterfaceWithDeprecatedMembers {
+    fun regularFunction(): Unit = TODO()
+
+    @Deprecated("Deprecated")
+    fun deprecatedWarningFunction(): Unit = TODO()
+
+    @Deprecated("Obsoleted", level = DeprecationLevel.ERROR)
+    fun deprecatedErrorFunction(): Unit = TODO()
+
+    @Deprecated("Removed", level = DeprecationLevel.HIDDEN)
+    fun deprecatedHiddenFunction(): Unit = TODO()
+}
+
+class ClassWithDeprecatedMembersFromInterface: InterfaceWithDeprecatedMembers {
+    override fun regularFunction(): Unit = TODO()
+
+    @Deprecated("Deprecated")
+    override fun deprecatedWarningFunction(): Unit = TODO()
+
+    @Deprecated("Obsoleted", level = DeprecationLevel.ERROR)
+    override fun deprecatedErrorFunction(): Unit = TODO()
+
+    @Deprecated("Removed", level = DeprecationLevel.HIDDEN)
+    override fun deprecatedHiddenFunction(): Unit = TODO()
+}
+
 // FILE: annotations_replacewith.kt
 
 const val MESSAGE = "message"

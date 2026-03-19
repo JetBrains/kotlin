@@ -3,6 +3,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool ClassWithDeprecatedMembersFromInterface_deprecatedErrorFunction(void * self);
+
+_Bool ClassWithDeprecatedMembersFromInterface_deprecatedWarningFunction(void * self);
+
+_Bool ClassWithDeprecatedMembersFromInterface_regularFunction(void * self);
+
+_Bool InterfaceWithDeprecatedMembers_deprecatedWarningFunction(void * self);
+
+_Bool InterfaceWithDeprecatedMembers_regularFunction(void * self);
+
 void * KotlinClassA_KotlinSubClassA_init_allocate();
 
 _Bool KotlinClassA_KotlinSubClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -34,6 +44,10 @@ _Bool KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String__(void * self,
 _Bool KotlinObjectB_kotlinFunB__TypesOfArguments__Swift_String__(void * self, NSString * objCParamB);
 
 _Bool KotlinObjectB_kotlinFunC__TypesOfArguments__Swift_String__(void * self, NSString * objCParamC);
+
+void * __root___ClassWithDeprecatedMembersFromInterface_init_allocate();
+
+_Bool __root___ClassWithDeprecatedMembersFromInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___KotlinClassA_init_allocate();
 

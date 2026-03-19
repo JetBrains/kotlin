@@ -1,10 +1,12 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ClassWithDeprecatedMembersFromInterface::class, "4main39ClassWithDeprecatedMembersFromInterfaceC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(KotlinObjectB::class, "4main11ObjCObjectBC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA::class, "4main11SwiftClassAC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA.KotlinSubClassC::class, "4main11SwiftClassAC13ObjCSubClassCC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA.KotlinSubClassA::class, "4main11SwiftClassAC14SwiftSubClassAC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA.KotlinSubClassB::class, "4main11SwiftClassAC14SwiftSubClassBC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(KotlinClassA.KotlinSubClassD::class, "4main11SwiftClassAC14SwiftSubClassDC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceWithDeprecatedMembers::class, "_InterfaceWithDeprecatedMembers")
 @file:kotlin.native.internal.objc.BindClassToObjCName(KotlinInterfaceC::class, "_SwiftInterfaceC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedChildT::class, "4main16deprecatedChildTC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedT::class, "4main11deprecatedTC")
@@ -19,6 +21,41 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ExportedBridge("ClassWithDeprecatedMembersFromInterface_deprecatedErrorFunction")
+public fun ClassWithDeprecatedMembersFromInterface_deprecatedErrorFunction(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassWithDeprecatedMembersFromInterface
+    val _result = run { __self.deprecatedErrorFunction() }
+    return run { _result; true }
+}
+
+@ExportedBridge("ClassWithDeprecatedMembersFromInterface_deprecatedWarningFunction")
+public fun ClassWithDeprecatedMembersFromInterface_deprecatedWarningFunction(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassWithDeprecatedMembersFromInterface
+    val _result = run { __self.deprecatedWarningFunction() }
+    return run { _result; true }
+}
+
+@ExportedBridge("ClassWithDeprecatedMembersFromInterface_regularFunction")
+public fun ClassWithDeprecatedMembersFromInterface_regularFunction(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassWithDeprecatedMembersFromInterface
+    val _result = run { __self.regularFunction() }
+    return run { _result; true }
+}
+
+@ExportedBridge("InterfaceWithDeprecatedMembers_deprecatedWarningFunction")
+public fun InterfaceWithDeprecatedMembers_deprecatedWarningFunction(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InterfaceWithDeprecatedMembers
+    val _result = run { __self.deprecatedWarningFunction() }
+    return run { _result; true }
+}
+
+@ExportedBridge("InterfaceWithDeprecatedMembers_regularFunction")
+public fun InterfaceWithDeprecatedMembers_regularFunction(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InterfaceWithDeprecatedMembers
+    val _result = run { __self.regularFunction() }
+    return run { _result; true }
+}
 
 @ExportedBridge("KotlinClassA_KotlinSubClassA_init_allocate")
 public fun KotlinClassA_KotlinSubClassA_init_allocate(): kotlin.native.internal.NativePtr {
@@ -131,6 +168,19 @@ public fun KotlinObjectB_kotlinFunC__TypesOfArguments__Swift_String__(self: kotl
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KotlinObjectB
     val __objCParamC = interpretObjCPointer<kotlin.String>(objCParamC)
     val _result = run { __self.kotlinFunC(__objCParamC) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___ClassWithDeprecatedMembersFromInterface_init_allocate")
+public fun __root___ClassWithDeprecatedMembersFromInterface_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<ClassWithDeprecatedMembersFromInterface>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___ClassWithDeprecatedMembersFromInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___ClassWithDeprecatedMembersFromInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, ClassWithDeprecatedMembersFromInterface()) }
     return run { _result; true }
 }
 
