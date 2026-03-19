@@ -676,7 +676,7 @@ public fun __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArgumen
 
 @ExportedBridge("__root___INLINE_CLASS_WITH_REF_init_allocate")
 public fun __root___INLINE_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<INLINE_CLASS_WITH_REF>() }
+    val _result = run { kotlin.native.internal.createUninitializedInstance<INLINE_CLASS_WITH_REF>() as Any? }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -690,7 +690,7 @@ public fun __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swi
 
 @ExportedBridge("__root___INLINE_CLASS_init_allocate")
 public fun __root___INLINE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<INLINE_CLASS>() }
+    val _result = run { kotlin.native.internal.createUninitializedInstance<INLINE_CLASS>() as Any? }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

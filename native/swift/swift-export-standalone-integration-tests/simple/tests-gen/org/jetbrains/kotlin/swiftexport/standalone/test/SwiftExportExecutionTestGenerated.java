@@ -174,6 +174,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("valueClass")
+  public void testValueClass() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/valueClass/");
+  }
+
+  @Test
   @TestMetadata("vararg")
   public void testVararg() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/vararg/");
