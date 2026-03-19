@@ -3,10 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
 package org.jetbrains.kotlin.gradle.apple
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
@@ -25,8 +28,6 @@ import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.condition.OS
-import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.test.assertEquals
 
@@ -35,11 +36,11 @@ import kotlin.test.assertEquals
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
-class SwiftPMImportIdeContextTests : KGPBaseTest() {
+class SwiftPMImportIdeModelTests : KGPBaseTest() {
 
     @OptIn(Idea222Api::class)
     @GradleTest
-    fun `hasSwiftPMDependencies - transitive SwiftPM dependencies from project dependencies - influence hasSwiftPMDependencies flag`(version: GradleVersion, @TempDir temp: Path) {
+    fun `hasSwiftPMDependencies - transitive SwiftPM dependencies from project dependencies - influence hasSwiftPMDependencies flag`(version: GradleVersion) {
         project("empty", version) {
             plugins {
                 kotlin("multiplatform").apply(false)
@@ -89,14 +90,14 @@ class SwiftPMImportIdeContextTests : KGPBaseTest() {
             val consumerWithDependencyHasSwiftPMDependenciesProvider = consumerWithDependency.providerBuildScriptReturn {
                 project.prepareKotlinIdeaImportTask.map {
                     project.ignoreAccessViolations {
-                        (project.kotlinExtension as KotlinMultiplatformExtension).swiftPMImportIdeContext?.hasSwiftPMDependencies ?: error("...")
+                        (project.kotlinExtension as KotlinMultiplatformExtension).swiftPMImportIdeModel?.hasSwiftPMDependencies ?: error("...")
                     }
                 }
             }
             val consumerWithoutDependencyHasSwiftPMDependenciesProvider = consumerWithoutDependency.providerBuildScriptReturn {
                 project.prepareKotlinIdeaImportTask.map {
                     project.ignoreAccessViolations {
-                        (project.kotlinExtension as KotlinMultiplatformExtension).swiftPMImportIdeContext?.hasSwiftPMDependencies ?: error("...")
+                        (project.kotlinExtension as KotlinMultiplatformExtension).swiftPMImportIdeModel?.hasSwiftPMDependencies ?: error("...")
                     }
                 }
             }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBui
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMImportIdeContextProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMImportIdeModelProvider
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
@@ -277,9 +277,9 @@ internal constructor(
                 syncCommonMultiplatformOptions(it)
             }
 
-    // This getter is consumed during KMP import
-    internal val swiftPMImportIdeContext
-        get() = if (!project.kotlinPropertiesProvider.disableSwiftPMImport) project.swiftPMImportIdeContextProvider().get() else null
+    // This getter is consumed during KMP import in KotlinMPPGradleModelBuilder
+    internal val swiftPMImportIdeModel
+        get() = if (!project.kotlinPropertiesProvider.disableSwiftPMImport) project.swiftPMImportIdeModelProvider().get() else null
 }
 
 private const val targetsExtensionDeprecationMessage =

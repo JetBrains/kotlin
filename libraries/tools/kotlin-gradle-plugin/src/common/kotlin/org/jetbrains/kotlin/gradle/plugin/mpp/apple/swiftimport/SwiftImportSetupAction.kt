@@ -174,7 +174,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     }
 
     prepareKotlinIdeaImportTask.configure {
-        it.dependsOn(project.swiftPMImportIdeContextProvider())
+        it.dependsOn(project.swiftPMImportIdeModelProvider())
     }
 
     kotlinExtension.targets.matching { it.supportsSwiftPMImport() }.all { target ->
@@ -513,9 +513,9 @@ private fun Project.registerXcodeIntegrationTasks(
     }
 }
 
-internal fun Project.swiftPMImportIdeContextProvider(): Provider<SwiftPMImportIdeContext> =
+internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeModel> =
     project.hasDirectOrTransitiveSwiftPMDependencies().map { hasDirectOrTransitiveSwiftPMDependencies ->
-        SwiftPMImportIdeContext(
+        SwiftPMImportIdeModel(
             hasDirectOrTransitiveSwiftPMDependencies,
             ("${project.path}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}").replace("::", ":"),
             SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,

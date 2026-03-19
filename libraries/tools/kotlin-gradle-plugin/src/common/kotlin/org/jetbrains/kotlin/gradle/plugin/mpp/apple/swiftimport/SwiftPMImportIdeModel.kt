@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 @Suppress("unused")
-internal data class SwiftPMImportIdeContext(
+internal data class SwiftPMImportIdeModel(
     val hasSwiftPMDependencies: Boolean,
     val integrateLinkagePackageTaskPath: String,
     val magicPackageName: String,
