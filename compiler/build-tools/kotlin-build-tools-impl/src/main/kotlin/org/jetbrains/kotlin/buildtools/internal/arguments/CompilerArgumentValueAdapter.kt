@@ -448,6 +448,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
             listValue.toTypedArray() as V
         }
 
+        JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT -> {
+            if (value == null) return emptyArray<String>() as V
+
+            val listValue = value as List<String>
+            listValue.toTypedArray() as V
+        }
+
         JvmCompilerArguments.X_NULLABILITY_ANNOTATIONS -> {
             if (value == null) return emptyArray<String>() as V
 
@@ -602,6 +609,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
             }
 
             JvmCompilerArguments.SCRIPT_TEMPLATES -> {
+                if (value == null) return emptyList<String>() as T
+
+                val arrayValue = value as Array<String>
+                arrayValue.toList() as T
+            }
+
+            JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT -> {
                 if (value == null) return emptyList<String>() as T
 
                 val arrayValue = value as Array<String>

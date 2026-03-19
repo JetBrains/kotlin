@@ -628,7 +628,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_SCRIPT_RESOLVER_ENVIRONMENT: JvmCompilerArgument<Array<String>?> =
+    public val X_SCRIPT_RESOLVER_ENVIRONMENT: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("X_SCRIPT_RESOLVER_ENVIRONMENT", KotlinReleaseVersion(1, 1, 2))
 
     /**

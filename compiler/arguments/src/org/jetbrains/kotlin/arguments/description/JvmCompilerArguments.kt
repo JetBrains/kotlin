@@ -401,11 +401,13 @@ This can be used in the event of problems with the new implementation.""".asRele
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xscript-resolver-environment"
         description = "Set the script resolver environment in key-value pairs (the value can be quoted and escaped).".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<key=value[,]>".asReleaseDependent()
+        argumentType = StringListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_2,

@@ -601,6 +601,14 @@ internal class KotlinWrapperPre2_4_0(
                     arrayValue.toList() as V
                 }
 
+                JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT -> {
+                    @Suppress("SENSELESS_COMPARISON")
+                    if (delegate[key] == null) return emptyList<String>() as V
+
+                    val arrayValue = delegate[key] as Array<String>
+                    arrayValue.toList() as V
+                }
+
                 JvmCompilerArguments.X_IGNORED_ANNOTATIONS_FOR_BRIDGES -> {
                     @Suppress("SENSELESS_COMPARISON")
                     if (delegate[key] == null) return emptyList<String>() as V
@@ -784,6 +792,15 @@ internal class KotlinWrapperPre2_4_0(
                 }
 
                 JvmCompilerArguments.SCRIPT_TEMPLATES -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<String>? = (value as? List<*>)?.takeIf { it.all { item -> item is String } } as List<String>?
+                    val arrayValue = listValue?.toTypedArray()
+                    val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
+
+                    delegate[arrayKey] = arrayValue
+                }
+
+                JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT -> {
                     @Suppress("UNCHECKED_CAST")
                     val listValue: List<String>? = (value as? List<*>)?.takeIf { it.all { item -> item is String } } as List<String>?
                     val arrayValue = listValue?.toTypedArray()
