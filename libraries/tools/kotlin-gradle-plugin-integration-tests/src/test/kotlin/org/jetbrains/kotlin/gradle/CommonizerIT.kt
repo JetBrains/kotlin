@@ -931,7 +931,7 @@ open class CommonizerIT : KGPBaseTest() {
             }
 
             val testSourceSetsDependingOnMainParameterOption = defaultBuildOptions.copy(
-                freeArgs = listOf("-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain")
+                freeArgs = listOf("-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain", "-Pkotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic")
             )
 
             reportSourceSetCommonizerDependencies(options = testSourceSetsDependingOnMainParameterOption) {

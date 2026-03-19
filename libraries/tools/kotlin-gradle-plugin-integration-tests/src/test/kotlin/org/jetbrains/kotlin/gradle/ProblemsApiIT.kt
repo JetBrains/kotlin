@@ -86,7 +86,7 @@ class ProblemsApiIT : KGPBaseTest() {
                             locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
                             problem = listOf(TextWrapper("Usage of Internal Kotlin Gradle Plugin Properties Detected")),
                             severity = "ERROR",
-                            problemDetails = listOf(TextWrapper("ATTENTION! This build uses the following Kotlin Gradle Plugin properties:\n\nkotlin.internal.compiler.arguments.log.level\nkotlin.internal.diagnostics.showStacktrace\nkotlin.internal.diagnostics.useParsableFormatting\n\nInternal properties are not recommended for production use.\nStability and future compatibility of the build is not guaranteed.")),
+                            problemDetails = listOf(TextWrapper("ATTENTION! This build uses the following Kotlin Gradle Plugin properties:\n\nkotlin.internal.compiler.arguments.log.level\nkotlin.internal.diagnostics.showStacktrace\nkotlin.internal.diagnostics.useParsableFormatting\nkotlin.internal.suppressGradlePluginErrors\n\nInternal properties are not recommended for production use.\nStability and future compatibility of the build is not guaranteed.")),
                             contextualLabel = "Usage of Internal Kotlin Gradle Plugin Properties Detected",
                             problemId = listOf(
                                 ProblemIdentifier("kgp:misconfiguration", "Kotlin Gradle Plugin Misconfiguration"),
