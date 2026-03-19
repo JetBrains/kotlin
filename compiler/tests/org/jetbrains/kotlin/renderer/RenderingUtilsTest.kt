@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.renderer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.NO_NAME_PROVIDED
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+import org.jetbrains.kotlin.name.render
 import org.junit.Test
 import kotlin.test.assertEquals
 
