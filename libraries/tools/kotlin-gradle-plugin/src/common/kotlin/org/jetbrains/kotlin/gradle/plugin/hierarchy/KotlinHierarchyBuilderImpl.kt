@@ -253,6 +253,18 @@ private class KotlinHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM64
     }
 
+    override fun withTizenArm32() = withTargets {
+        it is KotlinNativeTarget && it.konanTarget == KonanTarget.TIZEN_ARM32
+    }
+
+    override fun withTizenArm64() = withTargets {
+        it is KotlinNativeTarget && it.konanTarget == KonanTarget.TIZEN_ARM64
+    }
+
+    override fun withTizenX64() = withTargets {
+        it is KotlinNativeTarget && it.konanTarget == KonanTarget.TIZEN_X64
+    }
+
     override fun toString(): String {
         return "KotlinHierarchyBuilder($node)"
     }

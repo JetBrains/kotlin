@@ -396,4 +396,25 @@ interface KotlinHierarchyBuilder {
      * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
      */
     fun withLinuxArm64()
+
+    /**
+     * Only includes Kotlin's tizenArm32 target in this [group].
+     *
+     * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
+     */
+    fun withTizenArm32()
+
+    /**
+     * Only includes Kotlin's tizenArm64 target in this [group].
+     *
+     * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
+     */
+    fun withTizenArm64()
+
+    /**
+     * Only includes Kotlin's tizenX64 target in this [group].
+     *
+     * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
+     */
+    fun withTizenX64()
 }

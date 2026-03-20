@@ -40,6 +40,9 @@ internal object TargetHierarchy {
                 "linux",
                 Node("linuxArm64"),
                 Node("linuxArm32Hfp"),
+                Node("tizenArm32"),
+                Node("tizenArm64"),
+                Node("tizenX64"),
                 Node("linuxX64"),
             ),
             Node(
