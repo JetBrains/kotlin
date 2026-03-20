@@ -24,6 +24,7 @@ abstract class FirFunctionTypeConversionExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val expression: FirExpression
     abstract val usesFunctionKindConversion: Boolean
+    abstract val kind: FirFunctionConversionKind
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitFunctionTypeConversionExpression(this, data)

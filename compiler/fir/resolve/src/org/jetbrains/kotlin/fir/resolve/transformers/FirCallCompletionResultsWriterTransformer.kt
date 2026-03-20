@@ -633,6 +633,7 @@ class FirCallCompletionResultsWriterTransformer(
                     ) ?: it
                 }
             this.usesFunctionKindConversion = usesFunctionKindConversion
+            this.kind = FirFunctionConversionKind.Sam
             source = this@wrapInSamExpression.source?.fakeElement(KtFakeSourceElementKind.SamConversion)
         }
     }

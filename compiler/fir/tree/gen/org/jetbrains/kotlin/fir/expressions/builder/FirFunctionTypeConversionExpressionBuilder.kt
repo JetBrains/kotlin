@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionTypeConversionExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionTypeConversionExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
@@ -29,6 +26,7 @@ class FirFunctionTypeConversionExpressionBuilder : FirAnnotationContainerBuilder
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var expression: FirExpression
     var usesFunctionKindConversion: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    lateinit var kind: FirFunctionConversionKind
 
     override fun build(): FirFunctionTypeConversionExpression {
         return FirFunctionTypeConversionExpressionImpl(
@@ -37,6 +35,7 @@ class FirFunctionTypeConversionExpressionBuilder : FirAnnotationContainerBuilder
             annotations.toMutableOrEmpty(),
             expression,
             usesFunctionKindConversion,
+            kind,
         )
     }
 
@@ -61,5 +60,6 @@ inline fun buildFunctionTypeConversionExpressionCopy(original: FirFunctionTypeCo
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.expression = original.expression
     copyBuilder.usesFunctionKindConversion = original.usesFunctionKindConversion
+    copyBuilder.kind = original.kind
     return copyBuilder.apply(init).build()
 }
