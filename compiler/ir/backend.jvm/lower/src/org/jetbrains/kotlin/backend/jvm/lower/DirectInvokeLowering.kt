@@ -43,7 +43,7 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
                         require(argument != null) { "Unexpected null argument of direct lambda invocation" }
                         scope.createTemporaryVariable(
                             argument,
-                            nameHint = if (parameter.origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER) parameter.name.identifier else null,
+                            nameHint = parameter.name.identifierOrNullIfSpecial,
                             inventUniqueName = false
                         ).also { lambdaParam ->
                             lambdaParam.origin = parameter.origin
