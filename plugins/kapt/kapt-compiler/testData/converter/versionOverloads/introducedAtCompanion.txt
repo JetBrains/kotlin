@@ -1,0 +1,115 @@
+/**
+ * public final class ClassWithCompanion : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ClassWithCompanion {
+    @org.jetbrains.annotations.NotNull()
+    public static final ClassWithCompanion.Companion Companion = null;
+
+    public ClassWithCompanion() {
+        super();
+    }
+
+    /**
+     * public final companion object ClassWithCompanion.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // signature: companionFun(ILjava/lang/String;Z)Ljava/lang/String;
+     *   public final fun companionFun(a: kotlin/Int, @kotlin/IntroducedAt(version = "1") b: kotlin/String (* = ... *), @kotlin/IntroducedAt(version = "2") c: kotlin/Boolean (* = ... *)): kotlin/String
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String companionFun(int a, @kotlin.IntroducedAt(version = "1")
+        @org.jetbrains.annotations.NotNull()
+        java.lang.String b, @kotlin.IntroducedAt(version = "2")
+        boolean c) {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class ClassWithJvmStaticCompanion : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ClassWithJvmStaticCompanion {
+    @org.jetbrains.annotations.NotNull()
+    public static final ClassWithJvmStaticCompanion.Companion Companion = null;
+
+    public ClassWithJvmStaticCompanion() {
+        super();
+    }
+
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String staticCompanionFun(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b, @kotlin.IntroducedAt(version = "2")
+    boolean c) {
+        return null;
+    }
+
+    /**
+     * public final companion object ClassWithJvmStaticCompanion.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // signature: staticCompanionFun(ILjava/lang/String;Z)Ljava/lang/String;
+     *   @kotlin/jvm/JvmStatic
+     *   public final fun staticCompanionFun(a: kotlin/Int, @kotlin/IntroducedAt(version = "1") b: kotlin/String (* = ... *), @kotlin/IntroducedAt(version = "2") c: kotlin/Boolean (* = ... *)): kotlin/String
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @kotlin.jvm.JvmStatic()
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String staticCompanionFun(int a, @kotlin.IntroducedAt(version = "1")
+        @org.jetbrains.annotations.NotNull()
+        java.lang.String b, @kotlin.IntroducedAt(version = "2")
+        boolean c) {
+            return null;
+        }
+    }
+}

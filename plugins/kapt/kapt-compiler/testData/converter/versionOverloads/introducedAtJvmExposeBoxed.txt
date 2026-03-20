@@ -1,0 +1,60 @@
+/**
+ * public final class EverythingC : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: bar-OsBMiQA(IIZ)Ljava/lang/String;
+ *   @kotlin/jvm/JvmOverloads
+ *   @kotlin/jvm/JvmExposeBoxed(jvmName = "exposed_bar")
+ *   public final fun bar(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "2") a1: kotlin/UInt (* = ... *), @kotlin/IntroducedAt(version = "3") b: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // signature: foo-OsBMiQA(IIZ)Ljava/lang/String;
+ *   @kotlin/jvm/JvmOverloads
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public final fun foo(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "2") a1: kotlin/UInt (* = ... *), @kotlin/IntroducedAt(version = "3") b: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class EverythingC {
+
+    public EverythingC() {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo(int a, @kotlin.IntroducedAt(version = "2")
+    @org.jetbrains.annotations.NotNull()
+    kotlin.UInt a1, @kotlin.IntroducedAt(version = "3")
+    boolean b) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_bar")
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String exposed_bar() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_bar")
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String exposed_bar(int a, @kotlin.IntroducedAt(version = "2")
+    @org.jetbrains.annotations.NotNull()
+    kotlin.UInt a1, @kotlin.IntroducedAt(version = "3")
+    boolean b) {
+        return null;
+    }
+}
