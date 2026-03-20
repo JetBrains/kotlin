@@ -84,8 +84,8 @@ internal abstract class KotlinKProperty<out V>(
 
     override val annotations: List<Annotation>
         get() {
-            if (isLocalDelegated) {
-                // Annotations on local delegated properties are present only in the metadata.
+            if (isLocalDelegated || container.jClass.isAnnotation) {
+                // Annotations on local delegated properties and annotation constructor properties are present only in the metadata.
                 @OptIn(ExperimentalAnnotationsInMetadata::class)
                 return kmProperty.annotations.map { it.toAnnotation(container.jClass.classLoader) }
             }

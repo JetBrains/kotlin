@@ -13,7 +13,7 @@ import kotlin.reflect.KType
 
 internal class KotlinKParameter(
     override val callable: KotlinKCallable<*>,
-    private val kmParameter: KmValueParameter,
+    internal val kmParameter: KmValueParameter,
     override val index: Int,
     override val kind: KParameter.Kind,
     typeParameterTable: TypeParameterTable,

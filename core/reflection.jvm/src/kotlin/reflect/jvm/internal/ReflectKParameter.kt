@@ -10,6 +10,7 @@ import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.metadata.ExperimentalAnnotationsInMetadata
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -21,6 +22,8 @@ internal abstract class ReflectKParameter : KParameter {
     abstract val declaresDefaultValue: Boolean
 
     override val annotations: List<Annotation> by lazy(PUBLICATION) {
+        if (callable.isAnnotationConstructor) return@lazy loadAnnotationsOnAnnotationParameter()
+
         val java = javaParameter
         when (val callable = java?.callable) {
             is Method -> callable.parameterAnnotations[java.index].toList()
@@ -48,6 +51,15 @@ internal class InstanceParameter(override val callable: ReflectKCallable<*>, kla
     override val isVararg: Boolean get() = false
     override val annotations: List<Annotation> get() = emptyList()
     override val declaresDefaultValue: Boolean get() = false
+}
+
+private fun ReflectKParameter.loadAnnotationsOnAnnotationParameter(): List<Annotation> {
+    // In Java, there's no notion of annotation constructors.
+    if (this !is KotlinKParameter) return emptyList()
+
+    // In Kotlin, parameters of annotation constructors have no annotations in JVM bytecode, so we load them from metadata.
+    @OptIn(ExperimentalAnnotationsInMetadata::class)
+    return kmParameter.annotations.map { it.toAnnotation(callable.container.jClass.classLoader) }
 }
 
 /**
