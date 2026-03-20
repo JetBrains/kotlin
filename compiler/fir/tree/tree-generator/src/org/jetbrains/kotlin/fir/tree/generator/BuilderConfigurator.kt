@@ -469,7 +469,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         noBuilder(literalExpression)
 
-        builder(samConversionExpression) {
+        builder(functionTypeConversionExpression) {
             withCopy()
         }
 

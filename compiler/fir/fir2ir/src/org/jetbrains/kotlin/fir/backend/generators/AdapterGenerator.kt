@@ -403,13 +403,13 @@ class AdapterGenerator(
     internal fun IrExpression.applySamConversionIfNeeded(
         argument: FirExpression,
     ): IrExpression {
-        if (argument !is FirSamConversionExpression) return this
+        if (argument !is FirFunctionTypeConversionExpression) return this
 
         val samFirType = argument.resolvedType.let { it.removeExternalProjections(session.typeContext) ?: it }
         val samType = samFirType.toIrType(ConversionTypeOrigin.DEFAULT)
 
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
-        fun IrExpression.generateSamConversion(samType: IrType, firSamConversion: FirSamConversionExpression, samFirType: ConeKotlinType) =
+        fun IrExpression.generateSamConversion(samType: IrType, firSamConversion: FirFunctionTypeConversionExpression, samFirType: ConeKotlinType) =
             IrTypeOperatorCallImpl(
                 this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
                 castArgumentToFunctionalInterfaceForSamType(
@@ -558,7 +558,7 @@ class AdapterGenerator(
         }
 
         val argumentTypeWithoutSamConversion =
-            ((argument as? FirSamConversionExpression)?.expression ?: argument).resolvedType.fullyExpandedType()
+            ((argument as? FirFunctionTypeConversionExpression)?.expression ?: argument).resolvedType.fullyExpandedType()
         // No conversion should happen if an argument already satisfies the expected type requirements
         // NB: It's not just a fast path, but sometimes the presence adapter generation is incorrect (see KT-82590)
         if (argumentTypeWithoutSamConversion.isSubtypeOf(expectedType, session)) return this

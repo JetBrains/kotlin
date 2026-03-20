@@ -191,8 +191,8 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBasicExpressionCheckers.check(varargArgumentsExpression, data)
     }
 
-    override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(samConversionExpression, data)
+    override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(functionTypeConversionExpression, data)
     }
 
     override fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: CheckerContext) {

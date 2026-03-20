@@ -790,8 +790,8 @@ class FirRenderer(
             print(")")
         }
 
-        override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression) {
-            val expression = samConversionExpression.expression
+        override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression) {
+            val expression = functionTypeConversionExpression.expression
 
             if (expression is FirAnonymousFunctionExpression && expression.isTrailingLambda) {
                 print("<L> = SAM(")

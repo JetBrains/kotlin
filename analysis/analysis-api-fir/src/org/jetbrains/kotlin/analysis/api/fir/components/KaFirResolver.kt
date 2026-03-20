@@ -2109,7 +2109,7 @@ internal class KaFirResolver(
         // For spread, named, and lambda arguments, the source is the KtValueArgument.
         // For other arguments (including array indices), the source is the KtExpression.
         return when (this) {
-            is FirSamConversionExpression ->
+            is FirFunctionTypeConversionExpression ->
                 expression.realPsi as? KtExpression
             is FirSmartCastExpression ->
                 originalExpression.realPsi as? KtExpression

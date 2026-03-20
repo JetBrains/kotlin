@@ -17,21 +17,21 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirSamConversionExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionTypeConversionExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.impl.FirSamConversionExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionTypeConversionExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
-class FirSamConversionExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
+class FirFunctionTypeConversionExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var expression: FirExpression
     var usesFunctionKindConversion: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
-    override fun build(): FirSamConversionExpression {
-        return FirSamConversionExpressionImpl(
+    override fun build(): FirFunctionTypeConversionExpression {
+        return FirFunctionTypeConversionExpressionImpl(
             source,
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
@@ -43,19 +43,19 @@ class FirSamConversionExpressionBuilder : FirAnnotationContainerBuilder, FirExpr
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildSamConversionExpression(init: FirSamConversionExpressionBuilder.() -> Unit): FirSamConversionExpression {
+inline fun buildFunctionTypeConversionExpression(init: FirFunctionTypeConversionExpressionBuilder.() -> Unit): FirFunctionTypeConversionExpression {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return FirSamConversionExpressionBuilder().apply(init).build()
+    return FirFunctionTypeConversionExpressionBuilder().apply(init).build()
 }
 
 @OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
-inline fun buildSamConversionExpressionCopy(original: FirSamConversionExpression, init: FirSamConversionExpressionBuilder.() -> Unit): FirSamConversionExpression {
+inline fun buildFunctionTypeConversionExpressionCopy(original: FirFunctionTypeConversionExpression, init: FirFunctionTypeConversionExpressionBuilder.() -> Unit): FirFunctionTypeConversionExpression {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    val copyBuilder = FirSamConversionExpressionBuilder()
+    val copyBuilder = FirFunctionTypeConversionExpressionBuilder()
     copyBuilder.source = original.source
     copyBuilder.coneTypeOrNull = original.coneTypeOrNull
     copyBuilder.annotations.addAll(original.annotations)

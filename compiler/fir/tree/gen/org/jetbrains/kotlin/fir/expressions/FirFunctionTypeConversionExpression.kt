@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.samConversionExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.functionTypeConversionExpression]
  */
-abstract class FirSamConversionExpression : FirExpression() {
+abstract class FirFunctionTypeConversionExpression : FirExpression() {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
@@ -26,15 +26,15 @@ abstract class FirSamConversionExpression : FirExpression() {
     abstract val usesFunctionKindConversion: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitSamConversionExpression(this, data)
+        visitor.visitFunctionTypeConversionExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformSamConversionExpression(this, data) as E
+        transformer.transformFunctionTypeConversionExpression(this, data) as E
 
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSamConversionExpression
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionTypeConversionExpression
 }

@@ -2016,7 +2016,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             // Otherwise, we might fail resolution if the get and set operator parameter types are different
             // (different SAM types or one is a SAM type and the other isn't).
             // See testData/ir/irText/expressions/callableReferences/caoWithAdaptationForSam.kt
-            val unwrappedSamIndex = (index as? FirSamConversionExpression)?.expression ?: index
+            val unwrappedSamIndex = (index as? FirFunctionTypeConversionExpression)?.expression ?: index
             generateTemporaryVariable(
                 session.moduleData,
                 source = unwrappedSamIndex.source?.fakeElement(fakeSourceElementKind),
@@ -2042,8 +2042,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // applied automatically).
         // SAM conversions will be applied automatically for the set call during completion.
         val indicesQualifiedAccessForGet = indicesQualifiedAccess.mapIndexed { index, qualifiedAccess ->
-            val samConversion = flattenedGetCallArguments[index] as? FirSamConversionExpression ?: return@mapIndexed qualifiedAccess
-            buildSamConversionExpressionCopy(samConversion) {
+            val samConversion = flattenedGetCallArguments[index] as? FirFunctionTypeConversionExpression ?: return@mapIndexed qualifiedAccess
+            buildFunctionTypeConversionExpressionCopy(samConversion) {
                 expression = qualifiedAccess
             }
         }

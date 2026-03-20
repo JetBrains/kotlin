@@ -1276,7 +1276,7 @@ object FirTree : AbstractFirTreeBuilder() {
             """.trimMargin()
     }
 
-    val samConversionExpression: Element by element(Expression) {
+    val functionTypeConversionExpression: Element by element(Expression) {
         parent(expression)
 
         +field("expression", expression)

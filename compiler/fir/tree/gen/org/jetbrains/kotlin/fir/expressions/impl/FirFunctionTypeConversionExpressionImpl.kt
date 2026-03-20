@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirSamConversionExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionTypeConversionExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -23,27 +23,27 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
-internal class FirSamConversionExpressionImpl(
+internal class FirFunctionTypeConversionExpressionImpl(
     override val source: KtSourceElement?,
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var expression: FirExpression,
     override val usesFunctionKindConversion: Boolean,
-) : FirSamConversionExpression() {
+) : FirFunctionTypeConversionExpression() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         expression.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSamConversionExpressionImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFunctionTypeConversionExpressionImpl {
         transformAnnotations(transformer, data)
         expression = expression.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSamConversionExpressionImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionTypeConversionExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
     }

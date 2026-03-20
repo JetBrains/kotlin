@@ -315,7 +315,7 @@ class FirPCLAInferenceSession(
             }
 
             is FirWrappedExpression -> expression.isTrivialArgument()
-            is FirSamConversionExpression -> expression.isTrivialArgument()
+            is FirFunctionTypeConversionExpression -> expression.isTrivialArgument()
             is FirSmartCastExpression -> originalExpression.isTrivialArgument()
 
             is FirCall -> argumentList.arguments.all { it.isTrivialArgument() }

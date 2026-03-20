@@ -923,12 +923,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(varargArgumentsExpression)
     }
 
-    final override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: Nothing?) {
-        visitSamConversionExpression(samConversionExpression)
+    final override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression, data: Nothing?) {
+        visitFunctionTypeConversionExpression(functionTypeConversionExpression)
     }
 
-    open fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression) {
-        visitElement(samConversionExpression)
+    open fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression) {
+        visitElement(functionTypeConversionExpression)
     }
 
     final override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Nothing?) {
