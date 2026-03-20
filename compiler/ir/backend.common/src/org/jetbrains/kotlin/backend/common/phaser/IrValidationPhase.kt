@@ -41,16 +41,16 @@ class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Co
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
-            .withCheckers(IrValueAccessScopeChecker, IrExpressionBodyInFunctionChecker)
+            .withCheckers(
+                IrValueAccessScopeChecker,
+                IrExpressionBodyInFunctionChecker,
+                IrFieldVisibilityChecker,
+                IrCrossFileFieldUsageChecker,
+            )
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             //.withCheckers(IrTypeParameterScopeChecker) // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
             .applyIf(context.configuration.enableIrVisibilityChecks) {
-                withCheckers(IrVisibilityChecker.Relaxed, IrCrossFileFieldUsageChecker)
-                    // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
-                    //  non-private visibilities for fields.
-                    .applyIf(!context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
-                        withCheckers(IrFieldVisibilityChecker)
-                    }
+                withCheckers(IrVisibilityChecker.Relaxed)
             }
             .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
                 withCheckers(IrNestedOffsetRangeChecker)
@@ -103,7 +103,7 @@ class IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<Context : Lower
 
 class IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase<Context : LoweringContext>(
     context: Context,
-    private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker? = null
+    private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker? = null,
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig()
