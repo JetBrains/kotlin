@@ -99,9 +99,21 @@ class JavaClassFinderOverAstImpl(
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
-        val byName = index[packageFqName]
-        if (byName != null) return byName.keys
-        return emptySet()
+        val byName = index[packageFqName] ?: return emptySet()
+        // TODO: this is the place there we can fix KT-4455, so it worth revisiting it later
+        // Only return canonical class names (where the class name matches the file's basename).
+        // Secondary classes (e.g., class B defined alongside class A in A.java) are accessible
+        // when their ClassId is known directly (e.g., as return type from the same file's API)
+        // but are NOT exposed as standalone same-package names. This matches PSI behavior for
+        // KT-4455: non-canonical Java classes are not visible as independent types from Kotlin.
+        return byName.entries
+            .filter { (name, fileEntries) ->
+                fileEntries.any { entry ->
+                    entry.path.fileName.toString().removeSuffix(".java") == name
+                }
+            }
+            .map { it.key }
+            .toSet()
     }
 
     override fun canComputeKnownClassNamesInPackage(): Boolean = true
@@ -137,6 +149,14 @@ class JavaClassFinderOverAstImpl(
         }.toSet()
 
         if (classNames.isEmpty()) return null
+
+        // Only create an entry when the file's base name matches at least one declared class.
+        // This matches PSI's behavior per KT-4455: a file like "E.java" that only declares
+        // class "F" (no class "E") is not indexed — the classes it contains are not accessible
+        // to the compiler unless they appear as return/parameter types within the same .java file.
+        val fileBaseName = path.fileName.toString().removeSuffix(".java")
+        if (!classNames.contains(fileBaseName)) return null
+
         return FileEntry(path, packageFqName, classNames)
     }
 

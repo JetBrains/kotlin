@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 46 (2026-03-20) |
+| **Last Iteration** | 47 (2026-03-20) |
 | **Box Tests** | 1163/1168 passing (99.6%) |
-| **Phased Tests** | 1416/1443 passing (98.1%) |
-| **Combined** | ~2579/2611 passing, **32 failing** |
+| **Phased Tests** | 1418/1443 passing (98.3%) |
+| **Combined** | ~2581/2611 passing, **30 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -143,6 +143,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 44 | TYPE_USE annotation filtering fix: type-position annotations returned unconditionally, member annotations callback-filtered | +13 phased |
 | 45 | Type parameter direct annotations: KMP parser places annotations as direct children, not in MODIFIER_LIST | +3 phased |
 | 46 | Import resolution: nested class FQN splits, class-level star imports, first-import-wins, cross-file ambiguity with JLS 8.5 shadowing | +4 phased |
+| 47 | KT-4455: non-canonical Java classes (class F in E.java where no class E exists) not indexed; knownClassNamesInPackage returns only canonical names | +2 phased |
 
 ---
 

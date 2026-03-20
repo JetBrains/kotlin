@@ -134,6 +134,51 @@ The pre-check triggered regressions on `testSameInnersInSupertypeAndSupertypesSu
 
 ---
 
+## Iteration 47: KT-4455 — Non-Canonical Java Classes Visibility — 2026-03-20
+
+### Root Cause Analysis
+
+Two tests (`testMultipleJavaClassesInOneFile`, `testDifferentFilename`) both tagged `// ISSUE: KT-4455`. The issue is about which Java classes are accessible from Kotlin.
+
+**PSI behavior (expected)**:
+- A file `A.java` that declares `class A` (canonical) AND `class B` (secondary): both are findable by ClassId, but only `A` appears in the same-package class scope. `B` is accessible via return type chains (FIR already has its JavaClass instance), but NOT as a standalone name in Kotlin.
+- A file `E.java` that declares `class F` only (no class `E`): no class is indexed AT ALL. `F` is completely inaccessible.
+
+**java-direct behavior (bug)**:
+1. `tryBuildFileEntry` created entries for ALL files regardless of whether any class matched the filename. `E.java`→class `F` was indexed, making `F` resolvable via `resolveSimpleNameToClassId` step 3 (same package lookup).
+2. `knownClassNamesInPackage` returned ALL indexed class names, including secondary classes like `Another` from `Some.java`. When Kotlin resolved `Another()` in the same package, it found it → should give `UNRESOLVED_REFERENCE`.
+
+### Fixes
+
+**Fix A**: `tryBuildFileEntry` — skip files where the file's base name doesn't match any declared class name:
+- `E.java` with only class `F` → `fileBaseName="E"`, `"E" !in classNames` → returns null → `F` not indexed ✓
+- `C.java` with only class `D` → not indexed ✓
+- `A.java` with classes `A` and `B` → `"A" in classNames` → both indexed (B still findable when FIR already has its ClassId) ✓
+
+**Fix B**: `knownClassNamesInPackage` — only return canonical class names (where class name matches the file's base name):
+- `Some.java` with `Some` and `Another` → returns only `{Some}` → `Another()` in Kotlin gives `UNRESOLVED_REFERENCE` ✓
+
+### Test Results
+- **Box tests**: 1163/1168 (unchanged)
+- **Phased tests**: 1418/1443 (was 1416, +2 fixed)
+- **Total failures**: 30 (was 32, **2 tests fixed, 0 regressions**)
+- PSI regression: skipped (only java-direct files modified)
+
+### Tests Fixed
+- `testMultipleJavaClassesInOneFile` — secondary class `Another` in `Some.java` not visible from Kotlin
+- `testDifferentFilename` — class `F` in `E.java` (non-canonical file) not indexed
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`
+  - `tryBuildFileEntry`: skip files with no canonical class
+  - `knownClassNamesInPackage`: filter to only canonical class names
+
+### Key Learnings
+- PSI only exposes canonical classes (matching filename) in same-package scope. Secondary classes (same file, different name) are only accessible through API chains where FIR already has their ClassId.
+- Files without any canonical class (filename doesn't match any declared class) are completely inaccessible — they're not indexed at all.
+
+---
+
 ## Archives
 
 | Archive | Iterations | Result |
