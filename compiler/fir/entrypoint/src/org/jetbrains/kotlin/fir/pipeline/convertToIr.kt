@@ -279,7 +279,9 @@ private class Fir2IrPipeline(
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
+        fir2IrConfiguration.irVerificationSettings.mode = IrVerificationMode.ERROR
         hasIrValidationErrorFromFrontend = pluginContext.runMandatoryIrValidation(extension = null, mainIrFragment)
+        fir2IrConfiguration.irVerificationSettings.mode = IrVerificationMode.NONE
         pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
@@ -487,8 +489,6 @@ private class Fir2IrPipeline(
         extension: IrGenerationExtension?,
         module: IrModuleFragment,
     ): Boolean {
-        fir2IrConfiguration.irVerificationSettings.mode = IrVerificationMode.ERROR
-
         val verificationMode = fir2IrConfiguration.irVerificationSettings.mode
         val validateForKlibSerialization = fir2IrConfiguration.irVerificationSettings.validateForKlibSerialization
 
