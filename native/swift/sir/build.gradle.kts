@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.isSmokeTest
+
 plugins {
     kotlin("jvm")
     id("generated-sources")
@@ -28,3 +30,7 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+tasks.test.configure {
+    isSmokeTest = true
+}

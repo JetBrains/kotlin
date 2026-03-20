@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
+@SmokeTest
 abstract class AbstractClassIdConsistencyTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         testServices.moduleStructure.allDirectives.ignoreExceptionIfIgnoreDirectivePresent(IGNORE_CONSISTENCY_CHECK) {

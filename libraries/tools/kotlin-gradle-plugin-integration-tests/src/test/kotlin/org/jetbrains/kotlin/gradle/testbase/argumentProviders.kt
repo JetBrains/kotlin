@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
+import org.jetbrains.kotlin.testFederation.TestFederationMode
+import org.jetbrains.kotlin.testFederation.testFederationMode
 import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -51,7 +53,7 @@ annotation class GradleTestVersions(
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class GradleTestExtraStringArguments(
-    vararg val values: String
+    vararg val values: String,
 )
 
 /**
@@ -241,7 +243,12 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
             .map {
                 Arguments.of(it.first, it.second)
             }
-            .asStream()
+            .run {
+                /* We only take the last configuration in smoke test mode */
+                if (testFederationMode == TestFederationMode.Smoke) toList().takeLast(1)
+                else toList()
+            }
+            .stream()
     }
 
     private fun Set<GradleVersion>.gradleVersionsWorkingWithJdk(
@@ -333,7 +340,7 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
         context: ExtensionContext,
     ): Stream<out Arguments> {
         val agpVersionsAnnotation = findAnnotation<AndroidTestVersions>(context)
-        val agpVersions = setOfNotNull(
+        var agpVersions = setOfNotNull(
             agpVersionsAnnotation.minVersion,
             *agpVersionsAnnotation.additionalVersions,
             if (
@@ -348,6 +355,10 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
                 null
             }
         )
+
+        if (testFederationMode == TestFederationMode.Smoke) {
+            agpVersions = setOf(agpVersions.last())
+        }
 
         val gradleVersions = gradleVersions(context)
         val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")

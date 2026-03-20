@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.GradlePluginVariant
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.testFederation.isSmokeTest
 
 plugins {
     id("gradle-plugin-common-configuration")
@@ -472,6 +473,7 @@ tasks.named("validatePlugins") {
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
+        isSmokeTest = true
     }
 }
 
@@ -604,6 +606,7 @@ tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("konanProperties", rootDir.resolve("kotlin-native/konan/konan.properties"))
     useJUnitPlatform()
+    isSmokeTest = true
 }
 
 tasks.register<Test>("functionalUnitTest") {

@@ -399,7 +399,8 @@ include ":kotlin-script-runtime",
         ":wasm:wasm.config",
         ":wasm:wasm.debug.browsers",
         ":repo:codebase-tests",
-        ":repo:artifacts-tests"
+        ":repo:artifacts-tests",
+        ":repo:test-federation-runtime"
 
 include ":libraries:tools:abi-comparator"
 

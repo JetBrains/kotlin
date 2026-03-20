@@ -20,11 +20,13 @@ import androidx.compose.compiler.plugins.kotlin.facade.AnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import java.io.File
 
+@SmokeTest
 abstract class AbstractComposeDiagnosticsTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
     protected fun check(
         @Language("kotlin")

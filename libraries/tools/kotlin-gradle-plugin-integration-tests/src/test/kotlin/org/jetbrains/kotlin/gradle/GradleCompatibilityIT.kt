@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.pathString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@SmokeTest
 @DisplayName("Tests on compatibility with various Gradle versions")
 @JvmGradlePluginTests
 class GradleCompatibilityIT : KGPBaseTest() {

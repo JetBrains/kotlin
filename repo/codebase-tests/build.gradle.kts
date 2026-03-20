@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.isSmokeTest
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -39,6 +41,7 @@ open class CodeOwnersArgumentProviders @Inject constructor(
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit4) {
         dependsOn(":dist")
+        isSmokeTest = true
         workingDir = rootDir
         javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")

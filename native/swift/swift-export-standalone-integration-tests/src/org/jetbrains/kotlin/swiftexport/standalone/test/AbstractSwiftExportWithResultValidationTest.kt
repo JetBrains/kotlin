@@ -9,9 +9,11 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.testFederation.AnalysisApiContract
 import org.junit.jupiter.api.Assumptions
 import kotlin.io.path.div
 
+@AnalysisApiContract
 abstract class AbstractSwiftExportWithResultValidationTest : AbstractSwiftExportTest(), SwiftExportValidator {
     private object Directives : SimpleDirectivesContainer() {
         // TODO: better refactor to new test infrastructure

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.runner.RunWith
@@ -40,6 +41,7 @@ import org.junit.runners.Parameterized
 import java.io.File
 import java.net.URLClassLoader
 
+@SmokeTest
 @RunWith(Parameterized::class)
 abstract class AbstractCompilerTest(val useFir: Boolean) {
     companion object {

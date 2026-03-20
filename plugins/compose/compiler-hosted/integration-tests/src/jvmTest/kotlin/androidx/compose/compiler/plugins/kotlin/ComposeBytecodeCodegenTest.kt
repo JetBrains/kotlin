@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Test
@@ -24,6 +25,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /* ktlint-disable max-line-length */
+@SmokeTest
 class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
