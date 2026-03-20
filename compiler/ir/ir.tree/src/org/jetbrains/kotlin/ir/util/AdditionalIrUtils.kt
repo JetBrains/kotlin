@@ -395,3 +395,5 @@ fun ClassId.toIdSignature(): IdSignature {
         description = null
     )
 }
+
+fun IdSignature.CommonSignature.isClassSignature(): Boolean = id == null

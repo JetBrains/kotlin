@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -14,9 +15,12 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.isClassSignature
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
@@ -45,6 +49,8 @@ abstract class IrFileDeserializer {
      * @return If the annotations have been actually deserialized on this invocation.
      */
     abstract fun deserializeFileImplicitDataIfFirstUse(): Boolean
+
+    abstract fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature>
 }
 
 class IrFileDeserializerImpl(
@@ -55,6 +61,15 @@ class IrFileDeserializerImpl(
     override val declarationDeserializer: IrDeclarationDeserializer,
 ) : IrFileDeserializer() {
     override val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
+
+    private val callableIdToSignature = buildMap<CallableId, MutableList<IdSignature>> {
+        reversedSignatureIndex.keys.forEach { idSig ->
+            if (idSig !is IdSignature.CommonSignature) return@forEach
+            if (idSig.isClassSignature()) return@forEach
+            val callableId = CallableId(idSig.packageFqName(), Name.identifier(idSig.declarationFqName))
+            getOrPut(callableId) { mutableListOf() } += idSig
+        }
+    }
 
     /** Once deserialized this property is set to `null`. */
     private var protoAnnotationsPendingDeserialization: List<ProtoAnnotation>? = fileProto.annotationList
@@ -79,6 +94,23 @@ class IrFileDeserializerImpl(
         }
 
         return false
+    }
+
+    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
+        val topLevelCallableSignature = callableIdToSignature[callableId] ?: return emptyList()
+        return buildList {
+            for (topLevelSignature in topLevelCallableSignature) {
+                val index = reversedSignatureIndex[topLevelSignature] ?: continue
+                val proto = libraryFile.declaration(index)
+                when (signatureKind) {
+                    IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL ->
+                        if (proto.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_FUNCTION) add(topLevelSignature)
+                    IrDeserializer.TopLevelSymbolKind.PROPERTY_SYMBOL ->
+                        if (proto.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) add(topLevelSignature)
+                    else -> error("Unexpected signature kind: $signatureKind")
+                }
+            }
+        }
     }
 }
 

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
@@ -19,10 +21,12 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.DFS
 
@@ -134,6 +138,12 @@ abstract class IrModuleDeserializer(
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
     open fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer = error("Unsupported")
+
+    open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
+        return this.fileDeserializers().flatMap {
+            it.getAllMatchingSignatures(callableId, signatureKind)
+        }
+    }
 }
 
 fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol =
@@ -178,6 +188,16 @@ class IrModuleDeserializerWithBuiltIns(
     private val irBuiltInsMap = syntheticProvider.operatorsPackageFragment.declarations.associate {
         val symbol = (it as IrSymbolOwner).symbol
         symbol.signature to symbol
+    }
+
+    private val irBuiltInsCallableIdMap: Map<CallableId, MutableList<IdSignature>> by lazy {
+        buildMap {
+            syntheticProvider.operatorsPackageFragment.declarations.forEach {
+                val symbol = (it as IrSymbolOwner).symbol
+                val callableId = CallableId(it.getPackageFragment().packageFqName, (it as IrDeclarationWithName).name)
+                getOrPut(callableId) { mutableListOf() } += symbol.signature!!
+            }
+        }
     }
 
     override operator fun contains(idSig: IdSignature): Boolean {
@@ -271,6 +291,11 @@ class IrModuleDeserializerWithBuiltIns(
 
     override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
         return delegate.signatureDeserializerForFile(fileName)
+    }
+
+    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
+        irBuiltInsCallableIdMap[callableId]?.let { return it }
+        return super.getAllMatchingSignatures(callableId, signatureKind)
     }
 }
 
