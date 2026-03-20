@@ -244,9 +244,10 @@ class JavaResolutionContext private constructor(
      */
     private fun resolveSimpleNameToClassId(simpleName: String, tryResolve: (ClassId) -> Boolean): ClassId? {
         // 1. Explicit single-type imports take highest priority (JLS 7.5.1)
+        // Use resolveAsClassId to handle nested class FQNs like "a.x.b.b.b" where
+        // ClassId.topLevel would incorrectly split as package="a.x.b.b", class="b".
         simpleImports[simpleName]?.let { imported ->
-            val classId = ClassId.topLevel(imported)
-            if (tryResolve(classId)) return classId
+            resolveAsClassId(imported, tryResolve)?.let { return it }
         }
 
         // 2. Local/inner classes (same compilation unit, containing class hierarchy, supertypes)
@@ -261,6 +262,22 @@ class JavaResolutionContext private constructor(
 
         // 2b. Inherited inner classes from supertypes (cross-file, e.g., Kotlin classes)
         // JLS 6.5.2: inherited member types are in scope
+        //
+        // Before step 2b, check cross-file Java ambiguity via classFinderProvider.
+        // This prevents resolving a transitively-ambiguous inner class.
+        // Example: y extends x, implements i2 where both x and i (via i2) declare inner class Z.
+        // resolveInheritedInnerClassToClassId only checks direct supertypes and would miss i2->i.Z,
+        // incorrectly resolving Z to x.Z instead of detecting the ambiguity.
+        val containingClassForAmbiguity = containingClassProvider?.invoke() as? JavaClassOverAst
+        if (containingClassForAmbiguity != null && classFinderProvider != null) {
+            val fqNameForAmbiguity = containingClassForAmbiguity.fqName
+            if (fqNameForAmbiguity != null) {
+                val containingClassId = fqNameToClassId(fqNameForAmbiguity)
+                val inheritedInners = classFinderProvider.invoke().collectInheritedInnerClasses(containingClassId)
+                val candidates = inheritedInners[simpleName] ?: emptySet()
+                if (candidates.size > 1) return null // Ambiguously inherited – don't resolve
+            }
+        }
         resolveInheritedInnerClassToClassId(simpleName, tryResolve)?.let { return it }
 
         // 3. Same package
@@ -274,12 +291,25 @@ class JavaResolutionContext private constructor(
         }
 
         // 5. Explicit star imports
+        // Handle both package-level (import java.util.*) and class-level (import a.D.*) star imports.
+        // Class-level: "import a.D.*" imports nested types of class a.D.
         var foundClassId: ClassId? = null
         for (starPackage in starImports.distinct()) {
             val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
             if (tryResolve(candidateClassId)) {
-                if (foundClassId != null) return null // Ambiguous
+                if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
                 foundClassId = candidateClassId
+            } else {
+                // Try class-level star import: "import a.D.*" → resolve a.D as a class,
+                // then look for nested class `simpleName` within it.
+                val outerClassId = resolveAsClassId(starPackage, tryResolve)
+                if (outerClassId != null) {
+                    val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
+                    if (tryResolve(nestedClassId)) {
+                        if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
+                        foundClassId = nestedClassId
+                    }
+                }
             }
         }
         if (foundClassId != null) return foundClassId
@@ -401,6 +431,29 @@ class JavaResolutionContext private constructor(
         return null
     }
 
+    /**
+     * Resolves a FqName to a ClassId by trying all possible package/class splits,
+     * using the tryResolve callback to validate each candidate.
+     *
+     * Unlike ClassId.topLevel which only tries the trivial split at the last dot,
+     * this tries all splits from longest package to shortest, so "a.x.b.b.b" will
+     * try ClassId(a.x.b.b, b), ClassId(a.x.b, b.b), ClassId(a.x, b.b.b), ClassId(a, x.b.b.b).
+     *
+     * Used for explicit imports with nested class FQNs and for class-level star import resolution.
+     */
+    private fun resolveAsClassId(fqName: FqName, tryResolve: (ClassId) -> Boolean): ClassId? {
+        val parts = fqName.pathSegments()
+        if (parts.isEmpty()) return null
+        for (classStartIndex in (parts.size - 1) downTo 0) {
+            val pkg = if (classStartIndex == 0) FqName.ROOT
+                      else FqName.fromSegments(parts.subList(0, classStartIndex).map { it.asString() })
+            val cls = FqName.fromSegments(parts.subList(classStartIndex, parts.size).map { it.asString() })
+            val classId = ClassId(pkg, cls, false)
+            if (tryResolve(classId)) return classId
+        }
+        return null
+    }
+
     private fun fqNameToClassId(fqName: FqName): ClassId {
         // We know the package from resolutionContext.packageFqName
         // The class name is whatever comes after the package
@@ -469,7 +522,12 @@ class JavaResolutionContext private constructor(
                 if (hasStar) {
                     starImports.add(FqName(fqName))
                 } else {
-                    simpleImports[fqName.substringAfterLast('.')] = FqName(fqName)
+                    // Keep first occurrence: duplicate explicit imports for the same simple name
+                    // are a compile error in Java. PSI uses first-seen semantics, so we do too.
+                    val simpleName = fqName.substringAfterLast('.')
+                    if (!simpleImports.containsKey(simpleName)) {
+                        simpleImports[simpleName] = FqName(fqName)
+                    }
                 }
             }
             
@@ -492,7 +550,10 @@ class JavaResolutionContext private constructor(
                 if (hasStar) {
                     starImports.add(FqName(fqName))
                 } else {
-                    simpleImports[identifiers.last()] = FqName(fqName)
+                    val simpleName = identifiers.last()
+                    if (!simpleImports.containsKey(simpleName)) {
+                        simpleImports[simpleName] = FqName(fqName)
+                    }
                 }
             }
             
@@ -559,7 +620,10 @@ class JavaResolutionContext private constructor(
                             if (hasStar) {
                                 starImports.add(FqName(fqName))
                             } else {
-                                simpleImports[fqName.substringAfterLast('.')] = FqName(fqName)
+                                val simpleName = fqName.substringAfterLast('.')
+                                if (!simpleImports.containsKey(simpleName)) {
+                                    simpleImports[simpleName] = FqName(fqName)
+                                }
                             }
                         }
                     }

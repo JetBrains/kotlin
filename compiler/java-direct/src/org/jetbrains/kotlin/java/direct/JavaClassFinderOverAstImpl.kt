@@ -255,22 +255,31 @@ class JavaClassFinderOverAstImpl(
         val result = mutableMapOf<String, MutableSet<ClassId>>()
         val visited = mutableSetOf<ClassId>()
 
-        fun collectRecursive(current: ClassId) {
+        // shadowedNames: inner class names declared by closer classes in the current inheritance path.
+        // Per JLS 8.5, a member type declared in a subclass shadows same-named types from supertypes.
+        // Example: if B extends A and both declare Inner, then from C extends B, B.Inner shadows A.Inner.
+        // Only inner class names from UNRELATED paths that can't shadow each other indicate ambiguity.
+        fun collectRecursive(current: ClassId, shadowedNames: Set<String>) {
             if (current in visited) return
             visited.add(current)
 
             val innerClasses = getInnerClassNames(current)
             for (innerName in innerClasses) {
-                val innerClassId = current.createNestedClassId(Name.identifier(innerName))
-                result.getOrPut(innerName) { mutableSetOf() }.add(innerClassId)
+                // Don't report names already declared by a closer class in this path (they're shadowed)
+                if (innerName !in shadowedNames) {
+                    val innerClassId = current.createNestedClassId(Name.identifier(innerName))
+                    result.getOrPut(innerName) { mutableSetOf() }.add(innerClassId)
+                }
             }
 
+            // This class's inner class names shadow same-named types from its own supertypes
+            val shadowedByThisClass = shadowedNames + innerClasses
             for (supertypeId in getDirectSupertypes(current)) {
-                collectRecursive(supertypeId)
+                collectRecursive(supertypeId, shadowedByThisClass)
             }
         }
 
-        collectRecursive(classId)
+        collectRecursive(classId, emptySet())
         return result
     }
 

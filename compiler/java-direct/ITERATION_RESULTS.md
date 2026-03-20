@@ -69,6 +69,71 @@ Updated `JavaTypeParameterOverAst.annotations` to collect annotations from both 
 
 ---
 
+---
+
+## Iteration 46: Import Resolution — Nested Class FQNs, Class-Level Star Imports, Shadowing — 2026-03-20
+
+### Root Cause Analysis
+
+Three bugs in `JavaResolutionContext.kt` all manifesting as import resolution failures:
+
+**Bug 1: Explicit import FQN split (Fix 1b)** (`testImportThriceNestedClass` `b/x.java`)
+`resolveSimpleNameToClassId` used `ClassId.topLevel(imported)` for explicit imports. For `import a.x.b.b.b`, this produces `ClassId(a.x.b.b, b)` (splits at last dot only) — but the class is `ClassId(a, x.b.b.b)`. `tryResolve` returned false, resolution fell through.
+
+**Bug 2: Class-level star imports not handled (Fix 2)** (`testImportThriceNestedClass` `b/y.java`, `testNestedAndTopLevelClassClash` A2)
+`import a.x.b.b.*` and `import a.D.*` are CLASS-level star imports (import nested types of a class, not a package). The star import loop only tried `ClassId(starPackage, simpleName)` as a package import. When `a.x.b.b` and `a.D` are classes (not packages), this lookup fails, so nested types like `a.x.b.b.b` and `a.D.B` were never found.
+
+**Bug 3: Duplicate explicit imports — last-wins vs first-wins (Fix 1a)** (`testNestedAndTopLevelClassClash` A1)
+`import a.B; import a.D.B;` → `simpleImports["B"]` was overwritten by the second import (last-wins). PSI/K1 uses first-wins semantics. Changed to keep-first.
+
+**Bug 4: Cross-file ambiguity check bypassed (Fix 3)** (`testInheritanceAmbiguity2`)
+`resolveInheritedInnerClassToClassId` (step 2b) only checked DIRECT supertypes for inner classes. For `y extends x implements i2` where `i2 extends i` and both `x` and `i` have inner class `Z`, it only saw `x.Z` (direct) and missed `i.Z` (via `i2→i`). Added cross-file ambiguity pre-check using `collectInheritedInnerClasses`.
+
+**Regression fix: Java shadowing rule in `collectInheritedInnerClasses`**
+The pre-check triggered regressions on `testSameInnersInSupertypeAndSupertypesSupertype` and `testSuperTypeWithSameInner`. Root cause: `collectInheritedInnerClasses` didn't implement JLS 8.5 shadowing — when `B extends A` and both declare `Inner`, `B.Inner` shadows `A.Inner`. Fixed by passing `shadowedNames` down the inheritance path: inner class names declared by a closer class skip same-named types from supertypes.
+
+### Fixes
+
+1. **`resolveAsClassId` helper** (`JavaResolutionContext.kt`): Tries all package/class splits for a FQN using `tryResolve` callback (analogous to `findClassId` in `JavaTypeConversion.kt` but using the callback).
+
+2. **Step 1 (explicit imports)**: Use `resolveAsClassId(imported, tryResolve)` instead of `ClassId.topLevel(imported)` — handles nested class FQNs like `a.x.b.b.b`.
+
+3. **Step 5 (star imports)**: When package-level lookup fails, try class-level: resolve the star import path as a class, then look for `simpleName` as a nested class. Ambiguity detected across both package-level and class-level results.
+
+4. **`extractImports`**: All three import-adding sites changed to `putIfAbsent` / keep-first semantics for duplicate explicit imports.
+
+5. **Cross-file ambiguity pre-check**: Before `resolveInheritedInnerClassToClassId` (step 2b), run `collectInheritedInnerClasses` to detect multi-path ambiguity. Return null (unresolvable) if 2+ candidates.
+
+6. **`collectInheritedInnerClasses` shadowing** (`JavaClassFinderOverAstImpl.kt`): Added `shadowedNames: Set<String>` parameter. Inner class names declared by a class are passed down to its supertypes as "shadowed" — same-named types in supertypes are not added to the result. Fixes linear-hierarchy false-positives (B.Z shadows A.Z when B extends A).
+
+### Test Results
+- **Box tests**: 1163/1168 (unchanged)
+- **Phased tests**: 1416/1443 (was 1412, +4 fixed)
+- **Total failures**: 32 (was 36, **4 tests fixed, 0 regressions**)
+- PSI regression: skipped (only java-direct files modified)
+
+### Tests Fixed
+- `testImportThriceNestedClass` — explicit import of thrice-nested class + class-level star import
+- `testNestedAndTopLevelClassClash` — class-level star import ambiguity + first-import wins for duplicates
+- `testInheritanceAmbiguity2` — cross-file ambiguity detection via transitively-inherited inner class
+- `testClash` — bonus fix (likely resolved by one of the import fixes)
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt`
+  - Added `resolveAsClassId` helper
+  - `extractImports`: keep-first for duplicate explicit imports (3 sites)
+  - `resolveSimpleNameToClassId`: use `resolveAsClassId` for step 1; class-level star import fallback in step 5; cross-file ambiguity pre-check before step 2b
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`
+  - `collectInheritedInnerClasses`: added `shadowedNames` parameter to implement JLS 8.5 shadowing
+
+### Key Learnings
+- `ClassId.topLevel` only splits at the last dot — correct for top-level classes but wrong for nested class FQNs like `a.x.b.b.b`
+- Java star imports can be CLASS-level (`import a.D.*` imports nested types of class `a.D`), not just package-level
+- PSI uses first-import-wins for duplicate explicit imports (invalid Java code handled by SKIP_JAVAC tests)
+- Java shadowing (JLS 8.5): B.Inner shadows A.Inner when B extends A. Must pass shadowed names DOWN the inheritance path when collecting inherited members to avoid false ambiguity
+
+---
+
 ## Archives
 
 | Archive | Iterations | Result |
