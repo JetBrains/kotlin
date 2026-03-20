@@ -26,7 +26,7 @@ fun <T> Ref(content: Function2<Composer, Int, T>, %composer: Composer?, %changed
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         @Composable
-        fun <T> Fn(%composer: Composer?, %changed: Int): T {
+        fun Fn(%composer: Composer?, %changed: Int): T {
           %composer.startReplaceGroup(<>)
           sourceInformation(%composer, "C(Fn):Test.kt")
           val tmp0 = Fn(null, %composer, 0, 0b0001)

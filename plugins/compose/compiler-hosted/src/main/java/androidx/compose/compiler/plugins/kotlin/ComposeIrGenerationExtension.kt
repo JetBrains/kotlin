@@ -195,6 +195,8 @@ class ComposeIrGenerationExtension(
             featureFlags,
         ).lower(moduleFragment)
 
+        ComposableAnnotationRemover().lower(moduleFragment)
+
         if (isKlibTarget) {
             KlibAssignableParamTransformer(
                 pluginContext,
