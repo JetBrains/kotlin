@@ -12,7 +12,7 @@ class B {
 
 fun usage(b: B) {
     b.foo(A(), 10)
-    b.foo(A<Long>()) { 10L }
+    b.foo(A<Long>()) { 10 }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
