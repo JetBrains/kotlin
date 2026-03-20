@@ -2,9 +2,86 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-19 (iter 45)
+**Last Updated**: 2026-03-20 (iter 50)
 
 ---
+
+## Iteration 50: Interface Method Abstractness + Static Inner Type Scoping — 2026-03-20
+
+### Root Cause Analysis (3 independent bugs)
+
+**Bug 1 — Interface method `isAbstract` detection:**
+`JavaMethodOverAst.isAbstract` used `!hasBody` where `hasBody = node.findChildByType("CODE_BLOCK") != null`. For the test `noAnnotationInClassPath.kt`, the Java interface method `public boolean foo(@Nullable T y) {}` has an empty body `{}` — this IS a CODE_BLOCK in the AST. So `hasBody = true` → `isAbstract = false` → `A` had zero abstract methods → FIR did not recognize it as a SAM interface → SAM lambda conversion failed → `UNRESOLVED_REFERENCE` for `it`.
+
+PSI determines abstractness by checking for the `default` keyword, NOT by the presence of a body. In Java, any interface method without `default` or `static` is abstract regardless of body (having a body without `default` is a compile error, but PSI is lenient). The fix: `isAbstract = super.isAbstract || (isInterface && !hasDefaultKeyword && !isStatic)` where `hasDefaultKeyword` checks `MODIFIER_LIST` children (since `DEFAULT_KEYWORD` lives inside `MODIFIER_LIST`, not as a direct child of the method node).
+
+**Bug 2 — Static inner type scoping: outer type params not in scope:**
+`JavaClassOverAst.contextForInner` used `resolutionContext` (no outer type params) for static nested types. For `JavaClass.Inner<X>` (static nested interface with method `doSomething(T t, X x, ...): T` where `T` is from outer `JavaClass<T>`), `T` was not in scope → `MISSING_DEPENDENCY_CLASS` for the method. Expected: `ARGUMENT_TYPE_MISMATCH` (PSI resolves `T` as the unsubstituted outer type parameter).
+
+**Bug 3 — Static inner type scoping: outer type params shadow inner class names:**
+If outer type params are added to scope with high priority, they shadow inner class names. For `x.Nested` (static, no own type params), where outer `x<T>` has type param `T` AND `Nested` has inner class `T`, the outer type param `T` was found first → wrong type for `Nested.getT()`. Also broke `D.getZ2<Z>(Z z)` where `D` has inner class `Z<I>` AND method has own type param `Z` — the inner class `Z` would shadow the method's own type param.
+
+### Fix
+
+**isAbstract fix** (`JavaMemberOverAst.kt`):
+- `hasDefaultKeyword` checks `modifierList?.children?.any { it.type == "DEFAULT_KEYWORD" }` (inside `MODIFIER_LIST`)
+- `isAbstract = super.isAbstract || (isInterface && !hasDefaultKeyword && !isStatic)`
+
+**Scoping fix** (`JavaResolutionContext.kt`, `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`):
+Added `inheritedTypeParametersInScope: Map<String, JavaTypeParameter>` field to `JavaResolutionContext`.
+- **Own type params** (method/class own) → `typeParametersInScope` (high priority)
+- **Inherited outer type params** → `inheritedTypeParametersInScope` (low priority)
+
+New `withInheritedTypeParameters(typeParams)` method adds params to `inheritedTypeParametersInScope`.
+
+`contextForInner` in `JavaClassOverAst.findInnerClass`:
+- Non-static inner class → `memberResolutionContext` (outer type params as OWN, high priority)
+- Static inner class/interface/enum → `resolutionContext.withContainingClass(this).withInheritedTypeParameters(typeParameters)` (outer type params as INHERITED, low priority)
+
+Resolution order in `JavaClassifierTypeOverAst.classifier`:
+1. OWN type parameters (`findTypeParameter`) — method/class own, win over inner class names
+2. Local/inner class names (`findLocalClass`) — shadow inherited outer type params
+3. INHERITED type parameters (`findInheritedTypeParameter`) — outer class params, last resort
+
+### Test Results
+- **Box tests**: 1164/1168 (was 1163, +1 fixed: `testCapturedSelfInsideIntersection4`)
+- **Phased tests**: 1425/1443 (was 1419, +6 fixed)
+- **Total failures**: 18 (was 25, **7 tests fixed, 0 regressions**)
+
+### Tests Fixed
+- `testNoAnnotationInClassPath` — SAM interface detection: `foo` is now correctly abstract
+- `testInnerClassInGeneric` — `T` from outer class resolved as inherited type param in static inner interface
+- `testComplexGenericOverride` — same: `SubjectClass.NextFace<T extends KeyClass>` type param resolved
+- `testHugeMixedCapturedType` — benefited from improved inner type scoping
+- `testWriterAppenderExampleRecursive` — benefited from improved inner type scoping
+- `testKt64045` — benefited from improved inner type scoping
+- `testCapturedSelfInsideIntersection4` (Box) — benefited from improved inner type scoping
+
+### Key Learnings
+- `DEFAULT_KEYWORD` in Java interface methods is inside `MODIFIER_LIST`, not a direct child of the method node — always check `MODIFIER_LIST.children` for modifier keywords
+- Java interface methods without `default` are always abstract regardless of body presence (body is a compile error but parsers are lenient)
+- Outer class type parameters have DIFFERENT priority depending on static/non-static nesting:
+  - Non-static: outer type params are "own" (win over inner class names) — they're part of the class scope
+  - Static: outer type params are "inherited" (shadowed by inner class names of the static nested type)
+- Resolution order for Java type names: own type params > inner class names > inherited (outer) type params
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt`
+  - `isAbstract`: use `!hasDefaultKeyword && !isStatic` instead of `!hasBody`
+  - `hasDefaultKeyword`: checks `modifierList?.children` for `DEFAULT_KEYWORD`
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt`
+  - Added `inheritedTypeParametersInScope` field
+  - Added `withInheritedTypeParameters()` method
+  - Added `findInheritedTypeParameter()` method
+  - Updated `withTypeParameters()`, `withContainingClass()` to pass through inherited params
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt`
+  - `findInnerClass`: static types use `resolutionContext.withContainingClass(this).withInheritedTypeParameters(typeParameters)`; non-static use `memberResolutionContext`
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`
+  - `classifier`: resolution order: own type params → local classes → inherited type params
+
+---
+
+
 
 ## Iteration 44: TYPE_USE Annotation Filtering Fix — 2026-03-19
 

@@ -30,6 +30,14 @@ class JavaResolutionContext private constructor(
     private val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
     private val containingClassProvider: (() -> JavaClass?)? = null,
     private val classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null,
+    /**
+     * Type parameters from OUTER (enclosing) classes that have lower priority than inner class names.
+     * Used for static nested types where outer type params are "in scope" per some Java compilers
+     * (like PSI) but inner class names of the static nested type shadow them.
+     * Distinct from [typeParametersInScope] which are the method/class OWN type params and take
+     * priority over inner class names.
+     */
+    private val inheritedTypeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
 ) {
     /**
      * Finds a class by simple name. Checks:
@@ -127,7 +135,11 @@ class JavaResolutionContext private constructor(
         return allFound.firstOrNull()
     }
 
+    /** Returns type parameters with HIGH priority (method/class own params, win over inner class names). */
     fun findTypeParameter(name: String): JavaTypeParameter? = typeParametersInScope[name]
+
+    /** Returns type parameters with LOW priority (outer class inherited params, shadowed by inner class names). */
+    fun findInheritedTypeParameter(name: String): JavaTypeParameter? = inheritedTypeParametersInScope[name]
 
     fun getSimpleImport(simpleName: String): FqName? = simpleImports[simpleName]
 
@@ -183,14 +195,28 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Creates a new context with additional type parameters in scope.
+     * Creates a new context with additional OWN type parameters (high priority).
      * Used when entering a class or method that declares type parameters.
+     * Own type params take priority over inner class names of the containing class.
      */
     fun withTypeParameters(typeParams: List<JavaTypeParameter>): JavaResolutionContext {
         if (typeParams.isEmpty()) return this
         val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, localClassProvider, newScope, containingClassProvider, classFinderProvider
+            packageFqName, simpleImports, starImports, localClassProvider, newScope, containingClassProvider, classFinderProvider, inheritedTypeParametersInScope
+        )
+    }
+
+    /**
+     * Creates a new context with INHERITED type parameters from an outer class (low priority).
+     * Used for static nested types where outer class type params are visible but can be
+     * shadowed by inner class names of the static nested type itself.
+     */
+    fun withInheritedTypeParameters(typeParams: List<JavaTypeParameter>): JavaResolutionContext {
+        if (typeParams.isEmpty()) return this
+        val newInherited = inheritedTypeParametersInScope + typeParams.associateBy { it.name.asString() }
+        return JavaResolutionContext(
+            packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope, containingClassProvider, classFinderProvider, newInherited
         )
     }
 
@@ -202,7 +228,8 @@ class JavaResolutionContext private constructor(
         return JavaResolutionContext(
             packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope,
             containingClassProvider = { containingClass },
-            classFinderProvider = classFinderProvider
+            classFinderProvider = classFinderProvider,
+            inheritedTypeParametersInScope = inheritedTypeParametersInScope
         )
     }
 

@@ -103,12 +103,18 @@ class JavaClassifierTypeOverAst(
     override val classifier: JavaClassifier? by lazy {
         val parts = rawTypeName.split('.')
 
-        // 1. Check type parameters in scope FIRST (e.g., T, E, K, V)
         if (parts.size == 1) {
+            // Resolution order for simple names (matches Java scoping rules):
+            // 1. OWN type parameters (method/class own — high priority, win over inner class names)
             resolutionContext.findTypeParameter(parts[0])?.let { return@lazy it }
+            // 2. Inner/local class names (shadow INHERITED outer type params)
+            val localClass = resolutionContext.findLocalClass(Name.identifier(parts[0]))
+            if (localClass != null) return@lazy localClass
+            // 3. INHERITED type parameters from outer class (low priority — shadowed by inner classes)
+            resolutionContext.findInheritedTypeParameter(parts[0])?.let { return@lazy it }
         }
 
-        // 2. Check local classes (same compilation unit)
+        // Multi-part names: navigate from base class through inner classes
         var current: JavaClassifier? = resolutionContext.findLocalClass(Name.identifier(parts[0]))
 
         if (current is JavaClass) {

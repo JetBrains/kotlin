@@ -4,7 +4,7 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 49 (2026-03-20) |
+| **Last Iteration** | 50 (2026-03-20) |
 | **Box Tests** | 1163/1168 passing (99.6%) |
 | **Phased Tests** | 1418/1443 passing (98.3%) |
 | **Combined** | ~2581/2611 passing, **30 failing** |
@@ -146,6 +146,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 47 | KT-4455: non-canonical Java classes (class F in E.java where no class E exists) not indexed; knownClassNamesInPackage returns only canonical names | +2 phased |
 | 48 | package-info.java support: annotations in PACKAGE_STATEMENT→MODIFIER_LIST→ANNOTATION; JavaPackageOverAst.annotations now populated | +1 phased |
 | 49 | isTriviallyFlexibleHint: cross-file Java source classes now produce isTrivial=true in ConeFlexibleType via index-only lookup; fixes ft<T,T?> vs T! FIR dump mismatch | +4 phased |
+| 50 | Fix isAbstract for interface methods (DEFAULT_KEYWORD in MODIFIER_LIST, not direct child); fix inherited type param scope for static inner types; fix local class/type param resolution order | +7 |
 
 ---
 

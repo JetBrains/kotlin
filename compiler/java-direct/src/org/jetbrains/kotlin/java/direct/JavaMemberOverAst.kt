@@ -238,12 +238,17 @@ class JavaMethodOverAst(
     private val modifierList: JavaSyntaxNode?
         get() = node.findChildByType("MODIFIER_LIST")
 
-    // Interface methods without a body are implicitly abstract
+    // Interface methods are abstract unless they have 'default' or 'static' keyword.
+    // Note: in Java, a non-default interface method body is a compile error, but we still see
+    // the body in the AST. We must NOT use hasBody to determine abstractness — interface
+    // methods without 'default' are always abstract regardless of whether a body is present.
+    // This matches PSI behavior which only checks for explicit 'default'/'static' keywords.
     override val isAbstract: Boolean
-        get() = super.isAbstract || (containingClass.isInterface && !hasBody)
+        get() = super.isAbstract || (containingClass.isInterface && !hasDefaultKeyword && !isStatic)
 
-    private val hasBody: Boolean
-        get() = node.findChildByType("CODE_BLOCK") != null
+    private val hasDefaultKeyword: Boolean
+        // DEFAULT_KEYWORD is inside MODIFIER_LIST, not a direct child of the method node
+        get() = modifierList?.children?.any { it.type.toString() == "DEFAULT_KEYWORD" } ?: false
 
     override val annotationParameterDefaultValue: JavaAnnotationArgument?
         get() {

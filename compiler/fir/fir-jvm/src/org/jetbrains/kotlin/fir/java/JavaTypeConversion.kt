@@ -166,7 +166,7 @@ private fun JavaType?.toConeTypeProjection(
                 }
             }
             
-            if (!isRawType && (classifier?.isTriviallyFlexible() == true || isTriviallyFlexibleHint)) {
+            if (!isRawType && classifier?.isTriviallyFlexible() == true) {
                 lowerBound.toTrivialFlexibleType(session.typeContext)
             } else {
                 val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)
@@ -174,7 +174,11 @@ private fun JavaType?.toConeTypeProjection(
                 if (isRawType) {
                     ConeRawType.create(lowerBound, upperBound)
                 } else {
-                    ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
+                    // When isTriviallyFlexibleHint is true the class is a user-defined Java source
+                    // class (cross-file reference). Use isTrivial=true to match PSI rendering (T!
+                    // instead of ft<T,T?>). The upper bound is still computed to preserve any symbol-
+                    // loading side effects from toConeKotlinTypeForFlexibleBound.
+                    ConeFlexibleType(lowerBound, upperBound, isTrivial = isTriviallyFlexibleHint)
                 }
             }
         }

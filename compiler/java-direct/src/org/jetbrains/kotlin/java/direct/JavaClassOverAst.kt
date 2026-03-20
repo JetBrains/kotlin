@@ -132,8 +132,16 @@ class JavaClassOverAst(
         val isEnum = innerClassNode.findChildByType("ENUM_KEYWORD") != null
         val innerIsEffectivelyStatic = hasStaticKeyword || isInterface || isEnum
 
-        // Non-static inner classes see outer class type parameters; static nested classes/interfaces don't
-        val contextForInner = if (innerIsEffectivelyStatic) resolutionContext else memberResolutionContext
+        // Non-static inner classes get outer type params as OWN (high priority, can't be shadowed
+        // by inner class names) via memberResolutionContext.
+        // Static nested types (interfaces/enums/static classes) get outer type params as INHERITED
+        // (low priority, can be shadowed by inner class names of the static nested type itself).
+        // This matches Java's scoping rules where static nested types see outer type params but
+        // inner class names of the nested type shadow them.
+        val contextForInner = if (innerIsEffectivelyStatic)
+            resolutionContext.withContainingClass(this).withInheritedTypeParameters(typeParameters)
+        else
+            memberResolutionContext
         return JavaClassOverAst(innerClassNode, contextForInner, outerClass = this)
     }
 
