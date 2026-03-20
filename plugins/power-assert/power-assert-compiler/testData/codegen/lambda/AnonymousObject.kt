@@ -15,7 +15,6 @@ fun test2(a: Int, b: Int) {
         fun foo(): Boolean {
             return a > b
         }
-        override fun toString() = "ANONYMOUS"
     }.foo())
 }
 

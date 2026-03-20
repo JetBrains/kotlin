@@ -206,6 +206,7 @@ fun <T> buildTree(
                         variable.acceptChildren(this, chainNode)
                         chainNode.addChild(ExpressionNode(expression))
                     }
+
                     IrStatementOrigin.ELVIS -> {
                         // Elvis operators are handled with a special node
                         val statements = expression.statements
@@ -245,6 +246,7 @@ fun <T> buildTree(
                             "Expected the when of the elvis expression to consist of exactly two branches.\n${expression.dump()}"
                         }
                     }
+
                     IrStatementOrigin.WHEN -> {
                         // When-with-subject expressions are handled with a special node.
                         val statements = expression.statements
@@ -260,8 +262,17 @@ fun <T> buildTree(
                         variable.acceptChildren(this, chainNode)
                         processWhen(conditional, chainNode, variable)
                     }
+
+                    IrStatementOrigin.OBJECT_LITERAL -> {
+                        // Object literals should not be included in the diagram.
+                        // The source code for the literal will be visible in the diagram,
+                        // and that is likely more useful than a 'toString()' result.
+                        data.addChild(HiddenNode(expression))
+                    }
+
                     else -> {
-                        // Everything else is considered unsafe and terminates the expression tree
+                        // Everything else is considered unsafe and terminates the expression tree,
+                        // but should be included in the diagram to be safe.
                         data.addChild(ExpressionNode(expression))
                     }
                 }
