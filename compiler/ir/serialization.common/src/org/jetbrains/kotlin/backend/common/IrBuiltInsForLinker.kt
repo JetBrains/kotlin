@@ -7,19 +7,22 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltInsOverSymbolFinder
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.SymbolFinder
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 
+@OptIn(InternalSymbolFinderAPI::class)
 class IrBuiltInsForLinker(
     linker: KotlinIrLinker,
     override val languageVersionSettings: LanguageVersionSettings,
-) : IrBuiltInsOverSymbolFinder(SymbolFinderOverLinker(linker)) {
+    symbolFinder: SymbolFinder = SymbolFinderOverLinker(linker)
+) : IrBuiltInsOverSymbolFinder(symbolFinder) {
     override val irFactory: IrFactory = linker.symbolTable.irFactory
 
     override val operatorsPackageFragment: IrExternalPackageFragment = createEmptyExternalPackageFragment(
@@ -29,44 +32,8 @@ class IrBuiltInsForLinker(
         fqName = StandardClassIds.BASE_INTERNAL_PACKAGE
     )
 
-    override val ieee754equalsFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> = notImplemented()
-
-    override val eqeqeqSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val eqeqSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val throwCceSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val throwIseSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val andandSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val ororSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val checkNotNullSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val linkageErrorSymbol: IrSimpleFunctionSymbol = notImplemented()
-
-    override val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> = notImplemented()
-
-    override val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> = notImplemented()
-
-    override val greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> = notImplemented()
-
-    override val greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> = notImplemented()
-
     private fun createEmptyExternalPackageFragment(fqName: FqName): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
             IrExternalPackageFragmentSymbolImpl(), fqName
         )
-
-    private fun notImplemented(): Nothing = error("Should be taken from linker")
 }
