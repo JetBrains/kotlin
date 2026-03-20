@@ -336,6 +336,9 @@ private fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (th
     KonanTarget.LINUX_ARM32_HFP,
     KonanTarget.LINUX_ARM64,
     KonanTarget.LINUX_X64,
+    KonanTarget.TIZEN_ARM32,
+    KonanTarget.TIZEN_ARM64,
+    KonanTarget.TIZEN_X64,
     KonanTarget.MINGW_X64,
         -> error("unsupported targets")
 }
