@@ -70,6 +70,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             return
         }
 
+        val supportsExtendedValueClasses = context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
+        val valueModifierPrefix = if (supportsExtendedValueClasses) "@JvmInline value" else "Value"
         val isExtendedValueClass = declaration.isExtendedValueClass(context)
 
         if (declaration.isInner || declaration.isLocal) {
@@ -81,7 +83,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_OPEN)
             }
         } else if (declaration.modality != Modality.FINAL) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL)
+            reporter.reportOn(
+                declaration.source,
+                FirErrors.VALUE_CLASS_NOT_FINAL,
+                valueModifierPrefix,
+            )
         }
 
         if (declaration.contextParameters.isNotEmpty() && LanguageFeature.ContextReceivers.isEnabled()) {
@@ -94,7 +100,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             val supertypeSymbol = supertypeEntry.toRegularClassSymbol(context.session) ?: continue
             if (supertypeSymbol.isInterface) continue
             if (!isExtendedValueClass) {
-                reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES)
+                reporter.reportOn(
+                    supertypeEntry.source,
+                    FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES,
+                    valueModifierPrefix,
+                )
             } else if (!supertypeSymbol.fir.isExtendedValueClass(context) && !supertypeSymbol.classId.isRecordId()) {
                 reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES)
             }
@@ -123,7 +133,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             when (innerDeclaration) {
                 is FirRegularClassSymbol -> {
                     if (innerDeclaration.isInner && !isExtendedValueClass) {
-                        reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS)
+                        reporter.reportOn(
+                            innerDeclaration.source,
+                            FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS,
+                            valueModifierPrefix,
+                        )
                     }
                 }
 
@@ -182,7 +196,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                         reporter.reportOn(
                             functionSymbol.source,
                             FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS,
-                            reservedName
+                            reservedName,
                         )
                     }
                 } else if (containingClassSymbol.classKind == ClassKind.INTERFACE) {
@@ -190,7 +204,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                         declaration.source,
                         FirErrors.RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS,
                         containingClassSymbol.name.asString(),
-                        reservedName
+                        reservedName,
                     )
                 }
             }
@@ -198,20 +212,30 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         if (primaryConstructor?.source?.kind is KtRealSourceElementKind) {
             if (LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled() || isExtendedValueClass) {
-                if (primaryConstructorParametersByName.isEmpty()) {
-                    reporter.reportOn(primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR)
+                if (primaryConstructorParametersByName.isEmpty() && declaration.isFinal) {
+                    reporter.reportOn(
+                        primaryConstructor.source,
+                        FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR,
+                        if (supportsExtendedValueClasses) "Final value" else "Value"
+                    )
                     return
                 }
             } else if (primaryConstructorParametersByName.size != 1) {
-                reporter.reportOn(primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE)
+                reporter.reportOn(primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, valueModifierPrefix)
                 return
             }
         } else if (!isExtendedValueClass || declaration.isFinal) {
             if (!declaration.isExpect || LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor.isDisabled()) {
-                reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS)
+                reporter.reportOn(
+                    declaration.source,
+                    FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS,
+                    if (supportsExtendedValueClasses) "final value" else "value"
+                )
             } else {
                 declaration.constructors(context.session).filter { !it.isPrimary }.forEach { constructor ->
-                    reporter.reportOn(constructor.source, FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY)
+                    reporter.reportOn(
+                        constructor.source, FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY, if (supportsExtendedValueClasses) "final value" else "value"
+                    )
                 }
             }
             return
@@ -221,23 +245,35 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
             val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType(context.session)
             when {
-                (declaration.isFinal || !isExtendedValueClass) && primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
+                declaration.isFinal && primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
                     reporter.reportOn(
-                        primaryConstructorParameter.source, FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
+                        primaryConstructorParameter.source,
+                        FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
+                        if (supportsExtendedValueClasses) "Final value" else "Value",
                     )
+                isExtendedValueClass && declaration.isAbstract && primaryConstructorPropertiesByName[name] != null -> reporter.reportOn(
+                    primaryConstructorParameter.source,
+                    FirErrors.ABSTRACT_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
+                )
+
+                isExtendedValueClass && declaration.isSealed && primaryConstructorPropertiesByName[name] != null -> reporter.reportOn(
+                    primaryConstructorParameter.source,
+                    FirErrors.SEALED_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
+                )
 
                 !isExtendedValueClass && parameterTypeRef.isInapplicableParameterType(context.session) -> {
                     reporter.reportOn(
                         parameterTypeRef.source,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                        parameterTypeRef.coneType
+                        parameterTypeRef.coneType,
+                        valueModifierPrefix,
                     )
                 }
 
                 !isExtendedValueClass && recursionType != null -> when (recursionType) {
-                    Plain -> reporter.reportOn(parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE)
+                    Plain -> reporter.reportOn(parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE, valueModifierPrefix)
                     ViaTypeParameters -> reporter.reportOn(
-                        parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS
+                        parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS, valueModifierPrefix,
                     )
                 }
 

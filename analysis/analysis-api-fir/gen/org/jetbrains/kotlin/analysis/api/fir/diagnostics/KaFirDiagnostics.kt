@@ -1565,6 +1565,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ValueClassNotFinal : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = ValueClassNotFinal::class
+        val prefix: String
     }
 
     interface ValueClassOpen : KaFirDiagnostic<KtDeclaration> {
@@ -1573,22 +1574,35 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface AbsenceOfPrimaryConstructorForValueClass : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = AbsenceOfPrimaryConstructorForValueClass::class
+        val modifier: String
     }
 
     interface ExpectValueClassWithNoPrimaryConstructorHasSecondary : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = ExpectValueClassWithNoPrimaryConstructorHasSecondary::class
+        val modifier: String
     }
 
     interface InlineClassConstructorWrongParametersSize : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = InlineClassConstructorWrongParametersSize::class
+        val prefix: String
     }
 
     interface ValueClassEmptyConstructor : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ValueClassEmptyConstructor::class
+        val prefix: String
     }
 
     interface ValueClassConstructorNotFinalReadOnlyParameter : KaFirDiagnostic<KtParameter> {
         override val diagnosticClass get() = ValueClassConstructorNotFinalReadOnlyParameter::class
+        val prefix: String
+    }
+
+    interface AbstractValueClassConstructorPropertyParameter : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass get() = AbstractValueClassConstructorPropertyParameter::class
+    }
+
+    interface SealedValueClassConstructorPropertyParameter : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass get() = SealedValueClassConstructorPropertyParameter::class
     }
 
     interface PropertyWithBackingFieldInsideValueClass : KaFirDiagnostic<KtProperty> {
@@ -1602,6 +1616,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface ValueClassHasInapplicableParameterType : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ValueClassHasInapplicableParameterType::class
         val type: KaType
+        val prefix: String
     }
 
     interface ValueClassCannotImplementInterfaceByDelegation : KaFirDiagnostic<PsiElement> {
@@ -1610,6 +1625,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ValueClassCannotExtendClasses : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ValueClassCannotExtendClasses::class
+        val prefix: String
     }
 
     interface ValueClassCannotExtendIdentityClasses : KaFirDiagnostic<KtElement> {
@@ -1618,14 +1634,17 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ValueClassCannotBeRecursive : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ValueClassCannotBeRecursive::class
+        val prefix: String
     }
 
     interface ValueClassCannotBeRecursiveViaTypeParametersError : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ValueClassCannotBeRecursiveViaTypeParametersError::class
+        val prefix: String
     }
 
     interface ValueClassCannotBeRecursiveViaTypeParametersWarning : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ValueClassCannotBeRecursiveViaTypeParametersWarning::class
+        val prefix: String
     }
 
     interface MultiFieldValueClassPrimaryConstructorDefaultParameter : KaFirDiagnostic<KtExpression> {
@@ -1653,6 +1672,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface InnerClassInsideValueClass : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = InnerClassInsideValueClass::class
+        val prefix: String
     }
 
     interface ValueClassCannotBeCloneable : KaFirDiagnostic<KtDeclaration> {

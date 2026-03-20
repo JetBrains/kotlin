@@ -45,7 +45,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
         if (firClass !is FirRegularClass) return
         if (!firClass.hasAnnotationUltraSafe(JvmStandardClassIds.Annotations.JvmRecord)) return
         if (!(firClass.isData || (firClass.isValue &&
-                    !firClass.hasAnnotationUltraSafe(JvmStandardClassIds.Annotations.JvmInline) &&
+                    !firClass.hasAnnotationSafe(JvmStandardClassIds.Annotations.JvmInline, session) &&
                     session.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses))
                     )
         ) return

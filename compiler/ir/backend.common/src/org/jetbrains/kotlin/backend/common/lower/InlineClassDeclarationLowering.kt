@@ -63,7 +63,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
         val staticMethod = context.getOrCreateStaticMethod(function)
 
         transformMethodBodyFlat(function, staticMethod)
-            processDelegatedInlineClassMember(function)
+        processDelegatedInlineClassMember(function)
         function.body = delegateToStaticMethod(function, staticMethod)
 
         if (function.overriddenSymbols.isEmpty())  // Function is used only in unboxed context
