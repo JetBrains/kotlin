@@ -1,0 +1,49 @@
+/**
+ * public final class EverythingC : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: jvmname_foo(IIZ)Ljava/lang/String;
+ *   @kotlin/jvm/JvmOverloads
+ *   @kotlin/jvm/JvmName(name = "jvmname_foo")
+ *   @kotlin/jvm/JvmExposeBoxed(jvmName = "exposed_foo")
+ *   public final fun foo(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "2") a1: kotlin/UInt (* = ... *), @kotlin/IntroducedAt(version = "3") b: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class EverythingC {
+
+    public EverythingC() {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_foo")
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String exposed_foo(int a, @kotlin.IntroducedAt(version = "2")
+    @org.jetbrains.annotations.NotNull()
+    kotlin.UInt a1, @kotlin.IntroducedAt(version = "3")
+    boolean b) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmName(name = "jvmname_foo")
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_foo")
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String jvmname_foo() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmName(name = "jvmname_foo")
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String jvmname_foo(int a, @kotlin.IntroducedAt(version = "2")
+    int a1, @kotlin.IntroducedAt(version = "3")
+    boolean b) {
+        return null;
+    }
+}

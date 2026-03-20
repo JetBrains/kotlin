@@ -1,0 +1,65 @@
+/**
+ * public final class EverythingC : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: foo_no_introduce-OsBMiQA(IIZ)Ljava/lang/String;
+ *   @kotlin/jvm/JvmOverloads
+ *   public final fun foo_no_introduce(a: kotlin/Int (* = ... *), a1: kotlin/UInt (* = ... *), b: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // signature: foo_with_introduce(ILerror/NonExistentClass;Z)Ljava/lang/String;
+ *   @kotlin/jvm/JvmOverloads
+ *   public final fun foo_with_introduce(a: kotlin/Int (* = ... *), UInt: error/NonExistentClass (* = ... *), b: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class EverythingC {
+
+    public EverythingC() {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo_no_introduce() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo_no_introduce(int a) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo_with_introduce() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo_with_introduce(int a) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo_with_introduce(int a, @error.NonExistentClass()
+    @org.jetbrains.annotations.NotNull()
+    error.NonExistentClass UInt) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo_with_introduce(int a, @error.NonExistentClass()
+    @org.jetbrains.annotations.NotNull()
+    error.NonExistentClass UInt, @error.NonExistentClass()
+    boolean b) {
+        return null;
+    }
+}

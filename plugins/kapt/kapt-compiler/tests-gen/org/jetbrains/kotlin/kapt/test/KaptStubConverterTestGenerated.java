@@ -887,6 +887,68 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Nested
+  @TestMetadata("plugins/kapt/kapt-compiler/testData/converter/introducedAt")
+  @TestDataPath("$PROJECT_ROOT")
+  public class IntroducedAt {
+    private void run(String fileName) {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/introducedAt/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInIntroducedAt() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt/kapt-compiler/testData/converter/introducedAt"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("introducedAtCompanion.kt")
+    public void testIntroducedAtCompanion() {
+      run("introducedAtCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtFunctions.kt")
+    public void testIntroducedAtFunctions() {
+      run("introducedAtFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtFunctionsInlineClass.kt")
+    public void testIntroducedAtFunctionsInlineClass() {
+      run("introducedAtFunctionsInlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtFunctionsInlineClassJvmOverloads.kt")
+    public void testIntroducedAtFunctionsInlineClassJvmOverloads() {
+      run("introducedAtFunctionsInlineClassJvmOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtJvmExposeBoxed.kt")
+    public void testIntroducedAtJvmExposeBoxed() {
+      run("introducedAtJvmExposeBoxed.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtJvmName.kt")
+    public void testIntroducedAtJvmName() {
+      run("introducedAtJvmName.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtJvmOverloads.kt")
+    public void testIntroducedAtJvmOverloads() {
+      run("introducedAtJvmOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtJvmOverloadsJvmExposeBoxed.kt")
+    public void testIntroducedAtJvmOverloadsJvmExposeBoxed() {
+      run("introducedAtJvmOverloadsJvmExposeBoxed.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("plugins/kapt/kapt-compiler/testData/converter/jvmDefault")
   @TestDataPath("$PROJECT_ROOT")
   public class JvmDefault {

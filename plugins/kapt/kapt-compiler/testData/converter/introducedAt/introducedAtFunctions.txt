@@ -1,0 +1,80 @@
+/**
+ * package {
+ *
+ *   // signature: contextFun(ZILjava/lang/String;Z)Ljava/lang/String;
+ *   context(d: kotlin/Boolean)
+ *   public final fun contextFun(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "1") b: kotlin/String (* = ... *), @kotlin/IntroducedAt(version = "2") c: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // signature: extendFun(IILjava/lang/String;Z)Ljava/lang/String;
+ *   public final fun kotlin/Int.extendFun(a: kotlin/Int, @kotlin/IntroducedAt(version = "1") b: kotlin/String (* = ... *), @kotlin/IntroducedAt(version = "2") c: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // signature: inTrailing(Ljava/lang/String;IZLkotlin/jvm/functions/Function1;)Ljava/lang/String;
+ *   public final fun inTrailing(x: kotlin/String, @kotlin/IntroducedAt(version = "1") y: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "2") z: kotlin/Boolean (* = ... *), block: kotlin/Function1<kotlin/String, kotlin/String> (* = ... *)): kotlin/String
+ *
+ *   // signature: javaName(ILjava/lang/String;Z)Ljava/lang/String;
+ *   @kotlin/jvm/JvmName(name = "javaName")
+ *   public final fun kotlinName(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "1") b: kotlin/String (* = ... *), @kotlin/IntroducedAt(version = "2") c: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // signature: suspendFun(ILjava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   public final suspend fun suspendFun(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "1") b: kotlin/String (* = ... *), @kotlin/IntroducedAt(version = "2") c: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // signature: topLevelFun(ILjava/lang/String;Z)Ljava/lang/String;
+ *   public final fun topLevelFun(a: kotlin/Int, @kotlin/IntroducedAt(version = "1") b: kotlin/String (* = ... *), @kotlin/IntroducedAt(version = "2") c: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class IntroducedAtFunctionsKt {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String topLevelFun(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b, @kotlin.IntroducedAt(version = "2")
+    boolean c) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String extendFun(int $this$extendFun, int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b, @kotlin.IntroducedAt(version = "2")
+    boolean c) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public static final java.lang.Object suspendFun(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b, @kotlin.IntroducedAt(version = "2")
+    boolean c, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super java.lang.String> $completion) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmName(name = "javaName")
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String javaName(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b, @kotlin.IntroducedAt(version = "2")
+    boolean c) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String contextFun(boolean d, int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b, @kotlin.IntroducedAt(version = "2")
+    boolean c) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String inTrailing(@org.jetbrains.annotations.NotNull()
+    java.lang.String x, @kotlin.IntroducedAt(version = "1")
+    int y, @kotlin.IntroducedAt(version = "2")
+    boolean z, @org.jetbrains.annotations.NotNull()
+    kotlin.jvm.functions.Function1<? super java.lang.String, java.lang.String> block) {
+        return null;
+    }
+}

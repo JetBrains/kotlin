@@ -18,6 +18,15 @@ data class D (
     @IntroducedAt("1") val c: Float = 3f,
 )
 
+class E() {
+    constructor(
+        a: Int = 1,
+        @IntroducedAt("1") b: String = "",
+        @IntroducedAt("1") b1: String = "",
+        @IntroducedAt("2") c: Float = 3f,
+    ) : this()
+}
+
 fun test1() : String {
     val c = C()
 

@@ -6,7 +6,7 @@
 @JvmInline value class PositiveInt(val n: Int = 0)
 
 class C {
-    @JvmExposeBoxed
+    @JvmExposeBoxed("takesPositiveIntBoxed")
     fun takesPositiveInt(
         a: String,
         @IntroducedAt("1") b: PositiveInt = PositiveInt(1),
@@ -24,8 +24,8 @@ class C {
 fun test1() : String {
     val c = C()
 
-    val m1 = C::class.java.getMethod("takesPositiveInt", String::class.java)
-    val m2 = C::class.java.getMethod("takesPositiveInt", String::class.java, PositiveInt::class.java)
+    val m1 = C::class.java.getMethod("takesPositiveIntBoxed", String::class.java)
+    val m2 = C::class.java.getMethod("takesPositiveIntBoxed", String::class.java, PositiveInt::class.java)
 
     val v1 = m1.invoke(c, "hello") as String
     val v2 = m2.invoke(c, "hello", PositiveInt(1)) as String
