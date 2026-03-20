@@ -570,7 +570,7 @@ KtNameReferenceExpression(861,865): 'Left'
 KtDotQualifiedExpression(869,873): 'cs.x'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
 KtNameReferenceExpression(869,871): 'cs'
   KaSymbolResolutionSuccess:
@@ -581,7 +581,7 @@ KtNameReferenceExpression(869,871): 'cs'
 KtNameReferenceExpression(872,873): 'x'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
 KtWhenEntry(882,898): 'is Right -> cs.y'
   null
@@ -603,7 +603,7 @@ KtNameReferenceExpression(885,890): 'Right'
 KtDotQualifiedExpression(894,898): 'cs.y'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
 KtNameReferenceExpression(894,896): 'cs'
   KaSymbolResolutionSuccess:
@@ -614,4 +614,4 @@ KtNameReferenceExpression(894,896): 'cs'
 KtNameReferenceExpression(897,898): 'y'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>

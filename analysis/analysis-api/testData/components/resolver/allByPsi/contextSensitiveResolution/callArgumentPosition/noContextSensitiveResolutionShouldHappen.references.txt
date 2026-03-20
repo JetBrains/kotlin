@@ -61,7 +61,7 @@ KtNameReferenceExpression(209,210): 'X'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X' on receiver of type 'Unit'.>
     symbols:
       Nothing (Unresolved reference)
 

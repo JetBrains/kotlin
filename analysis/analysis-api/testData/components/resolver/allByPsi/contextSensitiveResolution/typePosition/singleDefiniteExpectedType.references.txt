@@ -360,7 +360,7 @@ KtNameReferenceExpression(898,903): 'prop1'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -411,7 +411,7 @@ KtNameReferenceExpression(973,978): 'prop2'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'T'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -852,7 +852,7 @@ KtNameReferenceExpression(1898,1902): 'prop'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -878,7 +878,7 @@ KtNameReferenceExpression(1952,1962): 'propNested'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface.NestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -993,7 +993,7 @@ KtNameReferenceExpression(2204,2208): 'prop'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -1019,7 +1019,7 @@ KtNameReferenceExpression(2258,2268): 'propNested'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -1113,7 +1113,7 @@ KtNameReferenceExpression(2480,2484): 'prop'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'T'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -1139,7 +1139,7 @@ KtNameReferenceExpression(2521,2526): 'prop1'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T'.>
     symbols:
       Nothing (Unresolved reference)
 

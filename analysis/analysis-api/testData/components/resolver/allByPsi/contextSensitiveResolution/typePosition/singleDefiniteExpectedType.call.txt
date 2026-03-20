@@ -892,7 +892,7 @@ KtNameReferenceExpression(869,885): 'SealedInheritor1'
 KtDotQualifiedExpression(889,903): 'instance.prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T (of fun <T : SealedClass, OtherI> testTypeParams)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T'.>
 
 KtNameReferenceExpression(889,897): 'instance'
   KaCallResolutionSuccess:
@@ -914,7 +914,7 @@ KtNameReferenceExpression(889,897): 'instance'
 KtNameReferenceExpression(898,903): 'prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T (of fun <T : SealedClass, OtherI> testTypeParams)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T'.>
 
 KtWhenEntry(908,989): '!is SealedInheritor1 if instance is SealedInheritor2 -> instance.prop2.toString()'
   null
@@ -993,7 +993,7 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
 KtDotQualifiedExpression(964,978): 'instance.prop2'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'T (of fun <T : SealedClass, OtherI> testTypeParams)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'T'.>
 
 KtNameReferenceExpression(964,972): 'instance'
   KaCallResolutionSuccess:
@@ -1015,7 +1015,7 @@ KtNameReferenceExpression(964,972): 'instance'
 KtNameReferenceExpression(973,978): 'prop2'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'T (of fun <T : SealedClass, OtherI> testTypeParams)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'T'.>
 
 KtCallExpression(979,989): 'toString()'
   KaCallResolutionSuccess:
@@ -2413,7 +2413,7 @@ KtNameReferenceExpression(2452,2467): 'NestedInheritor'
 KtDotQualifiedExpression(2471,2484): 'instance.prop'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'T (of fun <T : SealedInterface, SealedClass> testRegularIntersection)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'T'.>
 
 KtNameReferenceExpression(2471,2479): 'instance'
   KaCallResolutionSuccess:
@@ -2435,7 +2435,7 @@ KtNameReferenceExpression(2471,2479): 'instance'
 KtNameReferenceExpression(2480,2484): 'prop'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'T (of fun <T : SealedInterface, SealedClass> testRegularIntersection)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'T'.>
 
 KtWhenEntry(2489,2526): 'is SealedInheritor1 -> instance.prop1'
   null
@@ -2457,7 +2457,7 @@ KtNameReferenceExpression(2492,2508): 'SealedInheritor1'
 KtDotQualifiedExpression(2512,2526): 'instance.prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T (of fun <T : SealedInterface, SealedClass> testRegularIntersection)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T'.>
 
 KtNameReferenceExpression(2512,2520): 'instance'
   KaCallResolutionSuccess:
@@ -2479,7 +2479,7 @@ KtNameReferenceExpression(2512,2520): 'instance'
 KtNameReferenceExpression(2521,2526): 'prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T (of fun <T : SealedInterface, SealedClass> testRegularIntersection)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T'.>
 
 KtWhenEntry(2531,2544): 'else -> "100"'
   null

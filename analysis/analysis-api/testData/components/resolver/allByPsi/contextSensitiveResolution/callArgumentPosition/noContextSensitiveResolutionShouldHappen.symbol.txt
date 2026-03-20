@@ -112,7 +112,7 @@ KtValueArgument(199,210): 'WrongEnum.X'
 KtDotQualifiedExpression(199,210): 'WrongEnum.X'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X' on receiver of type 'Unit'.>
 
 KtNameReferenceExpression(199,208): 'WrongEnum'
   KaSymbolResolutionSuccess:
@@ -123,7 +123,7 @@ KtNameReferenceExpression(199,208): 'WrongEnum'
 KtNameReferenceExpression(209,210): 'X'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X' on receiver of type 'Unit'.>
 
 KtClass(215,248): '@DslMarker'
   null

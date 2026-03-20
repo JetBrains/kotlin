@@ -386,7 +386,7 @@ KtNameReferenceExpression(872,873): 'x'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -412,6 +412,6 @@ KtNameReferenceExpression(897,898): 'y'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
     symbols:
       Nothing (Unresolved reference)
