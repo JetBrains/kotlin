@@ -179,6 +179,76 @@ Two tests (`testMultipleJavaClassesInOneFile`, `testDifferentFilename`) both tag
 
 ---
 
+## Iteration 48: package-info.java Support (Infrastructure) — 2026-03-20
+
+### Investigation Summary
+
+Investigated `testGoogleErrorProne_packageInfoJava` and other package-annotation tests. Root finding: tests with `// WITH_STDLIB` or `// WITH_JSR305_TEST_ANNOTATIONS` use PSI-based Java class loading, NOT java-direct. This is because:
+- The `JavaClassFinderOverAstFactory.createJavaClassFinder` is never called for such tests
+- `JavaClassFinderOverAstImpl` is never instantiated
+- The PSI Java class finder handles these tests instead
+
+This means `package-info.java` support in java-direct cannot fix `testGoogleErrorProne_packageInfoJava` (which uses `WITH_STDLIB`).
+
+### Implementation
+
+Despite not fixing any currently-failing test, `package-info.java` support was implemented correctly in java-direct:
+- `buildIndex()` now calls `indexPackageInfo(path)` for `package-info.java` files instead of skipping them
+- `indexPackageInfo` parses the file, extracts the package FQN and any annotations, stores them in `packageAnnotationNodes`
+- `JavaPackageOverAst.annotations` returns annotations from `finder.getPackageAnnotations(fqName)`
+
+This is correct infrastructure for future tests that go through the java-direct path with package annotations.
+
+### Root Cause (Corrected)
+
+Initial investigation was flawed — Gradle daemon caching made throw-based debugging unreliable (the test worker was using cached bytecode). The user was right: `WITH_STDLIB` does NOT bypass java-direct. All Java source files including `package-info.java` ARE processed by java-direct.
+
+The actual issue: `indexPackageInfo` was looking for annotations at the wrong AST locations. The KMP Java parser structures `package-info.java` as:
+```
+ROOT
+  PACKAGE_STATEMENT
+    WHITE_SPACE
+    END_OF_LINE_COMMENT    (file header comment)
+    WHITE_SPACE
+    MODIFIER_LIST
+      ANNOTATION              ← @CheckReturnValue is HERE
+    WHITE_SPACE
+    PACKAGE_KEYWORD
+    WHITE_SPACE
+    JAVA_CODE_REFERENCE: usage
+    SEMICOLON
+  WHITE_SPACE
+  IMPORT_LIST
+```
+
+The annotation `@CheckReturnValue` is in `PACKAGE_STATEMENT → MODIFIER_LIST → ANNOTATION`. My initial code only checked `root.getChildrenByType("ANNOTATION")` and `packageStmt.getChildrenByType("ANNOTATION")` (direct children), missing the MODIFIER_LIST level.
+
+### Test Results
+- **Box tests**: 1163/1168 (unchanged)
+- **Phased tests**: 1419/1443 (was 1418, **+1 fixed**)
+- **Total failures**: 29 (was 30, **1 test fixed, 0 regressions**)
+
+### Tests Fixed
+- `testGoogleErrorProne_packageInfoJava` — `@CheckReturnValue` on `usage` package from `package-info.java` now correctly returned by `JavaPackageOverAst.annotations`
+
+### Key Learnings
+- `WITH_STDLIB` does NOT bypass java-direct — all Java source files are processed by java-direct regardless
+- Debugging with `throw`-based approaches is unreliable with Gradle daemon caching — use file-based logging with `--no-daemon` flag
+- `package-info.java` AST structure: annotation is in `PACKAGE_STATEMENT → MODIFIER_LIST → ANNOTATION` (not at root level)
+- `package-info.java` parsing is done separately from class indexing since these files have no class declarations
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`
+  - Added `packageAnnotationNodes` map
+  - Added `indexPackageInfo(path)` and `getPackageAnnotations(fqName)` 
+  - Modified `buildIndex()` to handle `package-info.java` files separately
+  - Fixed `indexPackageInfo` to extract annotations from `PACKAGE_STATEMENT → MODIFIER_LIST` path
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaPackageOverAst.kt`
+  - `annotations` now delegates to `finder.getPackageAnnotations(fqName)`
+  - `findAnnotation` now works based on `annotations` instead of always returning null
+
+---
+
 ## Archives
 
 | Archive | Iterations | Result |

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.ClassId
@@ -43,6 +44,9 @@ class JavaClassFinderOverAstImpl(
 
     // package cache
     private val packageCache: MutableMap<FqName, JavaPackage> = ConcurrentHashMap()
+
+    // Package-level annotations from package-info.java files
+    private val packageAnnotationNodes: MutableMap<FqName, MutableList<JavaAnnotation>> = ConcurrentHashMap()
 
     // Cache: ClassId -> list of supertype ClassIds (direct only)
     private val supertypeCache: MutableMap<ClassId, List<ClassId>> = ConcurrentHashMap()
@@ -124,6 +128,11 @@ class JavaClassFinderOverAstImpl(
             Files.walk(root).use { stream ->
                 stream.filter { it.isRegularFile() && it.fileName.toString().endsWith(".java") }
                     .forEach { path ->
+                        // Special handling for package-info.java — extract package-level annotations
+                        if (path.fileName.toString() == "package-info.java") {
+                            indexPackageInfo(path)
+                            return@forEach
+                        }
                         val entry = tryBuildFileEntry(path) ?: return@forEach
                         val byName = index.getOrPut(entry.packageFqName) { ConcurrentHashMap() }
                         for (name in entry.topLevelClassNames) {
@@ -134,6 +143,36 @@ class JavaClassFinderOverAstImpl(
             }
         }
     }
+
+    private fun indexPackageInfo(path: Path) {
+        val source = tryReadFile(path) ?: return
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+
+        val packageStmt = root.findChildByType("PACKAGE_STATEMENT")
+        val packageName = (packageStmt ?: root).findChildByType("JAVA_CODE_REFERENCE")?.text ?: return
+        val packageFqName = FqName(packageName)
+
+        val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
+        val annotations = mutableListOf<JavaAnnotation>()
+
+        // Annotations are in PACKAGE_STATEMENT → MODIFIER_LIST → ANNOTATION (KMP parser structure).
+        // Also check other plausible locations for robustness.
+        packageStmt?.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
+            ?.mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
+        packageStmt?.getChildrenByType("ANNOTATION")
+            ?.mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
+        root.getChildrenByType("ANNOTATION").mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
+        root.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
+            ?.mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
+
+        if (annotations.isNotEmpty()) {
+            packageAnnotationNodes.getOrPut(packageFqName) { mutableListOf() }.addAll(annotations)
+        }
+    }
+
+    internal fun getPackageAnnotations(packageFqName: FqName): List<JavaAnnotation> =
+        packageAnnotationNodes[packageFqName] ?: emptyList()
 
     private fun tryBuildFileEntry(path: Path): FileEntry? {
         val source = tryReadFile(path) ?: return null

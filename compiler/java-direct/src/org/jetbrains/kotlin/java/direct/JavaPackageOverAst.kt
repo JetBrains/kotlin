@@ -17,12 +17,13 @@ class JavaPackageOverAst(
 ) : JavaPackage {
 
     override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
+        get() = finder.getPackageAnnotations(fqName)
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = false
 
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? =
+        annotations.find { it.classId?.asSingleFqName() == fqName }
 
     override val subPackages: Collection<JavaPackage>
         get() = finder.subPackagesOf(fqName).map { JavaPackageOverAst(it, finder) }

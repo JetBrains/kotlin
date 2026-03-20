@@ -144,6 +144,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 45 | Type parameter direct annotations: KMP parser places annotations as direct children, not in MODIFIER_LIST | +3 phased |
 | 46 | Import resolution: nested class FQN splits, class-level star imports, first-import-wins, cross-file ambiguity with JLS 8.5 shadowing | +4 phased |
 | 47 | KT-4455: non-canonical Java classes (class F in E.java where no class E exists) not indexed; knownClassNamesInPackage returns only canonical names | +2 phased |
+| 48 | package-info.java support: annotations in PACKAGE_STATEMENT→MODIFIER_LIST→ANNOTATION; JavaPackageOverAst.annotations now populated | +1 phased |
 
 ---
 
