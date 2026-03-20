@@ -63,6 +63,7 @@ public final class AnnotationsKt {
     // source: 'annotations.kt'
     inner (anonymous) class AnnotationsKt$box$10
     inner (anonymous) class AnnotationsKt$box$12
+    private final static method box$superClass(p0: kotlin.reflect.KClass): kotlin.reflect.KClass
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getTP$annotations(p0: A): void
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getTP$annotations(p0: C): void
@@ -92,6 +93,12 @@ public final class B {
     public final @kotlin.jvm.JvmName(name="otherName") method otherName(): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public inner class Ann$Container
+}
+
+@kotlin.Metadata
+public abstract class Base {
+    // source: 'annotations.kt'
+    public method <init>(): void
 }
 
 @Ann$Container(value=[Ann, Ann])
@@ -126,4 +133,10 @@ public final class C {
     public final @Ann$Container(value=[Ann, Ann]) method setYTa(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable p0: A): void
     private final static method z_delegate$lambda$0(): A
     public inner class Ann$Container
+}
+
+@kotlin.Metadata
+public abstract class Sealed {
+    // source: 'annotations.kt'
+    public method <init>(): void
 }

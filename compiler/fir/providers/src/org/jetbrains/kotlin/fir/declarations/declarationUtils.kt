@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -18,16 +22,20 @@ import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullableAny
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Returns all constructors of a given class, including generated ones. Resolve phase is not guaranteed.
@@ -257,7 +265,9 @@ fun FirBasedSymbol<*>.isAnnotationConstructor(session: FirSession): Boolean {
     return getConstructedClass(session)?.classKind == ClassKind.ANNOTATION_CLASS
 }
 
+@OptIn(ExperimentalContracts::class)
 fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSession): Boolean {
+    contract { returns(true) implies (this@isPrimaryConstructorOfInlineOrValueClass is FirConstructorSymbol) }
     if (this !is FirConstructorSymbol) return false
     return getConstructedClass(session)?.isInlineOrValueClass() == true && this.isPrimary
 }
@@ -272,6 +282,15 @@ fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
     if (this.classKind != ClassKind.CLASS) return false
 
     return isInlineOrValue
+}
+
+@OptIn(SuspiciousValueClassCheck::class)
+fun FirRegularClassSymbol.isExtendedValueClass(session: FirSession): Boolean {
+    if (this.classKind != ClassKind.CLASS) return false
+
+    if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) return false
+
+    return isValue && !hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, session)
 }
 
 val JVM_INLINE_ANNOTATION_FQ_NAME: FqName = FqName("kotlin.jvm.JvmInline")

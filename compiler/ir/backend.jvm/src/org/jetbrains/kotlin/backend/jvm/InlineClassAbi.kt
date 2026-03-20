@@ -55,7 +55,7 @@ object InlineClassAbi {
     fun mangledNameFor(context: JvmBackendContext, irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
-            assert(irFunction.constructedClass.isValue) {
+            assert(irFunction.constructedClass.let { it.isValue && !it.isExtendedValueClass }) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
             return Name.identifier("constructor-impl")
@@ -65,7 +65,7 @@ object InlineClassAbi {
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
-        if (suffix == null && ((irFunction.parent as? IrClass)?.isValue != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
+        if (suffix == null && ((irFunction.parent as? IrClass)?.let { it.isValue && !it.isExtendedValueClass } != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
             return irFunction.name
         }
 
@@ -117,7 +117,7 @@ object InlineClassAbi {
     private fun IrType.asInfoForMangling(): InfoForMangling =
         InfoForMangling(
             erasedUpperBound.fqNameWhenAvailable!!.toUnsafe(),
-            isValue = isValueClassType(),
+            isValue = isValueClassType() && !erasedUpperBound.isExtendedValueClass,
             isNullable = isNullable()
         )
 

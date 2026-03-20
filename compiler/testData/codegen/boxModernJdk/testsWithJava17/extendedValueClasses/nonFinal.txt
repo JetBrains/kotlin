@@ -1,0 +1,190 @@
+@kotlin.Metadata
+public abstract class AbstractValue {
+    // source: 'nonFinal.kt'
+    public method <init>(p0: int, p1: int): void
+    public abstract method getP2(): int
+    public method getP4(): int
+    public final method getP6(): int
+}
+
+@kotlin.Metadata
+public final class FinalIdentity {
+    // source: 'nonFinal.kt'
+    private final field p2: int
+    private final field t0: int
+    private final field t10: int
+    private final field t11: int
+    private final @org.jetbrains.annotations.NotNull field t12$delegate: kotlin.Lazy
+    private field t13: int
+    private final field t1: int
+    private final field t2: int
+    private final field t3: int
+    private final field t4: int
+    private final field t5: int
+    private final field t6: int
+    private final field t8: int
+    public method <init>(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int): void
+    public method getP2(): int
+    public method getS4(): int
+    public final method getT0(): int
+    public final method getT1(): int
+    public final method getT10(): int
+    public final method getT11(): int
+    public final method getT12(): int
+    public final method getT13(): int
+    public final method getT2(): int
+    public final method getT3(): int
+    public final method getT4(): int
+    public final method getT5(): int
+    public method getT6(): int
+    public method getT7(): int
+    public final method getT8(): int
+    public final method getT9(): int
+    public final method setT13(p0: int): void
+    private final static method t12_delegate$lambda$0(): int
+}
+
+@kotlin.Metadata
+public final class FinalValue {
+    // source: 'nonFinal.kt'
+    private final field t0: int
+    private final field t1: int
+    private final field t2: int
+    private final field t3: int
+    private final field t4: int
+    private final field t5: int
+    public method <init>(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method getP2(): int
+    public method getS4(): int
+    public final method getT0(): int
+    public final method getT1(): int
+    public final method getT2(): int
+    public final method getT3(): int
+    public final method getT4(): int
+    public final method getT5(): int
+    public final method getT9(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class FromSealedIdentity {
+    // source: 'nonFinal.kt'
+    public method <init>(p0: int, p1: int, p2: int, p3: int): void
+    public method getP2(): int
+    public method getS4(): int
+}
+
+@kotlin.Metadata
+public final class Generated_Box_MainKt {
+    // source: 'Generated_Box_Main.kt'
+    public final static method main(): void
+    public synthetic static method main(p0: java.lang.String[]): void
+}
+
+@kotlin.Metadata
+public final class NonFinalKt {
+    // source: 'nonFinal.kt'
+    private final static @org.jetbrains.annotations.NotNull field globalIntsLog: java.util.List
+    static method <clinit>(): void
+    private final static method box$lambda$0(): kotlin.Unit
+    private final static method box$lambda$1(): kotlin.Unit
+    private final static method box$lambda$2(): kotlin.Unit
+    private final static method box$lambda$3(): kotlin.Unit
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getGlobalIntsLog(): java.util.List
+    public final static @org.jetbrains.annotations.NotNull method runAndLog(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.util.List
+}
+
+@kotlin.Metadata
+public class OpenIdentity {
+    // source: 'nonFinal.kt'
+    private final field p2: int
+    private final field t0: int
+    private final field t10: int
+    private final field t11: int
+    private final @org.jetbrains.annotations.NotNull field t12$delegate: kotlin.Lazy
+    private field t13: int
+    private final field t1: int
+    private final field t2: int
+    private final field t3: int
+    private final field t4: int
+    private final field t5: int
+    private final field t6: int
+    private final field t8: int
+    public method <init>(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int): void
+    public method getP2(): int
+    public method getS4(): int
+    public final method getT0(): int
+    public final method getT1(): int
+    public final method getT10(): int
+    public final method getT11(): int
+    public final method getT12(): int
+    public final method getT13(): int
+    public final method getT2(): int
+    public final method getT3(): int
+    public final method getT4(): int
+    public final method getT5(): int
+    public method getT6(): int
+    public method getT7(): int
+    public final method getT8(): int
+    public final method getT9(): int
+    public final method setT13(p0: int): void
+    private final static method t12_delegate$lambda$0(): int
+}
+
+@kotlin.Metadata
+public abstract class SealedIdentity {
+    // source: 'nonFinal.kt'
+    private final field s0: int
+    private final field s10: int
+    private final @org.jetbrains.annotations.NotNull field s11$delegate: kotlin.Lazy
+    private field s12: int
+    private final field s1: int
+    private final field s2: int
+    private final field s3: int
+    private final field s5: int
+    private final field s7: int
+    private final field s9: int
+    private method <init>(p0: int, p1: int, p2: int, p3: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getS0(): int
+    public final method getS1(): int
+    public final method getS10(): int
+    public final method getS11(): int
+    public final method getS12(): int
+    public final method getS2(): int
+    public final method getS3(): int
+    public abstract method getS4(): int
+    public method getS5(): int
+    public method getS6(): int
+    public final method getS7(): int
+    public final method getS8(): int
+    public final method getS9(): int
+    private final static method s11_delegate$lambda$0(): int
+    public final method setS12(p0: int): void
+    permittedSubclass: FromSealedIdentity
+}
+
+@kotlin.Metadata
+public abstract class SealedValue {
+    // source: 'nonFinal.kt'
+    private method <init>(p0: int, p1: int, p2: int, p3: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public abstract method getS4(): int
+    public method getS6(): int
+    public final method getS8(): int
+    permittedSubclass: FinalIdentity
+    permittedSubclass: FinalValue
+    permittedSubclass: OpenIdentity
+}
+
+@kotlin.Metadata
+public final class SimpleClass {
+    // source: 'nonFinal.kt'
+    private final field p1: int
+    public method <init>(p0: int, p1: int): void
+    public final method getP1(): int
+    public method getP2(): int
+}

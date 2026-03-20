@@ -97,6 +97,7 @@ internal class GranularAnnotationsBox(
          */
         private val specialAnnotationsListWithSafeArgumentsResolve: Map<String, ClassId> = listOf(
             JvmStandardClassIds.Annotations.JvmRecord,
+            JvmStandardClassIds.Annotations.JvmInline,
         ).associateBy { it.asFqNameString() }
 
         /**

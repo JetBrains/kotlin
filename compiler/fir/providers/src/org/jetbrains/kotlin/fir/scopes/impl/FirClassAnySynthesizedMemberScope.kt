@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -56,7 +58,7 @@ class FirClassAnySynthesizedMemberScope(
 ) : FirContainingNamesAwareScope() {
     private val originForFunctions = when {
         klass.isData -> FirDeclarationOrigin.Synthetic.DataClassMember
-        klass.isExtendedValueClass -> FirDeclarationOrigin.Synthetic.ExtendedValueClassMember
+        klass.isExtendedValueClass -> FirDeclarationOrigin.Synthetic.ExtendedValueClassMember(generatedAnyMethod = !klass.isAbstract && !klass.isSealed)
         klass.isInlineOrValue -> FirDeclarationOrigin.Synthetic.BasicValueClassMember
         else -> error("This scope should not be created for non-data and non-value class. ${klass.render()}")
     }
@@ -97,6 +99,7 @@ class FirClassAnySynthesizedMemberScope(
             declaredMemberScope.processFunctionsByName(name, processor)
             return
         }
+        if (!originForFunctions.generatedAnyMethod) return
         var synthesizedFunctionIsNeeded = true
         declaredMemberScope.processFunctionsByName(name) process@{ fromDeclaredScope ->
             if (fromDeclaredScope.matchesSomeAnyMember(name)) {
