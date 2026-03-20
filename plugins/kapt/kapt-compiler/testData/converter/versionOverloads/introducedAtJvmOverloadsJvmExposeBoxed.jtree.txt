@@ -1,0 +1,135 @@
+/**
+ * public final class EverythingC : kotlin/Any {
+ *
+ *   // signature: <init>(IIZ)V
+ *   @kotlin/jvm/JvmExposeBoxed(jvmName = "exposed_constructor")
+ *   public constructor(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "2") a1: kotlin/UInt (* = ... *), @kotlin/IntroducedAt(version = "3") b: kotlin/Boolean (* = ... *))
+ *
+ *   // signature: jvmname_foo(IIZ)Ljava/lang/String;
+ *   @kotlin/jvm/JvmOverloads
+ *   @kotlin/jvm/JvmName(name = "jvmname_foo")
+ *   @kotlin/jvm/JvmExposeBoxed(jvmName = "exposed_foo")
+ *   public final fun foo(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "2") a1: kotlin/UInt (* = ... *), @kotlin/IntroducedAt(version = "3") b: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // field: a:I
+ *   // getter: getA()I
+ *   public final val a: kotlin/Int
+ *     public final get
+ *
+ *   // field: a1:I
+ *   // getter: getA1-pVg5ArA()I
+ *   public final val a1: kotlin/UInt
+ *     public final get
+ *
+ *   // field: b:Z
+ *   // getter: getB()Z
+ *   public final val b: kotlin/Boolean
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class EverythingC {
+    private final int a = 0;
+    private final int a1 = 0;
+    private final boolean b = false;
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_constructor")
+    @java.lang.Deprecated()
+    public EverythingC(int a) {
+        super();
+    }
+
+    @java.lang.Deprecated()
+    public EverythingC(int a, @kotlin.IntroducedAt(version = "2")
+    int a1) {
+        super();
+    }
+
+    public EverythingC(int a, @kotlin.IntroducedAt(version = "2")
+    int a1, @kotlin.IntroducedAt(version = "3")
+    boolean b) {
+        super();
+    }
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_constructor")
+    @java.lang.Deprecated()
+    public EverythingC(int a, @kotlin.IntroducedAt(version = "2")
+    @org.jetbrains.annotations.NotNull()
+    kotlin.UInt a1) {
+        super();
+    }
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_constructor")
+    public EverythingC(int a, @kotlin.IntroducedAt(version = "2")
+    @org.jetbrains.annotations.NotNull()
+    kotlin.UInt a1, @kotlin.IntroducedAt(version = "3")
+    boolean b) {
+        super();
+    }
+
+    public final int getA() {
+        return 0;
+    }
+
+    public final boolean getB() {
+        return false;
+    }
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_foo")
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public final java.lang.String exposed_foo(int a, @kotlin.IntroducedAt(version = "2")
+    @org.jetbrains.annotations.NotNull()
+    kotlin.UInt a1) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_foo")
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String exposed_foo(int a, @kotlin.IntroducedAt(version = "2")
+    @org.jetbrains.annotations.NotNull()
+    kotlin.UInt a1, @kotlin.IntroducedAt(version = "3")
+    boolean b) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmName(name = "jvmname_foo")
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_foo")
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String jvmname_foo() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmName(name = "jvmname_foo")
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "exposed_foo")
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public final java.lang.String jvmname_foo(int a) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmName(name = "jvmname_foo")
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public final java.lang.String jvmname_foo(int a, @kotlin.IntroducedAt(version = "2")
+    int a1) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @kotlin.jvm.JvmName(name = "jvmname_foo")
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String jvmname_foo(int a, @kotlin.IntroducedAt(version = "2")
+    int a1, @kotlin.IntroducedAt(version = "3")
+    boolean b) {
+        return null;
+    }
+
+    public EverythingC() {
+        super();
+    }
+}
