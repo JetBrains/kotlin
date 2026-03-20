@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.BaseKotlinCompile
+import org.jetbrains.kotlin.testFederation.isSmokeTest
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
@@ -193,6 +194,7 @@ testing {
                 targets.all {
                     projectTests {
                         testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                            isSmokeTest = true
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                             extensions.configure<TestInputsCheckExtension> {

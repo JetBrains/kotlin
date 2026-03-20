@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.isSmokeTest
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
@@ -22,6 +24,7 @@ findProperty("deployVersion")?.let {
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
+        isSmokeTest = true
         val buildNumber by extra(findProperty("build.number")?.toString() ?: defaultSnapshotVersion)
         val kotlinVersion by extra(
             findProperty("deployVersion")?.toString()?.let { deploySnapshotStr ->
