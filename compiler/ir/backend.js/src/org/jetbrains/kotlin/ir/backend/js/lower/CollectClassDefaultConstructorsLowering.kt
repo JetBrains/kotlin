@@ -28,7 +28,7 @@ class CollectClassDefaultConstructorsLowering(private val context: JsIrBackendCo
     }
 
     private fun IrClass.couldContainDefaultConstructor(): Boolean {
-        return isClass && !isValue && !isExpect && modality != Modality.ABSTRACT && modality != Modality.SEALED
+        return isClass && (!isValue || isExtendedValueClass) && !isExpect && modality != Modality.ABSTRACT && modality != Modality.SEALED
     }
 
     private val IrClass.defaultConstructor: IrConstructor?

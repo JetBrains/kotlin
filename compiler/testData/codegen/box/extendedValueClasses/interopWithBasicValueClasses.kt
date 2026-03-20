@@ -3,12 +3,24 @@
 // WORKS_WHEN_VALUE_CLASS
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class InnerInline(val x: Int)
+value class InnerInline(val x: Int) {
+    fun f(z: InnerInline) {}
+    fun g(t: ExtendedVC) {}
+    fun h(t1: OuterInline) {}
+}
 
-value class ExtendedVC(val x: InnerInline, val y: InnerInline)
+value class ExtendedVC(val x: InnerInline, val y: InnerInline) {
+    fun f(z: InnerInline) {}
+    fun g(t: ExtendedVC) {}
+    fun h(t1: OuterInline) {}
+}
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class OuterInline(val x: ExtendedVC)
+value class OuterInline(val x: ExtendedVC) {
+    fun f(z: InnerInline) {}
+    fun g(t: ExtendedVC) {}
+    fun h(t1: OuterInline) {}
+}
 
 fun box(): String {
     val inner1 = InnerInline(1)

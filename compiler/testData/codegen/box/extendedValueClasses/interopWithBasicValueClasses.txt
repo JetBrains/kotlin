@@ -3,10 +3,14 @@ public final class ExtendedVC {
     // source: 'interopWithBasicValueClasses.kt'
     private final field x: int
     private final field y: int
-    public method <init>(p0: int, p1: int): void
+    private method <init>(p0: int, p1: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method f-0AojUPI(p0: int): void
+    public final method g(@org.jetbrains.annotations.NotNull p0: ExtendedVC): void
     public final method getX-rTLzBkc(): int
     public final method getY-rTLzBkc(): int
+    public final method h-QsU9m2Q(@org.jetbrains.annotations.NotNull p0: ExtendedVC): void
     public method hashCode(): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
@@ -22,7 +26,10 @@ public final class InnerInline {
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
+    public final static method f-0AojUPI(p0: int, p1: int): void
+    public final static method g-impl(p0: int, @org.jetbrains.annotations.NotNull p1: ExtendedVC): void
     public final method getX(): int
+    public final static method h-QsU9m2Q(p0: int, @org.jetbrains.annotations.NotNull p1: ExtendedVC): void
     public method hashCode(): int
     public static method hashCode-impl(p0: int): int
     public method toString(): java.lang.String
@@ -47,7 +54,10 @@ public final class OuterInline {
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: ExtendedVC, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: ExtendedVC, p1: ExtendedVC): boolean
+    public final static method f-0AojUPI(p0: ExtendedVC, p1: int): void
+    public final static method g-impl(p0: ExtendedVC, @org.jetbrains.annotations.NotNull p1: ExtendedVC): void
     public final @org.jetbrains.annotations.NotNull method getX(): ExtendedVC
+    public final static method h-QsU9m2Q(p0: ExtendedVC, @org.jetbrains.annotations.NotNull p1: ExtendedVC): void
     public method hashCode(): int
     public static method hashCode-impl(p0: ExtendedVC): int
     public method toString(): java.lang.String

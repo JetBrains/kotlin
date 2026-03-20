@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithNullableMultiFieldValueClass.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] valueClassWithNullableMultiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyValueClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyValueClass.foo] foo: Foo<Int>?): R|pack/MyValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithNullableMultiFieldValueClass.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] valueClassWithNullableMultiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPANION_GENERATION)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPANION_GENERATION)] class MyValueClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyValueClass.foo] foo: Foo<Int>?): R|pack/MyValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithNullableMultiFieldValueClass.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] valueClassWithNullableMultiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(SUPER_TYPES)] class MyValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(SUPER_TYPES)] class MyValueClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyValueClass.foo] foo: Foo<Int>?): R|pack/MyValueClass| {
             LAZY_super<R|kotlin/Any|>
         }

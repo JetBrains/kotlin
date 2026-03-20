@@ -4,10 +4,14 @@
 // WITH_STDLIB
 // WITH_REFLECT
 
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 @Repeatable
 annotation class Ann
+
+abstract value class Sealed
+abstract value class Base: Sealed()
 
 @[Ann Ann]
 value class A @Ann constructor(
@@ -23,7 +27,7 @@ value class A @Ann constructor(
     @field:[Ann Ann]
     @get:[Ann Ann]
     val y: Int,
-) {
+): Base() {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
         return 0
     }
@@ -187,6 +191,10 @@ fun box(): String {
     if (A::tP.annotations.count { it is Ann } != 2) return "Failed: A.t extension @Ann count"
 
     if (C::tP.annotations.count { it is Ann } != 2) return "Failed: C.t extension @Ann count"
+    fun KClass<*>.superClass() = supertypes.single().classifier as KClass<*>
+
+    if (!(A::class.superClass().isValue)) return "Failed: Base is not a value class"
+    if (!(A::class.superClass().superClass().isValue)) return "Failed: Sealed is not a value class"
 
     return "OK"
 }
