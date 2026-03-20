@@ -21,6 +21,7 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.lower.annotationClass
 import androidx.compose.compiler.plugins.kotlin.lower.isSyntheticComposableFunction
+import com.google.common.annotations.VisibleForTesting
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -192,7 +193,8 @@ private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
     (annotations.findAnnotation(ComposeFqNames.StabilityInferred)?.arguments[0] as? IrConst)
         ?.value as? Int
 
-private data class SymbolForAnalysis(
+@VisibleForTesting
+data class SymbolForAnalysis(
     val symbol: IrClassifierSymbol,
     val typeParameters: List<IrTypeArgument?>,
     /**
@@ -214,7 +216,9 @@ class StabilityInferencer(
 ) {
     private val externalTypeMatcherCollection = FqNameMatcherCollection(externalStableTypeMatchers)
 
-    private val cache = mutableMapOf<SymbolForAnalysis, Stability>()
+    @VisibleForTesting
+    var cache = mutableMapOf<SymbolForAnalysis, Stability>()
+        private set
 
     /**
      * Returns the stability of [irType].

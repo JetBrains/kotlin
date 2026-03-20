@@ -32,14 +32,17 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.statements
@@ -1870,6 +1873,54 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                 }
             }
         )
+    }
+
+    @Test
+    fun testStabilityCaching() {
+        val testFileSource = """
+            class A
+            class B(val a: A)
+            class C(val b: B)
+            class D(val c: C)
+        """.trimIndent()
+
+        val files = listOf(SourceFile("Test.kt", testFileSource))
+        val irModule = compileToIr(files, additionalPaths)
+        val stabilityInferencer = StabilityInferencer(isTargetJvm = true, irModule.descriptor, setOf())
+
+        val testIrFile = irModule.files.last()
+        val (aClass, bClass, cClass, dClass) = testIrFile.declarations.filterIsInstance<IrClass>()
+
+        // When a dependent in a different file requests the stability of a class defined in
+        // `testIrFile`, we expect the computed stability not to be cached. Note that
+        // `deepCopyWithoutPatchingParents` is used on the following line to obtain an object that
+        // is not referentially equal to `testIrFile`.
+        stabilityInferencer.stabilityOf(dClass.defaultType as IrType, testIrFile.deepCopyWithoutPatchingParents())
+        assertEquals(0, stabilityInferencer.cache.size)
+
+        // When `StabilityInferencer`'s cache is initially empty and `D`'s stability is requested,
+        // we expect the stability values of `A`, `B`, `C`, and `D` to each be computed and added to
+        // the cache.
+        val stabilityOfD = stabilityInferencer.stabilityOf(dClass.defaultType as IrType, testIrFile)
+        assertEquals(4, stabilityInferencer.cache.size)
+
+        // When the stability of a class is cached, we expect it to be returned from the cache, and
+        // we expect no cache modifications to happen.
+
+        assertEquals(
+            stabilityOfD,
+            stabilityInferencer.stabilityOf(dClass.defaultType as IrType, testIrFile)
+        )
+        assertEquals(4, stabilityInferencer.cache.size)
+
+        stabilityInferencer.stabilityOf(cClass.defaultType as IrType, testIrFile)
+        assertEquals(4, stabilityInferencer.cache.size)
+
+        stabilityInferencer.stabilityOf(bClass.defaultType as IrType, testIrFile)
+        assertEquals(4, stabilityInferencer.cache.size)
+
+        stabilityInferencer.stabilityOf(aClass.defaultType as IrType, testIrFile)
+        assertEquals(4, stabilityInferencer.cache.size)
     }
 
     private fun assertStability(
