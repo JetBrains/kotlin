@@ -935,4 +935,66 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
       run("noCompatibility1.8.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("plugins/kapt/kapt-compiler/testData/converter/versionOverloads")
+  @TestDataPath("$PROJECT_ROOT")
+  public class VersionOverloads {
+    private void run(String fileName) {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/versionOverloads/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInVersionOverloads() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt/kapt-compiler/testData/converter/versionOverloads"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("introducedAtCompanion.kt")
+    public void testIntroducedAtCompanion() {
+      run("introducedAtCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtFunctions.kt")
+    public void testIntroducedAtFunctions() {
+      run("introducedAtFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtFunctionsInlineClass.kt")
+    public void testIntroducedAtFunctionsInlineClass() {
+      run("introducedAtFunctionsInlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtFunctionsInlineClassJvmOverloads.kt")
+    public void testIntroducedAtFunctionsInlineClassJvmOverloads() {
+      run("introducedAtFunctionsInlineClassJvmOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtJvmExposeBoxed.kt")
+    public void testIntroducedAtJvmExposeBoxed() {
+      run("introducedAtJvmExposeBoxed.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtJvmName.kt")
+    public void testIntroducedAtJvmName() {
+      run("introducedAtJvmName.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtJvmOverloads.kt")
+    public void testIntroducedAtJvmOverloads() {
+      run("introducedAtJvmOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("introducedAtJvmOverloadsJvmExposeBoxed.kt")
+    public void testIntroducedAtJvmOverloadsJvmExposeBoxed() {
+      run("introducedAtJvmOverloadsJvmExposeBoxed.kt");
+    }
+  }
 }

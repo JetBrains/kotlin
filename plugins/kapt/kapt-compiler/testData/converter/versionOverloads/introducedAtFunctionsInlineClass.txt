@@ -1,0 +1,22 @@
+/**
+ * public final class EverythingC : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: foo_no_introduce-OsBMiQA(IIZ)Ljava/lang/String;
+ *   public final fun foo_no_introduce(a: kotlin/Int (* = ... *), a1: kotlin/UInt (* = ... *), b: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // signature: foo_with_introduce-OsBMiQA(IIZ)Ljava/lang/String;
+ *   public final fun foo_with_introduce(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "2") a1: kotlin/UInt (* = ... *), @kotlin/IntroducedAt(version = "3") b: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class EverythingC {
+
+    public EverythingC() {
+        super();
+    }
+}
