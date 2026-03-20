@@ -30,6 +30,7 @@ abstract class Abstract {
 }
 
 abstract value class C
+sealed value class C_
 
 <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class D {
     constructor(x: Int)
@@ -50,6 +51,15 @@ value class BasicMultiFieldValueClass<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS
 
 value class Delegation(val x: Int) : Comparable<Int> by x
 value class Delegation1(val x: Int) : <!VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION!>Comparable<Int><!> by (x.let { 2 + 2 })
+
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>abstract<!> value class AbstractOld(val x: Int)
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>open<!> value class OpenOld(val x: Int)
+@JvmInline
+<!VALUE_CLASS_NOT_FINAL!>sealed<!> value class SealedOld(val x: Int)
+@JvmInline
+value class OverridingOld(val x: Int) : <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>C<!>()
 
 fun main() {
     A(2).<!UNRESOLVED_REFERENCE!>copy<!>()

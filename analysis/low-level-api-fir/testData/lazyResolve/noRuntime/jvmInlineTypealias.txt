@@ -1,0 +1,287 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] jvmInlineTypealias.kt
+    @JvmInline[Unresolved]() public final? data [ResolvedTo(RAW_FIR)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias JvmInline = Ann
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @JvmInline[Unresolved]() public final? data [ResolvedTo(RAW_FIR)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias JvmInline = Ann
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias JvmInline = Ann
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? data [ResolvedTo(COMPANION_GENERATION)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias JvmInline = Ann
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? data [ResolvedTo(SUPER_TYPES)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias JvmInline = Ann
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @<ERROR TYPE REF:
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: kotlin/jvm/JvmInline
+              - types stage: {kotlin/jvm/JvmInline=} kotlin/jvm/Ann
+        >[Types]() public final? data [ResolvedTo(TYPES)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias JvmInline = R|kotlin/jvm/Ann|
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @<ERROR TYPE REF:
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: kotlin/jvm/JvmInline
+              - types stage: {kotlin/jvm/JvmInline=} kotlin/jvm/Ann
+        >[Types]() public final data [ResolvedTo(STATUS)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias JvmInline = R|kotlin/jvm/Ann|
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @<ERROR TYPE REF:
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: kotlin/jvm/JvmInline
+              - types stage: {kotlin/jvm/JvmInline=} kotlin/jvm/Ann
+        >[Types]() public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias JvmInline = R|kotlin/jvm/Ann|
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @<ERROR TYPE REF:
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: kotlin/jvm/JvmInline
+              - types stage: {kotlin/jvm/JvmInline=} kotlin/jvm/Ann
+        >[Types]() public final data [ResolvedTo(CONTRACTS)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias JvmInline = R|kotlin/jvm/Ann|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @<ERROR TYPE REF:
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: kotlin/jvm/JvmInline
+              - types stage: {kotlin/jvm/JvmInline=} kotlin/jvm/Ann
+        >[Types]() public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias JvmInline = R|kotlin/jvm/Ann|
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @<ERROR TYPE REF:
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: kotlin/jvm/JvmInline
+              - types stage: {kotlin/jvm/JvmInline=} kotlin/jvm/Ann
+        >[Types]() public final data [ResolvedTo(CONSTANT_EVALUATION)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias JvmInline = R|kotlin/jvm/Ann|
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @<ERROR TYPE REF:
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: kotlin/jvm/JvmInline
+              - types stage: {kotlin/jvm/JvmInline=} kotlin/jvm/Ann
+        >[Types]() public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class Some : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias JvmInline = R|kotlin/jvm/Ann|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] jvmInlineTypealias.kt
+    @<ERROR TYPE REF:
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: kotlin/jvm/JvmInline
+              - types stage: {kotlin/jvm/JvmInline=} kotlin/jvm/Ann
+        >[Types]() public final data [ResolvedTo(BODY_RESOLVE)] class Some : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias JvmInline = R|kotlin/jvm/Ann|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] jvmInlineTypealias.kt
+    @<ERROR TYPE REF:
+            Annotation type resolved differently on compiler annotation and types stages:
+              - compiler annotations: kotlin/jvm/JvmInline
+              - types stage: {kotlin/jvm/JvmInline=} kotlin/jvm/Ann
+        >[Types]() public final data [ResolvedTo(BODY_RESOLVE)] class Some : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor(): R|kotlin/jvm/Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy(): R|kotlin/jvm/Some|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|kotlin/jvm/Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias JvmInline = R|kotlin/jvm/Ann|

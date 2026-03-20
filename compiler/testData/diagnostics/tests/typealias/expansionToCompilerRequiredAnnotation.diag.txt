@@ -17,3 +17,5 @@
 /expansionToCompilerRequiredAnnotation.kt:19:11: error: 'public' typealias exposes 'internal' in expanded type 'JvmPackageName'.
 
 /expansionToCompilerRequiredAnnotation.kt:19:41: error: Cannot access 'annotation class JvmPackageName : Annotation': it is internal in file.
+
+/expansionToCompilerRequiredAnnotation.kt:25:25: error: Typealias to a compiler-required annotation 'kotlin.jvm.JvmInline' is not allowed. Remove the typealias and use the annotation directly.

@@ -2,7 +2,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
-abstract value class AbstractValue(val p0: Int, p1: Int) {
+abstract value class AbstractValue(<!ABSTRACT_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val p0: Int<!>, p1: Int) {
     abstract val p2: Int
     open <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val p3: Int<!> = 0
     open val p4: Int get() = 0
@@ -18,7 +18,7 @@ abstract value class AbstractValue(val p0: Int, p1: Int) {
         set(value) { field = value }
 }
 
-sealed value class SealedValue(val s0: Int, val s1: Int, val s2: Int, val s3: Int) : AbstractValue(s0, s1) {
+sealed value class SealedValue(<!SEALED_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val s0: Int<!>, <!SEALED_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val s1: Int<!>, s2: Int, s3: Int) : AbstractValue(s0, s1) {
     abstract val s4: Int
     open <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val s5: Int<!> = 0
     open val s6: Int get() = 0

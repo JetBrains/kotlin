@@ -433,6 +433,7 @@ object ConeTypeCompatibilityChecker {
          *   - strings
          *   - objects of data classes
          *   - objects of inline classes
+         *   - objects of final value classes
          *   - kotlin.Unit
          */
         fun getHasPredefinedEqualityContract(ctx: ConeInferenceContext): Boolean {
@@ -440,7 +441,7 @@ object ConeTypeCompatibilityChecker {
                     firClass.isPrimitiveType() ||
                     (ctx.prohibitComparisonOfIncompatibleClasses && firClass.classId == StandardClassIds.KClass) ||
                     firClass.classId == StandardClassIds.String || firClass.classId == StandardClassIds.Unit ||
-                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInlineOrValue))
+                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInlineOrValue && firClass.isFinal))
         }
 
         private val FirClassSymbol<*>.isFinal: Boolean

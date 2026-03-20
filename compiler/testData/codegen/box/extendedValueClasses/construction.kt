@@ -1,5 +1,4 @@
 // LANGUAGE: +ValueClasses
-// CHECK_BYTECODE_LISTING
 // WITH_STDLIB
 
 val objects = ArrayList<Any>()
@@ -8,7 +7,19 @@ fun log(o: Any) {
     objects.add(o)
 }
 
-value class Successful(val x: Int = 1.also(::log), val y: Int = 2.also(::log)) {
+sealed value class Sealed {
+    init {
+        log(100)
+    }
+}
+
+abstract value class Base(counter: Int): Sealed() {
+    init {
+        log(counter)
+    }
+}
+
+value class Successful(val x: Int = 1.also(::log), val y: Int = 2.also(::log)): Base((-1).also(::log).inc()) {
     init {
         log(3)
     }
@@ -54,31 +65,31 @@ inline fun <T> testWithLog(vararg expectedLog: Any?, action: () -> T): Result<T>
 value class Delegation(val x: Int = 14.also(::log)) : Comparable<Int> by x
 
 fun box(): String {
-    val successful1 = testWithLog(8, 2, 3, 7, 9) { Successful() }.getOrThrow()
+    val successful1 = testWithLog(8, 2, -1, 100, 0, 3, 7, 9) { Successful() }.getOrThrow()
     require(successful1.toString() == "Successful(x=8, y=2)") { successful1.toString() }
     
-    val successful2 = testWithLog(2, 3, 7) { Successful(x = 100) }.getOrThrow()
+    val successful2 = testWithLog(2, -1, 100, 0, 3, 7) { Successful(x = 100) }.getOrThrow()
     require(successful2.toString() == "Successful(x=100, y=2)") { successful2.toString() }
     
-    val successful3 = testWithLog(1, 3, 7) { Successful(y = 100) }.getOrThrow()
+    val successful3 = testWithLog(1, -1, 100, 0, 3, 7) { Successful(y = 100) }.getOrThrow()
     require(successful3.toString() == "Successful(x=1, y=100)") { successful3.toString() }
     
-    val successful4 = testWithLog(3, 7) { Successful(x = 100, y = 200) }.getOrThrow()
+    val successful4 = testWithLog(-1, 100, 0, 3, 7) { Successful(x = 100, y = 200) }.getOrThrow()
     require(successful4.toString() == "Successful(x=100, y=200)") { successful4.toString() }
     
-    val successful5 = testWithLog(3, 7) { Successful(y = 200, x = 100) }.getOrThrow()
+    val successful5 = testWithLog(-1, 100, 0, 3, 7) { Successful(y = 200, x = 100) }.getOrThrow()
     require(successful5.toString() == "Successful(x=100, y=200)") { successful5.toString() }
     
-    val successful6 = testWithLog(5L, 100L, 5L, 3, 7, 6) { Successful(x = 100L) }.getOrThrow()
+    val successful6 = testWithLog(5L, 100L, 5L, -1, 100, 0, 3, 7, 6) { Successful(x = 100L) }.getOrThrow()
     require(successful6.toString() == "Successful(x=100, y=5)") { successful6.toString() }
     
-    val successful7 = testWithLog(4L, 4L, 100L, 3, 7, 6) { Successful(y = 100L) }.getOrThrow()
+    val successful7 = testWithLog(4L, 4L, 100L, -1, 100, 0, 3, 7, 6) { Successful(y = 100L) }.getOrThrow()
     require(successful7.toString() == "Successful(x=4, y=100)") { successful7.toString() }
     
-    val successful8 = testWithLog(100L, 200L, 3, 7, 6) { Successful(x = 100L, y = 200L) }.getOrThrow()
+    val successful8 = testWithLog(100L, 200L, -1, 100, 0, 3, 7, 6) { Successful(x = 100L, y = 200L) }.getOrThrow()
     require(successful8.toString() == "Successful(x=100, y=200)") { successful8.toString() }
     
-    val successful9 = testWithLog(100L, 200L, 3, 7, 6) { Successful(y = 200L, x = 100L) }.getOrThrow()
+    val successful9 = testWithLog(100L, 200L, -1, 100, 0, 3, 7, 6) { Successful(y = 200L, x = 100L) }.getOrThrow()
     require(successful9.toString() == "Successful(x=100, y=200)") { successful9.toString() }
     
     

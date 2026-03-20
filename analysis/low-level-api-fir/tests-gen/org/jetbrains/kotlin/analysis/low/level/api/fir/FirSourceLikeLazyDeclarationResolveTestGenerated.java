@@ -2870,6 +2870,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("jvmInlineTypealias.kt")
+    public void testJvmInlineTypealias() {
+      run("jvmInlineTypealias.kt");
+    }
+
+    @Test
     @TestMetadata("jvmRecordTypealias.kt")
     public void testJvmRecordTypealias() {
       run("jvmRecordTypealias.kt");
