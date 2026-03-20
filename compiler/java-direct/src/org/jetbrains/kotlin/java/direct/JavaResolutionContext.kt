@@ -140,6 +140,48 @@ class JavaResolutionContext private constructor(
         return ClassId(starPackage, Name.identifier(simpleName))
     }
 
+
+
+    /**
+     * Returns true if a class with [simpleName] can be UNAMBIGUOUSLY found in the source index.
+     * Checks: explicit imports, same-package, star imports (with ambiguity detection).
+     *
+     * Uses index-only lookup (no file I/O, no class instantiation) so it is safe to call
+     * during FIR type processing without causing initialization order issues.
+     *
+     * Used by [JavaClassifierTypeOverAst.isTriviallyFlexibleHint] to make FIR produce compact
+     * `T!` rendering (isTrivial=true) instead of `ft<T, T?>` for user-defined Java source classes,
+     * matching the PSI behavior where all resolved Java classes are trivially flexible.
+     *
+     * Returns false for ambiguous cases (multiple star-import matches) to avoid false positives.
+     */
+    fun isUnambiguouslyCrossFileClass(simpleName: String): Boolean {
+        val finder = classFinderProvider?.invoke() ?: return false
+        // 1. Explicit single-type import takes highest priority (JLS 7.5.1) — always unambiguous
+        simpleImports[simpleName]?.let { importedFqn ->
+            val fqnStr = importedFqn.asString()
+            val classId = if (fqnStr.contains('.')) {
+                val lastDot = fqnStr.lastIndexOf('.')
+                ClassId(FqName(fqnStr.substring(0, lastDot)), FqName(fqnStr.substring(lastDot + 1)), isLocal = false)
+            } else {
+                ClassId.topLevel(FqName(fqnStr))
+            }
+            if (finder.isClassInIndex(classId)) return true
+        }
+        // 2. Same-package class — always unambiguous
+        val samePackageClassId = if (packageFqName.isRoot) {
+            ClassId.topLevel(FqName(simpleName))
+        } else {
+            ClassId(packageFqName, Name.identifier(simpleName))
+        }
+        if (finder.isClassInIndex(samePackageClassId)) return true
+        // 3. Star imports — only if exactly one star import provides the class (no ambiguity)
+        val starMatches = starImports.count { starPackage ->
+            finder.isClassInIndex(ClassId(starPackage, Name.identifier(simpleName)))
+        }
+        return starMatches == 1
+    }
+
     /**
      * Creates a new context with additional type parameters in scope.
      * Used when entering a class or method that declares type parameters.

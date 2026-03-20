@@ -199,6 +199,61 @@ Despite not fixing any currently-failing test, `package-info.java` support was i
 
 This is correct infrastructure for future tests that go through the java-direct path with package annotations.
 
+---
+
+## Iteration 49
+
+### Goal
+Fix `ft<T, T?>` vs `T!` FIR dump rendering mismatch for user-defined Java source classes.
+
+### Root Cause
+
+`JavaTypeConversion.kt` creates `ConeFlexibleType(lower, upper, isTrivial=false)` when `classifier == null` (cross-file reference). `isTrivial=false` forces the verbose `ft<T, T?>` rendering in FIR dumps, while PSI creates `isTrivial=true` (compact `T!`). The `isTrivial` flag is rendered differently by `ConeTypeRenderer.renderForSameLookupTags()` for generic types with type arguments.
+
+### Fix
+
+Added `isTriviallyFlexibleHint: Boolean` property (default `false`) to `JavaClassifierType` interface. java-direct's `JavaClassifierTypeOverAst` overrides it to `true` when:
+1. `classifier == null` (cross-file reference — otherwise the existing `isTriviallyFlexible()` already works)
+2. Simple name (single part) — qualified names are handled separately
+3. The class is unambiguously present in the source index (same-package, explicit import, or exactly one star-import match — disambiguated to avoid ambiguity regressions)
+
+`JavaTypeConversion.kt` updated to check `|| isTriviallyFlexibleHint` when deciding to call `toTrivialFlexibleType()`.
+
+The index check (`isClassInIndex`) is pure in-memory — no file I/O, no class instantiation — safe to call during FIR type processing.
+
+### Test Results
+- **Box tests**: 1163/1168 (unchanged)
+- **Phased tests**: 1423/1443 (was 1419, **+4 fixed**)
+- **Total failures**: 25 (was 29 across iterations 48+49, **4 tests fixed, 0 regressions**)
+
+### Tests Fixed
+- `testMappingWithWrongNullability` — `Subscriber<InputStream!>!` instead of `ft<Subscriber<InputStream!>, Subscriber<InputStream!>?>`
+- `testMappingWithWrongNullabilityLegacy` — same rendering fix
+- `testMappingWithWrongNullabilityWithoutWrtHack` — same rendering fix
+- `testFlexibleTypeAliases` — same rendering fix for cross-file flexible types
+
+### Key Learnings
+- `ConeFlexibleType.isTrivial=true` is required for the compact `T!` rendering for types WITH type arguments; types without type arguments already render as `T!` via the second condition in `renderForSameLookupTags()`
+- Changing `classifier` from `null` to a real `JavaClass` causes type construction to move from the `null` branch to the `is JavaClass` branch — this causes subtle regressions unrelated to rendering
+- The `isTriviallyFlexibleHint` approach separates rendering from construction: construction stays in the correct `null` branch, only `isTrivial` changes
+- Test ordering effects exist in the test suite — some tests pass in the full suite due to earlier tests warming up FIR caches
+
+### Files Modified
+- `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaTypes.kt`
+  - Added `isTriviallyFlexibleHint: Boolean get() = false` to `JavaClassifierType`
+- `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt`
+  - Added `|| isTriviallyFlexibleHint` to the trivial flexibility check
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`
+  - Added `isClassInIndex(classId: ClassId): Boolean` for safe index-only lookup
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt`
+  - Added `isUnambiguouslyCrossFileClass(simpleName: String): Boolean`
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`
+  - Added `override val isTriviallyFlexibleHint: Boolean` to `JavaClassifierTypeOverAst`
+
+---
+
+## Iteration 48
+
 ### Root Cause (Corrected)
 
 Initial investigation was flawed — Gradle daemon caching made throw-based debugging unreliable (the test worker was using cached bytecode). The user was right: `WITH_STDLIB` does NOT bypass java-direct. All Java source files including `package-info.java` ARE processed by java-direct.

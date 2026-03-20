@@ -71,6 +71,19 @@ interface JavaClassifierType : JavaType {
      * @return the resolved ClassId, or null if resolution failed
      */
     fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? = null
+
+    /**
+     * Hint for FIR type conversion that this classifier type should produce a trivially flexible
+     * ConeFlexibleType (isTrivial=true), even when the classifier is null (cross-file reference).
+     *
+     * When true, [org.jetbrains.kotlin.fir.java.JavaTypeConversion] will use
+     * [ConeRigidType.toTrivialFlexibleType] instead of constructing an explicit upper bound,
+     * producing compact `T!` FIR dump output instead of `ft<T, T?>`.
+     *
+     * The default returns false. java-direct overrides this for user-defined Java source classes
+     * that are known to be trivially flexible (matching PSI behavior).
+     */
+    val isTriviallyFlexibleHint: Boolean get() = false
 }
 
 interface JavaPrimitiveType : JavaType {

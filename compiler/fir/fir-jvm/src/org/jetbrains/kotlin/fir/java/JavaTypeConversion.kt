@@ -166,7 +166,7 @@ private fun JavaType?.toConeTypeProjection(
                 }
             }
             
-            if (!isRawType && classifier?.isTriviallyFlexible() == true) {
+            if (!isRawType && (classifier?.isTriviallyFlexible() == true || isTriviallyFlexibleHint)) {
                 lowerBound.toTrivialFlexibleType(session.typeContext)
             } else {
                 val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)

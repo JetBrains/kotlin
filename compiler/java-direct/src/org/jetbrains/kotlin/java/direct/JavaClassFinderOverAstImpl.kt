@@ -55,6 +55,16 @@ class JavaClassFinderOverAstImpl(
         buildIndex()
     }
 
+    /**
+     * Checks if a top-level class with the given ClassId is present in the source index.
+     * Pure index lookup — no file I/O, no class instantiation.
+     * Safe to call at any point, including during FIR type processing.
+     */
+    fun isClassInIndex(classId: ClassId): Boolean {
+        val topLevelName = classId.relativeClassName.pathSegments().firstOrNull()?.asString() ?: return false
+        return index[classId.packageFqName]?.containsKey(topLevelName) == true
+    }
+
     override fun findClass(request: JavaClassFinder.Request): JavaClass? {
         val classId = request.classId
         classCache[classId]?.let { return it }

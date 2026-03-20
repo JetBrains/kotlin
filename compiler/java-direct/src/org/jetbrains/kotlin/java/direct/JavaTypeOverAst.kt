@@ -120,6 +120,24 @@ class JavaClassifierTypeOverAst(
         current
     }
 
+    /**
+     * Returns true when this type references a user-defined Java source class that can be
+     * unambiguously resolved across files, signalling to FIR type conversion that it should
+     * create a trivially flexible ConeFlexibleType (isTrivial=true).
+     *
+     * This makes the FIR dump render the type as `T!` (compact) instead of `ft<T, T?>`
+     * (verbose), matching what PSI produces for the same types.
+     *
+     * Only triggers for simple (single-part) names when the local lookup already returned null
+     * (cross-file case), to avoid double-counting same-file classes.
+     */
+    override val isTriviallyFlexibleHint: Boolean by lazy {
+        if (classifier != null) return@lazy false // local lookup already found it
+        val parts = rawTypeName.split('.')
+        if (parts.size != 1) return@lazy false // qualified names handled by isTriviallyFlexible()
+        resolutionContext.isUnambiguouslyCrossFileClass(parts[0])
+    }
+
     override val classifierQualifiedName: String
         get() {
             val parts = rawTypeName.split('.')
