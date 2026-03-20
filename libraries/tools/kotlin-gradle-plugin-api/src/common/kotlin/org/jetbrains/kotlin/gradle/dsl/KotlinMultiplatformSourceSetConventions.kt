@@ -1162,8 +1162,146 @@ interface KotlinMultiplatformSourceSetConventions {
      * ```
      *
      * @since 2.0.20
-     */
+    */
     val NamedDomainObjectContainer<KotlinSourceSet>.linuxArm64Test: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the main Kotlin Source Set of tizenArm32 target.
+     * Declare tizenArm32 target to access this source set.
+     * If tizenArm32 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    tizenArm32() // Target is declared, tizenArm32Main source set is created
+     *
+     *    sourceSets {
+     *      tizenArm32Main.dependencies {
+     *          // Add tizenArm32Main dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.tizenArm32Main: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the test Kotlin Source Set of tizenArm32 target.
+     * Declare tizenArm32 target to access this source set.
+     * If tizenArm32 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    tizenArm32() // Target is declared, tizenArm32Test source set is created
+     *
+     *    sourceSets {
+     *      tizenArm32Test.dependencies {
+     *          // Add tizenArm32Test dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.tizenArm32Test: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the main Kotlin Source Set of tizenArm64 target.
+     * Declare tizenArm64 target to access this source set.
+     * If tizenArm64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    tizenArm64() // Target is declared, tizenArm64Main source set is created
+     *
+     *    sourceSets {
+     *      tizenArm64Main.dependencies {
+     *          // Add tizenArm64Main dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.tizenArm64Main: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the test Kotlin Source Set of tizenArm64 target.
+     * Declare tizenArm64 target to access this source set.
+     * If tizenArm64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    tizenArm64() // Target is declared, tizenArm64Test source set is created
+     *
+     *    sourceSets {
+     *      tizenArm64Test.dependencies {
+     *          // Add tizenArm64Test dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.tizenArm64Test: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the main Kotlin Source Set of tizenX64 target.
+     * Declare tizenX64 target to access this source set.
+     * If tizenX64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    tizenX64() // Target is declared, tizenX64Main source set is created
+     *
+     *    sourceSets {
+     *      tizenX64Main.dependencies {
+     *          // Add tizenX64Main dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.tizenX64Main: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the test Kotlin Source Set of tizenX64 target.
+     * Declare tizenX64 target to access this source set.
+     * If tizenX64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    tizenX64() // Target is declared, tizenX64Test source set is created
+     *
+     *    sourceSets {
+     *      tizenX64Test.dependencies {
+     *          // Add tizenX64Test dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.tizenX64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
      * Static accessor for the main Kotlin Source Set of linuxX64 target.
@@ -1868,7 +2006,5 @@ interface KotlinMultiplatformSourceSetConventions {
         configure: LanguageSettingsBuilder.() -> Unit,
     ): Unit = this { languageSettings(configure) }
 }
-
-
 
 

@@ -132,6 +132,18 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
 
     override val NamedDomainObjectContainer<KotlinSourceSet>.linuxArm64Test by KotlinSourceSetConvention
 
+    override val NamedDomainObjectContainer<KotlinSourceSet>.tizenArm32Main by KotlinSourceSetConvention
+
+    override val NamedDomainObjectContainer<KotlinSourceSet>.tizenArm32Test by KotlinSourceSetConvention
+
+    override val NamedDomainObjectContainer<KotlinSourceSet>.tizenArm64Main by KotlinSourceSetConvention
+
+    override val NamedDomainObjectContainer<KotlinSourceSet>.tizenArm64Test by KotlinSourceSetConvention
+
+    override val NamedDomainObjectContainer<KotlinSourceSet>.tizenX64Main by KotlinSourceSetConvention
+
+    override val NamedDomainObjectContainer<KotlinSourceSet>.tizenX64Test by KotlinSourceSetConvention
+
     override val NamedDomainObjectContainer<KotlinSourceSet>.linuxX64Main by KotlinSourceSetConvention
 
     override val NamedDomainObjectContainer<KotlinSourceSet>.linuxX64Test by KotlinSourceSetConvention
@@ -192,5 +204,3 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
     override val NamedDomainObjectContainer<KotlinSourceSet>.androidUnitTest by KotlinSourceSetConvention
     override val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest by KotlinSourceSetConvention
 }
-
-
