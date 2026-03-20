@@ -24,6 +24,19 @@ interface IrDeserializer : IrProvider {
     fun resolveBySignatureInModule(signature: IdSignature, kind: TopLevelSymbolKind, moduleName: Name): IrSymbol
 
     /**
+     * Retrieves the symbol associated with the given signature and kind.
+     *
+     * It is guaranteed that the returned symbol is not null if such a symbol belongs to the module represented by the current deserializer.
+     * The returned symbol may be unbound (and put in the deserialization queue to be deserialized later).
+     *
+     * However, it is guaranteed that the returned symbol is always bound if [getSymbolAndPutIntoQueue] is called after the
+     * main part of the deserialization process has been finished, i.e. after `postProcess(inOrAfterLinkageStep = true)` was called.
+     *
+     * @return The symbol for the given signature and kind if successfully found; otherwise, null.
+     */
+    fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: TopLevelSymbolKind): IrSymbol?
+
+    /**
      * [postProcess] has two usages with different expectations:
      * - IR plugin API: actualize expects/actuals, generate fake overrides
      * - Linker(s): the same + run partial linkage
