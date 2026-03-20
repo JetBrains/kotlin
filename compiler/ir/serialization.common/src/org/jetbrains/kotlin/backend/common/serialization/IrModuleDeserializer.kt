@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrBasedFunctionFactory
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.UnstableBuiltInsApi
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltinsPackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.DFS
 
 fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
@@ -136,6 +139,7 @@ fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKin
     tryDeserializeIrSymbol(idSig, symbolKind) ?: deserializedSymbolNotFound(idSig)
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
+@OptIn(InternalSymbolFinderAPI::class)
 class IrModuleDeserializerWithBuiltIns(
     private val builtIns: IrBuiltIns,
     private val symbolTable: SymbolTable,
@@ -150,6 +154,15 @@ class IrModuleDeserializerWithBuiltIns(
     }
 
     private val signatureComputer = PublicIdSignatureComputer(mangler)
+    private val syntheticProvider = IrSyntheticProvider(
+        packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(
+            delegate.moduleDescriptor,
+            StandardClassIds.BASE_INTERNAL_IR_PACKAGE
+        ),
+        symbolTable = symbolTable,
+        signatureComputer = signatureComputer::computeSignature
+    )
+
     private val syntheticFunctionClassGenerator = IrBasedFunctionFactory(
         delegate.moduleFragment,
         builtIns.functionClass,
@@ -164,7 +177,7 @@ class IrModuleDeserializerWithBuiltIns(
         builtIns.functionFactory = this
     }
 
-    private val irBuiltInsMap = builtIns.knownBuiltins.associate {
+    private val irBuiltInsMap = syntheticProvider.operatorsPackageFragment.declarations.associate {
         val symbol = (it as IrSymbolOwner).symbol
         symbol.signature to symbol
     }
@@ -252,6 +265,7 @@ class IrModuleDeserializerWithBuiltIns(
 
     internal fun finish(irBuiltIns: IrBuiltIns) {
         syntheticFunctionClassGenerator.typeSystem = IrTypeSystemContextImpl(irBuiltIns)
+        syntheticProvider.finish()
     }
 
     override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
