@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-31236
+// FIR_DUMP
 
 // KT-31236: Prohibit implicit intersection types as return types in new inference
 interface A

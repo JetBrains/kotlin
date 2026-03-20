@@ -1,0 +1,16 @@
+FILE: kt31236.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public final fun foo(x: R|kotlin/Any?|): R|kotlin/Any?| {
+        ^foo when () {
+            (R|<local>/x| is R|A|) && (R|<local>/x| is R|B|) ->  {
+                R|<local>/x|
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
