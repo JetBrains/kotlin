@@ -2692,7 +2692,7 @@ private fun KaDiagnosticConverterBuilder.addConversions59() {
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b.mapKeys { (expectActualMatchingCompatibility, _) ->
                 expectActualMatchingCompatibility
-            }.mapValues { (_, collection) ->
+            }.mapValues { (_, collection) -> 
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol)
                                 }
@@ -8198,7 +8198,7 @@ private fun KaDiagnosticConverterBuilder.addConversions190() {
             firDiagnostic.b.map { pair ->
                 firSymbolBuilder.buildSymbol(pair.first) to pair.second.mapKeys { (mismatch, _) ->
                                     mismatch
-                                }.mapValues { (_, collection) ->
+                                }.mapValues { (_, collection) -> 
                                     collection.map { firBasedSymbol ->
                                                             firSymbolBuilder.buildSymbol(firBasedSymbol)
                                                         }

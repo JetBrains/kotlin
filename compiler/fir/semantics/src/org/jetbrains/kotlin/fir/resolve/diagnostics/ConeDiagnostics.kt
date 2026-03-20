@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -87,6 +88,8 @@ class ConeUnresolvedNameError(
             null -> name.toString()
             else -> "$name ($token)"
         }
+    val receiverTypeName: String?
+        get() = if (receiverType?.hasError() == false) receiverType.renderReadable() else ""
 }
 
 class ConeFunctionCallExpectedError(

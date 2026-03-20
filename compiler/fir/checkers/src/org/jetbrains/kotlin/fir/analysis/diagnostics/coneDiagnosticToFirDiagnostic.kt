@@ -511,7 +511,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     )
 
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString(), null, null, session)
-    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken, receiverType, session)
+    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken, receiverTypeName, session)
     is ConeUnresolvedTypeQualifierError -> {
         when {
             // this.qualifiers will contain all resolved qualifiers from the left up to (including) the first unresolved qualifier.
