@@ -305,7 +305,7 @@ internal fun jsIsEs6(): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-internal fun <T> jsYield(value: T): T
+internal fun <T> jsYield(): T
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode

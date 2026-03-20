@@ -19,58 +19,77 @@ internal external interface JsIterator<T> {
     fun throws(exception: Throwable = definedExternally): JsIterationStep<T>
 }
 
-internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>?) : InterceptedCoroutine(), Continuation<Any?> {
+internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>) : InterceptedCoroutine(), Continuation<Any?> {
+    companion object {
+        private val WAITING_FOR_UNEXPECTED_RESUMING = js("Symbol()")
+    }
+
     var generator: JsIterator<Any?> = VOID.unsafeCast<JsIterator<Any?>>()
-    private val _context = resultContinuation?.context
+    private val _context = resultContinuation.context
 
-    public override val context: CoroutineContext get() = _context!!
+    public override val context: CoroutineContext get() = _context
 
-    fun runGenerator(result: Result<Any?> = Result(null)): Any? {
-        val suspended = COROUTINE_SUSPENDED
-        val stepResult = when (val e = result.exceptionOrNull()) {
-            null -> generator.next(result.value)
-            else -> generator.throws(e)
+    fun runGenerator(value: Any? = null, exception: Throwable? = null): Any? {
+        val stepResult = when (exception) {
+            null -> generator.next(value)
+            else -> generator.throws(exception)
         }
 
-        var done = stepResult.done
-        var value = stepResult.value
+        return if (stepResult.done) stepResult.value else COROUTINE_SUSPENDED
+    }
 
-        while (!done) {
-            try {
-                value = value.unsafeCast<() -> Any?>().invoke()
-            } catch (e: dynamic) {
-                val nextStep = generator.throws(e)
-                value = nextStep.value
-                done = nextStep.done
-                continue
+    internal var savedResult: Any? = null
+
+    internal fun waitingForUnexpectedResuming() {
+        savedResult = WAITING_FOR_UNEXPECTED_RESUMING
+    }
+
+    internal fun getOrThrow(): Any? {
+        return when (val result = savedResult) {
+            WAITING_FOR_UNEXPECTED_RESUMING -> {
+                savedResult = null
+                COROUTINE_SUSPENDED
             }
-            if (value === suspended) break
-            val nextStep = generator.next(value)
-            value = nextStep.value
-            done = nextStep.done
+            is Result.Failure -> throw result.exception
+            else -> result
         }
-
-        return value
     }
 
     override fun resumeWith(result: Result<Any?>) {
-        var exception: Throwable? = null
-        val nextResult = try {
-            runGenerator(result)
-        } catch (e: Throwable) {
-            exception = e
-            null
+        if (savedResult === WAITING_FOR_UNEXPECTED_RESUMING) {
+            savedResult = result.value
+            return
         }
 
-        if (nextResult === COROUTINE_SUSPENDED) return
+        var current = this
+        var currentResult: Any? = result.getOrNull()
+        var currentException: Throwable? = result.exceptionOrNull()
 
-        releaseIntercepted()
+        // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
+        while (true) {
+            try {
+                currentResult = current.runGenerator(currentResult, currentException)
+                currentException = null
+            } catch (e: dynamic) {
+                currentResult = null
+                currentException = e.unsafeCast<Throwable>()
+            }
 
-        resultContinuation?.run {
-            if (exception != null) {
-                resumeWithException(exception)
+            if (currentResult === COROUTINE_SUSPENDED) return
+
+            current.releaseIntercepted()
+
+            val nextContinuation = current.resultContinuation
+
+            if (nextContinuation is GeneratorCoroutineImpl) {
+                current = nextContinuation
             } else {
-                resume(nextResult)
+                if (currentException != null) {
+                    nextContinuation.resumeWithException(currentException)
+                } else {
+                    nextContinuation.resume(currentResult)
+                }
+                return
             }
         }
     }

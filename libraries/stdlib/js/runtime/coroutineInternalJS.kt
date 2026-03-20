@@ -8,6 +8,7 @@ package kotlin.js
 
 import kotlin.coroutines.*
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 
 @PublishedApi
@@ -17,10 +18,26 @@ internal fun <T> getContinuation(): Continuation<T> { throw Exception("Implement
 
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
+@OptIn(JsIntrinsic::class)
 @UsedFromCompilerGeneratedCode
-internal suspend fun <T> returnIfSuspended(argument: Any?): T {
-    return argument as T
+internal suspend fun <T> returnIfSuspended(argument: Any?, cont: GeneratorCoroutineImpl): T {
+    var result = argument
+    val suspended = COROUTINE_SUSPENDED
+
+    if (result === suspended) {
+        result = cont.getOrThrow()
+        if (result === suspended) result = jsYield<T>()
+    }
+
+    return result as T
 }
+
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+@Suppress("UNCHECKED_CAST")
+internal fun <T> safeGeneratorContinuationFor(continuation: Continuation<T>): GeneratorCoroutineImpl =
+    (if (continuation is GeneratorCoroutineImpl) continuation else GeneratorCoroutineImpl(continuation as Continuation<Any?>))
+        .also { it.waitingForUnexpectedResuming() }
 
 @PublishedApi
 internal fun <T> interceptContinuationIfNeeded(
@@ -37,7 +54,9 @@ internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinu
 // TODO: remove `JS` suffix oncec `NameGenerator` is implemented
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T =
-    returnIfSuspended<T>(block(getContinuation<T>()))
+internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturnJS(block: (Continuation<T>) -> Any?): T {
+    val cont = safeGeneratorContinuationFor(getContinuation<T>())
+    return returnIfSuspended(block(cont), cont)
+}
 
 

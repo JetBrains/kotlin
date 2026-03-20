@@ -96,9 +96,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(symbols.jsIsEs6) { _, _ -> JsBooleanLiteral(backendContext.es6mode) }
 
-            add(symbols.jsYieldFunctionSymbol) { call, context ->
-                JsYield(translateCallArguments(call, context).single())
-            }
+            add(symbols.jsYieldFunctionSymbol) { _, _ -> JsYield(null) }
 
             add(symbols.jsYieldStarFunctionSymbol) { call, context ->
                 JsYieldStar(translateCallArguments(call, context).single())
