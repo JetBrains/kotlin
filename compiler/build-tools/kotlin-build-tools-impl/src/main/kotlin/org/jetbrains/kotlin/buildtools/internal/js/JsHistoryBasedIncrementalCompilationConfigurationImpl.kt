@@ -8,8 +8,9 @@
 package org.jetbrains.kotlin.buildtools.internal.js
 
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.js.IncrementalModuleEntry
+import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration.Option
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
@@ -20,7 +21,7 @@ import java.nio.file.Path
 internal class JsHistoryBasedIncrementalCompilationConfigurationImpl(
     override val workingDirectory: Path,
     override val sourcesChanges: SourcesChanges,
-    override val modulesInformation: List<IncrementalModuleEntry>,
+    override val modulesInformation: List<IncrementalModule>,
     val options: Options = Options(
         JvmSnapshotBasedIncrementalCompilationConfiguration::class
     ),
@@ -65,6 +66,8 @@ internal class JsHistoryBasedIncrementalCompilationConfigurationImpl(
 
     companion object {
         val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)
+
+        val ROOT_PROJECT_BUILD_DIR: Option<Path?> = Option("ROOT_PROJECT_BUILD_DIR", null)
 
         val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR", null)
 

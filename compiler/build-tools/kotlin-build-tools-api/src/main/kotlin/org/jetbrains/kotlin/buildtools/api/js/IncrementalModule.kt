@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.js
 
 import java.nio.file.Path
 
-public class IncrementalModuleEntry(
+public class IncrementalModule(
     public val name: String,
     public val buildDir: Path,
     public val buildHistoryFile: Path,

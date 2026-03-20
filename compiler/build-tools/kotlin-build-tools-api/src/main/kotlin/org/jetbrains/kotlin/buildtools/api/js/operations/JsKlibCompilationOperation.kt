@@ -14,11 +14,10 @@ import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
-import org.jetbrains.kotlin.buildtools.api.js.IncrementalModuleEntry
+import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import java.nio.file.Path
 
 /**
@@ -47,16 +46,6 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
     public val compilerArguments: JsArguments
 
     /**
-     * Creates the configuration object for history-based incremental compilation (IC) in JS projects.
-     * TODO
-     */
-    public fun historyBasedIcConfigurationBuilder(
-        workingDirectory: Path,
-        sourcesChanges: SourcesChanges,
-        modulesInformation: List<IncrementalModuleEntry>,
-    ): JsHistoryBasedIncrementalCompilationConfiguration.Builder
-
-    /**
      * A builder for configuring and instantiating the [JsKlibCompilationOperation].
      */
     public interface Builder : BuildOperation.Builder {
@@ -75,6 +64,16 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
          */
         @OptIn(ExperimentalCompilerArgument::class)
         public val compilerArguments: JsArguments.Builder
+
+        /**
+         * Creates the configuration object for history-based incremental compilation (IC) in JS projects.
+         * TODO
+         */
+        public fun historyBasedIcConfigurationBuilder(
+            workingDirectory: Path,
+            sourcesChanges: SourcesChanges,
+            modulesInformation: List<IncrementalModule>,
+        ): JsHistoryBasedIncrementalCompilationConfiguration.Builder
 
         /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.

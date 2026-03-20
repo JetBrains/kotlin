@@ -8,9 +8,11 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.BACKUP_CLASSES
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.FORCE_RECOMPILATION
@@ -63,6 +65,18 @@ internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.extractIncremen
         keepIncrementalCompilationCachesInMemory = options[KEEP_IC_CACHES_IN_MEMORY],
         enableUnsafeIncrementalCompilationForMultiplatform = options[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
         enableMonotonousIncrementalCompileSetExpansion = options[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
+    )
+}
+
+
+internal fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
+    return IncrementalCompilationFeatures(
+        usePreciseJavaTracking = false,
+        withAbiSnapshot = false,
+        preciseCompilationResultsBackup = this[JsHistoryBasedIncrementalCompilationConfigurationImpl.BACKUP_CLASSES],
+        keepIncrementalCompilationCachesInMemory = this[JsHistoryBasedIncrementalCompilationConfigurationImpl.KEEP_IC_CACHES_IN_MEMORY],
+        enableUnsafeIncrementalCompilationForMultiplatform = this[JsHistoryBasedIncrementalCompilationConfigurationImpl.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
+        enableMonotonousIncrementalCompileSetExpansion = this[JsHistoryBasedIncrementalCompilationConfigurationImpl.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
     )
 }
 

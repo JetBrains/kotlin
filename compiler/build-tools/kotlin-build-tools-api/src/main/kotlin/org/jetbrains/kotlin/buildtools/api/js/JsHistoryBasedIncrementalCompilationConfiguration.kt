@@ -38,7 +38,7 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
 
     public val workingDirectory: Path
     public val sourcesChanges: SourcesChanges
-    public val modulesInformation: List<IncrementalModuleEntry>
+    public val modulesInformation: List<IncrementalModule>
 
     /**
      * A builder for [JsHistoryBasedIncrementalCompilationConfiguration].
@@ -63,7 +63,7 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
         /**
          * TODO
          */
-        public val modulesInformation: List<IncrementalModuleEntry>
+        public val modulesInformation: List<IncrementalModule>
 
         /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -121,6 +121,14 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
          */
         @JvmField
         public val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR")
+
+        /**
+         * The root project directory, used for computing relative paths for source files in the incremental compilation caches.
+         *
+         * If it is not specified, incremental compilation caches will be non-relocatable.
+         */
+        @JvmField
+        public val ROOT_PROJECT_BUILD_DIR: Option<Path?> = Option("ROOT_PROJECT_BUILD_DIR")
 
         /**
          * The build directory, used for computing relative paths for output files in the incremental compilation caches.

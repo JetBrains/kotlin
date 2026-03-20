@@ -115,8 +115,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     @Suppress("DEPRECATION_ERROR")
                     compilationOperationBuilder[BuildOperation.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = true
                 }
-                @Suppress("DEPRECATION")
-                compilationOperationBuilder[GENERATE_COMPILER_REF_INDEX] = workArguments.compilerExecutionSettings.generateCompilerRefIndex
+                compilationOperationBuilder[BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX] = workArguments.compilerExecutionSettings.generateCompilerRefIndex
 
                 val icEnv = workArguments.incrementalCompilationEnvironment
                 val classpathChanges = icEnv?.classpathChanges

@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.*
-import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerArgumentValueAdapter
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.ROOT_PROJECT_DIR
-import org.jetbrains.kotlin.buildtools.internal.jvm.operations.BaseCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -33,9 +31,7 @@ internal class JsLinkingOperationImpl private constructor(
     override val options: Options = Options(JsLinkingOperation::class),
     override val klib: Path,
     override val destination: Path,
-    compilerArguments: JsArgumentsImpl = JsArgumentsImpl(
-        CompilerArgumentValueAdapter.getOrNull(JsArguments.JsArgument::class)
-    ),
+    compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
 ) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
     JsLinkingOperation, JsLinkingOperation.Builder,
@@ -43,9 +39,7 @@ internal class JsLinkingOperationImpl private constructor(
     constructor(
         klib: Path,
         destination: Path,
-        compilerArguments: JsArgumentsImpl = JsArgumentsImpl(
-            CompilerArgumentValueAdapter.getOrNull(JsArguments.JsArgument::class)
-        ),
+        compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
         buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
     ) : this(
         options = Options(JsKlibCompilationOperation::class),
