@@ -7,12 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.lower.LAMBDA_EXTENSION_RECEIVER
-import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
-import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.declarationsAtFunctionReferenceLowering
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
@@ -32,9 +27,6 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrStarProjection
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
@@ -484,30 +476,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 parameters += createDispatchReceiverParameterWithClassParent()
                 require(superFunction.typeParameters.isEmpty()) { "Fun interface abstract function can't have type parameters" }
 
-                val typeSubstitutor = if (samSuperType == null) {
-                    IrTypeSubstitutor(
-                        extractTypeParameters(irFunctionReference.type.classOrFail.owner).map { it.symbol },
-                        (irFunctionReference.type as IrSimpleType).arguments.map {
-                            when (it) {
-                                // it can be "in Nothing" in case of strange intersections
-                                // if we keep it as Nothing, this can cause CCE on java.lang.Void
-                                // this happens only in K1 in tests, so maybe it's just a K1 bug, but let's be conservative in that case–
-                                is IrTypeProjection if it.type.isNothing() -> context.irBuiltIns.anyNType
-                                is IrTypeProjection -> it.type
-                                is IrStarProjection -> context.irBuiltIns.anyNType
-                            }
-                        },
-                        allowEmptySubstitution = true
-                    )
-                } else {
-                    val typeParameters = extractTypeParameters(samSuperType.classOrFail.owner)
-                    IrTypeSubstitutor(
-                        typeParameters.map { it.symbol },
-                        typeParameters.map { it.erasedUpperBound.rawType(context) },
-                        allowEmptySubstitution = true
-                    )
-                }
-
                 val nonDispatchParameters = superFunction.nonDispatchParameters.mapIndexed { i, superParameter ->
                     val oldParameter = invokeFunction.parameters[i + irFunctionReference.boundValues.size]
                     superParameter.copyTo(
@@ -516,8 +484,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                         endOffset = if (isLambda) oldParameter.endOffset else UNDEFINED_OFFSET,
                         name = oldParameter.name,
                         origin = oldParameter.origin,
-                        type = typeSubstitutor.substitute(superParameter.type)
-                            .mergeNullability(invokeFunction.parameters[i + boundValues.size].type),
+                        type = oldParameter.type,
                         defaultValue = null,
                     ).apply { copyAnnotationsFrom(oldParameter) }
                 }
