@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-19 (iter 44)
+**Last Updated**: 2026-03-19 (iter 45)
 
 ---
 
@@ -41,6 +41,31 @@ Added `memberAnnotations` parameter to `JavaTypeOverAst` and all subclasses. `cr
 
 ### Key Learning
 The `annotations-13.0.jar` bundled with the Kotlin compiler lacks `ElementType.TYPE_USE` in `@Target` for `@NotNull`/`@Nullable` — it predates Java 8. Callback-based TYPE_USE detection via FIR's annotation class resolution fails for these. Type-position annotations are TYPE_USE by syntactic position and don't need callback verification.
+
+---
+
+## Iteration 45: Type Parameter Direct Annotations — 2026-03-19
+
+### Root Cause Analysis
+
+`JavaTypeParameterOverAst.annotations` only checked for annotations inside `MODIFIER_LIST`. But the KMP Java parser places annotations on type parameters as direct children of the `TYPE_PARAMETER` node (no `MODIFIER_LIST` wrapper). For `<@org.jetbrains.annotations.NotNull K>`, the AST has `[ANNOTATION, IDENTIFIER, EXTENDS_BOUND_LIST]` — no MODIFIER_LIST.
+
+### Fix
+
+Updated `JavaTypeParameterOverAst.annotations` to collect annotations from both `MODIFIER_LIST` children and direct `ANNOTATION` children of the `TYPE_PARAMETER` node.
+
+### Test Results
+- **Box tests**: 1163/1168 (unchanged)
+- **Phased tests**: 1412/1443 (was 1409, +3 fixed)
+- **Total failures**: 36 (was 39, **3 tests fixed, 0 regressions**)
+
+### Tests Fixed
+- `testCheckEnhancedUpperBounds`
+- `testCheckEnhancedUpperBoundsWithEnabledImprovements`
+- `testTypeAliasConstructorTypeArgumentsInferenceWithNestedCalls`
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt` — `JavaTypeParameterOverAst.annotations`
 
 ---
 

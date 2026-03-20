@@ -469,11 +469,19 @@ class JavaTypeParameterOverAst(
 
     // Annotations on the type parameter declaration itself (e.g., <@NonNull T>).
     // Matches TreeBasedTypeParameter which reads tree.annotations().
+    // Annotations on the type parameter declaration (e.g., <@NonNull T>).
+    // The KMP parser may place annotations in a MODIFIER_LIST or directly under the
+    // TYPE_PARAMETER node (no MODIFIER_LIST wrapper).
     override val annotations: Collection<JavaAnnotation>
-        get() = node.findChildByType("MODIFIER_LIST")
-            ?.getChildrenByType("ANNOTATION")
-            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
-            ?: emptyList()
+        get() {
+            val modListAnns = node.findChildByType("MODIFIER_LIST")
+                ?.getChildrenByType("ANNOTATION")
+                ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+                ?: emptyList()
+            val directAnns = node.getChildrenByType("ANNOTATION")
+                .map { JavaAnnotationOverAst(it, resolutionContext) }
+            return modListAnns + directAnns
+        }
 
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? =
