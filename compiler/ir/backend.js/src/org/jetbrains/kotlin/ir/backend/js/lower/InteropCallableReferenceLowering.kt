@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
+import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -723,6 +724,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         factoryDeclaration.returnType = lambdaInfo.lambdaClass.typeWith(factoryTypeParameters.map { it.defaultType })
 
         factoryDeclaration.body = buildFactoryBody(factoryDeclaration, newDeclarations, lambdaInfo)
+        factoryDeclaration.originalCallableReferenceClass = lambdaInfo.lambdaClass
 
         if (oldToNewTypeParameterMapping.isNotEmpty()) {
             factoryDeclaration.body?.remapTypes(typeRemapper)

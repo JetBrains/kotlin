@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 
 var IrClass.localClassName: String? by irAttribute(copyByDefault = true)
 
@@ -92,3 +93,6 @@ var IrClass.hasPureInitialization: Boolean? by irAttribute(copyByDefault = false
  * We perform it on the JS AST optimization phase in [org.jetbrains.kotlin.js.inline.clean.MoveTemporaryVariableDeclarationToAssignment]
  */
 internal var IrVariable.wasMovedFromItsDeclarationPlace: Boolean by irFlag(copyByDefault = false)
+
+var IrSimpleFunction.originalCallableReferenceClass: IrClass? by irAttribute(copyByDefault = false)
+var IrClass.originalCallableReference: IrRichFunctionReference? by irAttribute(copyByDefault = false)
