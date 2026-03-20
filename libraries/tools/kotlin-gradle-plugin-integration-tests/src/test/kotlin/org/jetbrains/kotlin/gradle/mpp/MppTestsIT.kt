@@ -28,7 +28,7 @@ class MppTestsIT : KGPBaseTest() {
         ) {
             val nativeTarget = MPPNativeTargets.current
 
-            build(":allTests") {
+            build(":allTests", "-Pkotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic") {
                 assertTasksExecuted(
                     ":jsNodeTest",
                     ":jvmWithoutJavaTest",
@@ -40,7 +40,7 @@ class MppTestsIT : KGPBaseTest() {
             kotlinSourcesDir("commonTest").resolve("TestCommonCode.kt").modify {
                 it.replace("expectedFun()", "assertEquals(0, 1)")
             }
-            buildAndFail(":allTests") {
+            buildAndFail(":allTests", "-Pkotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic") {
                 assertTasksFailed(
                     ":jsNodeTest",
                     ":jvmWithoutJavaTest",

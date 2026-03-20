@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING", "DEPRECATION")
+@file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING", "DEPRECATION", "DEPRECATION_ERROR")
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget

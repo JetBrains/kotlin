@@ -53,7 +53,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Check build with published third-party library")
     fun testPublishedModules(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG).copy(freeArgs = emptyList())
 
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -220,7 +220,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 "hierarchical-mpp-project-dependency",
                 gradleVersion,
                 localRepoDir = tempDir,
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG).copy(freeArgs = emptyList())
             )
         ) {
             build("publish", "assemble") {
@@ -235,7 +235,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @TestMetadata("hierarchical-mpp-published-modules")
     @DisplayName("Check that only composite metadata artifacts are transformed")
     fun testOnlyCompositeMetadataArtifactsTransformed(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG).copy(freeArgs = emptyList())
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
         val regex = """artifact: '(.+)'""".toRegex()
@@ -317,7 +317,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                     subProject(it).buildGradle.replaceText("withJava()", "")
                 }
             }
-            build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
+            build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError,DeprecatedKotlinNativeTargetsDiagnostic")
         }
     }
 

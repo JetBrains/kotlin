@@ -13,7 +13,7 @@ kotlin {
         val hostOs = System.getProperty("os.name")
         val isMingwX64 = hostOs.startsWith("Windows")
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR")
         when {
             hostOs == "Mac OS X" -> macosX64("native")
             hostOs == "Linux" -> linuxX64("native")

@@ -71,7 +71,11 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
                 subProject("top-mpp").buildGradle.replaceText("withJava()", "")
             }
 
-            build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError") {
+            build(
+                "assemble",
+                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError",
+                "-Pkotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic",
+            ) {
                 assertNoUnnamedInputsOutputs()
             }
         }

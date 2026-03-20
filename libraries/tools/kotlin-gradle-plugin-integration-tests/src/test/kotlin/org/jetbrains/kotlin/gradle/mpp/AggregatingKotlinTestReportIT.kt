@@ -20,7 +20,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
         project(
             "new-mpp-lib-with-tests",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(freeArgs = listOf("-Pkotlin.tests.individualTaskReports=false"))
+            buildOptions = defaultBuildOptions.copy(freeArgs = defaultBuildOptions.freeArgs + "-Pkotlin.tests.individualTaskReports=false")
         ) {
             // break all the test tasks
             kotlinSourcesDir("commonTest").resolve("TestCommonCode.kt").modify {
@@ -106,7 +106,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
             "new-mpp-lib-with-tests",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                freeArgs = listOf("-Pkotlin.tests.individualTaskReports=false"),
+                freeArgs = defaultBuildOptions.freeArgs + "-Pkotlin.tests.individualTaskReports=false",
             ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             val nativeTarget = MPPNativeTargets.current
