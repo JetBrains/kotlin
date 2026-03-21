@@ -73,7 +73,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val properties = buildSerializableProperties(classSymbol, reporter) ?: return
             checkCorrectTransientAnnotationIsUsed(classSymbol, properties.serializableProperties, reporter)
             checkProtobufProperties(properties.serializableProperties, reporter)
-            checkProtoUnknownFields(classSymbol, reporter)
+            checkProtoUnknownFields(classSymbol, properties.serializableProperties, reporter)
             checkTransients(classSymbol, reporter)
             analyzePropertiesSerializers(classSymbol, properties.serializableProperties, reporter)
             checkInheritedAnnotations(classSymbol, reporter)
@@ -387,15 +387,11 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
     private fun CheckerContext.checkProtoUnknownFields(
         classSymbol: FirClassSymbol<*>,
+        properties: List<FirSerializableProperty>,
         reporter: DiagnosticReporter,
     ) {
-        val annotatedProps = mutableListOf<FirPropertySymbol>()
-        classSymbol.processAllDeclarations(session) { member ->
-            if (member is FirPropertySymbol &&
-                member.getAnnotationByClassId(protoUnknownFieldsAnnotationClassId, session) != null
-            ) {
-                annotatedProps.add(member)
-            }
+        val annotatedProps = properties.map { it.propertySymbol }.filter { prop ->
+            prop.getAnnotationByClassId(protoUnknownFieldsAnnotationClassId, session) != null
         }
 
         if (annotatedProps.size > 1) {
