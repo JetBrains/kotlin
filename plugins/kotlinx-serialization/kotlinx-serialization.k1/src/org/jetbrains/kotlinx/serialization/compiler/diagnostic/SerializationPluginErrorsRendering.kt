@@ -249,8 +249,8 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             CommonRenderers.STRING,
             CommonRenderers.STRING
         )
-        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_ANNOTATIONS, "In class ''{0}'', fields annotated with @ProtoUnknownFields: ''{1}''; only one field per class is allowed.", CommonRenderers.STRING, CommonRenderers.STRING)
-        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_WRONG_TYPE, "In class ''{0}'', field ''{1}'' annotated with @ProtoUnknownFields must have type ''ProtoUnknownFieldHolder'', but has type ''{2}''.", CommonRenderers.STRING, CommonRenderers.STRING, CommonRenderers.STRING)
-        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT, "In class ''{0}'', non-nullable field ''{1}'' annotated with @ProtoUnknownFields must have a default value ''ProtoUnknownFieldHolder.Empty''.", CommonRenderers.STRING, CommonRenderers.STRING)
+        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_ANNOTATIONS, "@ProtoUnknownFields must not be present on more than one property, specified on ''{1}'' in class ''{0}''.", CommonRenderers.STRING, CommonRenderers.STRING)
+        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_WRONG_TYPE, "@ProtoUnknownFields on field ''{1}'' in class ''{0}'' must have type ProtoUnknownFieldHolder, but has type ''{2}''.", CommonRenderers.STRING, CommonRenderers.STRING, CommonRenderers.STRING)
+        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT, "@ProtoUnknownFields on non-nullable field ''{1}'' in class ''{0}'' must have a default value ProtoUnknownFieldHolder.Empty.", CommonRenderers.STRING, CommonRenderers.STRING)
     }
 }
