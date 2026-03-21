@@ -402,8 +402,56 @@ interface KotlinMultiplatformSourceSetConventions {
      * ```
      *
      * @since 1.9.20
-     */
+    */
     val NamedDomainObjectContainer<KotlinSourceSet>.linuxTest: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for shared kotlin Source Set between all declared Tizen targets.
+     * Declare at least one of the targets mentioned above to access this source set.
+     * If no targets were declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    tizenArm64()
+     *    tizenX64()
+     *
+     *    sourceSets {
+     *      tizenMain.dependencies {
+     *          // Add tizenMain dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 1.9.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.tizenMain: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for shared kotlin Source Set between all declared Tizen targets.
+     * Declare at least one of the targets mentioned above to access this source set.
+     * If no targets were declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    tizenArm64()
+     *    tizenX64()
+     *
+     *    sourceSets {
+     *      tizenTest.dependencies {
+     *          // Add tizenTest dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 1.9.20
+     */
+    val NamedDomainObjectContainer<KotlinSourceSet>.tizenTest: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
      * Static accessor for shared kotlin Source Set between all declared Mingw targets.
@@ -450,7 +498,7 @@ interface KotlinMultiplatformSourceSetConventions {
      * ```
      *
      * @since 1.9.20
-     */
+    */
     val NamedDomainObjectContainer<KotlinSourceSet>.mingwTest: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -2006,5 +2054,3 @@ interface KotlinMultiplatformSourceSetConventions {
         configure: LanguageSettingsBuilder.() -> Unit,
     ): Unit = this { languageSettings(configure) }
 }
-
-

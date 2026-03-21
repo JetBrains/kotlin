@@ -50,6 +50,10 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
 
     override val NamedDomainObjectContainer<KotlinSourceSet>.linuxTest by KotlinSourceSetConvention
 
+    override val NamedDomainObjectContainer<KotlinSourceSet>.tizenMain by KotlinSourceSetConvention
+
+    override val NamedDomainObjectContainer<KotlinSourceSet>.tizenTest by KotlinSourceSetConvention
+
     override val NamedDomainObjectContainer<KotlinSourceSet>.mingwMain by KotlinSourceSetConvention
 
     override val NamedDomainObjectContainer<KotlinSourceSet>.mingwTest by KotlinSourceSetConvention
