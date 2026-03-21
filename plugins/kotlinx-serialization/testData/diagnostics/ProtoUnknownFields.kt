@@ -19,6 +19,13 @@ public class ProtoUnknownFieldHolder private constructor() {
     }
 }
 
+@Serializable
+public class ProtoUnknownFieldHolderSerializer : KSerializer<ProtoUnknownFieldHolder> {
+    public override val descriptor: SerialDescriptor = buildClassSerialDescriptor("ProtoUnknownFieldHolder")
+    public override fun serialize(encoder: Encoder, value: ProtoUnknownFieldHolder) {}
+    public override fun deserialize(decoder: Decoder): ProtoUnknownFieldHolder = ProtoUnknownFieldHolder.Empty
+}
+
 // MODULE: main(lib)
 // FILE: test.kt
 
@@ -28,15 +35,15 @@ import kotlinx.serialization.protobuf.ProtoUnknownFieldHolder
 
 // OK: non-nullable with default value
 @Serializable
-data class ValidNonNullable(@ProtoUnknownFields val unknown: <!SERIALIZER_NOT_FOUND!>ProtoUnknownFieldHolder<!> = ProtoUnknownFieldHolder.Empty)
+data class ValidNonNullable(@ProtoUnknownFields val unknown: ProtoUnknownFieldHolder = ProtoUnknownFieldHolder.Empty)
 
 // OK: nullable (no default value required)
 @Serializable
-data class ValidNullable(@ProtoUnknownFields val unknown: <!SERIALIZER_NOT_FOUND!>ProtoUnknownFieldHolder?<!> = null)
+data class ValidNullable(@ProtoUnknownFields val unknown: ProtoUnknownFieldHolder? = null)
 
 // OK: nullable without default value
 @Serializable
-data class ValidNullableNoDefault(@ProtoUnknownFields val unknown: <!SERIALIZER_NOT_FOUND!>ProtoUnknownFieldHolder?<!>)
+data class ValidNullableNoDefault(@ProtoUnknownFields val unknown: ProtoUnknownFieldHolder?)
 
 // OK: no @ProtoUnknownFields at all
 @Serializable
@@ -45,8 +52,8 @@ data class NoAnnotation(val a: Int, val b: String)
 // ERROR: more than one field annotated with @ProtoUnknownFields
 @Serializable
 data class MultipleAnnotations(
-    <!PROTO_UNKNOWN_FIELDS_MULTIPLE_ANNOTATIONS!>@ProtoUnknownFields<!> val first: <!SERIALIZER_NOT_FOUND!>ProtoUnknownFieldHolder<!> = ProtoUnknownFieldHolder.Empty,
-    @ProtoUnknownFields val second: <!SERIALIZER_NOT_FOUND!>ProtoUnknownFieldHolder<!> = ProtoUnknownFieldHolder.Empty,
+    <!PROTO_UNKNOWN_FIELDS_MULTIPLE_ANNOTATIONS!>@ProtoUnknownFields<!> val first: ProtoUnknownFieldHolder = ProtoUnknownFieldHolder.Empty,
+    @ProtoUnknownFields val second: ProtoUnknownFieldHolder = ProtoUnknownFieldHolder.Empty,
 )
 
 // ERROR: wrong type
@@ -59,4 +66,4 @@ data class WrongTypeString(<!PROTO_UNKNOWN_FIELDS_WRONG_TYPE("WrongTypeString; e
 
 // ERROR: non-nullable without default value
 @Serializable
-data class MissingDefault(<!PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT!>@ProtoUnknownFields val unknown: <!SERIALIZER_NOT_FOUND!>ProtoUnknownFieldHolder<!><!>)
+data class MissingDefault(<!PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT!>@ProtoUnknownFields val unknown: ProtoUnknownFieldHolder)
