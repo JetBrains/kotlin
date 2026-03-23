@@ -245,7 +245,10 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         val typeParameterSymbols =
             lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
                 ?.toRegularClassSymbol(session)?.typeParameterSymbols
-        return Array(typeArguments.size) { index ->
+        // Truncate type arguments to match the class's type parameter count when the source has
+        // more arguments than the class declares (wrong-arity type references in Java source).
+        val effectiveArgCount = if (typeParameterSymbols != null) minOf(typeArguments.size, typeParameterSymbols.size) else typeArguments.size
+        return Array(effectiveArgCount) { index ->
             // TODO: check this
             val newMode = if (mode.insideAnnotation) FirJavaTypeConversionMode.DEFAULT else mode
             val argument = typeArguments[index]
@@ -334,7 +337,8 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             val typeParameterSymbols = lookupTag
                 .takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
                 ?.toRegularClassSymbol(session)?.typeParameterSymbols
-            val isRawType = isRaw || (typeArguments.isEmpty() && typeParameterSymbols?.isNotEmpty() == true)
+            val isRawType = isRaw || (typeParameterSymbols != null && typeParameterSymbols.isNotEmpty() &&
+                (typeArguments.isEmpty() || typeArguments.size < typeParameterSymbols.size))
             
             val mappedTypeArguments = when {
                 isRawType -> {

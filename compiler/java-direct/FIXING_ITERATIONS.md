@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 54 (2026-03-23) |
+| **Last Iteration** | 55 (2026-03-23) |
 | **Box Tests** | 1168/1168 passing (100%) |
-| **Phased Tests** | 1446/1456 passing (99.3%) |
-| **Combined** | ~2614/2624 passing, **10 failing** |
+| **Phased Tests** | 1448/1456 passing (99.5%) |
+| **Combined** | ~2616/2624 passing, **8 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -45,6 +45,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | **Multi-Dimensional Array Types** | Done (iter 52) | 4 |
 | **Annotation Default Binary Expressions** | Done (iter 53) | 2 |
 | **External Class Flexible Type Rendering** | Done (iter 54) | 1 |
+| **Wrong-Arity Type Argument Handling** | Done (iter 55) | 2 |
 
 ---
 
@@ -105,6 +106,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | 52 | Multi-dimensional array types: KMP parser flat brackets fix in createJavaType() | +2 box, +2 phased |
 | 53 | Annotation default binary expressions: evaluateConstantExpression handles BINARY_EXPRESSION (int addition, string concat) | +1 box, +1 phased |
 | 54 | External class flexible type rendering: isTriviallyFlexibleHint checks import-resolved FQN against read-only collection set | +1 phased |
+| 55 | Wrong-arity type argument handling: isRaw for fewer-args, truncation for more-args, ConeRawScopeSubstitutor AIOOBE fix | +2 phased |
 
 ---
 

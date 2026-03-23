@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-23 (iter 54)
+**Last Updated**: 2026-03-23 (iter 55)
 
 ---
 
@@ -116,6 +116,47 @@ Added `JAVA_READ_ONLY_FQ_NAMES` and `JAVA_READ_ONLY_SIMPLE_NAMES` companion obje
 - PSI's `classifier` is non-null for all resolved classes (including JDK); java-direct's `classifier` is null for external classes — the `isTriviallyFlexibleHint` must bridge this gap
 - Read-only collection classes (`java.util.List`, `java.util.Map`, etc.) must NOT be trivially flexible because they need mutable/readonly distinction in the upper bound
 - `java.lang.*` classes are implicitly imported but not in java-direct's explicit import list — conservative simple name matching handles this
+
+---
+
+## Iteration 55: Wrong-Arity Type Argument Handling - 2026-03-23
+
+### Root Cause Analysis
+Java source code can contain type references with the wrong number of type arguments, e.g.:
+```java
+class Boo<N> {}
+class Foo<P1 extends Boo<P2, P3, P4>, ...>  // Boo has 1 param, 3 args given
+class A<T extends A<T, E>, E extends T, F>  // A has 3 params, 2 args given in bound
+```
+
+Javac rejects these with "wrong number of type arguments" but still processes them. PSI (backed by javac) handles these gracefully — fewer args than params are treated as raw, more args than params are truncated to the correct count.
+
+Java-direct parses the AST literally and presents the wrong-arity type arguments as-is. This caused two problems:
+1. **AIOOBE crash**: `ConeRawScopeSubstitutor.substituteType()` created a `nullabilities` array sized to `type.typeArguments.size` but iterated `firClass.typeParameterSymbols.size`, causing `ArrayIndexOutOfBoundsException` when the counts differed.
+2. **Wrong type erasure**: Raw type erasure with wrong-arity arguments produced incorrect types, leading to spurious diagnostics.
+
+### Fix
+**Three coordinated changes:**
+
+1. **`compiler/fir/providers/src/.../ConeRawScopeSubstitutor.kt`**: Defensive fix — size `nullabilities` array to `firClass.typeParameterSymbols.size` instead of `type.typeArguments.size`, using safe `getOrNull` access. Prevents AIOOBE for any source of arity mismatch.
+
+2. **`compiler/java-direct/src/.../JavaTypeOverAst.kt`**: Enhanced `isRaw` to detect fewer-args-than-params case. When explicit type argument count < class type parameter count, the type is treated as raw (matching PSI/javac behavior).
+
+3. **`compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt`**: Two changes:
+   - Extended `isRawType` check in `classifier == null` path to also detect fewer-args-than-params
+   - `buildTypeProjections()` now truncates type arguments to `min(typeArguments.size, typeParameterSymbols.size)` for more-args-than-params case
+
+### Test Results
+- Box: 1168/1168, Phased: 1448/1456, Total failing: 8
+
+### Tests Fixed
+- **Phased**: `testNonTrivialErasure` (recursive bound erasure with fewer args than params)
+- **Phased**: `testInterdependentTypeParameters` (interdependent bounds with more args than params)
+
+### Key Learnings
+- Javac rejects wrong-arity type references but PSI still presents them — fewer args → raw-like, more args → truncated
+- `ConeRawScopeSubstitutor` assumes `type.typeArguments.size == firClass.typeParameterSymbols.size` — this invariant can be violated by wrong-arity Java source
+- The `classifier == null` path in `JavaTypeConversion.kt` needs the same wrong-arity handling as the `classifier is JavaClass` path
 
 ---
 
