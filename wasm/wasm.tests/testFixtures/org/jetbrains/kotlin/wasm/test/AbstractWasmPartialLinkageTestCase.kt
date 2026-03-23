@@ -130,6 +130,7 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
             listOf(
                 KotlinWasmCompilerArguments::outputDir.cliArgument, module.klibFile.parentFile.absolutePath,
                 KotlinWasmCompilerArguments::moduleName.cliArgument, module.moduleInfo.moduleName,
+                KotlinWasmCompilerArguments::verifyIr.cliArgument("error"),
             ),
             dependencies.toCompilerArgs(),
             compilerArguments,
@@ -152,6 +153,7 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
                 KotlinWasmCompilerArguments::includes.cliArgument(mainModule.libraryFile.absolutePath),
                 KotlinWasmCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
                 KotlinWasmCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,
+                KotlinWasmCompilerArguments::verifyIr.cliArgument("error"),
             ),
             listOf(
                 KotlinWasmCompilerArguments::cacheDirectory.cliArgument(configuration.buildDir.resolve("libs-cache").absolutePath),
