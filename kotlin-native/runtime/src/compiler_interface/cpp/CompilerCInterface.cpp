@@ -35,7 +35,7 @@ touchType(FrameOverlay)
 
 touchFunction(AllocInstance)
 touchFunction(AllocArrayInstance)
-touchFunction(InitAndRegisterGlobal)
+touchFunction(RegisterGlobal)
 touchFunction(UpdateHeapRef)
 touchFunction(UpdateStackRef)
 touchFunction(UpdateVolatileHeapRef)

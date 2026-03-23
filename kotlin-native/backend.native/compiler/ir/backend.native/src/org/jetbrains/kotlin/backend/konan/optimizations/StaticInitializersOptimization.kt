@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
@@ -241,7 +240,7 @@ internal object StaticInitializersOptimization {
         }
 
         private val IrFunction.calledInitializer get() =
-            (body?.statements?.get(0) as? IrCall)?.symbol?.owner?.takeIf { it.isStaticInitializer }?.parent as IrDeclarationContainer?
+            (body?.statements?.get(0) as? IrCall)?.symbol?.owner?.takeIf { it.isLazyStaticInitializer }?.parent as IrDeclarationContainer?
 
         private fun intraproceduralAnalysis(
                 node: CallGraphNode,
@@ -476,7 +475,7 @@ internal object StaticInitializersOptimization {
                 }
 
                 override fun visitCall(expression: IrCall, data: BitSet): BitSet {
-                    if (expression.symbol.owner.isStaticInitializer)
+                    if (expression.symbol.owner.isLazyStaticInitializer)
                         return data.withSetBit(initializedContainers.containerIds[expression.symbol.owner.parent as IrDeclarationContainer]!!)
                     if (expression.symbol == executeImplSymbol)
                         return processExecuteImpl(expression, data)
@@ -549,11 +548,10 @@ internal object StaticInitializersOptimization {
                 val initializerCalls = (body as IrBlockBody).statements
                         .take(2) // The very first statements by construction.
                         .filter {
-                            val calleeOrigin = (it as? IrCall)?.symbol?.owner?.origin
-                            val isNotOptimizedAwayGlobalInitializerCall = calleeOrigin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
+                            val potentialInitializerCallee = (it as? IrCall)?.symbol?.owner ?: return@filter false
+                            val isNotOptimizedAwayGlobalInitializerCall = potentialInitializerCallee.isGlobalStaticInitializer
                                     && callee !in analysisResult.functionsRequiringGlobalInitializerCall
-                            val isNotOptimizedAwayThreadLocalInitializerCall = (calleeOrigin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
-                                    || calleeOrigin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER)
+                            val isNotOptimizedAwayThreadLocalInitializerCall = potentialInitializerCallee.isThreadLocalStaticInitializer
                                     && callee !in analysisResult.functionsRequiringThreadLocalInitializerCall
                             if (isNotOptimizedAwayGlobalInitializerCall)
                                 ++numberOfCallSitesToFunctionsWithGlobalInitializerCall
@@ -573,7 +571,7 @@ internal object StaticInitializersOptimization {
 
                 changedDeclarations.add(data!!.scope.scopeOwnerSymbol.owner as IrDeclaration)
                 return data.irBlock(expression) {
-                    initializerCalls.forEach { +irCallFileInitializer((it as IrCall).symbol) }
+                    initializerCalls.forEach { +irCall((it as IrCall).symbol) }
                     +expression
                 }
             }
@@ -586,8 +584,7 @@ internal object StaticInitializersOptimization {
                 val globalInitializerCallIndex = statements
                         .take(2) // The very first statements by construction.
                         .indexOfFirst {
-                            val calleeOrigin = (it as? IrCall)?.symbol?.owner?.origin
-                            calleeOrigin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
+                            (it as? IrCall)?.symbol?.owner?.isGlobalStaticInitializer == true
                         }
                 if (globalInitializerCallIndex >= 0) {
                     ++numberOfFunctionsWithGlobalInitializerCall
@@ -600,9 +597,7 @@ internal object StaticInitializersOptimization {
                 val threadLocalInitializerCallIndex = statements
                         .take(2)
                         .indexOfFirst {
-                            val calleeOrigin = (it as? IrCall)?.symbol?.owner?.origin
-                            calleeOrigin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
-                                    || calleeOrigin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
+                            (it as? IrCall)?.symbol?.owner?.isThreadLocalStaticInitializer == true
                         }
                 if (threadLocalInitializerCallIndex >= 0) {
                     ++numberOfFunctionsWithThreadLocalInitializerCall

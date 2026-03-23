@@ -115,14 +115,10 @@ extern "C" OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elem
     RETURN_RESULT_OF(mm::AllocateArray, threadData, typeInfo, static_cast<uint32_t>(elements));
 }
 
-extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {
+extern "C" RUNTIME_NOTHROW void RegisterGlobal(ObjHeader** location) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
-    // Null `initialValue` means that the appropriate value was already set by static initialization.
-    if (initialValue != nullptr) {
-        UpdateHeapRef(location, const_cast<ObjHeader*>(initialValue));
-    }
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
