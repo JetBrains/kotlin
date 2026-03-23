@@ -3,10 +3,8 @@ import kotlinx.benchmark.gradle.benchmark
 plugins {
     java
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.benchmark") version "0.4.6-1"
+    alias(libs.plugins.kotlinx.benchmark)
 }
-
-val benchmarks_version = "0.4.6-1"
 
 repositories {
     maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
@@ -23,7 +21,7 @@ dependencies {
     api(project(":compiler:cli"))
     api(intellijCore())
     api(jpsModel())
-    api("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$benchmarks_version")
+    api(libs.kotlinx.benchmark.runtime)
 }
 
 sourceSets {
