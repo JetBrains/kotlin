@@ -10,11 +10,6 @@ import java.nio.file.FileSystem
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 
-
-/*
- * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
 internal sealed interface DomainInfo {
     /**
      * @see DeclaredDomain.home

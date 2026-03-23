@@ -12,11 +12,6 @@ import org.gradle.api.tasks.TaskAction
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.writeText
 
-/*
- * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 /**
  * Generates code available at runtime for tests (e.g. all contract annotations such as '@CompilerContract', ...)
  */

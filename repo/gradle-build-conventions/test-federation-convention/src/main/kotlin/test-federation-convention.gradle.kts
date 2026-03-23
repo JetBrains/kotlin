@@ -1,6 +1,5 @@
 import org.gradle.api.internal.tasks.testing.junit.JUnitTestFramework
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.testFederation.*
 
 val extension = extensions.create<TestFederationExtension>("testFederation")
