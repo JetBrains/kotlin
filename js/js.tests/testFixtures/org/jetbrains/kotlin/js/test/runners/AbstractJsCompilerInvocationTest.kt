@@ -154,6 +154,7 @@ internal class JsCompilerInvocationTestArtifactBuilder(
                 K2JSCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
                 K2JSCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,
                 K2JSCompilerArguments::verifyIr.cliArgument("error"),
+                K2JSCompilerArguments::disableIrCheckers.cliArgument("IrVisibilityChecker"),
             ),
             listOf(
                 K2JSCompilerArguments::cacheDirectory.cliArgument,
