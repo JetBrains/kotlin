@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.WasmBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings

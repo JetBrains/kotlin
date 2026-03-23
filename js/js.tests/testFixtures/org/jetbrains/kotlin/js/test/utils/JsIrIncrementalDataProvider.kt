@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.openapi.util.io.FileUtilRt
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsSerializedKlibPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact

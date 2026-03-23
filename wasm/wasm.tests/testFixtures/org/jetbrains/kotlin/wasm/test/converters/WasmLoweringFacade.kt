@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.WholeWorldCompiler
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.WholeWorldMultiModuleCompiler
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldCompiler
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldMultiModuleCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig

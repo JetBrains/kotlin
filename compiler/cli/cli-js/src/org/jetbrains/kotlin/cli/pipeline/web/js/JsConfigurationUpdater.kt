@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.js
 
-import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
-import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_WARNING
+import org.jetbrains.kotlin.cli.CliDiagnostics.JS_AND_WASM_ARGUMENT_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.JS_AND_WASM_ARGUMENT_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.incrementalCompilationIsEnabledForJs
@@ -76,7 +76,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         }
 
         if (arguments.script) {
-            configuration.report(WEB_ARGUMENT_ERROR, "K/JS does not support Kotlin script (*.kts) files")
+            configuration.report(JS_AND_WASM_ARGUMENT_ERROR, "K/JS does not support Kotlin script (*.kts) files")
         }
 
         if (arguments.freeArgs.isEmpty() && !(incrementalCompilationIsEnabledForJs(arguments))) {
@@ -85,7 +85,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
                 throw SuccessfulPipelineExecutionException()
             }
             if (arguments.includes.isNullOrEmpty()) {
-                configuration.report(WEB_ARGUMENT_ERROR, "Specify at least one source file or directory", location = null)
+                configuration.report(JS_AND_WASM_ARGUMENT_ERROR, "Specify at least one source file or directory", location = null)
             }
         }
     }
@@ -97,17 +97,17 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         val targetVersion = arguments.targetVersion
 
         if (targetVersion == null) {
-            configuration.report(WEB_ARGUMENT_ERROR, "Unsupported ECMA version: ${arguments.target}")
+            configuration.report(JS_AND_WASM_ARGUMENT_ERROR, "Unsupported ECMA version: ${arguments.target}")
         }
         return targetVersion
     }
 
     internal fun checkWasmArgumentsUsage(arguments: K2JSCompilerArguments, configuration: CompilerConfiguration) {
         if (arguments.irDceDumpReachabilityInfoToFile != null) {
-            configuration.report(WEB_ARGUMENT_WARNING, "Dumping the reachability info to a file is not supported for Kotlin/JS.")
+            configuration.report(JS_AND_WASM_ARGUMENT_WARNING, "Dumping the reachability info to a file is not supported for Kotlin/JS.")
         }
         if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
-            configuration.report(WEB_ARGUMENT_WARNING, "Dumping the sizes of declarations to file is not supported for Kotlin/JS.")
+            configuration.report(JS_AND_WASM_ARGUMENT_WARNING, "Dumping the sizes of declarations to file is not supported for Kotlin/JS.")
         }
     }
 }

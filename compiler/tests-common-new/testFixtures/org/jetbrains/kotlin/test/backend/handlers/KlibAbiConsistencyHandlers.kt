@@ -9,8 +9,8 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsFir2IrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.WebKlibSerializationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.js.config.outputDir

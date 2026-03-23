@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineContext
 import org.jetbrains.kotlin.cli.pipeline.PipelineStepException
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmFir2IrPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmFrontendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmKlibInliningPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.WebKlibSerializationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmFir2IrPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmKlibInliningPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*

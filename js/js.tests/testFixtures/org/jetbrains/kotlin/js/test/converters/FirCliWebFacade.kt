@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmFrontendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmFrontendPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmFrontendPipelinePhase
 import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade
 import org.jetbrains.kotlin.test.services.TestServices
 

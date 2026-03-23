@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsFir2IrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmKlibInliningPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmKlibInliningPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
