@@ -421,16 +421,12 @@ class AdapterGenerator(
         val samType = samFirType.toIrType(ConversionTypeOrigin.DEFAULT)
 
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
-        fun IrExpression.generateSamConversion(
-            samType: IrType,
-            firSamConversion: FirFunctionTypeConversionExpression,
-            samFirType: ConeKotlinType
-        ) =
+        fun IrExpression.generateSamConversion() =
             IrTypeOperatorCallImpl(
                 this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
                 castArgumentToFunctionalInterfaceForSamType(
                     argument = this,
-                    argumentConeType = firSamConversion.expression.resolvedType,
+                    argumentConeType = argument.expression.resolvedType,
                     samType = samFirType
                 )
             )
@@ -440,12 +436,12 @@ class AdapterGenerator(
             // BLOCK ADAPTED_FUNCTION_REFERENCE(FUN ADAPTER_FOR_CALLABLE_REFERENCE, TYPE_OP SAM_CONVERSION(FUNCTION_REFERENCE))
             // Therefore, we need to insert the cast as the last statement of the block, not around the block itself.
             val lastIndex = statements.lastIndex
-            val samConversion = (statements[lastIndex] as IrExpression).generateSamConversion(samType, argument, samFirType)
+            val samConversion = (statements[lastIndex] as IrExpression).generateSamConversion()
             statements[lastIndex] = samConversion
             this.type = samConversion.type
             this
         } else {
-            generateSamConversion(samType, argument, samFirType)
+            generateSamConversion()
         }
     }
 
