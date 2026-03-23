@@ -183,7 +183,7 @@ internal object ArgumentCheckingProcessor {
 
     private fun ArgumentContext.resolvePlainExpressionArgument(
         atom: ConeResolutionAtom,
-        useNullableArgumentType: Boolean = false
+        useNullableArgumentType: Boolean = false,
     ) {
         if (expectedType == null) return
         val expression = atom.expression
@@ -456,7 +456,7 @@ internal object ArgumentCheckingProcessor {
      * In case of false result, this function works as pure (it does not change inference state).
      */
     private fun ArgumentContext.createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(
-        atom: ConeResolutionAtomWithPostponedChild
+        atom: ConeResolutionAtomWithPostponedChild,
     ): Boolean {
         if (expectedType == null || !csBuilder.isTypeVariable(expectedType)) return false
         val expectedTypeVariableWithConstraints = csBuilder.currentStorage()
@@ -485,7 +485,7 @@ internal object ArgumentCheckingProcessor {
     private fun ArgumentContext.createResolvedLambdaAtom(
         atom: ConeResolutionAtomWithPostponedChild,
         duringCompletion: Boolean,
-        returnTypeVariable: ConeTypeVariableForLambdaReturnType?
+        returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
     ): ConeResolvedLambdaAtom {
         val expression = atom.lambdaExpression
         val anonymousFunction = expression.anonymousFunction
@@ -605,7 +605,9 @@ internal object ArgumentCheckingProcessor {
             .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
             ?.firstOrNull() as? ConeKotlinType ?: return null
 
-        val typeArguments = functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.coneType }.ifEmpty { return null }
+        val typeArguments =
+            functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.coneType }
+                .ifEmpty { return null }
         return createFunctionType(
             kind = expectedTypeKind,
             parameters = typeArguments.subList(0, typeArguments.lastIndex),
