@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 53 (2026-03-23) |
+| **Last Iteration** | 54 (2026-03-23) |
 | **Box Tests** | 1168/1168 passing (100%) |
-| **Phased Tests** | 1445/1456 passing (99.2%) |
-| **Combined** | ~2613/2624 passing, **11 failing** |
+| **Phased Tests** | 1446/1456 passing (99.3%) |
+| **Combined** | ~2614/2624 passing, **10 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -44,6 +44,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | **Static-Imported Const Vals in Annotations** | Done (iter 51) | 2 |
 | **Multi-Dimensional Array Types** | Done (iter 52) | 4 |
 | **Annotation Default Binary Expressions** | Done (iter 53) | 2 |
+| **External Class Flexible Type Rendering** | Done (iter 54) | 1 |
 
 ---
 
@@ -103,6 +104,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | 51 | Static-imported Kotlin const vals in Java annotations: IMPORT_STATIC_STATEMENT parsing, staticImportResolution for bare names, FirExpressionEvaluator for const eval | +2 box |
 | 52 | Multi-dimensional array types: KMP parser flat brackets fix in createJavaType() | +2 box, +2 phased |
 | 53 | Annotation default binary expressions: evaluateConstantExpression handles BINARY_EXPRESSION (int addition, string concat) | +1 box, +1 phased |
+| 54 | External class flexible type rendering: isTriviallyFlexibleHint checks import-resolved FQN against read-only collection set | +1 phased |
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-23 (iter 53)
+**Last Updated**: 2026-03-23 (iter 54)
 
 ---
 
@@ -87,6 +87,35 @@ Added `BINARY_EXPRESSION` handling to `evaluateConstantExpression()`:
 ### Key Learnings
 - PSI evaluates constant expressions via javac's `PsiExpression.evaluate()`; java-direct must implement its own evaluator
 - Annotation default values flow through `annotationParameterDefaultValue` → FIR's `toFirExpression` → `createConstantOrError`, where `null` becomes an error expression
+
+---
+
+## Iteration 54: External Class Flexible Type Rendering - 2026-03-23
+
+### Root Cause Analysis
+In FIR's `JavaTypeConversion.kt`, the `isTriviallyFlexible()` check at line 169 relies on `classifier` being non-null to determine if a Java type should render as `T!` (trivially flexible) vs `ft<T, T?>` (verbose). With PSI, `classifier` is always non-null for resolved external classes (JDK, libraries). With java-direct, `classifier` is null for all external classes (only local source classes resolve), falling through to `isTriviallyFlexibleHint` which only handled cross-file Java source classes.
+
+Types like `Comparable` (java.lang) and `Comparator` (java.util) were not recognized as trivially flexible, causing inference dump mismatches in tests that compare type representations.
+
+### Fix
+**File**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`
+
+Enhanced `isTriviallyFlexibleHint` in `JavaClassifierTypeOverAst` to handle external classes:
+1. For types resolved via explicit imports: check the Java FQN against `JavaToKotlinClassMap.getReadOnlyAsJava()` — read-only collection classes (List, Map, etc.) are NOT trivially flexible
+2. For unresolved simple names (java.lang implicit import, star imports): conservatively check against simple names of read-only collection classes
+
+Added `JAVA_READ_ONLY_FQ_NAMES` and `JAVA_READ_ONLY_SIMPLE_NAMES` companion object constants.
+
+### Test Results
+- Box: 1168/1168, Phased: 1446/1456, Total failing: 10
+
+### Tests Fixed
+- **Phased**: `testFlatMapWithReverseOrder` (inference dump: `Comparable<in W!>!` and `Comparator<W!>!` now render correctly instead of `ft<...>`)
+
+### Key Learnings
+- PSI's `classifier` is non-null for all resolved classes (including JDK); java-direct's `classifier` is null for external classes — the `isTriviallyFlexibleHint` must bridge this gap
+- Read-only collection classes (`java.util.List`, `java.util.Map`, etc.) must NOT be trivially flexible because they need mutable/readonly distinction in the upper bound
+- `java.lang.*` classes are implicitly imported but not in java-direct's explicit import list — conservative simple name matching handles this
 
 ---
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -127,21 +128,37 @@ class JavaClassifierTypeOverAst(
     }
 
     /**
-     * Returns true when this type references a user-defined Java source class that can be
-     * unambiguously resolved across files, signalling to FIR type conversion that it should
-     * create a trivially flexible ConeFlexibleType (isTrivial=true).
+     * Returns true when this type references a class that should produce a trivially flexible
+     * ConeFlexibleType (isTrivial=true), rendering as `T!` instead of `ft<T, T?>`.
      *
-     * This makes the FIR dump render the type as `T!` (compact) instead of `ft<T, T?>`
-     * (verbose), matching what PSI produces for the same types.
+     * With PSI, the `classifier` property is non-null for all resolved classes, and
+     * `isTriviallyFlexible()` is checked directly. With java-direct, `classifier` is null
+     * for external classes (JDK, libraries, cross-file), so this hint provides the equivalent
+     * check.
      *
-     * Only triggers for simple (single-part) names when the local lookup already returned null
-     * (cross-file case), to avoid double-counting same-file classes.
+     * A class is trivially flexible unless it's a Kotlin read-only collection mapped class
+     * (e.g., java.util.List → kotlin.collections.List), which needs mutable/readonly distinction.
      */
     override val isTriviallyFlexibleHint: Boolean by lazy {
-        if (classifier != null) return@lazy false // local lookup already found it
+        if (classifier != null) return@lazy false // local lookup found it — handled by isTriviallyFlexible()
         val parts = rawTypeName.split('.')
-        if (parts.size != 1) return@lazy false // qualified names handled by isTriviallyFlexible()
-        resolutionContext.isUnambiguouslyCrossFileClass(parts[0])
+
+        // Cross-file Java source class (same module, different file)
+        if (parts.size == 1 && resolutionContext.isUnambiguouslyCrossFileClass(parts[0])) return@lazy true
+
+        // For types resolved via explicit imports, check the Java FQN against the read-only set
+        val qualifiedName = classifierQualifiedName
+        if (qualifiedName != rawTypeName) {
+            return@lazy FqName(qualifiedName) !in JAVA_READ_ONLY_FQ_NAMES
+        }
+
+        // Unresolved simple name (java.lang implicit import, star imports, same-package).
+        // Conservatively check against simple names of read-only collection classes.
+        if (parts.size == 1) {
+            return@lazy parts[0] !in JAVA_READ_ONLY_SIMPLE_NAMES
+        }
+
+        false
     }
 
     override val classifierQualifiedName: String
@@ -282,6 +299,15 @@ class JavaClassifierTypeOverAst(
 
     override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
         return resolutionContext.resolve(rawTypeName, tryResolve)
+    }
+
+    private companion object {
+        /** Java FQNs of Kotlin read-only collection classes (e.g., java.util.List, java.util.Map). */
+        private val JAVA_READ_ONLY_FQ_NAMES: Set<FqName> = JavaToKotlinClassMap.getReadOnlyAsJava()
+
+        /** Simple names of read-only collection classes for conservative matching of unresolved names. */
+        private val JAVA_READ_ONLY_SIMPLE_NAMES: Set<String> =
+            JAVA_READ_ONLY_FQ_NAMES.mapTo(mutableSetOf()) { it.shortName().asString() }
     }
 }
 
