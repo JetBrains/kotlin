@@ -554,10 +554,6 @@ class AdapterGenerator(
         argument: FirFunctionTypeConversionExpression,
         kind: FirFunctionConversionKind.BetweenFunctionTypes,
     ): IrExpression {
-        if (this is IrBlock && origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
-            return this
-        }
-
         val expectedType = argument.resolvedType
 
         val convertedArgumentType = argument.expression.resolvedType.fullyExpandedType()
