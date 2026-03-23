@@ -599,7 +599,25 @@ class JavaResolutionContext private constructor(
                     }
                 }
             }
-            
+
+            // Handle static imports: "import static pkg.Class.MEMBER" or "import static pkg.Class.*"
+            // The KMP parser uses IMPORT_STATIC_STATEMENT with IMPORT_STATIC_REFERENCE child.
+            for (importNode in importList?.getChildrenByType("IMPORT_STATIC_STATEMENT") ?: emptyList()) {
+                val refNode = importNode.findChildByType("IMPORT_STATIC_REFERENCE") ?: continue
+                val hasStar = importNode.children.any { it.type.toString() == "ASTERISK" }
+                val fqName = refNode.text
+
+                if (hasStar) {
+                    starImports.add(FqName(fqName))
+                } else {
+                    // e.g. "example.KotlinDtoMapping.ID" → simpleName = "ID"
+                    val simpleName = fqName.substringAfterLast('.')
+                    if (!simpleImports.containsKey(simpleName)) {
+                        simpleImports[simpleName] = FqName(fqName)
+                    }
+                }
+            }
+
             // Also check for ERROR_ELEMENT imports (parser may emit these for imports starting with reserved words like 'kotlin')
             for (errorNode in importList?.getChildrenByType("ERROR_ELEMENT") ?: emptyList()) {
                 if (errorNode.findChildByType("IMPORT_KEYWORD") == null) continue

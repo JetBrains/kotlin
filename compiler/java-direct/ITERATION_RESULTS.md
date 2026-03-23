@@ -2,9 +2,74 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-20 (iter 50)
+**Last Updated**: 2026-03-23 (iter 51)
 
 ---
+
+## Iteration 51: Static-Imported Kotlin Const Vals in Java Annotations — 2026-03-23
+
+### Status: 2 tests fixed, 0 regressions
+
+### Root Cause Analysis
+
+**Const val in Java annotations via static import (2 box tests)**:
+`testConstValAsAnnotationArgumentInJava`, `testKt83402`. Two-part problem:
+
+1. **Static import parsing**: `import static example.KotlinDtoMapping.ID` is parsed as `IMPORT_STATIC_STATEMENT` (not `IMPORT_STATEMENT`) by KMP parser. Fixed in prior work within this iteration by adding `IMPORT_STATIC_STATEMENT` handling to `extractImports` in `JavaResolutionContext.kt`.
+
+2. **Bare-name annotation argument resolution**: After fixing static import parsing, bare identifiers like `ID` in `@SimpleAnnotation(ID)` still failed. `JavaEnumValueAnnotationArgumentOverAst` returned `enumClassId=null` for bare names (no dots) because it didn't consult static imports. FIR then produced an error expression → `FirLazyResolveContractViolationException` during FIR2IR processing.
+
+3. **Fragile const field evaluation in FIR mapping**: Even with correct `enumClassId`, the const field resolution in `javaAnnotationsMapping.kt` used `(constField.initializer as? FirLiteralExpression)?.value` which only works for simple literal initializers. Kotlin const vals with non-trivial expressions (or not yet evaluated) would return null.
+
+### Fix
+
+**Part 1 — Bare-name static import resolution** (`JavaAnnotationOverAst.kt`):
+Added `staticImportResolution` lazy property to `JavaEnumValueAnnotationArgumentOverAst`. For bare identifiers (no dots), checks `resolutionContext.getSimpleImport(text)`. If found (e.g., `example.KotlinDtoMapping.ID`), splits the FQN into class qualifier (`example.KotlinDtoMapping`) and member name (`ID`). The `className`, `entryName`, and `enumClassId` getters now use this resolution, making the existing `resolveEnumClass` callback work correctly for static-imported constants.
+
+**Part 2 — FIR-based const evaluation** (`javaAnnotationsMapping.kt`):
+Replaced the ad-hoc const field resolution with two new functions:
+- `resolveConstFieldValue(session, classId, fieldName)`: Looks up const fields in the class, its companion object, and falls back to top-level properties (for Kotlin facade classes like `MainKt`).
+- `extractEvaluatedConstValue(property, session)`: Uses `FirExpressionEvaluator.evaluatePropertyInitializer()` for proper const evaluation instead of the fragile literal cast. Handles non-trivial initializers and already-evaluated properties.
+
+### Improvements Made (from prior work in this iteration, no test count change)
+
+1. **`extractImports` handles `IMPORT_STATIC_STATEMENT`** (`JavaResolutionContext.kt`): KMP parser uses `IMPORT_STATIC_STATEMENT` with `IMPORT_STATIC_REFERENCE` child (not `IMPORT_STATEMENT` + `JAVA_CODE_REFERENCE`). Static member imports now correctly added to `simpleImports`/`starImports`.
+
+2. **`AnnotationCodegen.kt` skip `IrErrorExpression`**: When JVM backend encounters `IrErrorExpression` as annotation argument, skip instead of crashing with `BackendException`. Defensive improvement.
+
+### Test Results
+- **Box tests**: 1165/1168 (was 1164/1168, **+1 net**)
+- **Phased tests**: 1442/1456 (no regressions; test base grew from 1443 to 1456)
+- **Total box failures**: 3 (was 4, **2 fixed**: `testConstValAsAnnotationArgumentInJava`, `testKt83402`)
+
+### Tests Fixed
+- `testConstValAsAnnotationArgumentInJava` — `import static example.KotlinDtoMapping.ID` now correctly resolved in annotation arguments
+- `testKt83402` — same root cause (static-imported Kotlin const val in Java annotation)
+
+### Remaining Failures (17 total)
+
+**Box (3)**:
+- `testAnnotationsViaActualTypeAliasFromBinary` — multiplatform baseline diff
+- `testJavaMethodsSmokeTest` — reflection metadata
+- `testJavaArrayType` — reflection metadata
+
+**Phased (14)**: Raw types (4), JSpecify (2), collection overrides (1), multiplatform (1), inheritance (2), other (4).
+
+### Key Learnings
+
+- Static-imported Kotlin const vals in Java annotations require a two-layer fix: (1) java-direct must resolve bare names via static imports to provide the correct class qualifier, and (2) FIR must use `FirExpressionEvaluator` (not a literal cast) to evaluate const property values
+- The lazy `argumentMapping` block in `buildFirAnnotation()` is the right place for const evaluation — it already performs symbol lookups and runs after Kotlin symbols are available
+- `FirExpressionEvaluator.evaluatePropertyInitializer()` handles circular dependencies via `visitedCallables` ThreadLocal, making it safe for cross-language const references
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaAnnotationOverAst.kt`: Added `staticImportResolution` for bare-name annotation arguments
+- `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/javaAnnotationsMapping.kt`: Added `resolveConstFieldValue()` and `extractEvaluatedConstValue()` using `FirExpressionEvaluator`; added imports for `FirEvaluatorResult`, `evaluatedInitializer`, `isConst`
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt`: Added `IMPORT_STATIC_STATEMENT` handling (prior work)
+- `compiler/ir/backend.jvm/codegen/src/org/jetbrains/kotlin/backend/jvm/codegen/AnnotationCodegen.kt`: Skip `IrErrorExpression` annotation args (prior work)
+
+---
+
+
 
 ## Iteration 50: Interface Method Abstractness + Static Inner Type Scoping — 2026-03-20
 

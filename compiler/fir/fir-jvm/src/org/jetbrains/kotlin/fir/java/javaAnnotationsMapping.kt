@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -202,33 +205,14 @@ internal fun JavaAnnotationArgument.toFirExpression(
             } ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
 
             if (classId != null) {
-                // Check if this is actually an enum or a const field (for Kotlin constants in Java annotations)
-                val firClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir as? FirRegularClass
                 val fieldName = entryName
-                
-                if (firClass != null && fieldName != null) {
-                    // First try to find it as a const field (for Kotlin const vals)
-                    // Check both the class itself and its companion object
-                    val constField = firClass.declarations.filterIsInstance<FirProperty>().find { 
-                        it.name == fieldName && it.status.isConst
-                    } ?: run {
-                        // Check companion object
-                        val companion = firClass.companionObjectSymbol?.fir
-                        companion?.declarations?.filterIsInstance<FirProperty>()?.find {
-                            it.name == fieldName && it.status.isConst
-                        }
-                    }
-                    
-                    if (constField != null) {
-                        // It's a const field - return its literal value
-                        val constantValue = (constField.initializer as? FirLiteralExpression)?.value
-                        if (constantValue != null) {
-                            return constantValue.createConstantOrError(session, expectedArrayElementTypeIfArray)
-                        }
-                        // If constantValue is null, fall through to treat as enum (will likely fail but allows for other resolution paths)
-                    }
+
+                // Try to resolve as a const field (Kotlin const vals or Java static final fields)
+                val constValue = fieldName?.let { resolveConstFieldValue(session, classId, it) }
+                if (constValue != null) {
+                    return constValue.createConstantOrError(session, expectedArrayElementTypeIfArray)
                 }
-                
+
                 // Otherwise treat it as an enum entry
                 buildEnumEntryDeserializedAccessExpression {
                     enumClassId = classId
@@ -366,6 +350,58 @@ private fun fillAnnotationArgumentMapping(
         val typeRef = parameterNameToTypeRef?.get(name)
         name to argument.toFirExpression(session, JavaTypeParameterStack.EMPTY, typeRef, source)
     }
+}
+
+/**
+ * Tries to resolve a reference as a const field value.
+ * Checks the class itself, its companion object, and top-level properties.
+ * Uses [FirExpressionEvaluator] for proper const evaluation, handling non-trivial initializers.
+ */
+private fun resolveConstFieldValue(session: FirSession, classId: ClassId, fieldName: Name): Any? {
+    val firClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir as? FirRegularClass
+
+    if (firClass != null) {
+        // Check both the class itself and its companion object
+        val constField = firClass.declarations.filterIsInstance<FirProperty>().find {
+            it.name == fieldName && it.isConst
+        } ?: firClass.companionObjectSymbol?.fir?.declarations?.filterIsInstance<FirProperty>()?.find {
+            it.name == fieldName && it.isConst
+        }
+
+        if (constField != null) {
+            return extractEvaluatedConstValue(constField, session)
+        }
+    }
+
+    // Fallback: try as a top-level Kotlin property via facade class (e.g., MainKt.FOO → top-level const val FOO)
+    val topLevelSymbols = session.symbolProvider.getTopLevelPropertySymbols(classId.packageFqName, fieldName)
+    for (symbol in topLevelSymbols) {
+        if (symbol.isConst) {
+            extractEvaluatedConstValue(symbol.fir, session)?.let { return it }
+        }
+    }
+
+    return null
+}
+
+/**
+ * Extracts the evaluated constant value from a [FirProperty] using FIR's const evaluator.
+ * Handles both simple literal initializers and complex const expressions.
+ */
+private fun extractEvaluatedConstValue(property: FirProperty, session: FirSession): Any? {
+    // First check if already evaluated
+    val evaluated = property.evaluatedInitializer
+        ?: FirExpressionEvaluator.evaluatePropertyInitializer(property, session)
+
+    if (evaluated is FirEvaluatorResult.Evaluated) {
+        val result = evaluated.result
+        if (result is FirLiteralExpression) {
+            return result.value
+        }
+    }
+
+    // Fallback: try the initializer directly (simple literal)
+    return (property.initializer as? FirLiteralExpression)?.value
 }
 
 private fun JavaClass.annotationParametersMapping(

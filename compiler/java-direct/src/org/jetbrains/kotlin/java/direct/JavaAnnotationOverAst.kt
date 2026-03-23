@@ -18,9 +18,7 @@ class JavaAnnotationOverAst(
 ) : JavaElementOverAst(node), JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument>
         get() {
-            val parameterList = node.findChildByType("ANNOTATION_PARAMETER_LIST")
-            if (parameterList == null) return emptyList()
-
+            val parameterList = node.findChildByType("ANNOTATION_PARAMETER_LIST") ?: return emptyList()
             return parameterList.getChildrenByType("NAME_VALUE_PAIR").map { nvp ->
                 createAnnotationArgument(nvp, resolutionContext)
             }
@@ -297,15 +295,37 @@ class JavaEnumValueAnnotationArgumentOverAst(
     private val refNode: JavaSyntaxNode,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaEnumValueAnnotationArgument {
+
+    /**
+     * For bare identifiers (no dots), tries to resolve via static imports.
+     * E.g., `import static example.KotlinDtoMapping.ID` makes `ID` resolvable
+     * as className="example.KotlinDtoMapping", entryName="ID".
+     *
+     * Returns a pair of (className, memberName) if the static import is found, null otherwise.
+     */
+    private val staticImportResolution: Pair<String, String>? by lazy {
+        val text = refNode.text
+        if (text.contains('.')) return@lazy null // Not a bare identifier
+        val importedFqn = resolutionContext.getSimpleImport(text) ?: return@lazy null
+        val fqnStr = importedFqn.asString()
+        val lastDot = fqnStr.lastIndexOf('.')
+        if (lastDot < 0) return@lazy null
+        // Split: "example.KotlinDtoMapping.ID" → class="example.KotlinDtoMapping", member="ID"
+        fqnStr.substring(0, lastDot) to fqnStr.substring(lastDot + 1)
+    }
+
     /**
      * The class name part of the enum reference (everything before the last dot).
      * For "NLS.Capitalization.NotSpecified", returns "NLS.Capitalization".
+     * For bare identifiers resolved via static import, returns the class qualifier.
      */
     private val className: String?
         get() {
             val text = refNode.text
             val lastDot = text.lastIndexOf('.')
-            return if (lastDot >= 0) text.substring(0, lastDot) else null
+            if (lastDot >= 0) return text.substring(0, lastDot)
+            // Bare identifier — try static import resolution
+            return staticImportResolution?.first
         }
 
     override val isResolved: Boolean
@@ -313,6 +333,8 @@ class JavaEnumValueAnnotationArgumentOverAst(
             val name = className ?: return true
             // Resolved if explicitly imported
             if (resolutionContext.getSimpleImport(name) != null) return true
+            // Resolved if resolved via static import
+            if (staticImportResolution != null) return false // class part still needs resolution
             // Not resolved if it contains dots (could be nested class)
             // and is not a simple name
             return false
@@ -320,7 +342,15 @@ class JavaEnumValueAnnotationArgumentOverAst(
 
     override val enumClassId: ClassId?
         get() {
-            val className = className ?: return null
+            val className = className
+
+            if (className == null) {
+                // Bare identifier (no dots) and no static import found.
+                // We can't resolve enumClassId for bare names without lazy class lookup (which is
+                // forbidden at this phase). Return null so FIR falls back to expected type;
+                // the backend will skip unresolvable error expressions in annotations (AnnotationCodegen).
+                return null
+            }
 
             // Try to resolve via explicit imports first
             val imported = resolutionContext.getSimpleImport(className)
@@ -347,8 +377,10 @@ class JavaEnumValueAnnotationArgumentOverAst(
         get() {
             val text = refNode.text
             val lastDot = text.lastIndexOf('.')
-            return if (lastDot >= 0) Name.identifier(text.substring(lastDot + 1))
-            else Name.identifier(text)
+            if (lastDot >= 0) return Name.identifier(text.substring(lastDot + 1))
+            // Bare identifier — if resolved via static import, return the member name
+            staticImportResolution?.let { return Name.identifier(it.second) }
+            return Name.identifier(text)
         }
 }
 
