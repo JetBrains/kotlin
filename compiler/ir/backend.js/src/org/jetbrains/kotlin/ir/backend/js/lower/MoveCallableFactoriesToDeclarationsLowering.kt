@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 
 /**
  * This lowering moves callable references implementations from the consumer-site into the declaration-site.
@@ -82,13 +83,22 @@ class MoveCallableFactoriesToDeclarationsLowering(private val context: JsIrBacke
         if (declaration.origin != JsStatementOrigins.FACTORY_ORIGIN) return null
 
         val originalReference = declaration.richFunctionReference ?: return null
-        val targetCallable = originalReference.reflectionTargetSymbol?.owner ?: return null
-        val targetFragment = targetCallable.getPackageFragment()
-        if (targetFragment !is IrFile) return null
-        if (declaration.getPackageFragment() == targetFragment) return null
+        val originalFunction = originalReference.reflectionTargetSymbol as? IrSimpleFunction ?: return null
+        val destinationFile = getOriginalFile(originalFunction) ?: return null
+        if (declaration.getPackageFragment() == destinationFile) return null
 
-        targetFragment.addChild(declaration)
+        destinationFile.addChild(declaration)
         return listOf()
+    }
+
+    private fun getOriginalFile(declaration: IrSimpleFunction): IrFile? {
+        return when {
+            declaration.isEffectivelyExternal() -> {
+                val shadowFile = declaration.getPackageFragment() as? IrFile
+                shadowFile?.module?.files?.firstOrNull { it.fileEntry == shadowFile.fileEntry }
+            }
+            else -> declaration.getPackageFragment() as? IrFile
+        }
     }
 }
 
