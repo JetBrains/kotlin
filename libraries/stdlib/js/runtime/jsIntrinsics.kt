@@ -305,7 +305,8 @@ internal fun jsIsEs6(): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-internal fun <T> jsYield(): T
+// TODO: drop the value after bootstrapping
+internal fun <T> jsYield(value: Any?): T
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode

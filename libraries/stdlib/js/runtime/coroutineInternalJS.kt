@@ -26,7 +26,8 @@ internal suspend fun <T> returnIfSuspended(argument: Any?, cont: GeneratorCorout
 
     if (result === suspended) {
         result = cont.getOrThrow()
-        if (result === suspended) result = jsYield<T>()
+        // TODO: drop the usage of the result value after bootstrap
+        if (result === suspended) result = jsYield<T>(result)
     }
 
     return result as T
