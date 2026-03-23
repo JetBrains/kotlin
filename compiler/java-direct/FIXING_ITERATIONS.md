@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 52 (2026-03-23) |
-| **Box Tests** | 1167/1168 passing (99.9%) |
-| **Phased Tests** | 1444/1456 passing (99.2%) |
-| **Combined** | ~2611/2624 passing, **13 failing** |
+| **Last Iteration** | 53 (2026-03-23) |
+| **Box Tests** | 1168/1168 passing (100%) |
+| **Phased Tests** | 1445/1456 passing (99.2%) |
+| **Combined** | ~2613/2624 passing, **11 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -43,6 +43,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | **Interface Abstractness / Static Inner Scoping** | Done (iter 50) | 7 |
 | **Static-Imported Const Vals in Annotations** | Done (iter 51) | 2 |
 | **Multi-Dimensional Array Types** | Done (iter 52) | 4 |
+| **Annotation Default Binary Expressions** | Done (iter 53) | 2 |
 
 ---
 
@@ -55,7 +56,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | `implDocs/archive/ITERATIONS_17_23_DETAILS.md` | 17-23 | 1075 -> 1134/1166 (97.2%) |
 | `implDocs/archive/ITERATIONS_24_26_DETAILS.md` | 24-26 | 1134/1166 -> 1150/1167 (98.5%) |
 | `implDocs/archive/ITERATIONS_27_36_DETAILS.md` | 27-36 | 1150/1167 -> 1157/1168 box, **79 combined failing** |
-| `implDocs/archive/ITERATIONS_37_51_DETAILS.md` | 37-51 | 1157/1168 -> 1167/1168 box, **13 combined failing** |
+| `implDocs/archive/ITERATIONS_37_51_DETAILS.md` | 37-51 | 1157/1168 -> 1165/1168 box, **17 combined failing** |
 
 **Key patterns established** (see archives and `ITERATION_RESULTS.md`):
 - Callback pattern for resolution (types, annotations, enums, constants)
@@ -101,6 +102,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | 50 | Fix isAbstract for interface methods (DEFAULT_KEYWORD in MODIFIER_LIST, not direct child); fix inherited type param scope for static inner types; fix local class/type param resolution order | +7 |
 | 51 | Static-imported Kotlin const vals in Java annotations: IMPORT_STATIC_STATEMENT parsing, staticImportResolution for bare names, FirExpressionEvaluator for const eval | +2 box |
 | 52 | Multi-dimensional array types: KMP parser flat brackets fix in createJavaType() | +2 box, +2 phased |
+| 53 | Annotation default binary expressions: evaluateConstantExpression handles BINARY_EXPRESSION (int addition, string concat) | +1 box, +1 phased |
 
 ---
 

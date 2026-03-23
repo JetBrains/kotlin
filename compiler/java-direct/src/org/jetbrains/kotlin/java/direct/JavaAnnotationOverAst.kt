@@ -178,9 +178,47 @@ private fun evaluateConstantExpression(node: JavaSyntaxNode): Any? {
                 }
             }
         }
+        "BINARY_EXPRESSION" -> {
+            val operands = node.children.filter {
+                it.nodeType !in listOf("WHITE_SPACE", "PLUS", "MINUS", "ASTERISK", "DIV", "PERC")
+            }
+            val operatorNode = node.children.firstOrNull {
+                it.nodeType in listOf("PLUS", "MINUS", "ASTERISK", "DIV", "PERC")
+            }
+            if (operands.size == 2 && operatorNode != null) {
+                val left = evaluateConstantExpression(operands[0])
+                val right = evaluateConstantExpression(operands[1])
+                return evaluateBinaryExpression(left, operatorNode.nodeType, right)
+            }
+        }
         "LITERAL_EXPRESSION" -> return evaluateLiteral(node)
     }
     return null
+}
+
+private fun evaluateBinaryExpression(left: Any?, operator: String, right: Any?): Any? {
+    if (left == null || right == null) return null
+    // String concatenation
+    if (operator == "PLUS" && (left is String || right is String)) {
+        return left.toString() + right.toString()
+    }
+    // Numeric operations
+    return when (operator) {
+        "PLUS" -> numericBinaryOp(left, right) { a, b -> a + b }
+        "MINUS" -> numericBinaryOp(left, right) { a, b -> a - b }
+        "ASTERISK" -> numericBinaryOp(left, right) { a, b -> a * b }
+        "DIV" -> numericBinaryOp(left, right) { a, b -> if (b != 0L) a / b else 0L }
+        "PERC" -> numericBinaryOp(left, right) { a, b -> if (b != 0L) a % b else 0L }
+        else -> null
+    }
+}
+
+private fun numericBinaryOp(left: Any, right: Any, op: (Long, Long) -> Long): Any? {
+    val l = (left as? Number)?.toLong() ?: return null
+    val r = (right as? Number)?.toLong() ?: return null
+    val result = op(l, r)
+    // If either operand was Long, keep Long; otherwise try Int
+    return if (left is Long || right is Long) result else result.toInt()
 }
 
 private fun parseIntegerLiteral(text: String): Any {

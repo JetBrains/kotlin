@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-23 (iter 52)
+**Last Updated**: 2026-03-23 (iter 53)
 
 ---
 
@@ -54,6 +54,39 @@ Changed both array-handling paths in `createJavaType()` to count ALL `LBRACKET` 
 ### Key Learnings
 - KMP parser flattens array dimensions as siblings, unlike javac which nests `JCArrayTypeTree`
 - Always dump AST structure when array or nested type handling is suspect
+
+---
+
+## Iteration 53: Annotation Default Binary Expressions - 2026-03-23
+
+### Root Cause Analysis
+Java annotation members can have default values that are compile-time constant expressions, e.g.:
+```java
+int i2() default 21212121 + 32323232;
+String str() default "fi" + "zz";
+```
+
+`evaluateConstantExpression()` in `JavaAnnotationOverAst.kt` only handled `PREFIX_EXPRESSION` (negation) and `LITERAL_EXPRESSION`, but not `BINARY_EXPRESSION`. Binary expressions like `21212121 + 32323232` evaluated to `null`, which FIR converted to an error expression. When comparing the Java annotation's defaults against the Kotlin `expect` declaration's defaults, the mismatch triggered `ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE`.
+
+### Fix
+**File**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaAnnotationOverAst.kt`
+
+Added `BINARY_EXPRESSION` handling to `evaluateConstantExpression()`:
+- Extracts left/right operands and operator (`PLUS`, `MINUS`, `ASTERISK`, `DIV`, `PERC`)
+- Recursively evaluates operands (supports nested expressions)
+- `evaluateBinaryExpression()` handles string concatenation (`PLUS` with any `String` operand) and integer arithmetic
+- `numericBinaryOp()` preserves `Long` vs `Int` type based on operands
+
+### Test Results
+- Box: 1168/1168, Phased: 1445/1456, Total failing: 11
+
+### Tests Fixed
+- **Box**: `testAnnotationsViaActualTypeAliasFromBinary` (annotation default value matching)
+- **Phased**: `testAnnotationsViaActualTypeAlias2` (same root cause — `ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE` no longer spuriously reported)
+
+### Key Learnings
+- PSI evaluates constant expressions via javac's `PsiExpression.evaluate()`; java-direct must implement its own evaluator
+- Annotation default values flow through `annotationParameterDefaultValue` → FIR's `toFirExpression` → `createConstantOrError`, where `null` becomes an error expression
 
 ---
 
