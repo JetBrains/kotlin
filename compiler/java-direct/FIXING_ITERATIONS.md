@@ -5,9 +5,9 @@
 | Metric | Value |
 |--------|-------|
 | **Last Iteration** | 51 (2026-03-23) |
-| **Box Tests** | 1164/1168 passing (99.6%) |
-| **Phased Tests** | 1425/1443 passing (98.7%) |
-| **Combined** | ~2589/2611 passing, **19 failing** |
+| **Box Tests** | 1165/1168 passing (99.7%) |
+| **Phased Tests** | 1442/1456 passing (99.0%) |
+| **Combined** | ~2607/2624 passing, **17 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -25,74 +25,23 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 
 ---
 
-## Remaining Failures (36 tests)
+## Completed Features
 
-### Completed Features (iterations 26-29)
-
-| Category | Status                  | Tests Fixed           |
-|----------|-------------------------|-----------------------|
-| **Sealed Classes** | Done (iter 26)          | 9 tests fixed         |
-| **Java Records** | Done (iter 27, iter 28) | all record tests pass |
-| **Ambiguity Detection** | Done (iter 29-30)       | 4 tests fixed (including cross-file) |
-| **Raw Types** | Done (iter 33)          | 10 tests fixed        |
-
-### Next Priorities
-
-#### Ambiguity Detection — ✅ DONE (iter 29-30)
-
-**Status**: All 4 tests fixed, including cross-file detection.
-
-**Tests fixed**:
-- ✅ `testInheritanceAmbiguity` (same-file)
-- ✅ `testInheritanceAmbiguity2` (cross-file)
-- ✅ `testInheritanceAmbiguity3` (same-file)
-- ✅ `testInheritanceAmbiguity4` (cross-file)
-
-#### Raw Types — ✅ DONE (iter 33)
-
-**Status**: 10 tests fixed. Two edge cases remain.
-
-**Root causes fixed**:
-1. Java Model `isRaw` — empty `REFERENCE_PARAMETER_LIST` was treated as having type args
-2. FIR raw type detection — star imports returned simple names, not FQN
-
-**Remaining failures (2)**:
-- `testPseudoRawTypes` — Java compilation error (custom `java.util.Collection`)
-- `testRawSupertypeOverride` — Complex raw supertype inheritance
-
-#### Type Parameter Scoping — ✅ DONE (iter 34)
-
-**Status**: 3 tests fixed.
-
-#### Import/Package Edge Cases — ~8-10 tests — LOW CONFIDENCE
-
-**Problem**: Complex scenarios where package names clash with class names, or nested imports clash with top-level classes.
-
-**Tests to debug first**: `testTopLevelClassVsPackage`, `testNestedClassClash`, `testCurrentPackageAndExplicitNestedImport`
-
-**Approach**: Review import resolution in `JavaResolutionContext.kt`.
-
-#### Records FIR Integration — **DONE** (iter 28)
-
-All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
-
-#### Enum Handling — ~3-5 tests — LOW CONFIDENCE
-
-**Tests**: `testEnumEntriesFromJava`, `testStaticImportFromEnumJava`, `testJavaEnum`
-
-**Status**: Needs investigation of enum entries generation for java-direct.
-
-#### Baseline Differences — ~50-60 tests — NEEDS TRIAGE
-
-**IMPORTANT**: Many "baseline diffs" are real java-direct bugs, not cosmetic differences.
-
-**Triage process** (for each test):
-1. Run with PSI-based FIR: `./gradlew :compiler:fir:fir-jvm:test --tests "FirLightTreeBlackBoxCodegenTestGenerated.*testName*" -q`
-2. If PSI passes but java-direct fails -> real java-direct bug, recategorize by actual error
-3. If both fail -> general FIR issue, exclude from java-direct scope
-
-**Known real bugs in this category** (from iteration 25c investigation):
-- `testInheritedInnerAndNested` was a real `isStatic` bug, not a cosmetic diff
+| Category | Status | Tests Fixed |
+|----------|--------|-------------|
+| **Sealed Classes** | Done (iter 26) | 9 |
+| **Java Records** | Done (iter 27-28) | 8 |
+| **Ambiguity Detection** | Done (iter 29-30) | 4 |
+| **Raw Types** | Done (iter 33) | 10 |
+| **Type Parameter Scoping** | Done (iter 34) | 3 |
+| **Enum Handling** | Done (iter 36) | 14 |
+| **Implicit Modifiers** | Done (iter 37) | 5 |
+| **Import Resolution** | Done (iter 37b, 43, 46) | 16 |
+| **TYPE_USE Annotations** | Done (iter 44-45) | 16 |
+| **package-info.java** | Done (iter 48) | 1 |
+| **Flexible Type Rendering** | Done (iter 49) | 4 |
+| **Interface Abstractness / Static Inner Scoping** | Done (iter 50) | 7 |
+| **Static-Imported Const Vals in Annotations** | Done (iter 51) | 2 |
 
 ---
 
@@ -104,6 +53,8 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | `implDocs/archive/ITERATIONS_7_16_DETAILS.md` | 7-16 | 90 -> 532/601 (88.5%) |
 | `implDocs/archive/ITERATIONS_17_23_DETAILS.md` | 17-23 | 1075 -> 1134/1166 (97.2%) |
 | `implDocs/archive/ITERATIONS_24_26_DETAILS.md` | 24-26 | 1134/1166 -> 1150/1167 (98.5%) |
+| `implDocs/archive/ITERATIONS_27_36_DETAILS.md` | 27-36 | 1150/1167 -> 1157/1168 box, **79 combined failing** |
+| `implDocs/archive/ITERATIONS_37_51_DETAILS.md` | 37-51 | 1157/1168 -> 1165/1168 box, **17 combined failing** |
 
 **Key patterns established** (see archives and `ITERATION_RESULTS.md`):
 - Callback pattern for resolution (types, annotations, enums, constants)
@@ -113,7 +64,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 - java.lang implicit import handling
 - Protected static vs protected and package visibility distinction
 
-### Recent Iterations (24-27)
+### All Iterations
 
 | Iteration | Category | Tests Fixed |
 |-----------|----------|-------------|
@@ -147,7 +98,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 48 | package-info.java support: annotations in PACKAGE_STATEMENT→MODIFIER_LIST→ANNOTATION; JavaPackageOverAst.annotations now populated | +1 phased |
 | 49 | isTriviallyFlexibleHint: cross-file Java source classes now produce isTrivial=true in ConeFlexibleType via index-only lookup; fixes ft<T,T?> vs T! FIR dump mismatch | +4 phased |
 | 50 | Fix isAbstract for interface methods (DEFAULT_KEYWORD in MODIFIER_LIST, not direct child); fix inherited type param scope for static inner types; fix local class/type param resolution order | +7 |
-| 51 | Investigation only: IMPORT_STATIC_STATEMENT parsing (KMP uses separate node type for static imports); AnnotationCodegen defensive skip for IrErrorExpression; no test count change | +0 |
+| 51 | Static-imported Kotlin const vals in Java annotations: IMPORT_STATIC_STATEMENT parsing, staticImportResolution for bare names, FirExpressionEvaluator for const eval | +2 box |
 
 ---
 
@@ -172,19 +123,8 @@ See `AGENT_INSTRUCTIONS.md` — Triage, Fixing Approach, Iteration Process, and 
 [Solution description. Files modified.]
 
 ### Test Results
-- Box: X/1167, Phased: X/1442
+- Box: X/1168, Phased: X/1456
 
 ### Key Learnings
 [What to add to AGENT_INSTRUCTIONS.md or implDocs/?]
 ```
-
----
-
-## Document Change Log
-
-- 2026-03-16: Iteration 35 (enum annotation crash fix) complete, updated metrics to 93 failures
-- 2026-03-16: Iteration 34 (type parameter identity) complete, updated metrics to 94 failures
-- 2026-03-16: Iteration 33 (raw types) complete, updated metrics to 98 failures
-- 2026-03-13: Restructured — merged TEST_FAILURE_ANALYSIS content, removed code snippets, updated metrics to post-iter-27
-- 2026-03-12: Iteration 24 complete, updated remaining work analysis
-- 2026-03-12: Consolidated iterations 17-23 to archive
