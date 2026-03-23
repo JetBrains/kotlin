@@ -20,7 +20,6 @@ open class IntArrayPlusBenchmark : AbstractSimpleFileBenchmark() {
     @Benchmark
     //@Fork(jvmArgsAppend = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"])
     fun benchmark(bh: Blackhole) {
-        if (!isIR) error("Doesn't make sense to run it on old frontend on buildserver")
         analyzeGreenFile(bh)
     }
 

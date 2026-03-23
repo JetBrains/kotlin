@@ -30,6 +30,4 @@ open class SimpleDataFlowBenchmark : AbstractSimpleFileBenchmark(){
             |${(1..size).joinToString("\n") { "    x = foo(v)" }}
             |}
             """.trimMargin()
-
-
 }

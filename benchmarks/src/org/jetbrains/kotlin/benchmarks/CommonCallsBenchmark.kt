@@ -12,8 +12,7 @@ import java.util.concurrent.TimeUnit
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-open class CommonCallsBenchmark : AbstractSimpleFileBenchmark(){
-
+open class CommonCallsBenchmark : AbstractSimpleFileBenchmark() {
     @Param("1", "10", "100", "1000", "3000", "5000", "7000", "10000")
     private var size: Int = 0
 
