@@ -7,6 +7,8 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
+val fooGlobal = 10
+
 @Composable
 fun A(x: Int) {
     B(
@@ -25,6 +27,7 @@ fun A(x: Int) {
 // Transformed IR
 // ------------------------------------------
 
+val fooGlobal: Int = 10
 @Composable
 fun A(x: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)

@@ -41,7 +41,7 @@ fun Example(wontChange: Int, mightChange: Int, %composer: Composer?, %changed: I
         wontChange = 123
       }
       if (%default and 0b0010 != 0) {
-        mightChange = LocalColor.<get-current>(%composer, 0b0110)
+        mightChange = LocalColor.<get-current>(%composer, 0)
         %dirty = %dirty and 0b01110000.inv()
       }
     } else {

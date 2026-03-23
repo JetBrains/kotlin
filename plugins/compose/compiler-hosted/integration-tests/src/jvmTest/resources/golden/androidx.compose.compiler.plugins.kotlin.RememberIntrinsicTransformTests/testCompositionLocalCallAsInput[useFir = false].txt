@@ -24,7 +24,7 @@ fun Test(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     val foo = <block>{
-      val tmp0_remember%arg%0 = compositionLocalBar.<get-current>(%composer, 0b0110)
+      val tmp0_remember%arg%0 = compositionLocalBar.<get-current>(%composer, 0)
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(%composer.changed(tmp0_remember%arg%0)) {
         Foo()

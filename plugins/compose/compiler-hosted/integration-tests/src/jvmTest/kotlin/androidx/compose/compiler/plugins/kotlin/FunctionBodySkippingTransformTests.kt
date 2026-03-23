@@ -654,14 +654,14 @@ class FunctionBodySkippingTransformTests(
 
     @Test
     fun testInlineClassDefaultParameter(): Unit = comparisonPropagation(
+        unchecked = "",
         """
             inline class Color(val value: Int) {
                 companion object {
                     val Unset = Color(0)
                 }
             }
-        """,
-        """
+
             @Composable
             fun A(text: String) {
                 B(text)
@@ -685,8 +685,6 @@ class FunctionBodySkippingTransformTests(
                 Bam
             }
             const val constInt: Int = 123
-            val normInt = 345
-            val stableTopLevelProp: Modifier = Modifier
             @Composable fun C(x: Any?) {}
             @Stable
             interface Modifier {
@@ -702,6 +700,9 @@ class FunctionBodySkippingTransformTests(
             @Composable fun D(content: @Composable() () -> Unit) {}
         """,
         """
+            val normInt = 345
+            val stableTopLevelProp: Modifier = Modifier
+
             // all of these should result in 0b0110
             @Composable fun A() {
                 val x = 123
@@ -908,9 +909,10 @@ class FunctionBodySkippingTransformTests(
     fun testDifferentParameters(): Unit = comparisonPropagation(
         """
             @Composable fun B(a: Int, b: Int, c: Int, d: Int) {}
-            val fooGlobal = 10
         """,
         """
+            val fooGlobal = 10
+
             @Composable
             fun A(x: Int) {
                 B(

@@ -1121,10 +1121,12 @@ abstract class AbstractComposeLowering(
                 val typeIsStable = stabilityInferencer.stabilityOf(type, fileContainingDependent).knownStable()
                 val receiversAreStatic = arguments.all { it?.isStatic(fileContainingDependent) != false }
 
-                // if we see that the property is read-only with a default getter and a
-                // stable return type , then reading the property can also be considered
-                // static if this is a top level property or the subject is also static.
-                if (!prop.isVar &&
+                // If we see that the property is defined in [fileContainingDependent], and is
+                // read-only with a default getter and a stable return type, then reading the
+                // property can also be considered static if this is a top level property or the
+                // subject is also static.
+                if (prop.fileOrNull == fileContainingDependent &&
+                    !prop.isVar &&
                     prop.getter?.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
                     typeIsStable &&
                     receiversAreStatic

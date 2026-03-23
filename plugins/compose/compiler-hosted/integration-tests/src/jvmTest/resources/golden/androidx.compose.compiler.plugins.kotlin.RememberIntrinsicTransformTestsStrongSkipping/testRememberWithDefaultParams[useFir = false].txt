@@ -31,7 +31,7 @@ fun Icon(param: Int, defaultParam: Int, %composer: Composer?, %changed: Int, %de
     sourceInformation(%composer, "<curren...>")
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0010 != 0) {
-        defaultParam = LocalColor.<get-current>(%composer, 0b0110)
+        defaultParam = LocalColor.<get-current>(%composer, 0)
         %dirty = %dirty and 0b01110000.inv()
       }
     } else {

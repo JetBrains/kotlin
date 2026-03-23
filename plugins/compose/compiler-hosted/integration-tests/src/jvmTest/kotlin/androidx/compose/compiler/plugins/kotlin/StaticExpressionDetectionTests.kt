@@ -220,6 +220,26 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         expression = "EmptyCoroutineContext"
     )
 
+    @Test
+    fun testInvokeDefaultGetterOfReadonlyProperty() {
+        // This is a regression test against a bug that was causing incremental compilation to
+        // produce different output than non-incremental compilation of the same source code. The
+        // bug was one of the causes of https://issuetracker.google.com/issues/427530633.
+
+        // A call to a default getter of a read-only property is static if the call is made in the
+        // same file that the property is defined in.
+        assertStatic(
+            expression = "x",
+            extraSrc = "val x = 123"
+        )
+
+        // A call to a default getter of a read-only property is not static if the call is made in a
+        // different file than the one that the property is defined in.
+        assertUncertain(
+            expression = "mapOf<Int, Int>().size"
+        )
+    }
+
     private val uiFoundationImports = """
             import androidx.compose.ui.unit.Dp
             import androidx.compose.ui.unit.dp
