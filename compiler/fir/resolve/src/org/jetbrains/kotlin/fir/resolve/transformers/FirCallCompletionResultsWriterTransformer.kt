@@ -570,27 +570,29 @@ class FirCallCompletionResultsWriterTransformer(
                 }
 
                 // Once we encounter the first "real" expression, we delegate to the outer transformer.
-                val transformed =
-                    element.transformSingle(this@FirCallCompletionResultsWriterTransformer, expectedArgumentsTypeMapping).let {
-                        expectedArgumentsTypeMapping?.argumentReplacements?.get(it) ?: it
+                var transformed: FirElement =
+                    element.transformSingle(this@FirCallCompletionResultsWriterTransformer, expectedArgumentsTypeMapping)
+
+                val key = (element as? FirAnonymousFunctionExpression)?.anonymousFunction ?: element
+                // Currently, it's only about collection literals or context-sensitive resolution
+                expectedArgumentsTypeMapping?.argumentReplacements?.get(key)?.let {
+                    transformed = it
+                }
+
+                // Finally, the result can be wrapped in a SAM conversion if necessary.
+                expectedArgumentsTypeMapping?.samConversions?.get(key)?.let { samInfo ->
+                    check(transformed is FirExpression) { "SAM conversion should be applied to expressions only" }
+
+                    val samConversionExpression = transformed.wrapInSamExpression(
+                        expectedArgumentType = samInfo.samType,
+                        usesFunctionKindConversion = key in expectedArgumentsTypeMapping.argumentsWithFunctionKindConversion
+                    )
+
+                    if (this@transformArgumentList is FirContextArgumentListOwner && transformed in contextArguments) {
+                        replaceContextArguments(contextArguments.map { if (it == transformed) samConversionExpression else it })
                     }
 
-                if (transformed is FirExpression) {
-                    // Finally, the result can be wrapped in a SAM conversion if necessary.
-                    val key = (element as? FirAnonymousFunctionExpression)?.anonymousFunction ?: element
-                    expectedArgumentsTypeMapping?.samConversions?.get(key)?.let { samInfo ->
-                        val samConversionExpression = transformed.wrapInSamExpression(
-                            expectedArgumentType = samInfo.samType,
-                            usesFunctionKindConversion = key in expectedArgumentsTypeMapping.argumentsWithFunctionKindConversion
-                        )
-
-                        if (this@transformArgumentList is FirContextArgumentListOwner && transformed in contextArguments) {
-                            replaceContextArguments(contextArguments.map { if (it == transformed) samConversionExpression else it })
-                        }
-
-                        @Suppress("UNCHECKED_CAST")
-                        return samConversionExpression as E
-                    }
+                    transformed = samConversionExpression
                 }
 
                 @Suppress("UNCHECKED_CAST")
