@@ -58,6 +58,8 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
 public class SirCustomTypeTranslatorImpl(
     private val session: SirSession
 ) : SirCustomTypeTranslator {
+    private val dynamicTypeToWrapperMap = mutableMapOf<SirNominalType, SirCustomTypeTranslator.BridgeWrapper>()
+
     public override fun isFqNameSupported(fqName: FqName): Boolean {
         return supportedFqNames.contains(fqName)
     }
@@ -146,7 +148,7 @@ public class SirCustomTypeTranslatorImpl(
                 }
                 else -> return null
             }.also {
-                typeToWrapperMap[swiftType] = it
+                dynamicTypeToWrapperMap[swiftType] = it
             }
         }
     }
@@ -196,7 +198,7 @@ public class SirCustomTypeTranslatorImpl(
     }
 
     override fun SirNominalType.toBridge(): SirCustomTypeTranslator.BridgeWrapper? {
-        return typeToWrapperMap[this]
+        return primitiveTypeToWrapperMap[this] ?: dynamicTypeToWrapperMap[this]
     }
 
     internal class RangeBridge private constructor(
@@ -324,29 +326,28 @@ public class SirCustomTypeTranslatorImpl(
                 FqNames.unit.toSafe(),
             )
 
-        private val typeToWrapperMap = mapOf(
-            SirSwiftModule.utf16CodeUnit to AnyBridge.TypePair(KotlinType.Char, CType.UInt16),
+        private val primitiveTypeToWrapperMap: Map<SirNominalType, SirCustomTypeTranslator.BridgeWrapper> = buildMap {
+            for ((declaration, kctype) in mapOf(
+                SirSwiftModule.utf16CodeUnit to AnyBridge.TypePair(KotlinType.Char, CType.UInt16),
 
-            SirSwiftModule.int8 to AnyBridge.TypePair(KotlinType.Byte, CType.Int8),
-            SirSwiftModule.int16 to AnyBridge.TypePair(KotlinType.Short, CType.Int16),
-            SirSwiftModule.int32 to AnyBridge.TypePair(KotlinType.Int, CType.Int32),
-            SirSwiftModule.int64 to AnyBridge.TypePair(KotlinType.Long, CType.Int64),
+                SirSwiftModule.int8 to AnyBridge.TypePair(KotlinType.Byte, CType.Int8),
+                SirSwiftModule.int16 to AnyBridge.TypePair(KotlinType.Short, CType.Int16),
+                SirSwiftModule.int32 to AnyBridge.TypePair(KotlinType.Int, CType.Int32),
+                SirSwiftModule.int64 to AnyBridge.TypePair(KotlinType.Long, CType.Int64),
 
-            SirSwiftModule.uint8 to AnyBridge.TypePair(KotlinType.UByte, CType.UInt8),
-            SirSwiftModule.uint16 to AnyBridge.TypePair(KotlinType.UShort, CType.UInt16),
-            SirSwiftModule.uint32 to AnyBridge.TypePair(KotlinType.UInt, CType.UInt32),
-            SirSwiftModule.uint64 to AnyBridge.TypePair(KotlinType.ULong, CType.UInt64),
+                SirSwiftModule.uint8 to AnyBridge.TypePair(KotlinType.UByte, CType.UInt8),
+                SirSwiftModule.uint16 to AnyBridge.TypePair(KotlinType.UShort, CType.UInt16),
+                SirSwiftModule.uint32 to AnyBridge.TypePair(KotlinType.UInt, CType.UInt32),
+                SirSwiftModule.uint64 to AnyBridge.TypePair(KotlinType.ULong, CType.UInt64),
 
-            SirSwiftModule.bool to AnyBridge.TypePair(KotlinType.Boolean, CType.Bool),
+                SirSwiftModule.bool to AnyBridge.TypePair(KotlinType.Boolean, CType.Bool),
 
-            SirSwiftModule.double to AnyBridge.TypePair(KotlinType.Double, CType.Double),
-            SirSwiftModule.float to AnyBridge.TypePair(KotlinType.Float, CType.Float),
-        ).entries.associateTo(mutableMapOf()) { (declaration, kctype) ->
-            SirNominalType(declaration) to Bridge.AsIs(
-                declaration, kctype.kotlinType, kctype.cType
-            ).wrapper()
-        }.also {
-            it[SirNominalType(SirSwiftModule.void)] = Bridge.AsVoid.wrapper()
+                SirSwiftModule.double to AnyBridge.TypePair(KotlinType.Double, CType.Double),
+                SirSwiftModule.float to AnyBridge.TypePair(KotlinType.Float, CType.Float),
+            )) {
+                put(SirNominalType(declaration), Bridge.AsIs(declaration, kctype.kotlinType, kctype.cType).wrapper())
+            }
+            put(SirNominalType(SirSwiftModule.void), Bridge.AsVoid.wrapper())
         }
 
         private val classIdToWrapperMap = hashMapOf(
