@@ -378,13 +378,24 @@ fun createJavaType(
     // If input node is a TYPE with array brackets or vararg ellipsis, handle it directly
     // (don't look for nested TYPE first, as that would skip the array dimension)
     if (node.type.toString() == "TYPE") {
-        val hasArrayBracket = node.findChildByType("LBRACKET") != null
+        val arrayDimensions = node.children.count { it.type.toString() == "LBRACKET" }
         val hasVarargEllipsis = node.findChildByType("ELLIPSIS") != null
-        if (hasArrayBracket || hasVarargEllipsis) {
+        if (arrayDimensions > 0 || hasVarargEllipsis) {
             val componentTypeNode = node.findChildByType("TYPE")
             if (componentTypeNode != null) {
-                val componentType = createJavaType(componentTypeNode, resolutionContext)
-                return JavaArrayTypeOverAst(node, resolutionContext, componentType, extraAnnotations, memberAnnotations)
+                // The KMP parser places all [] pairs as siblings under the same TYPE node
+                // (e.g., List<Double>[][] → TYPE[TYPE[List<Double>], [], []]).
+                // We need to wrap the inner type in N array dimensions, innermost first.
+                val dims = if (hasVarargEllipsis) 1 else arrayDimensions
+                var result: JavaType = createJavaType(componentTypeNode, resolutionContext)
+                repeat(dims) { i ->
+                    result = JavaArrayTypeOverAst(
+                        node, resolutionContext, result,
+                        if (i == dims - 1) extraAnnotations else emptyList(),
+                        if (i == dims - 1) memberAnnotations else emptyList(),
+                    )
+                }
+                return result
             }
         }
 
@@ -412,13 +423,21 @@ fun createJavaType(
     }
 
     // Array type or vararg: TYPE contains nested TYPE + LBRACKET/RBRACKET or ELLIPSIS
-    val hasArrayBracket = typeNode.findChildByType("LBRACKET") != null
+    val arrayDims = typeNode.children.count { it.type.toString() == "LBRACKET" }
     val hasVarargEllipsis = typeNode.findChildByType("ELLIPSIS") != null
-    if (hasArrayBracket || hasVarargEllipsis) {
+    if (arrayDims > 0 || hasVarargEllipsis) {
         val componentTypeNode = typeNode.findChildByType("TYPE")
         if (componentTypeNode != null) {
-            val componentType = createJavaType(componentTypeNode, resolutionContext)
-            return JavaArrayTypeOverAst(typeNode, resolutionContext, componentType, extraAnnotations, memberAnnotations)
+            val dims = if (hasVarargEllipsis) 1 else arrayDims
+            var result: JavaType = createJavaType(componentTypeNode, resolutionContext)
+            repeat(dims) { i ->
+                result = JavaArrayTypeOverAst(
+                    typeNode, resolutionContext, result,
+                    if (i == dims - 1) extraAnnotations else emptyList(),
+                    if (i == dims - 1) memberAnnotations else emptyList(),
+                )
+            }
+            return result
         }
     }
 
