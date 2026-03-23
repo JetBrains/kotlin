@@ -547,6 +547,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object SamConversion : KtFakeSourceElementKind()
 
     /**
+     * When a value of one function type is converted to another function type, the expression is wrapped in an extra node
+     */
+    object FunctionTypeConversion : KtFakeSourceElementKind()
+
+    /**
      * For synthetic functions created for SAM constructors.
      */
     object SamConstructor : KtFakeSourceElementKind()

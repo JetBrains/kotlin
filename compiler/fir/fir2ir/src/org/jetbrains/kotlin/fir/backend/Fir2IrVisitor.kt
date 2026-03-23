@@ -614,8 +614,9 @@ class Fir2IrVisitor(
     override fun visitFunctionTypeConversionExpression(
         functionTypeConversionExpression: FirFunctionTypeConversionExpression,
         data: Any?
-    ): IrElement {
+    ): IrElement = with(c.adapterGenerator) {
         return convertToIrExpression(functionTypeConversionExpression.expression)
+            .applyFunctionTypeConversion(functionTypeConversionExpression)
     }
 
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: Any?): IrElement {

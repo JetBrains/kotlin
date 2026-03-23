@@ -7,4 +7,10 @@ package org.jetbrains.kotlin.fir.expressions
 
 sealed class FirFunctionConversionKind {
     data object Sam : FirFunctionConversionKind()
+    class BetweenFunctionTypes(
+        /**
+         * For example, from `() -> String` to `suspend () -> String`
+         */
+        val isFromSimpleToCustom: Boolean,
+    ) : FirFunctionConversionKind()
 }

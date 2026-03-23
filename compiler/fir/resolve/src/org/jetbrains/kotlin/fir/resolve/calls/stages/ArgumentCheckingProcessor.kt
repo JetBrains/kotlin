@@ -226,7 +226,13 @@ internal object ArgumentCheckingProcessor {
                 argumentType = argumentTypeForApplicabilityCheck,
             )?.let {
                 argumentTypeForApplicabilityCheck = it
-                candidate.addFunctionKindConversionOfArgument(expression)
+                candidate.addFunctionKindConversionOfArgument(
+                    expression,
+                    Candidate.FunctionConversionDescription(
+                        isFromSimpleToCustom = true,
+                        expectedType,
+                    ),
+                )
             }
         }
 

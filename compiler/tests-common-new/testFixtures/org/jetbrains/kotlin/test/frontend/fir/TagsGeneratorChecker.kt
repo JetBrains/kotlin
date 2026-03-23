@@ -220,6 +220,7 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
         const val FUNCTIONAL_TYPE_WITH_EXTENSION = "typeWithExtension"
         const val FUN_INTERFACE = "funInterface"
         const val SAM_CONVERSION = "samConversion"
+        const val FUNCTION_TYPE_CONVERSION = "functionTypeConversion"
         const val SMARTCAST = "smartcast"
         const val SAFE_CALL = "safeCall"
         const val LOCAL_CLASS = "localClass"
@@ -545,7 +546,10 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
 
     override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression) {
         visitExpression(functionTypeConversionExpression)
-        tags += FirTags.SAM_CONVERSION
+        tags += when (functionTypeConversionExpression.kind) {
+            is FirFunctionConversionKind.Sam -> FirTags.SAM_CONVERSION
+            else -> FirTags.FUNCTION_TYPE_CONVERSION
+        }
     }
 
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression) {

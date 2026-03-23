@@ -42,10 +42,7 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
         }.insertSpecialCast(expression, valueType, expectedType)
     }
 
-    return with(c.adapterGenerator) {
-        expressionWithCast.applySuspendConversionIfNeeded(expression, substitutedExpectedType)
-            .applySamConversionIfNeeded(expression)
-    }
+    return expressionWithCast
 }
 
 

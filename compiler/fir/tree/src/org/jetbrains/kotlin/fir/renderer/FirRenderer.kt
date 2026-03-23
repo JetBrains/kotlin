@@ -793,14 +793,19 @@ class FirRenderer(
         override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression) {
             val expression = functionTypeConversionExpression.expression
 
+            val kind = when (functionTypeConversionExpression.kind) {
+                FirFunctionConversionKind.Sam -> "SAM"
+                is FirFunctionConversionKind.BetweenFunctionTypes -> "FConversion"
+            }
+
             if (expression is FirAnonymousFunctionExpression && expression.isTrailingLambda) {
-                print("<L> = SAM(")
+                print("<L> = $kind(")
                 expression.anonymousFunction.accept(this)
                 print(")")
                 return
             }
 
-            print("SAM(")
+            print("$kind(")
             expression.accept(this)
             print(")")
         }

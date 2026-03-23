@@ -32,7 +32,7 @@ FILE: simple.kt
             ^@runUsual Unit
         }
         )
-        R|/runInlineable|(R|<local>/l0|)
+        R|/runInlineable|(FConversion(R|<local>/l0|))
         R|/runInlineable|(R|<local>/l1|)
         R|/runInlineable|(R|<local>/l2|)
         R|/runInlineable|(R|<local>/l3|)

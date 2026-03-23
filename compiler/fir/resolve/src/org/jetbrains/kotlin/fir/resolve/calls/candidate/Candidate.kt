@@ -127,15 +127,24 @@ class Candidate(
         }
     }
 
+    data class FunctionConversionDescription(
+        val isFromSimpleToCustom: Boolean,
+        val expectedType: ConeKotlinType,
+    ) {
+        fun toKind(): FirFunctionConversionKind.BetweenFunctionTypes =
+            FirFunctionConversionKind.BetweenFunctionTypes(isFromSimpleToCustom)
+    }
+
     /**
      * Expressions in this set are arguments of the call that have function kind conversion applied (e.g., suspend conversion).
      */
-    var argumentsWithFunctionKindConversion: HashSet<FirExpression>? = null
+    var argumentsWithFunctionKindConversion: MutableMap<FirExpression, FunctionConversionDescription>? = null
         private set
 
-    fun addFunctionKindConversionOfArgument(element: FirExpression) {
-        val set = argumentsWithFunctionKindConversion ?: HashSet<FirExpression>().also { argumentsWithFunctionKindConversion = it }
-        set += element
+    fun addFunctionKindConversionOfArgument(element: FirExpression, kind: FunctionConversionDescription) {
+        val map = argumentsWithFunctionKindConversion ?: HashMap<FirExpression, FunctionConversionDescription>()
+            .also { argumentsWithFunctionKindConversion = it }
+        map[element] = kind
     }
 
     var samConversionInfosOfArguments: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null

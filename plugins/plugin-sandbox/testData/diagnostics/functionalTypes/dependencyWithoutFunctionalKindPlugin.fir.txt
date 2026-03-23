@@ -6,7 +6,7 @@ FILE: dependencyWithoutFunctionalKindPlugin.kt
     public final fun consumeOurInlineableFunction(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
     }
     public final fun test_1(block: R|() -> kotlin/Unit|, InlineableBlock: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|, suspendBlock: R|suspend () -> kotlin/Unit|): R|kotlin/Unit| {
-        R|org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction|(R|<local>/block|)
+        R|org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction|(FConversion(R|<local>/block|))
         R|org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction|(R|<local>/InlineableBlock|)
         R|org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction<Inapplicable(INAPPLICABLE): org/jetbrains/kotlin/plugin/sandbox/consumeInlineableFunction>#|(R|<local>/suspendBlock|)
     }

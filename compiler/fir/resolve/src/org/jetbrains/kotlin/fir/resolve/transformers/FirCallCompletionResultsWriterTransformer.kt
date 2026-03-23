@@ -574,14 +574,24 @@ class FirCallCompletionResultsWriterTransformer(
                     element.transformSingle(this@FirCallCompletionResultsWriterTransformer, expectedArgumentsTypeMapping)
 
                 val key = (element as? FirAnonymousFunctionExpression)?.anonymousFunction ?: element
+                expectedArgumentsTypeMapping?.argumentsWithFunctionKindConversion[key]?.let { functionKindConversion ->
+                    check(transformed is FirExpression) { "Function kind conversion should be applied to expressions only" }
+
+                    transformed = transformed.wrapInFunctionTypeConversionExpression(
+                        expectedArgumentType = functionKindConversion.expectedType,
+                        kind = functionKindConversion.toKind(),
+                        newSourceKind = KtFakeSourceElementKind.FunctionTypeConversion,
+                    )
+                }
 
                 // Finally, the result can be wrapped in a SAM conversion if necessary.
                 expectedArgumentsTypeMapping?.samConversions?.get(key)?.let { samInfo ->
                     check(transformed is FirExpression) { "SAM conversion should be applied to expressions only" }
 
-                    val samConversionExpression = transformed.wrapInSamExpression(
+                    val samConversionExpression = transformed.wrapInFunctionTypeConversionExpression(
                         expectedArgumentType = samInfo.samType,
-                        usesFunctionKindConversion = key in expectedArgumentsTypeMapping.argumentsWithFunctionKindConversion
+                        kind = FirFunctionConversionKind.Sam,
+                        newSourceKind = KtFakeSourceElementKind.SamConversion,
                     )
 
                     if (this@transformArgumentList is FirContextArgumentListOwner && transformed in contextArguments) {
@@ -617,12 +627,13 @@ class FirCallCompletionResultsWriterTransformer(
         argumentList.transformArguments(ArgumentTransformer(), null)
     }
 
-    private fun FirExpression.wrapInSamExpression(
+    private fun FirExpression.wrapInFunctionTypeConversionExpression(
         expectedArgumentType: ConeKotlinType,
-        usesFunctionKindConversion: Boolean,
+        kind: FirFunctionConversionKind,
+        newSourceKind: KtFakeSourceElementKind,
     ): FirFunctionTypeConversionExpression {
         return buildFunctionTypeConversionExpression {
-            expression = this@wrapInSamExpression
+            expression = this@wrapInFunctionTypeConversionExpression
             coneTypeOrNull = expectedArgumentType.withNullabilityOf(resolvedType, session.typeContext)
                 .let {
                     typeApproximator.approximateToSuperType(
@@ -630,9 +641,9 @@ class FirCallCompletionResultsWriterTransformer(
                         TypeApproximatorConfiguration.TypeArgumentApproximationAfterCompletionInK2
                     ) ?: it
                 }
-            this.usesFunctionKindConversion = usesFunctionKindConversion
-            this.kind = FirFunctionConversionKind.Sam
-            source = this@wrapInSamExpression.source?.fakeElement(KtFakeSourceElementKind.SamConversion)
+            this.usesFunctionKindConversion = false // TODO: Will be removed soon
+            this.kind = kind
+            source = this@wrapInFunctionTypeConversionExpression.source?.fakeElement(newSourceKind)
         }
     }
 
@@ -877,6 +888,7 @@ class FirCallCompletionResultsWriterTransformer(
         val isIntegerOperator = symbol.isWrappedIntegerOperator()
 
         var samConversions: MutableMap<FirElement, FirSamResolver.SamConversionInfo>? = null
+        var functionConversions: MutableMap<FirExpression, Candidate.FunctionConversionDescription>? = null
         val arguments = argumentMapping.flatMap { (atom, valueParameter) ->
             val argument = atom.expression
             val expectedType = when {
@@ -897,6 +909,12 @@ class FirCallCompletionResultsWriterTransformer(
                         samType = samInfo.samType.substituteType(this)
                     )
                 }
+                argumentsWithFunctionKindConversion?.get(it)?.let { conversionDescription ->
+                    if (functionConversions == null) functionConversions = mutableMapOf()
+                    functionConversions[it] = conversionDescription.copy(
+                        expectedType = conversionDescription.expectedType.substituteType(this),
+                    )
+                }
                 element to expectedType
             }
         }.toMap()
@@ -908,7 +926,7 @@ class FirCallCompletionResultsWriterTransformer(
             map = arguments,
             lambdasReturnTypes = lambdasReturnType,
             samConversions = samConversions ?: emptyMap(),
-            argumentsWithFunctionKindConversion = argumentsWithFunctionKindConversion ?: emptySet(),
+            argumentsWithFunctionKindConversion = functionConversions ?: emptyMap(),
             forErrorReference = forErrorReference,
             argumentReplacements,
         )
@@ -1485,7 +1503,7 @@ sealed class ExpectedArgumentType(
         val map: Map<FirElement, ConeKotlinType>,
         val lambdasReturnTypes: Map<FirAnonymousFunction, ConeKotlinType>,
         val samConversions: Map<FirElement, FirSamResolver.SamConversionInfo>,
-        val argumentsWithFunctionKindConversion: Set<FirExpression>,
+        val argumentsWithFunctionKindConversion: Map<FirExpression, Candidate.FunctionConversionDescription>,
         val forErrorReference: Boolean,
         argumentReplacements: Map<FirElement, FirExpression>?,
     ) : ExpectedArgumentType(argumentReplacements)

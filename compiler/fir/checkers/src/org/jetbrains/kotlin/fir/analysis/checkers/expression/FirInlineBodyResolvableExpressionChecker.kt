@@ -153,7 +153,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
             val calledFunctionSymbol = targetSymbol as? FirFunctionSymbol ?: return
             val argumentMapping = functionCall.resolvedArgumentMapping ?: return
             for ((wrappedArgument, valueParameter) in argumentMapping) {
-                val argument = wrappedArgument.unwrapErrorExpression().unwrapArgument()
+                val argument = wrappedArgument.unwrapToPotentialParameterUsage()
                 val resolvedArgumentSymbol = argument.toResolvedCallableSymbol(session) as? FirVariableSymbol<*> ?: continue
 
                 val valueParameterOfOriginalInlineFunction = inlinableParameters.firstOrNull { it == resolvedArgumentSymbol }
@@ -190,7 +190,15 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
             ) ?: return false
             if (this == (containingQualifiedAccess as? FirQualifiedAccessExpression)?.explicitReceiver?.unwrapErrorExpression()) return true
             val call = containingQualifiedAccess as? FirCall ?: return false
-            return call.arguments.any { it.unwrapErrorExpression().unwrapArgument() == this }
+            return call.arguments.any { it.unwrapToPotentialParameterUsage() == this }
+        }
+
+        private fun FirExpression.unwrapToPotentialParameterUsage(): FirExpression {
+            unwrapErrorExpression().unwrapArgument().takeIf { it !== this }?.let {
+                return it.unwrapToPotentialParameterUsage()
+            }
+
+            return (this as? FirFunctionTypeConversionExpression)?.expression?.unwrapToPotentialParameterUsage() ?: this
         }
     }
 }
