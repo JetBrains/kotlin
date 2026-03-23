@@ -1,2 +1,3 @@
 STEP 0:
     dependencies: stdlib, lib
+    arguments: -Xdisable-ir-checkers=IrVisibilityChecker

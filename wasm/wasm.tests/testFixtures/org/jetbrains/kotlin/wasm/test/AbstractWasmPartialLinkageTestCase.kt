@@ -154,6 +154,7 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
                 KotlinWasmCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
                 KotlinWasmCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,
                 KotlinWasmCompilerArguments::verifyIr.cliArgument("error"),
+                KotlinWasmCompilerArguments::disableIrCheckers.cliArgument("IrVisibilityChecker"),
             ),
             listOf(
                 KotlinWasmCompilerArguments::cacheDirectory.cliArgument(configuration.buildDir.resolve("libs-cache").absolutePath),
