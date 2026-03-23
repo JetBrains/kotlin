@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
+import org.jetbrains.kotlin.gradle.targets.js.ir.WASM_BACKEND
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.chainedDisallowChanges
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -370,7 +371,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         )
         processArgsBeforeCompile(args)
         @Suppress("DEPRECATION")
-        if (args.wasm) {
+        if (args.wasm || args.freeArgs.contains(WASM_BACKEND)) {
             val wasmArgs = copyK2JSCompilerArguments(args, KotlinWasmCompilerArguments())
             compilerRunner.runWasmCompilerAsync(
                 wasmArgs,
