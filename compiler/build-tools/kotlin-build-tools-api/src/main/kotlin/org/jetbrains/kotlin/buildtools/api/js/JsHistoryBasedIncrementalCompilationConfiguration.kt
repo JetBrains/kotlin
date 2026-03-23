@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.api.js
 
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
@@ -34,7 +34,8 @@ public interface JsIncrementalCompilationConfiguration
  * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
  */
 @ExperimentalBuildToolsApi
-public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrementalCompilationConfiguration {
+public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrementalCompilationConfiguration,
+    BaseIncrementalCompilationConfiguration {
 
     public val workingDirectory: Path
     public val sourcesChanges: SourcesChanges
@@ -45,7 +46,7 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
      *
      * @since 2.4.0
      */
-    public interface Builder {
+    public interface Builder : BaseIncrementalCompilationConfiguration.Builder {
         /**
          * The working directory for the IC operation to store internal objects
          *
@@ -113,15 +114,6 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
     public operator fun <V> get(key: Option<V>): V
 
     public companion object {
-
-        /**
-         * The root project directory, used for computing relative paths for source files in the incremental compilation caches.
-         *
-         * If it is not specified, incremental compilation caches will be non-relocatable.
-         */
-        @JvmField
-        public val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR")
-
         /**
          * The root project directory, used for computing relative paths for source files in the incremental compilation caches.
          *
@@ -130,76 +122,5 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
         @JvmField
         public val ROOT_PROJECT_BUILD_DIR: Option<Path?> = Option("ROOT_PROJECT_BUILD_DIR")
 
-        /**
-         * The build directory, used for computing relative paths for output files in the incremental compilation caches.
-         *
-         * If it is not specified, incremental compilation caches will be non-relocatable.
-         */
-        @JvmField
-        public val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR")
-
-        /**
-         * Controls whether incremental compilation should perform file-by-file backup of previously compiled files
-         * and revert them in the case of a compilation failure
-         */
-        @JvmField
-        public val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES")
-
-        /**
-         * Controls whether caches should remain in memory
-         * and not be flushed to the disk until the compilation can be marked as successful.
-         */
-        @JvmField
-        public val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY")
-
-        /**
-         * Controls whether the non-incremental mode of the incremental compiler is forced.
-         * The non-incremental mode of the incremental compiler means that during the compilation,
-         * the compiler will collect enough information to perform subsequent builds incrementally.
-         */
-        @JvmField
-        public val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION")
-
-        /**
-         * The directories that the compiler will clean in the case of fallback to non-incremental compilation.
-         *
-         * The default ones are calculated in the case of a `null` value as a set of the incremental compilation working directory
-         * passed to [JsHistoryBasedIncrementalCompilationConfiguration] and the classes output directory from the compiler arguments.
-         *
-         * If the value is set explicitly, it must contain the above-mentioned default directories.
-         */
-        @JvmField
-        public val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS")
-
-        /**
-         * Controls whether classpath snapshots comparing should be avoided.
-         *
-         * Can be used as an optimization if the check is already performed by the API consumer.
-         */
-        @JvmField
-        public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES")
-
-        /**
-         * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
-         * Keeping this option disabled provides consistent builds at the cost of compilation speed. (See KT-62686 for the underlying issue.)
-         * Enabling this option brings back pre-K2 behavior and may potentially introduce incorrect incremental builds.
-         */
-        @JvmField
-        @ExperimentalCompilerArgument
-        public val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
-            Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
-
-        /**
-         * When this option is enabled, the incremental compilation scope is always expanded monotonously (see explanation below).
-         *
-         * For example, when recompilation of file `a.kt` introduces changes that require the recompilation of file `b.kt`, the new
-         * file `b.kt` is _added_ to the compilation scope, and both files `a.kt` and `b.kt` are recompiled in the next step.
-         *
-         * When this option is disabled, only the files that weren't compiled previously are recompiled,
-         * so only `b.kt` from the example above would be recompiled in the second step.
-         */
-        @JvmField
-        @ExperimentalCompilerArgument
-        public val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION")
     }
 }

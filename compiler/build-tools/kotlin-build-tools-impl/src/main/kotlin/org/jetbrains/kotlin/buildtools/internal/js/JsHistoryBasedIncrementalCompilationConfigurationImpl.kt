@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration.Option
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
@@ -22,10 +23,10 @@ internal class JsHistoryBasedIncrementalCompilationConfigurationImpl(
     override val workingDirectory: Path,
     override val sourcesChanges: SourcesChanges,
     override val modulesInformation: List<IncrementalModule>,
-    val options: Options = Options(
+    override val options: Options = Options(
         JvmSnapshotBasedIncrementalCompilationConfiguration::class
     ),
-) : JsHistoryBasedIncrementalCompilationConfiguration, JsHistoryBasedIncrementalCompilationConfiguration.Builder,
+) : BaseIncrementalCompilationConfigurationImpl(), JsHistoryBasedIncrementalCompilationConfiguration, JsHistoryBasedIncrementalCompilationConfiguration.Builder,
     DeepCopyable<JsHistoryBasedIncrementalCompilationConfigurationImpl> {
 
     override fun build(): JsHistoryBasedIncrementalCompilationConfiguration = deepCopy()

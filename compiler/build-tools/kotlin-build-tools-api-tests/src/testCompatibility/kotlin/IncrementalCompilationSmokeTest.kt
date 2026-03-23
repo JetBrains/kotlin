@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
@@ -113,9 +114,9 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                     SourcesChanges.ToBeCalculated,
                     modulesInfo
                 ).apply {
-                    this[JsHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_DIR] = workingDirectory
+                    this[BaseIncrementalCompilationConfiguration.ROOT_PROJECT_DIR] = workingDirectory
+                    this[BaseIncrementalCompilationConfiguration.MODULE_BUILD_DIR] = libModule.buildDirectory
                     this[JsHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_BUILD_DIR] = workingDirectory.resolve("build")
-                    this[JsHistoryBasedIncrementalCompilationConfiguration.MODULE_BUILD_DIR] = libModule.buildDirectory
                 }.build()
             }
             val compilationOperation2 = toolchain.js.jsKlibCompilationOperation(
@@ -131,9 +132,9 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                     SourcesChanges.ToBeCalculated,
                     modulesInfo
                 ).apply {
-                    this[JsHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_DIR] = workingDirectory
+                    this[BaseIncrementalCompilationConfiguration.ROOT_PROJECT_DIR] = workingDirectory
+                    this[BaseIncrementalCompilationConfiguration.MODULE_BUILD_DIR] = appModule.buildDirectory
                     this[JsHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_BUILD_DIR] = appModule.buildDirectory
-                    this[JsHistoryBasedIncrementalCompilationConfiguration.MODULE_BUILD_DIR] = appModule.buildDirectory
                 }.build()
             }
             toolchain.createBuildSession().use {

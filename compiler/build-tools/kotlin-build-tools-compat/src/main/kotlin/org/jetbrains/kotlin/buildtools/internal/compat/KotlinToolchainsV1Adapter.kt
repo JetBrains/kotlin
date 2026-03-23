@@ -387,6 +387,10 @@ private class JvmCompilationOperationV1Adapter private constructor(
             )
         }
 
+        override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
+            options.options[key] = value
+        }
+
         class Option<V> : BaseOptionWithDefault<V> {
             constructor(id: String) : super(id)
             constructor(id: String, default: V) : super(id, default = default)
