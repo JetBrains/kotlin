@@ -574,10 +574,6 @@ class FirCallCompletionResultsWriterTransformer(
                     element.transformSingle(this@FirCallCompletionResultsWriterTransformer, expectedArgumentsTypeMapping)
 
                 val key = (element as? FirAnonymousFunctionExpression)?.anonymousFunction ?: element
-                // Currently, it's only about collection literals or context-sensitive resolution
-                expectedArgumentsTypeMapping?.argumentReplacements?.get(key)?.let {
-                    transformed = it
-                }
 
                 // Finally, the result can be wrapped in a SAM conversion if necessary.
                 expectedArgumentsTypeMapping?.samConversions?.get(key)?.let { samInfo ->
