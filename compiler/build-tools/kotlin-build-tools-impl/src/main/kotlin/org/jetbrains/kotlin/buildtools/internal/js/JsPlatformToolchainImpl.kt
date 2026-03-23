@@ -15,9 +15,9 @@ import java.io.File
 import java.nio.file.Path
 
 internal class JsPlatformToolchainImpl(private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>) : JsPlatformToolchain {
-    override fun jsLinkingOperationBuilder(sources: Path, destinationDirectory: Path): JsLinkingOperation.Builder =
-        JsLinkingOperationImpl(sources, destinationDirectory, buildIdToSessionFlagFile = buildIdToSessionFlagFile)
+    override fun jsLinkingOperationBuilder(klib: Path, destination: Path): JsLinkingOperation.Builder =
+        JsLinkingOperationImpl(klib, destination, buildIdToSessionFlagFile = buildIdToSessionFlagFile)
 
-    override fun jsKlibCompilationOperationBuilder(sources: List<Path>, destinationKlib: Path): JsKlibCompilationOperation.Builder =
-        JsKlibCompilationOperationImpl(sources, destinationKlib, buildIdToSessionFlagFile = buildIdToSessionFlagFile)
+    override fun jsKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): JsKlibCompilationOperation.Builder =
+        JsKlibCompilationOperationImpl(sources, destination, buildIdToSessionFlagFile = buildIdToSessionFlagFile)
 }

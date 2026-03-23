@@ -66,28 +66,7 @@ internal class JsHistoryBasedIncrementalCompilationConfigurationImpl(
     }
 
     companion object {
-        val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)
-
         val ROOT_PROJECT_BUILD_DIR: Option<Path?> = Option("ROOT_PROJECT_BUILD_DIR", null)
-
-        val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR", null)
-
-        val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES", false)
-
-        val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY", false)
-
-        val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION", false)
-
-        val RECOMPILATION_CLEANUP_DIRS: Option<Path> = Option("REBUILD_CLEANUP_DIRS")
-
-        val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
-
-        val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =
-            Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
-
-        val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
-            Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", false)
-
-        val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", false)
+        val HISTORY_FILE_DIR: Option<Path?> = Option("HISTORY_FILE_DIR", null)
     }
 }

@@ -122,5 +122,12 @@ public interface JsHistoryBasedIncrementalCompilationConfiguration : JsIncrement
         @JvmField
         public val ROOT_PROJECT_BUILD_DIR: Option<Path?> = Option("ROOT_PROJECT_BUILD_DIR")
 
+        /**
+         * The directory where the build history files will be stored.
+         *
+         * The contents of this directory should not be cached, as they are only valid for subsequent local executions.
+         */
+        @JvmField
+        public val HISTORY_FILE_DIR: Option<Path?> = Option("HISTORY_FILE_DIR")
     }
 }

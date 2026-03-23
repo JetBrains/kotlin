@@ -120,13 +120,13 @@ class JvmModule(
                 generateClasspathSnapshot(it).toFile()
             }
 
-            val snapshotIcConfig = compilationOperation.snapshotBasedIcConfiguration(
+            @Suppress("DEPRECATION") val snapshotIcConfig = compilationOperation.snapshotBasedIcConfiguration(
                 icCachesDir,
                 sourcesChanges,
                 snapshots.map { it.toPath() }
             ) {
                 this[MODULE_BUILD_DIR] = buildDirectory
-                this[ROOT_PROJECT_DIR] = project.projectDirectory
+                this[JvmSnapshotBasedIncrementalCompilationConfiguration.ROOT_PROJECT_DIR] = project.projectDirectory
                 this[FORCE_RECOMPILATION] = forceNonIncrementalCompilation
 
                 icOptionsConfigAction(this)

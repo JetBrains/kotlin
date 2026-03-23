@@ -72,10 +72,10 @@ internal fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrem
     return IncrementalCompilationFeatures(
         usePreciseJavaTracking = false,
         withAbiSnapshot = false,
-        preciseCompilationResultsBackup = this[JsHistoryBasedIncrementalCompilationConfigurationImpl.BACKUP_CLASSES],
-        keepIncrementalCompilationCachesInMemory = this[JsHistoryBasedIncrementalCompilationConfigurationImpl.KEEP_IC_CACHES_IN_MEMORY],
-        enableUnsafeIncrementalCompilationForMultiplatform = this[JsHistoryBasedIncrementalCompilationConfigurationImpl.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
-        enableMonotonousIncrementalCompileSetExpansion = this[JsHistoryBasedIncrementalCompilationConfigurationImpl.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
+        preciseCompilationResultsBackup = this[BACKUP_CLASSES],
+        keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
+        enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
+        enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
     )
 }
 

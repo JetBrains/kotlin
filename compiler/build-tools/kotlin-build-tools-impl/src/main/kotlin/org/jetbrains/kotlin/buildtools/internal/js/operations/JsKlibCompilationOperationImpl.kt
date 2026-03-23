@@ -20,17 +20,18 @@ import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilati
 import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.BACKUP_CLASSES
+import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.KEEP_IC_CACHES_IN_MEMORY
+import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MODULE_BUILD_DIR
+import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
+import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.OUTPUT_DIRS
+import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
+import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.BACKUP_CLASSES
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.KEEP_IC_CACHES_IN_MEMORY
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.MODULE_BUILD_DIR
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.OUTPUT_DIRS
+import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.HISTORY_FILE_DIR
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_BUILD_DIR
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -140,7 +141,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
                     requestedCompilationResults = requestedCompilationResults,
                     outputFiles = aggregatedIcConfiguration[OUTPUT_DIRS]?.map { it.toFile() },
                     multiModuleICSettings = MultiModuleICSettings(
-                        aggregatedIcConfiguration.workingDirectory.resolve(IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME).toFile(),
+                        aggregatedIcConfiguration[HISTORY_FILE_DIR]!!.resolve(IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME).toFile(),
                         false
                     ),
                     modulesInfo = aggregatedIcConfiguration.modulesInformation.toIncrementalModuleInfo(
@@ -215,7 +216,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
         val incrementalCompiler = IncrementalJsCompilerRunner(
             icConfiguration.workingDirectory.toFile(),
             buildReporter,
-            icConfiguration.workingDirectory.resolve(IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME).toFile(),
+            icConfiguration[HISTORY_FILE_DIR]!!.resolve(IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME).toFile(),
             ModulesApiHistoryJs(
                 icConfiguration[ROOT_PROJECT_DIR]!!.toFile(),
                 icConfiguration.modulesInformation.toIncrementalModuleInfo(

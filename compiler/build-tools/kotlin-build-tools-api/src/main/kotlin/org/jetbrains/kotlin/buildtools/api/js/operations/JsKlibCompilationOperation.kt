@@ -48,7 +48,7 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
     /**
      * A builder for configuring and instantiating the [JsKlibCompilationOperation].
      */
-    public interface Builder : BuildOperation.Builder {
+    public interface Builder : BaseCompilationOperation.Builder {
         /**
          * All sources of the compilation unit.
          */

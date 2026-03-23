@@ -51,7 +51,7 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
     /**
      * A builder for configuring and instantiating the [JsLinkingOperation].
      */
-    public interface Builder : BuildOperation.Builder, JsLinkingOperationProperties {
+    public interface Builder : BaseCompilationOperation.Builder, JsLinkingOperationProperties {
         /**
          * Kotlin compiler configurable options for JS platform.
          */

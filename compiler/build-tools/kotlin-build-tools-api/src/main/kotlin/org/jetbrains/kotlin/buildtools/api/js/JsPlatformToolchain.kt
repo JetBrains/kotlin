@@ -27,20 +27,20 @@ import kotlin.contracts.contract
 @ExperimentalBuildToolsApi
 public interface JsPlatformToolchain : KotlinToolchains.Toolchain {
     /**
-     * Creates a builder for an operation for compiling Kotlin sources into JS files.
+     * Creates a builder for an operation for producing the final output from a KLib file
      *
-     * @param sources all sources of the compilation unit.
-     * @param destinationDirectory where to put the output of the compilation
+     * @param klib the input .klib that will be used for linking
+     * @param destination where to put the output of the compilation
      */
-    public fun jsLinkingOperationBuilder(sources: Path, destinationDirectory: Path): JsLinkingOperation.Builder
+    public fun jsLinkingOperationBuilder(klib: Path, destination: Path): JsLinkingOperation.Builder
 
     /**
      * Creates a builder for an operation for compiling Kotlin sources into a KLib.
      *
      * @param sources all sources of the compilation unit.
-     * @param destinationKlib output KLib file
+     * @param destination output KLib file
      */
-    public fun jsKlibCompilationOperationBuilder(sources: List<Path>, destinationKlib: Path): JsKlibCompilationOperation.Builder
+    public fun jsKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): JsKlibCompilationOperation.Builder
 
     public companion object {
         /**

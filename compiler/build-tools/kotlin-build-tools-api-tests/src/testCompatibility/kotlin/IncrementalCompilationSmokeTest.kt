@@ -93,12 +93,12 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                 IncrementalModule(
                     "app",
                     appModule.buildDirectory,
-                    appModule.icCachesDir.resolve("build-history.bin")
+                    appModule.icWorkingDir.resolve("build-history.bin")
                 ),
                 IncrementalModule(
                     "lib",
                     libModule.buildDirectory,
-                    libModule.icCachesDir.resolve("build-history.bin")
+                    libModule.icWorkingDir.resolve("build-history.bin")
                 ),
             )
 
@@ -117,6 +117,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                     this[BaseIncrementalCompilationConfiguration.ROOT_PROJECT_DIR] = workingDirectory
                     this[BaseIncrementalCompilationConfiguration.MODULE_BUILD_DIR] = libModule.buildDirectory
                     this[JsHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_BUILD_DIR] = workingDirectory.resolve("build")
+                    this[JsHistoryBasedIncrementalCompilationConfiguration.HISTORY_FILE_DIR] = libModule.icWorkingDir
                 }.build()
             }
             val compilationOperation2 = toolchain.js.jsKlibCompilationOperation(
@@ -135,6 +136,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                     this[BaseIncrementalCompilationConfiguration.ROOT_PROJECT_DIR] = workingDirectory
                     this[BaseIncrementalCompilationConfiguration.MODULE_BUILD_DIR] = appModule.buildDirectory
                     this[JsHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_BUILD_DIR] = appModule.buildDirectory
+                    this[JsHistoryBasedIncrementalCompilationConfiguration.HISTORY_FILE_DIR] = appModule.icWorkingDir
                 }.build()
             }
             toolchain.createBuildSession().use {
@@ -156,6 +158,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                     assertEquals(CompilationResult.COMPILATION_SUCCESS, result)
                     result = it.executeOperation(compilationOperation2.toBuilder().build(), strategyConfig.second, logger)
                     assertEquals(CompilationResult.COMPILATION_SUCCESS, result)
+                    // TODO actually assert that IC worked
                 } finally {
                     logger.printBuildOutput(LogLevel.DEBUG)
                 }
