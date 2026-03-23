@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
@@ -26,7 +26,7 @@ object TestFirJsSessionFactory {
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {
-        val libraries = loadWebKlibs(
+        val libraries = loadJsOrWasmKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.JS,
         ).all

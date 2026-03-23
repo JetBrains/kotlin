@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.backend.js.ic.acquireAndRelease
 import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 
-abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, IntermediateOutput>(
+abstract class JsAndWasmBackendPipelinePhase<Output : JsAndWasmBackendPipelineArtifact, IntermediateOutput>(
     name: String
 ) : PipelinePhase<ConfigurationPipelineArtifact, Output>(
     name = name,
@@ -134,7 +134,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
             configFiles
         )
 
-        val klibs = loadWebKlibs(configuration, configuration.platformChecker)
+        val klibs = loadJsOrWasmKlibs(configuration, configuration.platformChecker)
 
         val module = ModulesStructure(
             project = environment.project,

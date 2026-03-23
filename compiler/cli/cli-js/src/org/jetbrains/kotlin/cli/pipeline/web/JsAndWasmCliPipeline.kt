@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.util.PerformanceManager
 
-abstract class WebCliPipeline<T : CommonJsAndWasmCompilerArguments>(
+abstract class JsAndWasmCliPipeline<T : CommonJsAndWasmCompilerArguments>(
     override val defaultPerformanceManager: PerformanceManager,
 ) : AbstractCliPipeline<T>() {
 
@@ -29,32 +29,32 @@ abstract class WebCliPipeline<T : CommonJsAndWasmCompilerArguments>(
     }
 
     private fun createKlibSerializationPhase(): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<T>, JsSerializedKlibPipelineArtifact> {
-        return webConfigurationPhase then
-                WebFrontendPipelinePhase then
+        return jsAndWasmConfigurationPhase then
+                JsAndWasmFrontendPipelinePhase then
                 FrontendFilesForPluginsGenerationPipelinePhase() then
-                WebFir2IrPipelinePhase then
-                WebKlibInliningPipelinePhase then
-                WebKlibSerializationPipelinePhase
+                JsAndWasmFir2IrPipelinePhase then
+                JsAndWasmKlibInliningPipelinePhase then
+                JsAndWasmKlibSerializationPipelinePhase
     }
 
-    abstract val webConfigurationPhase: CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<T>, ConfigurationPipelineArtifact>
+    abstract val jsAndWasmConfigurationPhase: CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<T>, ConfigurationPipelineArtifact>
 }
 
-class JsCliPipeline(defaultPerformanceManager: PerformanceManager) : WebCliPipeline<K2JSCompilerArguments>(defaultPerformanceManager) {
+class JsCliPipeline(defaultPerformanceManager: PerformanceManager) : JsAndWasmCliPipeline<K2JSCompilerArguments>(defaultPerformanceManager) {
     override fun createCodeGenerationPhase(): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JSCompilerArguments>, *> {
         return JsConfigurationPhase then
                 JsBackendPipelinePhase
     }
 
-    override val webConfigurationPhase = JsConfigurationPhase
+    override val jsAndWasmConfigurationPhase = JsConfigurationPhase
 }
 
 class WasmCliPipeline(defaultPerformanceManager: PerformanceManager) :
-    WebCliPipeline<KotlinWasmCompilerArguments>(defaultPerformanceManager) {
-    override fun createCodeGenerationPhase(): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<KotlinWasmCompilerArguments>, out WebBackendPipelineArtifact> {
+    JsAndWasmCliPipeline<KotlinWasmCompilerArguments>(defaultPerformanceManager) {
+    override fun createCodeGenerationPhase(): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<KotlinWasmCompilerArguments>, out JsAndWasmBackendPipelineArtifact> {
         return WasmConfigurationPhase then
                 WasmBackendPipelinePhase
     }
 
-    override val webConfigurationPhase = WasmConfigurationPhase
+    override val jsAndWasmConfigurationPhase = WasmConfigurationPhase
 }

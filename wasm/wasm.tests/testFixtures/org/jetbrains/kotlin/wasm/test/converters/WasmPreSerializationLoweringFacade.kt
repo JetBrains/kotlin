@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
-import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsFir2IrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmKlibInliningPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -58,7 +58,7 @@ class WasmPreSerializationLoweringFacade(
                     return Fir2IrCliBasedOutputArtifact(input)
                 }
 
-                val output = WebKlibInliningPipelinePhase.executePhase(input)
+                val output = JsAndWasmKlibInliningPipelinePhase.executePhase(input)
 
                 // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
                 // Later, third artifact of class `JsIrDeserializedFromKlibBackendInput` might replace it again during some test pipelines.

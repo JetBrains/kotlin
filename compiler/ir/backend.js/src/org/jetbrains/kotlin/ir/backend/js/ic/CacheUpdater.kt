@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsIrCompilerWithIC
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -129,7 +129,7 @@ class CacheUpdater(
     private inner class CacheUpdaterInternal {
         val signatureHashCalculator = IdSignatureHashCalculator(icHasher)
 
-        val klibs = loadWebKlibs(
+        val klibs = loadJsOrWasmKlibs(
             configuration = compilerConfiguration,
             platformChecker = if (compilerConfiguration.wasmCompilation) KlibPlatformChecker.Wasm() else KlibPlatformChecker.JS
         )

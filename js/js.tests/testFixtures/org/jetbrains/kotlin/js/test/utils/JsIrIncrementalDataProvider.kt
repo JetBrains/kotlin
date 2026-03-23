@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.openapi.util.io.FileUtilRt
-import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.JsSrcFileArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.rebuildCacheForDirtyFiles
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
@@ -130,7 +130,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 
     fun recordIncrementalData(module: TestModule, artifact: JsSerializedKlibPipelineArtifact) {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SECOND)
-        val klibs = loadWebKlibs(
+        val klibs = loadJsOrWasmKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.JS,
         )

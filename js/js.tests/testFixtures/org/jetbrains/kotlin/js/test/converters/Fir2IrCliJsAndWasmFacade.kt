@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmFir2IrPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmFrontendPipelineArtifact
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliFacade
 import org.jetbrains.kotlin.test.services.TestServices
 
-class Fir2IrCliWebFacade(
+class Fir2IrCliJsAndWasmFacade(
     testServices: TestServices,
-) : Fir2IrCliFacade<WebFir2IrPipelinePhase, WebFrontendPipelineArtifact, JsFir2IrPipelineArtifact>(testServices, WebFir2IrPipelinePhase)
+) : Fir2IrCliFacade<JsAndWasmFir2IrPipelinePhase, JsAndWasmFrontendPipelineArtifact, JsFir2IrPipelineArtifact>(testServices, JsAndWasmFir2IrPipelinePhase)

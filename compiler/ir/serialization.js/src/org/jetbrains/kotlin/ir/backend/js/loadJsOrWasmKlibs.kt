@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
  * @param configuration The current compiler configuration.
  * @param platformChecker The platform checker (it's necessary to avoid loading KLIBs for the wrong platform).
  */
-fun loadWebKlibs(
+fun loadJsOrWasmKlibs(
     configuration: CompilerConfiguration,
     platformChecker: KlibPlatformChecker,
 ): LoadedKlibs {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.Ir2JsTransformer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.pipeline.web.JsBackendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.config.artifactConfiguration
 import org.jetbrains.kotlin.js.config.outputDir
 import java.io.File
 
-object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact, JsBackendPipelineArtifact>("JsBackendPipelinePhase") {
+object JsBackendPipelinePhase : JsAndWasmBackendPipelinePhase<JsBackendPipelineArtifact, JsBackendPipelineArtifact>("JsBackendPipelinePhase") {
     override val configFiles: EnvironmentConfigFiles
         get() = EnvironmentConfigFiles.JS_CONFIG_FILES
 

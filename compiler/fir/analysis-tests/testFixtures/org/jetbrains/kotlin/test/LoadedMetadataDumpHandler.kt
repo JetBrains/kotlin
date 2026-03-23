@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttri
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.ClassId
@@ -117,7 +117,7 @@ class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoad
         moduleName: Name,
         libraryList: DependencyListForCliModule,
     ): List<SessionWithSources<KtFile>> {
-        val klibs = loadWebKlibs(
+        val klibs = loadJsOrWasmKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.JS,
         )
@@ -154,7 +154,7 @@ class KlibWasmJsLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
         moduleName: Name,
         libraryList: DependencyListForCliModule,
     ): List<SessionWithSources<KtFile>> {
-        val klibs = loadWebKlibs(
+        val klibs = loadJsOrWasmKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
         )

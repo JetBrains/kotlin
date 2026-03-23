@@ -41,7 +41,7 @@ open class JsIrDeserializerFacade(
 
         val mainModule = MainModule.Klib(inputArtifact.outputFile.absolutePath)
 
-        val klibs = loadWebKlibs(
+        val klibs = loadJsOrWasmKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.JS,
         )

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import java.io.File
 
-class FirKlibSerializerCliWebFacade(
+class FirKlibSerializerCliJsAndWasmFacade(
     testServices: TestServices,
     private val firstTimeCompilation: Boolean = true,
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
@@ -38,16 +38,16 @@ class FirKlibSerializerCliWebFacade(
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
         require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
-            "FirKlibSerializerCliWebFacade expects Fir2IrCliBasedWebOutputArtifact as input, got ${inputArtifact::class.simpleName}"
+            "FirKlibSerializerCliJsAndWasmFacade expects Fir2IrCliBasedWebOutputArtifact as input, got ${inputArtifact::class.simpleName}"
         }
         val cliArtifact = inputArtifact.cliArtifact
         require(cliArtifact is JsFir2IrPipelineArtifact) {
-            "FirKlibSerializerCliWebFacade expects JsFir2IrPipelineArtifact as input"
+            "FirKlibSerializerCliJsAndWasmFacade expects JsFir2IrPipelineArtifact as input"
         }
         val input = cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
 
         val output = if (firstTimeCompilation) {
-            WebKlibSerializationPipelinePhase.executePhase(input)
+            JsAndWasmKlibSerializationPipelinePhase.executePhase(input)
         } else {
             JsSerializedKlibPipelineArtifact(
                 outputKlibPath = testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).absolutePath,

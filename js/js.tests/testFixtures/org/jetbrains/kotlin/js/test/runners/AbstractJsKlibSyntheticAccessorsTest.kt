@@ -27,11 +27,11 @@ abstract class AbstractJsKlibSyntheticAccessorTest : AbstractKotlinCompilerWithT
     val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirCliWebFacade
     val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliWebFacade
+        get() = ::Fir2IrCliJsAndWasmFacade
     val irInliningFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
         get() = ::JsIrPreSerializationLoweringFacade
     val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirKlibSerializerCliWebFacade
+        get() = ::FirKlibSerializerCliJsAndWasmFacade
     val deserializerFacade: Constructor<org.jetbrains.kotlin.test.model.DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
         get() = ::JsIrDeserializerFacade
 

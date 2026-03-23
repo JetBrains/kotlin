@@ -41,8 +41,8 @@ object CliDiagnostics : KtDiagnosticsContainer() {
     val SCRIPTING_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val SCRIPTING_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
-    val WEB_ARGUMENT_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
-    val WEB_ARGUMENT_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val JS_AND_WASM_ARGUMENT_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val JS_AND_WASM_ARGUMENT_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val JS_IC_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     val KONAN_ARGUMENT_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
@@ -82,8 +82,8 @@ object CliDiagnostics : KtDiagnosticsContainer() {
             map.put(SCRIPTING_WARNING, MESSAGE_PLACEHOLDER)
             map.put(SCRIPTING_ERROR, MESSAGE_PLACEHOLDER)
 
-            map.put(WEB_ARGUMENT_WARNING, MESSAGE_PLACEHOLDER)
-            map.put(WEB_ARGUMENT_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(JS_AND_WASM_ARGUMENT_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(JS_AND_WASM_ARGUMENT_ERROR, MESSAGE_PLACEHOLDER)
             map.put(JS_IC_ERROR, MESSAGE_PLACEHOLDER)
 
             map.put(KONAN_ARGUMENT_WARNING, MESSAGE_PLACEHOLDER)

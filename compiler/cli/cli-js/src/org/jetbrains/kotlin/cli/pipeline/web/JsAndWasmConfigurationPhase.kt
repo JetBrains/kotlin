@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.cli.pipeline.web
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
-import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_WARNING
+import org.jetbrains.kotlin.cli.CliDiagnostics.JS_AND_WASM_ARGUMENT_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.JS_AND_WASM_ARGUMENT_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.allowKotlinPackage
 import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
@@ -64,7 +64,7 @@ object WasmConfigurationPhase : AbstractConfigurationPhase<KotlinWasmCompilerArg
 }
 
 
-object CommonWasmConfigurationUpdater : CommonWebConfigurationUpdater<KotlinWasmCompilerArguments>() {
+object CommonWasmConfigurationUpdater : CommonJsAndWasmConfigurationUpdater<KotlinWasmCompilerArguments>() {
     override fun fillConfiguration(input: ArgumentsPipelineArtifact<KotlinWasmCompilerArguments>, configuration: CompilerConfiguration) {
         super.fillConfiguration(input, configuration)
         configuration.wasmCompilation = true
@@ -98,12 +98,12 @@ object CommonWasmConfigurationUpdater : CommonWebConfigurationUpdater<KotlinWasm
 
 }
 
-object CommonJsConfigurationUpdater : CommonWebConfigurationUpdater<K2JSCompilerArguments>()
+object CommonJsConfigurationUpdater : CommonJsAndWasmConfigurationUpdater<K2JSCompilerArguments>()
 
 /**
  * Contains configuration updating logic shared between JS and WASM CLIs
  */
-abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArguments> : ConfigurationUpdater<T>() {
+abstract class CommonJsAndWasmConfigurationUpdater<T : CommonJsAndWasmCompilerArguments> : ConfigurationUpdater<T>() {
     override fun fillConfiguration(
         input: ArgumentsPipelineArtifact<T>,
         configuration: CompilerConfiguration,
@@ -114,15 +114,15 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         configuration.jsIncrementalCompilationEnabled = incrementalCompilationIsEnabledForJs(arguments)
 
         when (val outputName = arguments.moduleName) {
-            null -> configuration.report(WEB_ARGUMENT_ERROR, "IR: Specify output name via ${K2JSCompilerArguments::moduleName.cliArgument}")
+            null -> configuration.report(JS_AND_WASM_ARGUMENT_ERROR, "IR: Specify output name via ${K2JSCompilerArguments::moduleName.cliArgument}")
             else -> configuration.outputName = outputName
         }
         when (val outputDir = arguments.outputDir) {
-            null -> configuration.report(WEB_ARGUMENT_ERROR, "IR: Specify output dir via ${K2JSCompilerArguments::outputDir.cliArgument}")
+            null -> configuration.report(JS_AND_WASM_ARGUMENT_ERROR, "IR: Specify output dir via ${K2JSCompilerArguments::outputDir.cliArgument}")
             else -> try {
                 configuration.outputDir = File(outputDir).canonicalFile
             } catch (_: IOException) {
-                configuration.report(WEB_ARGUMENT_ERROR, "Could not resolve output directory")
+                configuration.report(JS_AND_WASM_ARGUMENT_ERROR, "Could not resolve output directory")
             }
         }
 
@@ -141,7 +141,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
 
         if (arguments.includes == null && arguments.irProduceJs) {
             configuration.report(
-                WEB_ARGUMENT_ERROR,
+                JS_AND_WASM_ARGUMENT_ERROR,
                 "It is not possible to produce a KLIB ('${K2JSCompilerArguments::includes.cliArgument}' is not passed) "
                         + "and compile the resulting JavaScript artifact ('${K2JSCompilerArguments::irProduceJs.cliArgument}' is passed) at the same time "
                         + "with the K2 compiler"
@@ -176,10 +176,10 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
 
         } else {
             if (arguments.sourceMapPrefix != null) {
-                configuration.report(WEB_ARGUMENT_WARNING, "source-map-prefix argument has no effect without source map", null)
+                configuration.report(JS_AND_WASM_ARGUMENT_WARNING, "source-map-prefix argument has no effect without source map", null)
             }
             if (arguments.sourceMapBaseDirs != null) {
-                configuration.report(WEB_ARGUMENT_WARNING, "source-map-source-root argument has no effect without source map", null)
+                configuration.report(JS_AND_WASM_ARGUMENT_WARNING, "source-map-source-root argument has no effect without source map", null)
             }
         }
 
@@ -202,7 +202,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         }
         if (sourceMapContentEmbedding == null) {
             configuration.report(
-                WEB_ARGUMENT_ERROR,
+                JS_AND_WASM_ARGUMENT_ERROR,
                 "Unknown source map source embedding mode: $sourceMapEmbedContentString. Valid values are: ${sourceMapContentEmbeddingMap.keys.joinToString()}"
             )
             sourceMapContentEmbedding = SourceMapSourceEmbedding.INLINING
@@ -210,7 +210,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         configuration.sourceMapEmbedSources = sourceMapContentEmbedding
 
         if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
-            configuration.report(WEB_ARGUMENT_WARNING, "source-map-embed-sources argument has no effect without source map", null)
+            configuration.report(JS_AND_WASM_ARGUMENT_WARNING, "source-map-embed-sources argument has no effect without source map", null)
         }
 
         val sourceMapNamesPolicyString = arguments.sourceMapNamesPolicy
@@ -221,7 +221,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         }
         if (sourceMapNamesPolicy == null) {
             configuration.report(
-                WEB_ARGUMENT_ERROR,
+                JS_AND_WASM_ARGUMENT_ERROR,
                 "Unknown source map names policy: $sourceMapNamesPolicyString. Valid values are: ${sourceMapNamesPolicyMap.keys.joinToString()}"
             )
             sourceMapNamesPolicy = SourceMapNamesPolicy.SIMPLE_NAMES
@@ -233,7 +233,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
 
         arguments.irDceRuntimeDiagnostic?.let { configuration.dceRuntimeDiagnostic = it }
 
-        configuration.setupPartialLinkageConfig(arguments, WEB_ARGUMENT_WARNING, WEB_ARGUMENT_ERROR)
+        configuration.setupPartialLinkageConfig(arguments, JS_AND_WASM_ARGUMENT_WARNING, JS_AND_WASM_ARGUMENT_ERROR)
     }
 
     internal fun initializeCommonConfiguration(
@@ -267,7 +267,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         }
         val moduleName = arguments.irModuleName ?: arguments.moduleName ?: run {
             val message = "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"
-            configuration.report(WEB_ARGUMENT_ERROR, message)
+            configuration.report(JS_AND_WASM_ARGUMENT_ERROR, message)
             return
         }
         configuration.moduleName = moduleName

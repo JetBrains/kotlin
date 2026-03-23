@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -92,7 +92,7 @@ internal class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWa
         get() = IrBackendInput::JsIrAfterFrontendBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
-        return loadWebKlibs(
+        return loadJsOrWasmKlibs(
             configuration = compilerConfiguration,
             platformChecker = KlibPlatformChecker.JS,
         ).all

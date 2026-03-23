@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.Name
@@ -73,7 +73,7 @@ object TestFirWasmSessionFactory {
 fun loadWasmLibraries(
     configuration: CompilerConfiguration,
 ): List<KotlinLibrary> {
-    return loadWebKlibs(
+    return loadJsOrWasmKlibs(
         configuration = configuration,
         platformChecker = KlibPlatformChecker.Wasm(configuration.wasmTarget.alias),
     ).all

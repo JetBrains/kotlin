@@ -33,11 +33,11 @@ open class AbstractWasmJsKlibSyntheticAccessorTest : AbstractKotlinCompilerWithT
     val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade // TODO Change for ::FirCliWebFacade in scope of KT-74671
     val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter // TODO Change for ::Fir2IrCliWebFacade in scope of KT-74671
+        get() = ::Fir2IrResultsConverter // TODO Change for ::Fir2IrCliJsAndWasmFacade in scope of KT-74671
     val irInliningFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
         get() = ::WasmPreSerializationLoweringFacade
     val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirWasmKlibSerializerFacade // TODO Change for ::FirKlibSerializerCliWebFacade in scope of KT-74671
+        get() = ::FirWasmKlibSerializerFacade // TODO Change for ::FirKlibSerializerCliJsAndWasmFacade in scope of KT-74671
     val deserializerFacade: Constructor<org.jetbrains.kotlin.test.model.DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
         get() = ::WasmDeserializerFacade
 

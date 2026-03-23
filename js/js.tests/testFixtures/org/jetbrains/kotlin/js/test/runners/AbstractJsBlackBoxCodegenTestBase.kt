@@ -256,13 +256,13 @@ fun TestConfigurationBuilder.commonConfigurationForJsTest() {
     facadeStep(::FirCliWebFacade)
     firHandlersStep()
 
-    facadeStep(::Fir2IrCliWebFacade)
+    facadeStep(::Fir2IrCliJsAndWasmFacade)
     irHandlersStep()
 
     facadeStep(::JsIrPreSerializationLoweringFacade)
     loweredIrHandlersStep()
 
-    facadeStep(::FirKlibSerializerCliWebFacade)
+    facadeStep(::FirKlibSerializerCliJsAndWasmFacade)
     klibArtifactsHandlersStep()
 }
 

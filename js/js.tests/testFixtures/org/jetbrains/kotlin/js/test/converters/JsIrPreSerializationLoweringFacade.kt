@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsFir2IrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmKlibInliningPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -36,7 +36,7 @@ class JsIrPreSerializationLoweringFacade(
         // Attach a new empty diagnosticReporter to prevent double-reporting of diagnostics from Fir2IR phase.
         val input = cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
 
-        val output = WebKlibInliningPipelinePhase.executePhase(input)
+        val output = JsAndWasmKlibInliningPipelinePhase.executePhase(input)
 
         // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
         // Later, third artifact of class `JsIrDeserializedFromKlibBackendInput` might replace it again during some test pipelines.

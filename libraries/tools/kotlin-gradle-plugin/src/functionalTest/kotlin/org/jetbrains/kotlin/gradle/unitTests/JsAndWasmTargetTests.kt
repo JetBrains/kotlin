@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class WebTargetTests {
+class JsAndWasmTargetTests {
 
     @Test
     fun `build task dependencies includes wasm specific tool tasks`() {

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.fir.session.KlibIcData
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -44,11 +44,11 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 
 @OptIn(ExperimentalCompilerApi::class)
-object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, WebFrontendPipelineArtifact>(
+object JsAndWasmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JsAndWasmFrontendPipelineArtifact>(
     name = "JsFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: ConfigurationPipelineArtifact): WebFrontendPipelineArtifact? {
+    override fun executePhase(input: ConfigurationPipelineArtifact): JsAndWasmFrontendPipelineArtifact? {
         val configuration = input.configuration
         val environmentForJS = KotlinCoreEnvironment.createForProduction(input.rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
         configuration.perfManager?.let {
@@ -63,7 +63,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val isWasm = configuration.wasmCompilation
 
-        val klibs = loadWebKlibs(configuration, configuration.platformChecker)
+        val klibs = loadJsOrWasmKlibs(configuration, configuration.platformChecker)
 
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
         val moduleStructure = ModulesStructure(
@@ -139,7 +139,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         if (!kotlinPackageUsageIsFine) return null
 
-        return WebFrontendPipelineArtifact(
+        return JsAndWasmFrontendPipelineArtifact(
             analyzedOutput,
             configuration,
             moduleStructure,

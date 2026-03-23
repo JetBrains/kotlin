@@ -39,12 +39,12 @@ import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir2IrPipelineArtifact>(
-    name = "JsFir2IrPipelinePhase",
+object JsAndWasmFir2IrPipelinePhase : PipelinePhase<JsAndWasmFrontendPipelineArtifact, JsFir2IrPipelineArtifact>(
+    name = "JsAndWasmFir2IrPipelinePhase",
     preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: WebFrontendPipelineArtifact): JsFir2IrPipelineArtifact {
+    override fun executePhase(input: JsAndWasmFrontendPipelineArtifact): JsFir2IrPipelineArtifact {
         val (firResult, configuration, moduleStructure, hasErrors) = input
         val diagnosticsReporter = configuration.diagnosticsCollector
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, firResult.outputs, diagnosticsReporter)

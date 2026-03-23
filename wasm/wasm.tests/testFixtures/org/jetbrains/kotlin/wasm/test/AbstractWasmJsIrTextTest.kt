@@ -42,7 +42,7 @@ abstract class AbstractWasmJsIrTextTest :
         get() = ::FirFrontendFacade // TODO Change for ::FirCliWebFacade in scope of KT-74671
 
     override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter // TODO Change for ::Fir2IrCliWebFacade in scope of KT-74671
+        get() = ::Fir2IrResultsConverter // TODO Change for ::Fir2IrCliJsAndWasmFacade in scope of KT-74671
 
     override val preSerializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
         get() = ::WasmPreSerializationLoweringFacade
@@ -52,7 +52,7 @@ abstract class AbstractWasmJsIrTextTest :
 
     override val klibFacades: KlibFacades
         get() = KlibFacades(
-            serializerFacade = ::FirWasmKlibSerializerFacade, // TODO Change for ::FirKlibSerializerCliWebFacade in scope of KT-74671
+            serializerFacade = ::FirWasmKlibSerializerFacade, // TODO Change for ::FirKlibSerializerCliJsAndWasmFacade in scope of KT-74671
             deserializerFacade = ::WasmDeserializerFacade,
         )
 

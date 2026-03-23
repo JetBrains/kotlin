@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.libraries
@@ -88,7 +88,7 @@ class FirWasmKlibSerializerFacade(
         // We're loading KLIBs here only for the purposes of the downstream test handlers.
         // It's not a part of the compilation process.
         // This is why we're copying the compiler configuration.
-        val lib = loadWebKlibs(
+        val lib = loadJsOrWasmKlibs(
             configuration = configuration.copy().apply {
                 libraries = listOf(outputFile.path)
                 friendLibraries = emptyList()

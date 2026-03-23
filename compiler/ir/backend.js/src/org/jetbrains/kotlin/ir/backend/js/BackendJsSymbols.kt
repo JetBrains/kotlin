@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.ir.BackendKlibSymbols
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsSymbols
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationWebSymbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsAndWasmSymbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.*
@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class BackendWebSymbols(
+abstract class BackendJsAndWasmSymbols(
     irBuiltIns: IrBuiltIns,
-) : PreSerializationWebSymbols, BackendKlibSymbols(irBuiltIns) {
+) : PreSerializationJsAndWasmSymbols, BackendKlibSymbols(irBuiltIns) {
     abstract val throwISE: IrSimpleFunctionSymbol
     abstract val throwIAE: IrSimpleFunctionSymbol
 
@@ -57,7 +57,7 @@ class BackendJsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
     private val compileLongAsBigint: Boolean
-) : PreSerializationJsSymbols by PreSerializationJsSymbols.Impl(irBuiltIns), BackendWebSymbols(irBuiltIns) {
+) : PreSerializationJsSymbols by PreSerializationJsSymbols.Impl(irBuiltIns), BackendJsAndWasmSymbols(irBuiltIns) {
     val noWhenBranchMatchedException = CallableIds.noWhenBranchMatchedException.functionSymbol()
 
     override val throwNullPointerException = CallableIds.throwNpe.functionSymbol()

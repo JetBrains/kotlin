@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.BackendJsSymbols
 import org.jetbrains.kotlin.ir.declarations.StageController
-import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliJsAndWasmFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliJsAndWasmFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -29,9 +29,9 @@ class JsSymbolsTest : AbstractSymbolsValidationTest(
     TargetBackend.JS_IR,
     JsPlatforms.defaultJsPlatform,
     ::FirCliWebFacade,
-    ::Fir2IrCliWebFacade,
+    ::Fir2IrCliJsAndWasmFacade,
     ::JsIrPreSerializationLoweringFacade,
-    ::FirKlibSerializerCliWebFacade,
+    ::FirKlibSerializerCliJsAndWasmFacade,
     ::JsIrDeserializerFacade,
     ::IrPreSerializationJsSymbolValidationHandler,
     ::JsSymbolValidationHandler,

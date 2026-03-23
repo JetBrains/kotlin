@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.wasm.test.converters
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.SingleModuleCompiler
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.SingleModuleCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule

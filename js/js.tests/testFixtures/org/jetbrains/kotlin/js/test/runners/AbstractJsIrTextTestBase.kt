@@ -42,14 +42,14 @@ abstract class AbstractJsIrTextTestBase(
         get() = ::FirCliWebFacade
 
     override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliWebFacade
+        get() = ::Fir2IrCliJsAndWasmFacade
 
     override val klibAbiDumpBeforeInliningSavingHandler: Constructor<AbstractKlibAbiDumpBeforeInliningSavingHandler>?
         get() = ::FirJsKlibAbiDumpBeforeInliningSavingHandler
 
     override val klibFacades: KlibFacades
         get() = KlibFacades(
-            serializerFacade = ::FirKlibSerializerCliWebFacade,
+            serializerFacade = ::FirKlibSerializerCliJsAndWasmFacade,
             deserializerFacade = ::JsIrDeserializerFacade,
         )
 

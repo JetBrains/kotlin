@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
-import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirCommonJsAndWasmExternalChecker
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNative
 
-object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterface = true) {
+object FirJsExternalChecker : FirCommonJsAndWasmExternalChecker(allowCompanionInInterface = true) {
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
         return symbol.isNativeObject(session)
     }

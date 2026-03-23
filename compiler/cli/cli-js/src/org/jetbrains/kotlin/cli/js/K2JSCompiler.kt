@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.js
 
-import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_WARNING
+import org.jetbrains.kotlin.cli.CliDiagnostics.JS_AND_WASM_ARGUMENT_WARNING
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION
@@ -72,7 +72,7 @@ fun RuntimeDiagnostic.Companion.resolve(
     RUNTIME_DIAGNOSTIC_EXCEPTION -> RuntimeDiagnostic.EXCEPTION
     null -> null
     else -> {
-        configuration.report(WEB_ARGUMENT_WARNING, "Unknown runtime diagnostic '$value'")
+        configuration.report(JS_AND_WASM_ARGUMENT_WARNING, "Unknown runtime diagnostic '$value'")
         null
     }
 }

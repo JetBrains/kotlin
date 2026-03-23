@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.PreSerializationWasmSymbols
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.backend.js.BackendWebSymbols
+import org.jetbrains.kotlin.ir.backend.js.BackendJsAndWasmSymbols
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 class BackendWasmSymbols(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
-) : PreSerializationWasmSymbols by PreSerializationWasmSymbols.Impl(irBuiltIns), BackendWebSymbols(irBuiltIns) {
+) : PreSerializationWasmSymbols by PreSerializationWasmSymbols.Impl(irBuiltIns), BackendJsAndWasmSymbols(irBuiltIns) {
     internal inner class WasmReflectionSymbols : ReflectionSymbols {
         override val createKType: IrSimpleFunctionSymbol = CallableIds.createKType.functionSymbol()
         override val getKClass: IrSimpleFunctionSymbol = CallableIds.getKClass.functionSymbol()

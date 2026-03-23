@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.WasmBackendPipelinePhase
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -106,7 +106,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             this.includes = includes
         }
 
-        val klibs = loadWebKlibs(
+        val klibs = loadJsOrWasmKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
         )

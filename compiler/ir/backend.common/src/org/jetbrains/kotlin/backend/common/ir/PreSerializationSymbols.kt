@@ -47,14 +47,14 @@ fun findSharedVariableBoxClass(primitiveType: PrimitiveType?): PreSerializationK
  * ```
  * PreSerializationSymbols.Impl → BackendSymbols → JvmSymbols
  * └ PreSerializationKlibSymbols.Impl → BackendKlibSymbols
- *   ├ PreSerializationWebSymbols.Impl → BackendWebSymbols
+ *   ├ PreSerializationJsAndWasmSymbols.Impl → BackendfjsAndWasmSymbols
  *   │ ├ PreSerializationJsSymbols.Impl → BackendJsSymbols
  *   │ └ PreSerializationWasmSymbols.Impl → BackendWasmSymbols
  *   └ PreSerializationNativeSymbols.Impl → BackendNativeSymbols
  * ```
  *
  *  1. Pre-serialization symbols inheritance is represented from top to bottom. It also follows the general logic around backend
- *     (for example, js and wasm are inherited from web).
+ *     (for example, js and wasm are inherited from jsAndWasm).
  *  2. Backend symbols also follow this pattern, but they also inherit corresponding pre-serialization symbols, so we can avoid duplication.
  *
  *  `JvmSymbols` are special here. They don't have corresponding pre-serialization class because we are not serializing JVM artifacts into
@@ -140,8 +140,8 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
     }
 }
 
-interface PreSerializationWebSymbols : PreSerializationKlibSymbols {
-    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWebSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
+interface PreSerializationJsAndWasmSymbols : PreSerializationKlibSymbols {
+    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationJsAndWasmSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
         override val coroutineContextGetter: IrSimpleFunctionSymbol by CallableIds.coroutineContextGetter.getterSymbol()
 
         companion object {
@@ -153,14 +153,14 @@ interface PreSerializationWebSymbols : PreSerializationKlibSymbols {
     }
 }
 
-interface PreSerializationJsSymbols : PreSerializationWebSymbols {
+interface PreSerializationJsSymbols : PreSerializationJsAndWasmSymbols {
     val dynamicType: IrDynamicType
         get() = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
 
     val jsCode: IrSimpleFunctionSymbol
     val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol
 
-    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationJsSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
+    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationJsSymbols, PreSerializationJsAndWasmSymbols.Impl(irBuiltIns) {
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
             CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
         override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.coroutineGetContext.functionSymbol()
@@ -188,8 +188,8 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
     }
 }
 
-interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
-    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWasmSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
+interface PreSerializationWasmSymbols : PreSerializationJsAndWasmSymbols {
+    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWasmSymbols, PreSerializationJsAndWasmSymbols.Impl(irBuiltIns) {
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
             CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
         override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.coroutineGetContext.functionSymbol()

@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.ir.backend.js.shouldGoToNextIcRound
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 
-object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsFir2IrPipelineArtifact>(
-    name = "WebKlibInliningPipelinePhase",
+object JsAndWasmKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsFir2IrPipelineArtifact>(
+    name = "JsAndWasmKlibInliningPipelinePhase",
     preActions = setOf(PerformanceNotifications.IrPreLoweringStarted),
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector),
 ) {

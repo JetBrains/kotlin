@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
+import org.jetbrains.kotlin.ir.backend.js.loadJsOrWasmKlibs
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
@@ -73,7 +73,7 @@ class ClassicJsKlibSerializerFacade(
 
         val dependencies = klibEnvironmentConfigurator.getDependencyModulesFor(module, testServices).toList()
 
-        val lib = loadWebKlibs(
+        val lib = loadJsOrWasmKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.JS
         ).all.single()

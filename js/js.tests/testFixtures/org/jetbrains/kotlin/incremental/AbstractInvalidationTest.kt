@@ -24,16 +24,15 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineContext
 import org.jetbrains.kotlin.cli.pipeline.PipelineStepException
-import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmFir2IrPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.JsAndWasmKlibInliningPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
@@ -429,9 +428,9 @@ abstract class AbstractInvalidationTest(
         configuration.renderDiagnosticInternalName = true
         configuration.allowNoSourceFiles = true
 
-        val klibSerializationCompoundPhase = WebFrontendPipelinePhase then
-                WebFir2IrPipelinePhase then
-                WebKlibInliningPipelinePhase then
+        val klibSerializationCompoundPhase = JsAndWasmFrontendPipelinePhase then
+                JsAndWasmFir2IrPipelinePhase then
+                JsAndWasmKlibInliningPipelinePhase then
                 WebKlibSerializationPipelinePhase
 
         try {

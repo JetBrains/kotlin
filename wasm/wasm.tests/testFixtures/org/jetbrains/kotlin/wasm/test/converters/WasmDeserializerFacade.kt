@@ -54,7 +54,7 @@ abstract class WasmDeserializerFacadeBase(
         MainModule.Klib(inputArtifact.outputFile.absolutePath)
 
     open fun loadKLibs(module: TestModule, mainModule: MainModule.Klib, configuration: CompilerConfiguration): LoadedKlibs {
-        return loadWebKlibs(
+        return loadJsOrWasmKlibs(
             configuration = configuration,
             platformChecker = KlibPlatformChecker.Wasm(configuration.wasmTarget.alias)
         )

@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileIncrementallyMultimodule
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileIncrementallySingleModule
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileIncrementallyWholeWorld
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.WasmCompilationMode.Companion.wasmCompilationMode
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.compileIncrementallyMultimodule
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.compileIncrementallySingleModule
+import org.jetbrains.kotlin.cli.pipeline.`js-and-wasm`.wasm.compileIncrementallyWholeWorld
 import org.jetbrains.kotlin.codegen.ModelTarget
 import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo

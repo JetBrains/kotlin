@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
-abstract class FirWebCommonExternalChecker(
+abstract class FirCommonJsAndWasmExternalChecker(
     private val allowCompanionInInterface: Boolean
 ) : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     abstract fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean

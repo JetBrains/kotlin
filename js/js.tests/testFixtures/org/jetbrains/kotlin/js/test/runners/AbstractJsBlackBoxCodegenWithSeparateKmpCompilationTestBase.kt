@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.js.test.runners
 
-import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliJsAndWasmFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliJsAndWasmFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
 import org.jetbrains.kotlin.test.FirParser
@@ -66,11 +66,11 @@ abstract class AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
         facadeStep(::FirCliWebFacade)
         firHandlersStep()
         facadeStep(::FirCliMetadataSerializerFacade)
-        facadeStep(::Fir2IrCliWebFacade)
+        facadeStep(::Fir2IrCliJsAndWasmFacade)
         irHandlersStep()
         facadeStep(::JsIrPreSerializationLoweringFacade)
         loweredIrHandlersStep()
-        facadeStep(::FirKlibSerializerCliWebFacade)
+        facadeStep(::FirKlibSerializerCliJsAndWasmFacade)
         klibArtifactsHandlersStep()
     }
 }

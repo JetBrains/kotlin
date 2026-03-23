@@ -10,15 +10,12 @@ import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
-import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.JsAndWasmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
-import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -28,7 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
-object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>>("WasmBackendPipelinePhase") {
+object WasmBackendPipelinePhase : JsAndWasmBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>>("WasmBackendPipelinePhase") {
     override val configFiles: EnvironmentConfigFiles
         get() = EnvironmentConfigFiles.WASM_CONFIG_FILES
 

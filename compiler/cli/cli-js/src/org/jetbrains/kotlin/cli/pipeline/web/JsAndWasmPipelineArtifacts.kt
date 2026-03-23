@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import java.io.File
 
-data class WebFrontendPipelineArtifact(
+data class JsAndWasmFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
 ) : FrontendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
-    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): WebFrontendPipelineArtifact {
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JsAndWasmFrontendPipelineArtifact {
         return copy(configuration = newConfiguration)
     }
 
@@ -66,13 +66,13 @@ data class JsLoadedKlibPipelineArtifact(
     }
 }
 
-sealed class WebBackendPipelineArtifact : PipelineArtifact()
+sealed class JsAndWasmBackendPipelineArtifact : PipelineArtifact()
 
 data class JsBackendPipelineArtifact(
     val outputs: CompilationOutputs,
     val outputDir: File,
     override val configuration: CompilerConfiguration,
-) : WebBackendPipelineArtifact() {
+) : JsAndWasmBackendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JsBackendPipelineArtifact {
         return copy(configuration = newConfiguration)
@@ -83,7 +83,7 @@ data class WasmBackendPipelineArtifact(
     val result: List<WasmCompilerResult>,
     val outputDir: File,
     override val configuration: CompilerConfiguration
-) : WebBackendPipelineArtifact() {
+) : JsAndWasmBackendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): WasmBackendPipelineArtifact {
         return copy(configuration = newConfiguration)
