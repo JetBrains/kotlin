@@ -26,7 +26,6 @@ internal class FirFunctionTypeConversionExpressionImpl(
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var expression: FirExpression,
-    override val usesFunctionKindConversion: Boolean,
     override val kind: FirFunctionConversionKind,
 ) : FirFunctionTypeConversionExpression() {
 

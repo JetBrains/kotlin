@@ -1280,7 +1280,6 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
 
         +field("expression", expression)
-        +field("usesFunctionKindConversion", boolean)
         +field("kind", functionConversionKindType)
     }
 

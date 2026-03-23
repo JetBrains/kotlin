@@ -641,7 +641,6 @@ class FirCallCompletionResultsWriterTransformer(
                         TypeApproximatorConfiguration.TypeArgumentApproximationAfterCompletionInK2
                     ) ?: it
                 }
-            this.usesFunctionKindConversion = false // TODO: Will be removed soon
             this.kind = kind
             source = this@wrapInFunctionTypeConversionExpression.source?.fakeElement(newSourceKind)
         }

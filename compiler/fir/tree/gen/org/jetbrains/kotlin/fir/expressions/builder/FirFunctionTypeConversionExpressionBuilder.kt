@@ -25,7 +25,6 @@ class FirFunctionTypeConversionExpressionBuilder : FirAnnotationContainerBuilder
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var expression: FirExpression
-    var usesFunctionKindConversion: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     lateinit var kind: FirFunctionConversionKind
 
     override fun build(): FirFunctionTypeConversionExpression {
@@ -34,7 +33,6 @@ class FirFunctionTypeConversionExpressionBuilder : FirAnnotationContainerBuilder
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             expression,
-            usesFunctionKindConversion,
             kind,
         )
     }
@@ -59,7 +57,6 @@ inline fun buildFunctionTypeConversionExpressionCopy(original: FirFunctionTypeCo
     copyBuilder.coneTypeOrNull = original.coneTypeOrNull
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.expression = original.expression
-    copyBuilder.usesFunctionKindConversion = original.usesFunctionKindConversion
     copyBuilder.kind = original.kind
     return copyBuilder.apply(init).build()
 }
