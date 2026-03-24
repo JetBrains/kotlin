@@ -93,7 +93,9 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     if (context.isWasmJsTarget) {
         add(context.wasmSymbols.jsRelatedSymbols.getKotlinException.owner)
         add(context.wasmSymbols.jsRelatedSymbols.throwValue.owner)
-        add(context.wasmSymbols.jsRelatedSymbols.getJsError.owner)
+        if (context.wasmCoroutinesStackSwitching) {
+            add(context.wasmSymbols.jsRelatedSymbols.getJsError.owner)
+        }
     }
 
     context.fileContexts.values.forEach { crossFileContext ->
