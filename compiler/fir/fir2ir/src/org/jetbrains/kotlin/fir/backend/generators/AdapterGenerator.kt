@@ -552,33 +552,33 @@ class AdapterGenerator(
     ): IrExpression {
         val expectedType = argument.resolvedType
 
-        val convertedArgumentType = argument.expression.resolvedType.fullyExpandedType()
+        val originalArgumentType = argument.expression.resolvedType.fullyExpandedType()
         // No conversion should happen if an argument already satisfies the expected type requirements
-        check(!convertedArgumentType.isSubtypeOf(expectedType, session))
+        check(!originalArgumentType.isSubtypeOf(expectedType, session))
 
         // Currently, only conversion from simple to custom function types is supported
         check(kind.isFromSimpleToCustom)
-        val expectedFunctionalType = expectedType.customFunctionTypeToSimpleFunctionType(session)
+        val expectedSimpleFunctionType = expectedType.customFunctionTypeToSimpleFunctionType(session)
 
         // For all other conversions beside suspend ones, we leave it to plugins to work with them
         if (!expectedType.isSuspendOrKSuspendFunctionType(session)) return this
 
-        val invokeSymbol = findInvokeSymbol(expectedFunctionalType, convertedArgumentType) ?: return this
-        val suspendConvertedType = expectedType.toIrType() as IrSimpleType
+        val invokeSymbol = findInvokeSymbol(expectedSimpleFunctionType, originalArgumentType) ?: return this
+        val expectedIrType = expectedType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(
                 startOffset,
                 endOffset,
-                suspendConvertedType,
-                expectedFunctionalType.toIrType(),
-                convertedArgumentType.isMarkedNullable,
+                expectedIrType,
+                expectedSimpleFunctionType.toIrType(),
+                originalArgumentType.isMarkedNullable,
                 invokeSymbol
             )
             val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset, suspendConvertedType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
+                startOffset, endOffset, expectedIrType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
                 null, IrStatementOrigin.SUSPEND_CONVERSION
             )
-            IrBlockImpl(startOffset, endOffset, suspendConvertedType, IrStatementOrigin.SUSPEND_CONVERSION).apply {
+            IrBlockImpl(startOffset, endOffset, expectedIrType, IrStatementOrigin.SUSPEND_CONVERSION).apply {
                 statements.add(irAdapterFunction)
                 statements.add(irAdapterRef.apply { arguments[0] = this@applyConversionBetweenFunctionTypes })
             }
@@ -611,7 +611,7 @@ class AdapterGenerator(
         startOffset: Int,
         endOffset: Int,
         type: IrSimpleType,
-        adapterParameterType: IrType,
+        adapteeParameterType: IrType,
         argumentIsNullable: Boolean,
         invokeSymbol: IrSimpleFunctionSymbol
     ): IrSimpleFunction {
@@ -638,7 +638,7 @@ class AdapterGenerator(
                 this += createAdapterParameter(
                     irAdapterFunction,
                     Name.identifier($$"$callee"),
-                    adapterParameterType,
+                    adapteeParameterType,
                     IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
                     IrParameterKind.ExtensionReceiver,
                 )
