@@ -10,13 +10,13 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.coroutines.Continuation
-import kotlin.jvm.internal.KFunctionWithEqualityData
+import kotlin.jvm.internal.EquatableKFunction
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.findMethodBySignature
 import kotlin.reflect.KClass
 import kotlin.reflect.full.valueParameters
 
-internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunctionWithEqualityData<Any?>, KotlinGenericDeclaration {
+internal interface ReflectKFunction : ReflectKCallable<Any?>, EquatableKFunction<Any?>, KotlinGenericDeclaration {
     override val signature: String
 
     val overridden: Collection<ReflectKFunction>

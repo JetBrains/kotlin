@@ -10,7 +10,7 @@ import java.lang.reflect.Method
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
-import kotlin.jvm.internal.KFunctionWithEqualityData
+import kotlin.jvm.internal.EquatableKFunction
 import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -78,7 +78,7 @@ internal class JavaAnnotationConstructor(
         error("Annotation constructors cannot be copied: $this")
 
     override fun equals(other: Any?): Boolean {
-        val that = other as? KFunctionWithEqualityData<*> ?: return false
+        val that = other as? EquatableKFunction<*> ?: return false
         return owner == that.owner &&
                 name == that.name &&
                 signature == that.signature &&

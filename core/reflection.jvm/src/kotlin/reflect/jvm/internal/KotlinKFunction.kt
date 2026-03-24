@@ -8,7 +8,7 @@ package kotlin.reflect.jvm.internal
 import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.FunctionBase
-import kotlin.jvm.internal.KFunctionWithEqualityData
+import kotlin.jvm.internal.EquatableKFunction
 import kotlin.metadata.KmType
 import kotlin.metadata.KmValueParameter
 import kotlin.metadata.jvm.JvmMethodSignature
@@ -150,7 +150,7 @@ internal abstract class KotlinKFunction(
         isValue && this != Result::class
 
     override fun equals(other: Any?): Boolean {
-        val that = other as? KFunctionWithEqualityData<*> ?: return false
+        val that = other as? EquatableKFunction<*> ?: return false
         return owner == that.owner &&
                 name == that.name &&
                 signature == that.signature &&

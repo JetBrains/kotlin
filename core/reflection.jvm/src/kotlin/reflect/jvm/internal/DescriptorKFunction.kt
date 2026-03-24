@@ -28,7 +28,7 @@ import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
-import kotlin.jvm.internal.KFunctionWithEqualityData
+import kotlin.jvm.internal.EquatableKFunction
 import kotlin.reflect.KClass
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
@@ -254,7 +254,7 @@ internal class DescriptorKFunction private constructor(
         get() = (descriptor as? ConstructorDescriptor)?.isPrimary == true
 
     override fun equals(other: Any?): Boolean {
-        val that = other as? KFunctionWithEqualityData<*> ?: return false
+        val that = other as? EquatableKFunction<*> ?: return false
         return owner == that.owner &&
                 name == that.name &&
                 signature == that.signature &&

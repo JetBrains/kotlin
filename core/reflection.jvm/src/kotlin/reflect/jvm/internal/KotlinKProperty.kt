@@ -7,7 +7,7 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.KPropertyWithEqualityData
+import kotlin.jvm.internal.EquatableKProperty
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
 import kotlin.reflect.*
@@ -198,7 +198,7 @@ internal abstract class KotlinKProperty<out V>(
     }
 
     override fun equals(other: Any?): Boolean {
-        val that = other as? KPropertyWithEqualityData<*> ?: return false
+        val that = other as? EquatableKProperty<*> ?: return false
         return owner == that.owner &&
                 name == that.name &&
                 signature == that.signature &&

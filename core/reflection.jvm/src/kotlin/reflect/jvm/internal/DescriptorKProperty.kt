@@ -23,7 +23,7 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
-import kotlin.jvm.internal.KPropertyWithEqualityData
+import kotlin.jvm.internal.EquatableKProperty
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -118,7 +118,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     override val isSuspend: Boolean get() = false
 
     override fun equals(other: Any?): Boolean {
-        val that = other as? KPropertyWithEqualityData<*> ?: return false
+        val that = other as? EquatableKProperty<*> ?: return false
         return owner == that.owner &&
                 name == that.name &&
                 signature == that.signature &&

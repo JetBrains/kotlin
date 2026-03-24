@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.Java8ParameterNamesLoa
 import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.FunctionBase
-import kotlin.jvm.internal.KFunctionWithEqualityData
+import kotlin.jvm.internal.EquatableKFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.jvm.internal.calls.arity
@@ -59,7 +59,7 @@ internal abstract class JavaKFunction(
     override val isInfix: Boolean get() = false
 
     override fun equals(other: Any?): Boolean {
-        val that = other as? KFunctionWithEqualityData<*> ?: return false
+        val that = other as? EquatableKFunction<*> ?: return false
         return owner == that.owner &&
                 name == that.name &&
                 signature == that.signature &&

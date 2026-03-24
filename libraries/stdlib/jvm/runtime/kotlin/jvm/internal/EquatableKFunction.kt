@@ -5,13 +5,7 @@
 
 package kotlin.jvm.internal
 
-/**
- * Provides data used for equality check for most of [kotlin.reflect.KCallable]s.
- */
+import kotlin.reflect.KFunction
+
 @SinceKotlin("2.4")
-public interface KCallableEqualityData {
-    public val name: String
-    public val signature: String
-    public val owner: Any?
-    public val rawBoundReceiver: Any?
-}
+public interface EquatableKFunction<out R> : KFunction<R>, EquatableKCallable

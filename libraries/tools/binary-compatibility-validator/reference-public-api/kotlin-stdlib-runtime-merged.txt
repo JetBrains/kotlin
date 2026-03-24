@@ -4007,6 +4007,19 @@ public final class kotlin/jvm/internal/EnumCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/EnumCompanionObject;
 }
 
+public abstract interface class kotlin/jvm/internal/EquatableKCallable {
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getOwner ()Ljava/lang/Object;
+	public abstract fun getRawBoundReceiver ()Ljava/lang/Object;
+	public abstract fun getSignature ()Ljava/lang/String;
+}
+
+public abstract interface class kotlin/jvm/internal/EquatableKFunction : kotlin/jvm/internal/EquatableKCallable, kotlin/reflect/KFunction {
+}
+
+public abstract interface class kotlin/jvm/internal/EquatableKProperty : kotlin/jvm/internal/EquatableKCallable, kotlin/reflect/KProperty {
+}
+
 public final class kotlin/jvm/internal/FloatCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/FloatCompanionObject;
 	public static final field MAX_VALUE F
@@ -4076,7 +4089,7 @@ public abstract class kotlin/jvm/internal/FunctionImpl : java/io/Serializable, k
 	public fun invokeVararg ([Ljava/lang/Object;)Ljava/lang/Object;
 }
 
-public class kotlin/jvm/internal/FunctionReference : kotlin/jvm/internal/CallableReference, kotlin/jvm/internal/FunctionBase, kotlin/jvm/internal/KFunctionWithEqualityData {
+public class kotlin/jvm/internal/FunctionReference : kotlin/jvm/internal/CallableReference, kotlin/jvm/internal/EquatableKFunction, kotlin/jvm/internal/FunctionBase {
 	public fun <init> (I)V
 	public fun <init> (ILjava/lang/Object;)V
 	public fun <init> (ILjava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
@@ -4171,19 +4184,6 @@ public class kotlin/jvm/internal/Intrinsics {
 }
 
 public class kotlin/jvm/internal/Intrinsics$Kotlin {
-}
-
-public abstract interface class kotlin/jvm/internal/KCallableEqualityData {
-	public abstract fun getName ()Ljava/lang/String;
-	public abstract fun getOwner ()Ljava/lang/Object;
-	public abstract fun getRawBoundReceiver ()Ljava/lang/Object;
-	public abstract fun getSignature ()Ljava/lang/String;
-}
-
-public abstract interface class kotlin/jvm/internal/KFunctionWithEqualityData : kotlin/jvm/internal/KCallableEqualityData, kotlin/reflect/KFunction {
-}
-
-public abstract interface class kotlin/jvm/internal/KPropertyWithEqualityData : kotlin/jvm/internal/KCallableEqualityData, kotlin/reflect/KProperty {
 }
 
 public abstract interface class kotlin/jvm/internal/KTypeBase : kotlin/reflect/KType {
@@ -4350,7 +4350,7 @@ public abstract class kotlin/jvm/internal/PrimitiveSpreadBuilder {
 	protected final fun toArray (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 }
 
-public abstract class kotlin/jvm/internal/PropertyReference : kotlin/jvm/internal/CallableReference, kotlin/jvm/internal/KPropertyWithEqualityData {
+public abstract class kotlin/jvm/internal/PropertyReference : kotlin/jvm/internal/CallableReference, kotlin/jvm/internal/EquatableKProperty {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Object;)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V

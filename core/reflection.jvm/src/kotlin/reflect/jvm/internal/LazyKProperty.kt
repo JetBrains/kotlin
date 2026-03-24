@@ -6,10 +6,10 @@
 package kotlin.reflect.jvm.internal
 
 import kotlin.reflect.*
-import kotlin.jvm.internal.KPropertyWithEqualityData
+import kotlin.jvm.internal.EquatableKProperty
 
-internal abstract class LazyKProperty<out V, out D : KPropertyWithEqualityData<V>>(computeProperty: () -> D) :
-    KPropertyWithEqualityData<V> {
+internal abstract class LazyKProperty<out V, out D : EquatableKProperty<V>>(computeProperty: () -> D) :
+    EquatableKProperty<V> {
 
     val delegate: D by lazy(LazyThreadSafetyMode.PUBLICATION, computeProperty)
 
@@ -39,7 +39,7 @@ internal abstract class LazyKProperty<out V, out D : KPropertyWithEqualityData<V
 
 internal open class LazyKProperty0<out V, out D>(computeProperty: () -> D) :
     LazyKProperty<V, D>(computeProperty), KProperty0<V>
-        where D : KProperty0<V>, D : KPropertyWithEqualityData<V> {
+        where D : KProperty0<V>, D : EquatableKProperty<V> {
     override val getter: KProperty0.Getter<V> get() = delegate.getter
     override fun get(): V = delegate.get()
     override fun getDelegate(): Any? = delegate.getDelegate()
@@ -48,14 +48,14 @@ internal open class LazyKProperty0<out V, out D>(computeProperty: () -> D) :
 
 internal class LazyKMutableProperty0<V, D>(computeProperty: () -> D) :
     LazyKProperty0<V, D>(computeProperty), KMutableProperty0<V>
-        where D : KMutableProperty0<V>, D : KPropertyWithEqualityData<V> {
+        where D : KMutableProperty0<V>, D : EquatableKProperty<V> {
     override val setter: KMutableProperty0.Setter<V> get() = delegate.setter
     override fun set(value: V): Unit = delegate.set(value)
 }
 
 internal open class LazyKProperty1<T, out V, out D>(computeProperty: () -> D) :
     LazyKProperty<V, D>(computeProperty), KProperty1<T, V>
-        where D : KProperty1<T, V>, D : KPropertyWithEqualityData<V> {
+        where D : KProperty1<T, V>, D : EquatableKProperty<V> {
     override val getter: KProperty1.Getter<T, V> get() = delegate.getter
     override fun get(receiver: T): V = delegate.get(receiver)
     override fun getDelegate(receiver: T): Any? = delegate.getDelegate(receiver)
@@ -64,7 +64,7 @@ internal open class LazyKProperty1<T, out V, out D>(computeProperty: () -> D) :
 
 internal class LazyKMutableProperty1<T, V, D>(computeProperty: () -> D) :
     LazyKProperty1<T, V, D>(computeProperty), KMutableProperty1<T, V>
-        where D : KMutableProperty1<T, V>, D : KPropertyWithEqualityData<V> {
+        where D : KMutableProperty1<T, V>, D : EquatableKProperty<V> {
     override val setter: KMutableProperty1.Setter<T, V> get() = delegate.setter
     override fun set(receiver: T, value: V): Unit = delegate.set(receiver, value)
 }

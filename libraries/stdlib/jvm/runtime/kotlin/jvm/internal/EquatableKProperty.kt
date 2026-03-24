@@ -5,7 +5,7 @@
 
 package kotlin.jvm.internal
 
-import kotlin.reflect.KFunction
+import kotlin.reflect.KProperty
 
 @SinceKotlin("2.4")
-public interface KFunctionWithEqualityData<out R> : KFunction<R>, KCallableEqualityData
+public interface EquatableKProperty<out V> : KProperty<V>, EquatableKCallable

@@ -10,7 +10,7 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KFunction;
 
 @SuppressWarnings({"rawtypes", "unused"})
-public class FunctionReference extends CallableReference implements FunctionBase, KFunctionWithEqualityData {
+public class FunctionReference extends CallableReference implements FunctionBase, EquatableKFunction {
     private final int arity;
 
     public FunctionReference(int arity) {
@@ -85,9 +85,9 @@ public class FunctionReference extends CallableReference implements FunctionBase
     public boolean equals(Object obj) {
         if (obj == this) return true;
         // the only KFunction without equality data are properties getters/setters, and they are not equal to functions
-        if (!(obj instanceof KFunctionWithEqualityData)) return false;
+        if (!(obj instanceof EquatableKFunction)) return false;
 
-        KFunctionWithEqualityData other = (KFunctionWithEqualityData) obj;
+        EquatableKFunction other = (EquatableKFunction) obj;
         return getName().equals(other.getName()) &&
                getSignature().equals(other.getSignature()) &&
                Intrinsics.areEqual(getRawBoundReceiver(), other.getRawBoundReceiver()) &&

@@ -5,7 +5,13 @@
 
 package kotlin.jvm.internal
 
-import kotlin.reflect.KProperty
-
+/**
+ * Provides data used for equality check for most of [kotlin.reflect.KCallable]s.
+ */
 @SinceKotlin("2.4")
-public interface KPropertyWithEqualityData<out V> : KProperty<V>, KCallableEqualityData
+public interface EquatableKCallable {
+    public val name: String
+    public val signature: String
+    public val owner: Any?
+    public val rawBoundReceiver: Any?
+}

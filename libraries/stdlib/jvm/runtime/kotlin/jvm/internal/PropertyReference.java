@@ -10,7 +10,7 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty;
 
 @SuppressWarnings("rawtypes")
-public abstract class PropertyReference extends CallableReference implements KPropertyWithEqualityData {
+public abstract class PropertyReference extends CallableReference implements EquatableKProperty {
     private final boolean syntheticJavaProperty;
 
     public PropertyReference() {
@@ -69,9 +69,9 @@ public abstract class PropertyReference extends CallableReference implements KPr
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (!(obj instanceof KPropertyWithEqualityData)) return false;
+        if (!(obj instanceof EquatableKProperty)) return false;
 
-        KPropertyWithEqualityData other = (KPropertyWithEqualityData) obj;
+        EquatableKProperty other = (EquatableKProperty) obj;
         return getOwner().equals(other.getOwner()) &&
                getName().equals(other.getName()) &&
                getSignature().equals(other.getSignature()) &&
