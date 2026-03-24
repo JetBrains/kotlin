@@ -41,6 +41,12 @@ fun returnSuspendUnit(): suspend () -> Unit = TODO()
 
 suspend fun alwaysFails(): Nothing = TODO()
 
+fun flowOfUnit(): Flow<Unit> = TODO()
+
+fun flowOfNullableUnit(): Flow<Unit?> = TODO()
+
+fun mutableStateFlowOfUnit(): MutableStateFlow<Unit> = TODO()
+
 // MODULE: flow_overrides
 // FILE: flow_overrides.kt
 package namespace

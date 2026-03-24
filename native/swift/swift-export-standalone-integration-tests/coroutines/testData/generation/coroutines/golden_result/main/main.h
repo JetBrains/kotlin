@@ -19,6 +19,12 @@ void * __root___demo();
 
 void * __root___flowFoo_get();
 
+void * __root___flowOfNullableUnit();
+
+void * __root___flowOfUnit();
+
+void * __root___mutableStateFlowOfUnit();
+
 void * __root___produce_flow();
 
 void * __root___produce_function();

@@ -91,7 +91,10 @@ public class SirTypeProviderImpl(
                                 val elementArg = kaType.typeArguments.singleOrNull()
                                 if (elementArg is KaTypeArgumentWithVariance) {
                                     val elementType = elementArg.type
-                                    val translatedElement = elementType.translateType(ctx)
+                                    val translatedElement = when {
+                                        elementType.isUnitType -> ctx.anyRepresentativeType().optionalIfNeeded(elementType)
+                                        else -> elementType.translateType(ctx)
+                                    }
                                     if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {
                                         return@withSessions SirTypedFlowType(
                                             typedProtocol = when (kaType.classId) {

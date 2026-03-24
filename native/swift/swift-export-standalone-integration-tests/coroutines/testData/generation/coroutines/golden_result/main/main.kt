@@ -111,6 +111,24 @@ public fun __root___flowFoo_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___flowOfNullableUnit")
+public fun __root___flowOfNullableUnit(): kotlin.native.internal.NativePtr {
+    val _result = run { flowOfNullableUnit() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___flowOfUnit")
+public fun __root___flowOfUnit(): kotlin.native.internal.NativePtr {
+    val _result = run { flowOfUnit() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___mutableStateFlowOfUnit")
+public fun __root___mutableStateFlowOfUnit(): kotlin.native.internal.NativePtr {
+    val _result = run { mutableStateFlowOfUnit() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___produce_flow")
 public fun __root___produce_flow(): kotlin.native.internal.NativePtr {
     val _result = run { produce_flow() }

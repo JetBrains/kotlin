@@ -1,5 +1,6 @@
 import Main
 import KotlinRuntime
+import KotlinRuntimeSupport
 import Testing
 import Foundation
 
@@ -111,6 +112,26 @@ func testEmpty() async {
 
     #expect(!task.isCancelled)
     #expect(actual == .success(()))
+}
+
+@Test
+@MainActor
+func testUnit() async {
+    let task = Task<[(any _KotlinBridgeable)?], any Error>.detached {
+        var actual: [(any _KotlinBridgeable)?] = []
+        for try await element in testUnit().asAsyncSequence() {
+            actual.append(element)
+        }
+        return actual
+    }
+
+    let actual = try! await task.result.get()
+
+    #expect(!task.isCancelled)
+    #expect(actual.count == 3)
+    #expect(actual[0] != nil)
+    #expect(actual[1] == nil)
+    #expect(actual[2] != nil)
 }
 
 @Test

@@ -37,6 +37,8 @@ fun testList(): Flow<List<Int>> = flowOf(listOf(1), listOf(2), listOf(3))
 
 fun testPrimitive(): Flow<UInt> = flowOf(1u, 2u, 3u)
 
+fun testUnit(): Flow<Unit?> = flowOf(Unit, null, Unit)
+
 fun testFailing(): Flow<Elem> = flow {
     emit(Element1)
     emit(Element2)

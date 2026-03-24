@@ -103,6 +103,15 @@ public func consume_flow(
 public func demo() -> any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo> {
     return KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }
+public func flowOfNullableUnit() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
+    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowOfNullableUnit()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+}
+public func flowOfUnit() -> any KotlinCoroutineSupport.KotlinTypedFlow<any KotlinRuntimeSupport._KotlinBridgeable> {
+    return KotlinCoroutineSupport._KotlinTypedFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowOfUnit()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+}
+public func mutableStateFlowOfUnit() -> any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<any KotlinRuntimeSupport._KotlinBridgeable> {
+    return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___mutableStateFlowOfUnit()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow)
+}
 public func produce_flow() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Int32> {
     return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Int32>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_flow()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }
