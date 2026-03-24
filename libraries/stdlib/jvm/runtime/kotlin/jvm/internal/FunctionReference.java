@@ -76,6 +76,12 @@ public class FunctionReference extends CallableReference implements FunctionBase
     }
 
     @Override
+    @SinceKotlin(version = "2.4")
+    public Object getRawBoundReceiver() {
+        return receiver;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         // the only KFunction without equality data are properties getters/setters, and they are not equal to functions

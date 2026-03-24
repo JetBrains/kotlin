@@ -6,7 +6,6 @@
 package kotlin.jvm.internal;
 
 import kotlin.SinceKotlin;
-import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +48,7 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
     private final int flags;
 
     @SinceKotlin(version = "2.4")
-    protected enum Flag {
+    enum Flag {
         TOP_LEVEL(1),
         SYNTHETIC_JAVA_PROPERTY(1 << 1),
         STDLIB_ONLY_REFLECTION(1 << 2);
@@ -103,11 +102,6 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
 
     @SinceKotlin(version = "1.1")
     public Object getBoundReceiver() {
-        return receiver;
-    }
-
-    @SinceKotlin(version = "2.4")
-    public Object getRawBoundReceiver() {
         return receiver;
     }
 

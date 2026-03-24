@@ -3899,7 +3899,6 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	public fun getName ()Ljava/lang/String;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
 	public fun getParameters ()Ljava/util/List;
-	public fun getRawBoundReceiver ()Ljava/lang/Object;
 	protected fun getReflected ()Lkotlin/reflect/KCallable;
 	public fun getReturnType ()Lkotlin/reflect/KType;
 	public fun getSignature ()Ljava/lang/String;
@@ -3909,15 +3908,6 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	public fun isFinal ()Z
 	public fun isOpen ()Z
 	public fun isSuspend ()Z
-}
-
-protected final class kotlin/jvm/internal/CallableReference$Flag : java/lang/Enum {
-	public static final field STDLIB_ONLY_REFLECTION Lkotlin/jvm/internal/CallableReference$Flag;
-	public static final field SYNTHETIC_JAVA_PROPERTY Lkotlin/jvm/internal/CallableReference$Flag;
-	public static final field TOP_LEVEL Lkotlin/jvm/internal/CallableReference$Flag;
-	public fun isSet (I)Z
-	public static fun valueOf (Ljava/lang/String;)Lkotlin/jvm/internal/CallableReference$Flag;
-	public static fun values ()[Lkotlin/jvm/internal/CallableReference$Flag;
 }
 
 public final class kotlin/jvm/internal/CharCompanionObject {
@@ -4094,6 +4084,7 @@ public class kotlin/jvm/internal/FunctionReference : kotlin/jvm/internal/Callabl
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getArity ()I
 	public synthetic fun getOwner ()Ljava/lang/Object;
+	public fun getRawBoundReceiver ()Ljava/lang/Object;
 	protected synthetic fun getReflected ()Lkotlin/reflect/KCallable;
 	protected fun getReflected ()Lkotlin/reflect/KFunction;
 	public fun hashCode ()I
@@ -4366,6 +4357,7 @@ public abstract class kotlin/jvm/internal/PropertyReference : kotlin/jvm/interna
 	public fun compute ()Lkotlin/reflect/KCallable;
 	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getOwner ()Ljava/lang/Object;
+	public fun getRawBoundReceiver ()Ljava/lang/Object;
 	protected synthetic fun getReflected ()Lkotlin/reflect/KCallable;
 	protected fun getReflected ()Lkotlin/reflect/KProperty;
 	public fun hashCode ()I

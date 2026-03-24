@@ -61,6 +61,12 @@ public abstract class PropertyReference extends CallableReference implements KPr
     }
 
     @Override
+    @SinceKotlin(version = "2.4")
+    public Object getRawBoundReceiver() {
+        return receiver;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (!(obj instanceof KPropertyWithEqualityData)) return false;
