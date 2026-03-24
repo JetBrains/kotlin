@@ -5,64 +5,29 @@
 
 package kotlin.coroutines
 
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.wasm.internal.ExcludedFromCodegen
 
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
-internal abstract class CoroutineImpl<T, R>(private val resultContinuation: Continuation<R>, val rethrowExceptions: Boolean = false) : Continuation<T> {
+internal abstract class CoroutineImpl<T> : Continuation<T> {
     protected var state = 0
     protected var exceptionState = 0
-    internal var result: Any? = null
+    protected var result: Any? = null
     protected var exception: Throwable? = null
     protected var finallyPath: Array<Int>? = null
-    internal var wasSuspended = false
 
-    private val _context: CoroutineContext = resultContinuation.context
+    protected abstract val _context: CoroutineContext?
+    public override val context: CoroutineContext get() = _context!!
 
-    public override val context: CoroutineContext get() = _context
-
-    private var intercepted_: Continuation<T>? = null
+    protected var intercepted_: Continuation<T>? = null
 
     public fun intercepted(): Continuation<T> = intercepted_
         ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
             .also { intercepted_ = it }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun resumeWith(result: Result<T>) {
-        this.result = result.getOrNull()
-        exception = result.exceptionOrNull()
 
-        if (exception != null) {
-            state = exceptionState
-        }
-
-        try {
-            val outcome = doResume()
-            this.result = outcome
-            exception = null
-            if (outcome === COROUTINE_SUSPENDED) return
-        } catch (exception: Throwable) { // Catch all exceptions
-            this.result = null
-            this.exception = exception
-        }
-
-        releaseIntercepted() // this state machine instance is terminating
-
-        val completion = resultContinuation
-
-        // top-level completion reached -- invoke and return
-        if (exception != null) {
-            if (rethrowExceptions && !wasSuspended) throw exception!!
-            completion.resumeWithException(exception!!)
-        } else {
-            if (rethrowExceptions && !wasSuspended) return // prevent double-completion
-            completion.resume(this.result as R)
-        }
-        return
-    }
-
-    private fun releaseIntercepted() {
+    protected fun releaseIntercepted() {
         val intercepted = intercepted_
         if (intercepted != null && intercepted !== this) {
             context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
