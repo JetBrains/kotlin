@@ -165,6 +165,11 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
         return signature;
     }
 
+    @SinceKotlin(version = "2.4")
+    int getFlags() {
+        return flags;
+    }
+
     @Override
     @Nullable
     public GenericDeclaration findJavaDeclaration() {
