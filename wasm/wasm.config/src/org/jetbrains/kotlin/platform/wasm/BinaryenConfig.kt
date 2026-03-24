@@ -39,9 +39,7 @@ object BinaryenConfig {
         "--type-ssa",
         "-O3",
         "-O3",
-// Disabled till fixed version of Binaryen will be released
-// By now gufa isn't working with stack switching
-//        "--gufa",
+        "--gufa",
         "-O3",
         // requires --closed-world
         "--type-merging",
