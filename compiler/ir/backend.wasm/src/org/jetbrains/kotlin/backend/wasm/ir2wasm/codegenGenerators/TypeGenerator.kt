@@ -49,6 +49,20 @@ class TypeGenerator(
 
         typeCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)
 
+        if (backendContext.wasmCoroutinesStackSwitching) {
+            defineSuspendFunctionStackSwitchingTypes(
+                declaration = declaration,
+                parameterTypes = parameterTypes,
+                wasmFunctionType = wasmFunctionType
+            )
+        }
+    }
+
+    private fun defineSuspendFunctionStackSwitchingTypes(
+        declaration: IrFunction,
+        parameterTypes: List<WasmType>,
+        wasmFunctionType: WasmFunctionType
+    ) {
         val arity = parameterTypes.size
         val wasmFunctionTypeRef = typeCodegenContext.referenceFunctionHeapType(declaration.symbol)
         val suspendFunctionNames = buildSet { repeat(3) { add(FqName("kotlin.coroutines.SuspendFunction$size.invoke")) } }
