@@ -23,9 +23,7 @@ open class WasiBoxRunner(
     testServices: TestServices,
     val functionToRun: String = "runBoxTest",
 ) : AbstractWasmArtifactsCollector(testServices) {
-//    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
-
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.ReferenceInterpreter)
+    internal open val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -118,4 +116,11 @@ open class WasiBoxRunner(
             writeToFilesAndRunTest("optimized", it.compilerResult)
         }
     }
+}
+
+class WasiStackSwitchingRunner(
+    testServices: TestServices,
+    functionToRun: String = "runBoxTest"
+) : WasiBoxRunner(testServices, functionToRun) {
+    override val vmsToCheck: List<WasmVM> = listOf(WasmVM.ReferenceInterpreter)
 }
