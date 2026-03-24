@@ -6,6 +6,19 @@
 
 ---
 
+## ⚠ Non-Negotiable Rules (stop immediately if violated)
+
+1. **No command chaining** — NEVER use `&&`, `||`, or `;`. Each command = one tool call.
+   Why: the permission system only checks the first token. 
+
+2. **Always pipe Gradle output to `tee "$JD_TMP/..."`** — no exceptions.
+   If you forgot `tee`: do NOT rerun Gradle. Grep whatever output you have, or ask the user.
+
+3. **Only the main agent runs Gradle** — subagents MUST NOT invoke `./gradlew`.
+   Why: parallel builds corrupt each other's test results and cause excessive CPU and disk load.
+
+---
+
 ## Shell Discipline
 
 ### Session Working Directory
@@ -19,7 +32,9 @@ All temp file paths in this document use `$JD_TMP`. **NEVER write directly to `/
 
 ### One Command Per Execution
 
-**NEVER chain commands with `&&`, `||`, or `;`.** Each command must be a separate tool call so the user can review and approve each one individually. The only exception is piping (`|`), which is a single logical operation.
+**NEVER chain commands with `&&`, `||`, or `;`.** Each command must be a separate tool call. The only exception is piping (`|`), which is a single logical operation.
+
+The permission system matches on the **first token only**. With `cmd1 && cmd2`, only `cmd1` is checked — `cmd2` runs without the user seeing it, bypassing review entirely.
 
 - **Wrong**: `rm -f "$JD_TMP/debug.log" && ./gradlew ...`
 - **Wrong**: `cp file.kt /tmp/file.kt.orig && echo "done"`
@@ -31,7 +46,7 @@ All temp file paths in this document use `$JD_TMP`. **NEVER write directly to `/
 
 After running a suite, **grep the saved file** — never rerun Gradle just to see a different slice. If code hasn't changed, the output hasn't changed.
 
-**Only the main agent runs Gradle.** Subagents may only analyze saved log files — they must NEVER invoke Gradle themselves. This prevents parallel builds from interfering with each other.
+**Only the main agent runs Gradle.** Subagents may only analyze saved log files — they must NEVER invoke Gradle themselves. Parallel builds corrupt each other's test results and cause excessive CPU and disk load.
 
 ### File-based Debug Logging
 
@@ -179,8 +194,8 @@ Target 1 specific root cause per iteration:
 ## What NOT to Do
 
 - Don't rerun Gradle for a different view of results — grep the saved log file
-- Don't chain shell commands with `&&` — one command per tool call
-- Don't let subagents run Gradle — only the main agent runs builds
+- Don't chain shell commands with `&&` — one command per tool call (permission system only checks first token)
+- Don't let subagents run Gradle — parallel builds corrupt results and overload CPU/disk
 - Don't use `--info`/`--debug` unless specifically necessary
 - Don't hardcode lists for resolution — use callback pattern
 - Don't assume AST token names — always verify
@@ -213,4 +228,4 @@ Key principle: when string-based resolution is ambiguous, return `ClassId` direc
 
 ---
 
-*Last updated: 2026-03-20 (shell discipline, temp directory isolation, reduced redundancy)*
+*Last updated: 2026-03-24 (non-negotiable rules block, permission system explanation, subagent reasons)*
