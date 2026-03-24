@@ -946,6 +946,7 @@ tasks {
         // see comments on the task in kotlin-scripting-jvm-host-test
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
+        dependsOn(":examples:scripting-jvm-simple-script-host:test")
     }
 
     register("scriptingTest") {

@@ -11,6 +11,10 @@ dependencies {
     testImplementation(libs.junit4)
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
