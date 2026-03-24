@@ -171,7 +171,7 @@ func testDiscarding() async {
 func testStateFlow() async {
     let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
 
-    let subject = CurrentSubject.shared
+    let subject = CurrentSubject()
     #expect(subject.stateFlow.value == expected.first)
 
     let collectTask = Task<[Elem], any Error>.detached {
@@ -200,6 +200,33 @@ func testStateFlow() async {
     #expect(emitResult == .success(()))
     #expect(collectResult == .success(expected))
     #expect(subject.stateFlow.value == expected.last)
+}
+
+@Test
+@MainActor
+func testCollectMutableStateFlowInKotlin() async {
+    let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
+
+    let mutableStateFlow = CurrentSubject().mutableStateFlow
+
+    let collectTask = Task<[Elem], any Error>.detached {
+        try await testCollect(flow: mutableStateFlow, count: 3)
+    }
+
+    let emitTask = Task<(), any Error>.detached {
+        testUpdateValue(flow: mutableStateFlow, value: Element1.shared)
+        try await Task.sleep(nanoseconds: 300_000_000)
+        testUpdateValue(flow: mutableStateFlow, value: Element2.shared)
+        try await Task.sleep(nanoseconds: 300_000_000)
+        testUpdateValue(flow: mutableStateFlow, value: Element3.shared)
+    }
+
+    let (emitResult, collectResult) = try await (emitTask.result, collectTask.result)
+
+    #expect(!emitTask.isCancelled)
+    #expect(!collectTask.isCancelled)
+    #expect(emitResult == .success(()))
+    #expect(collectResult == .success(expected))
 }
 
 func ==<T>(_ lhs: Result<T, any Error>, _ rhs: Result<T, any Error>) -> Bool where T: Equatable {

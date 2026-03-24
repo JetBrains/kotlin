@@ -11,6 +11,10 @@ _Bool __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20th
 
 _Bool __root___alwaysFails(_Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
+_Bool __root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__(_Bool (^i)(void *));
+
+_Bool __root___consume_flow__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___(void * flow);
+
 void * __root___demo();
 
 void * __root___flowFoo_get();

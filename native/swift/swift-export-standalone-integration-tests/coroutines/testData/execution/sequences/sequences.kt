@@ -15,13 +15,13 @@ object Element1: Elem()
 object Element2: Elem()
 object Element3: Elem()
 
-object CurrentSubject {
-    private val mutableStateflow: MutableStateFlow<Elem> = MutableStateFlow(Element1)
+class CurrentSubject {
+    public val mutableStateFlow: MutableStateFlow<Elem> = MutableStateFlow(Element1)
 
-    public val stateFlow: StateFlow<Elem> get() = mutableStateflow
+    public val stateFlow: StateFlow<Elem> get() = mutableStateFlow
 
     public fun update(value: Elem) {
-        mutableStateflow.value = value
+        mutableStateFlow.value = value
     }
 }
 
@@ -48,4 +48,10 @@ fun testDiscarding(): Flow<Elem> = flow {
     emit(Element2)
     emit(Element3)
     error("Flow has to be discarded")
+}
+
+suspend fun testCollect(flow: Flow<Elem>, count: Int): List<Elem> = flow.take(count).toList()
+
+fun testUpdateValue(flow: MutableStateFlow<Elem>, value: Elem) {
+    flow.value = value
 }

@@ -79,6 +79,26 @@ public fun __root___alwaysFails(continuation: kotlin.native.internal.NativePtr, 
     }.alsoCancel(__cancellation)
 }
 
+@ExportedBridge("__root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__")
+public fun __root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__(i: kotlin.native.internal.NativePtr): Boolean {
+    val __i = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(i);
+        { arg0: kotlinx.coroutines.flow.Flow<Foo> ->
+            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            run<Unit> { _result }
+        }
+    }
+    val _result = run { closure_returning_flow(__i) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___consume_flow__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___")
+public fun __root___consume_flow__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___(flow: kotlin.native.internal.NativePtr): Boolean {
+    val __flow = kotlin.native.internal.ref.dereferenceExternalRCRef(flow) as kotlinx.coroutines.flow.Flow<Foo>
+    val _result = run { consume_flow(__flow) }
+    return run { _result; true }
+}
+
 @ExportedBridge("__root___demo")
 public fun __root___demo(): kotlin.native.internal.NativePtr {
     val _result = run { demo() }

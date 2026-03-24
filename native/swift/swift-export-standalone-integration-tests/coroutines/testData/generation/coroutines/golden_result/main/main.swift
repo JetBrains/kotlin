@@ -87,6 +87,19 @@ public func alwaysFails() async throws -> Swift.Never {
         }
     }()
 }
+public func closure_returning_flow(
+    i: @escaping (any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo>) -> Swift.Void
+) -> Swift.Void {
+    return { __root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__({
+        let originalBlock = i
+        return { arg0 in return { originalBlock(KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)); return true }() }
+    }()); return () }()
+}
+public func consume_flow(
+    flow: any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo>
+) -> Swift.Void {
+    return { __root___consume_flow__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___(flow.wrapped.__externalRCRef()); return () }()
+}
 public func demo() -> any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo> {
     return KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }

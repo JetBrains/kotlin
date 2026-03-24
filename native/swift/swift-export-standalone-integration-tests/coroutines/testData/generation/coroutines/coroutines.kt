@@ -17,6 +17,8 @@ val flowFoo: Flow<Foo> = TODO()
 
 fun closure_returning_flow(i: (Flow<Foo>) -> Unit): Unit = TODO()
 
+fun consume_flow(flow: Flow<Foo>): Unit = TODO()
+
 fun produce_flow(): Flow<Int> = TODO()
 
 fun produce_function(): suspend (Int) -> Int = TODO()

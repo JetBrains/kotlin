@@ -253,6 +253,7 @@ private fun hasUnboundInputTypeParameters(
     isReturnType: Boolean
 ): Boolean = (type.fullyExpandedType as? KaClassType)?.let { classType ->
     if (sirSession.isTypeSupported(classType)) return@let false
+    if (classType.classId in SirTypeProviderImpl.FLOW_CLASS_IDS) return@let false
     if (classType is KaFunctionType) {
         return@let classType.parameterTypes.any {
             hasUnboundInputTypeParameters(it, false)

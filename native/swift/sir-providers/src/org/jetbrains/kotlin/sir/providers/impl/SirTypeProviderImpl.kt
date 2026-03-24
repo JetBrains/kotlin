@@ -87,7 +87,7 @@ public class SirTypeProviderImpl(
                             }
 
                             // Intercept Flow<T> for typed generic wrapping in covariant position
-                            if (kaType.classId in FLOW_CLASS_IDS && ctx.currentPosition == SirTypeVariance.COVARIANT) {
+                            if (kaType.classId in FLOW_CLASS_IDS) {
                                 val elementArg = kaType.typeArguments.singleOrNull()
                                 if (elementArg is KaTypeArgumentWithVariance) {
                                     val elementType = elementArg.type
@@ -263,7 +263,7 @@ public class SirTypeProviderImpl(
     private val SirNominalType.isTypealiasOntoFunctionalType: Boolean
         get() = (typeDeclaration as? SirTypealias)?.let { it.expandedType is SirFunctionalType } == true
 
-    private companion object {
+    internal companion object {
         val FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/Flow")
         val STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/StateFlow")
         val MUTABLE_STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/MutableStateFlow")
