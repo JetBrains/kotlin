@@ -99,6 +99,7 @@ public fun __root___SwiftJob_setCallback(self: kotlin.native.internal.NativePtr,
 @OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
 class SwiftFlowIterator<T> private constructor(
     private val state: AtomicReference<SwiftFlowIterator.State>,
+    private val coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
 ): FlowCollector<T> {
     private object Retry
     private class Throw(val exception: Throwable)
@@ -124,7 +125,7 @@ class SwiftFlowIterator<T> private constructor(
 
     public constructor(flow: Flow<T>) : this(state = AtomicReference(State.Ready<T>(flow)))
 
-    public fun cancel() = complete(CancellationException("Flow cancelled"))
+    public fun cancel() = coroutineScope.cancel(CancellationException("Flow cancelled"))
 
     @Suppress("UNCHECKED_CAST")
     public fun complete(error: Throwable?) {
@@ -178,6 +179,7 @@ class SwiftFlowIterator<T> private constructor(
                 is State.Ready<*> -> {
                     val state = state as State.Ready<T>
                     return suspendCancellableCoroutine<Any?> { continuation ->
+                        continuation.invokeOnCancellation { cancel() }
                         val newState = State.AwaitingProducer(continuation)
                         if (!this@SwiftFlowIterator.state.compareAndSet(state, newState)) {
                             continuation.resume(Retry) // state changed; continue the outer loop
@@ -188,6 +190,7 @@ class SwiftFlowIterator<T> private constructor(
                 }
                 is State.AwaitingConsumer -> {
                     return suspendCancellableCoroutine<Any?> { continuation ->
+                        continuation.invokeOnCancellation { cancel() }
                         val newState = State.AwaitingProducer(continuation)
                         if (!this@SwiftFlowIterator.state.compareAndSet(state, newState)) {
                             continuation.resume(Retry) // state changed; continue the outer loop
@@ -205,7 +208,7 @@ class SwiftFlowIterator<T> private constructor(
     }
 
     private fun launch(flow: Flow<T>) {
-        CoroutineScope(EmptyCoroutineContext).launch {
+        coroutineScope.launch {
             flow
                 .catch { complete(it) }
                 .collect(this@SwiftFlowIterator)

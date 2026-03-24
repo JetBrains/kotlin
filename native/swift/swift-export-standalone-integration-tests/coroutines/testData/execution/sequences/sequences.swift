@@ -263,6 +263,58 @@ func testSharedFlow() async {
     #expect(collectResult == .success(expected))
 }
 
+@Test
+@MainActor
+func testImplicitCancellation() async {
+    let trackedFlow = TrackedFlow()
+    #expect(trackedFlow.count == 0)
+
+    let collectTask = Task<Void, any Error>.detached {
+        let iterator = trackedFlow.flow.asAsyncSequence().makeAsyncIterator()
+        let element = try await iterator.next()
+        #expect(element == Element1.shared)
+        #expect(trackedFlow.count == 1)
+    }
+
+    try await collectTask.result
+    #expect(!collectTask.isCancelled)
+    try! await Task.sleep(nanoseconds: 300_000_000)
+    #expect(trackedFlow.count == 0)
+}
+
+@Test
+@MainActor
+func testExplicitCancellation() async {
+    let trackedFlow = TrackedFlow()
+    #expect(trackedFlow.count == 0)
+
+    let collectTask = Task<Elem?, any Error>.detached {
+        let iterator = trackedFlow.flow.asAsyncSequence().makeAsyncIterator()
+        let element = try await iterator.next()
+        #expect(trackedFlow.count == 1)
+        do {
+            let _ = try await iterator.next()
+        } catch is CancellationError {
+            return element
+        }
+        #expect(Bool(false)) // call to next should be cancelled
+        return nil
+    }
+
+    let cancelTask = Task<Void, any Error>.detached {
+        try! await Task.sleep(nanoseconds: 300_000_000)
+        collectTask.cancel()
+    }
+
+    let (collectResult, cancelResult) = try await (collectTask.result, cancelTask.result)
+
+    #expect(collectTask.isCancelled)
+    #expect(!cancelTask.isCancelled)
+    #expect(collectResult == .success(Element1.shared))
+    try! await Task.sleep(nanoseconds: 300_000_000)
+    #expect(trackedFlow.count == 0)
+}
+
 func ==<T>(_ lhs: Result<T, any Error>, _ rhs: Result<T, any Error>) -> Bool where T: Equatable {
     switch (lhs, rhs) {
     case (.success(let l), .success(let r)): l == r

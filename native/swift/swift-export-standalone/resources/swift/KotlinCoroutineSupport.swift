@@ -184,8 +184,26 @@ public struct KotlinFlowSequence<Element>: AsyncSequence {
         self.flow = flow
     }
 
-    public func makeAsyncIterator() -> KotlinFlowIterator<Element> {
-        KotlinFlowIterator<Element>(flow)
+    public final class Iterator: AsyncIteratorProtocol {
+        public typealias Failure = any Error
+
+        private let iterator: KotlinFlowIterator<Element>
+
+        fileprivate init(_ flow: some KotlinFlow) {
+            iterator = KotlinFlowIterator(flow)
+        }
+
+        deinit {
+            _kotlin_swift_SwiftFlowIterator_cancel(iterator.__externalRCRef())
+        }
+
+        public func next() async throws -> Element? {
+            try await iterator.next()
+        }
+    }
+
+    public func makeAsyncIterator() -> Iterator {
+        Iterator(flow)
     }
 }
 
@@ -194,17 +212,13 @@ public struct KotlinFlowSequence<Element>: AsyncSequence {
 /// ## Discussion
 /// This type is a manually bridged counterpart to SwiftFlowIterator type in Kotlin
 /// It simply maps `next()` calls to its implementation in Kotlin.
-public final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, AsyncIteratorProtocol {
+internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, AsyncIteratorProtocol {
     public typealias Failure = any Error
 
     fileprivate init(_ flow: some KotlinFlow) {
         let __kt = _kotlin_swift_SwiftFlowIterator_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         _kotlin_swift_SwiftFlowIterator_init_initialize(__kt, flow.__externalRCRef())
-    }
-
-    deinit {
-        _kotlin_swift_SwiftFlowIterator_cancel(self.__externalRCRef())
     }
 
     package override init(

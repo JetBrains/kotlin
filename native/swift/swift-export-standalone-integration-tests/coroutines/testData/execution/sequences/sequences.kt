@@ -50,6 +50,18 @@ fun testDiscarding(): Flow<Elem> = flow {
     error("Flow has to be discarded")
 }
 
+class TrackedFlow {
+
+    private val _count = MutableStateFlow(0)
+    public val count: Int get() = _count.value
+
+    public val flow: Flow<Elem> = MutableStateFlow(Element1).onStart {
+        _count.update { it + 1 }
+    }.onCompletion {
+        _count.update { it - 1 }
+    }
+}
+
 suspend fun testCollect(flow: Flow<Elem>, count: Int): List<Elem> = flow.take(count).toList()
 
 fun testUpdateValue(flow: MutableStateFlow<Elem>, value: Elem) {
