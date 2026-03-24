@@ -9,19 +9,20 @@
 #ifdef KONAN_HOT_RELOAD
 
 #include "Types.h"
+#include <vector>
 
 namespace kotlin::hot {
 struct Stats {
     long start_;
     long end_;
-    std::string loadedLibrary_;
+    std::vector<std::string> loadedObjects_;
     int reboundSymbols_;
     bool wasSuccessful_;
 
     Stats() = default;
 
-    Stats(const long start, const long end, const std::string& loaded_library, const int rebound_symbols, const bool was_successful) :
-        start_(start), end_(end), loadedLibrary_(loaded_library), reboundSymbols_(rebound_symbols), wasSuccessful_(was_successful) {}
+    Stats(const long start, const long end, const std::vector<std::string>& loaded_objects, const int rebound_symbols, const bool was_successful) :
+        start_(start), end_(end), loadedObjects_(loaded_objects), reboundSymbols_(rebound_symbols), wasSuccessful_(was_successful) {}
 
     void build(KRef builder) const noexcept;
 };
@@ -30,7 +31,7 @@ class StatsCollector {
 public:
     void RegisterStart(long start) noexcept;
     void RegisterEnd(long end) noexcept;
-    void RegisterLoadedObject(const std::string& loadedLibrary) noexcept;
+    void RegisterLoadedObject(const std::vector<std::string>& loadedObjects) noexcept;
     void RegisterReboundSymbols(int reboundSymbols) noexcept;
     void RegisterSuccessful(bool wasSuccessful) noexcept;
 

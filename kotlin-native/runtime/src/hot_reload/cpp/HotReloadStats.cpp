@@ -52,15 +52,15 @@ RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_fill
 namespace kotlin::hot {
 
 void Stats::build(KRef builder) const noexcept {
-    ObjHolder loadedLibraryHolder;
-
     Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStartEpoch(builder, start_);
     Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setEndEpoch(builder, end_);
     Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setReboundSymbols(builder, reboundSymbols_);
     Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setSuccessful(builder, wasSuccessful_);
 
-    CreateStringFromCString(loadedLibrary_.c_str(), loadedLibraryHolder.slot());
-    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary(builder, loadedLibraryHolder.obj());
+    // TODO: allocate an array of Kotlin strings here...
+    // ObjHolder loadedLibraryHolder;
+    // CreateStringFromCString(loadedObjects_.c_str(), loadedLibraryHolder.slot());
+    // Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary(builder, loadedLibraryHolder.obj());
 }
 
 void StatsCollector::RegisterStart(long start) noexcept {
@@ -71,15 +71,15 @@ void StatsCollector::RegisterEnd(long end) noexcept {
     currentStats_.end_ = end;
 }
 
-void StatsCollector::RegisterLoadedObject(const std::string& loadedLibrary) noexcept {
-    currentStats_.loadedLibrary_ = loadedLibrary;
+void StatsCollector::RegisterLoadedObject(const std::vector<std::string>& loadedObjects) noexcept {
+    currentStats_.loadedObjects_ = loadedObjects;
 }
 
-void StatsCollector::RegisterReboundSymbols(int reboundSymbols) noexcept {
+void StatsCollector::RegisterReboundSymbols(const int reboundSymbols) noexcept {
     currentStats_.reboundSymbols_ = reboundSymbols;
 }
 
-void StatsCollector::RegisterSuccessful(bool wasSuccessful) noexcept {
+void StatsCollector::RegisterSuccessful(const bool wasSuccessful) noexcept {
     currentStats_.wasSuccessful_ = wasSuccessful;
 }
 } // namespace kotlin::hot
