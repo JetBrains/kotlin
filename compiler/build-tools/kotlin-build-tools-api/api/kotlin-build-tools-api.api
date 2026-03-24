@@ -1006,6 +1006,106 @@ public abstract class org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/js/IncrementalModule {
+	public fun <init> (Ljava/lang/String;Ljava/nio/file/Path;Ljava/nio/file/Path;)V
+	public final fun getBuildDir ()Ljava/nio/file/Path;
+	public final fun getBuildHistoryDir ()Ljava/nio/file/Path;
+	public final fun getName ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/BaseIncrementalCompilationConfiguration, org/jetbrains/kotlin/buildtools/api/js/JsIncrementalCompilationConfiguration {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Companion;
+	public static final field HISTORY_FILE_DIR Lorg/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Option;
+	public static final field ROOT_PROJECT_BUILD_DIR Lorg/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Option;)Ljava/lang/Object;
+	public abstract fun getModulesInformation ()Ljava/util/List;
+	public abstract fun getSourcesChanges ()Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;
+	public abstract fun getWorkingDirectory ()Ljava/nio/file/Path;
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Builder : org/jetbrains/kotlin/buildtools/api/BaseIncrementalCompilationConfiguration$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Option;)Ljava/lang/Object;
+	public abstract fun getModulesInformation ()Ljava/util/List;
+	public abstract fun getSourcesChanges ()Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;
+	public abstract fun getWorkingDirectory ()Ljava/nio/file/Path;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsIncrementalCompilationConfiguration {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain$Companion;
+	public static fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;
+	public abstract fun jsKlibCompilationOperationBuilder (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Builder;
+	public abstract fun jsLinkingOperationBuilder (Ljava/nio/file/Path;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation$Builder;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain$Companion {
+	public final fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchainKt {
+	public static final fun jsKlibCompilationOperation (Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation;
+	public static final fun jsLinkingOperation (Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;Ljava/nio/file/Path;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation, org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Companion;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments;
+	public abstract fun getDestination ()Ljava/nio/file/Path;
+	public abstract fun getSources ()Ljava/util/List;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Option;Ljava/lang/Object;)V
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Builder : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$Builder;
+	public abstract fun getDestination ()Ljava/nio/file/Path;
+	public abstract fun getSources ()Ljava/util/List;
+	public abstract fun historyBasedIcConfigurationBuilder (Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Builder;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Companion {
+	public final fun getINCREMENTAL_COMPILATION ()Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Option;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation, org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation, org/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperationProperties {
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation$Option;Ljava/lang/Object;)V
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation$Builder : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder, org/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperationProperties {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$Builder;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperationProperties {
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation$Option;)Ljava/lang/Object;
+	public abstract fun getDestination ()Ljava/nio/file/Path;
+	public abstract fun getKlib ()Ljava/nio/file/Path;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/AccessibleClassSnapshot : org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshot {
 	public abstract fun getClassAbiHash ()J
 }

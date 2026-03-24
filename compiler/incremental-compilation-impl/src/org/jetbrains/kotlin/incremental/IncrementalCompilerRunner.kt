@@ -696,6 +696,7 @@ abstract class IncrementalCompilerRunner<
         const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
         const val LAST_BUILD_INFO_FILE_NAME = "last-build.bin"
         const val ABI_SNAPSHOT_FILE_NAME = "abi-snapshot.bin"
+        const val BUILD_HISTORY_FILE_NAME = "build-history.bin"
     }
 
     private object EmptyCompilationCanceledStatus : CompilationCanceledStatus {
