@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.impl.javaFile
+import java.io.File
 
 /**
  * Hot-Reload works through split-compilation. The Kotlin/Native runtime provides the HotReload module
@@ -55,34 +56,48 @@ import org.jetbrains.kotlin.library.impl.javaFile
  * @property hostExecutable The file path to the host executable, which includes the runtime, launcher, and platform support.
  * @property bootstrapObject The file path to the bootstrap object file, which contains the compiled user code.
  */
-internal data class HotReloadCompilationOutput(
-        val hostExecutable: java.io.File,
-        val bootstrapObject: java.io.File,
+internal data class HotReloadFinalCompilationOutput(
+        val hostExecutable: File,
+        val bootstrapObject: File,
 )
+
+sealed interface HotReloadCompilationOutput {
+    val bootstrapBitcodeFile: File
+    val dependenciesTrackingResult: DependenciesTrackingResult
+}
 
 /**
  * Intermediate output from hot reload module compilation.
  */
 internal data class HotReloadModuleCompilationOutput(
-        val hostBitcodeFile: java.io.File,
-        val bootstrapBitcodeFile: java.io.File,
-        val dependenciesTrackingResult: DependenciesTrackingResult,
-)
+        val hostBitcodeFile: File,
+        override val bootstrapBitcodeFile: File,
+        override val dependenciesTrackingResult: DependenciesTrackingResult,
+) : HotReloadCompilationOutput
 
 /**
  * Output from guest-only hot reload compilation (bootstrap-only).
  */
 internal data class HotReloadGuestCompilationOutput(
-        val bootstrapBitcodeFile: java.io.File,
-        val dependenciesTrackingResult: DependenciesTrackingResult,
-)
+        override val bootstrapBitcodeFile: File,
+        override val dependenciesTrackingResult: DependenciesTrackingResult,
+) : HotReloadCompilationOutput
 
 /**
  * Result of guest-only hot reload compilation.
  */
 internal data class HotReloadGuestResult(
-        val guestObject: java.io.File,
+        val guestObject: File,
 )
+
+private data class BootstrapCompilationMetadata(
+        val bootstrapObject: File,
+        val forceLoadCaches: List<String>,
+        val jitCaches: List<String>,
+        val resolvedCaches: ResolvedCacheBinaries
+)
+
+private const val MANIFEST_DEPS_FILE_EXTENSION: String = "cache-deps"
 
 /**
  * The compiler will produce the host executable, plus the bootstrap guest code.
@@ -100,8 +115,8 @@ val NativeSecondStageCompilationConfig.isCompilingGuestCodeOnly: Boolean
 internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
         userModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
-        hostBitcodeFile: java.io.File,
-        bootstrapBitcodeFile: java.io.File,
+        hostBitcodeFile: File,
+        bootstrapBitcodeFile: File,
         cExportFiles: CExportFiles?,
 ) {
 
@@ -109,7 +124,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
 
     // First, patch and serialize the ObjC module using the main context (where objCExport is available)
     // The patched module contains OutputBase, OutputBoolean, etc. (renamed from KotlinBase, etc.)
-    val objcBitcodeFile = java.io.File.createTempFile("objc_patched", ".bc")
+    val objcBitcodeFile = File.createTempFile("objc_patched", ".bc")
     var hasObjCModule = false
     try {
         val objcModule = patchObjCRuntimeModule(context)
@@ -252,37 +267,16 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
         hotReloadOutput: HotReloadModuleCompilationOutput,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
-): HotReloadCompilationOutput {
+): HotReloadFinalCompilationOutput {
 
     // Compile host bitcode to object file
     val hostObjectFile = temporaryFiles.create(outputFiles.outputName, ".host.o")
-
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(hotReloadOutput.hostBitcodeFile, hostObjectFile.javaFile()))
 
     // This is the final bootstrap.o that will be loaded by JITLink
-    val bootstrapObjectFile = java.io.File(outputFiles.outputName + ".bootstrap.o")
-    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(hotReloadOutput.bootstrapBitcodeFile, bootstrapObjectFile))
-
-    // Resolve cache binaries (stdlib, platform libs, etc.) that the host must link against
-    val resolvedCaches = resolveCacheBinaries(context.config.cachedLibraries, hotReloadOutput.dependenciesTrackingResult)
-
-    val configurables = context.config.platform.configurables
-
-    // Split caches into platform (CInterop stubs) and non-platform (stdlib, user libs).
-    // Platform caches contain stubs for ALL SDK symbols across all OS versions.
-    // -force_load on them pulls in references to newer SDK symbols that may not exist
-    // on the running macOS, causing dyld failures. Use standard archive linking for those.
-    // Non-platform caches (stdlib, user libs like compose/skiko) must be force-loaded so
-    // bootstrap.o can resolve their symbols at JIT runtime.
-    val isPlatformCache = { path: String -> path.contains("platform.") && path.contains("-system-") }
-    val (platformCaches, nonPlatformCaches) = resolvedCaches.static.partition(isPlatformCache)
-
-    // Non-platform archives may have duplicate .o members (e.g. skiko), so deduplicate first.
-    val dedupDir = temporaryFiles.create("dedup", "").javaFile().also { it.mkdirs() }
-    val forceLoadFlags = nonPlatformCaches.map { archivePath ->
-        val dedupArchive = deduplicateArchive(archivePath, dedupDir, context.config)
-        "-Wl,-force_load,$dedupArchive"
-    }
+    // The bootstrap is not a temporary file (at least for now), since it needes to be loaded by the runtime to start the actual program
+    val (bootstrapObjectFile, forceLoadCaches, jitCaches, resolvedCaches) =
+            compileBootstrapObjectAndManifest(outputFiles, hotReloadOutput)
 
     // TODO: add frameworks with weak linking, since SKIA uses newer CoreGraphics API
     // TODO: Just update macOS (on my side)
@@ -292,10 +286,17 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
             "Security", "SystemConfiguration", "IOKit",
     ).flatMap { listOf("-Wl,-weak_framework,$it") }
 
+    val configurables = context.config.platform.configurables
+
+    val dedupDir = temporaryFiles.create("dedup", "").javaFile().also { it.mkdirs() }
+    val forceLoadFlags = forceLoadCaches.map { archivePath ->
+        val dedupArchive = deduplicateArchive(archivePath, dedupDir, context.config)
+        "-Wl,-force_load,$dedupArchive"
+    }
+
     val jitLinkerFlags = listOf(
             "-L${configurables.absoluteLlvmHome}/lib",
             "-Wl,-rpath,${configurables.absoluteLlvmHome}/lib",
-            "-Wl,-export_dynamic",
             "-Wl,-undefined,dynamic_lookup",
     ) + weakFrameworkFlags + forceLoadFlags + configurables.llvmJitLibs
 
@@ -310,13 +311,13 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
             hotReloadOutput.dependenciesTrackingResult,
             outputFiles,
             temporaryFiles,
-            ResolvedCacheBinaries(platformCaches, resolvedCaches.dynamic),
+            ResolvedCacheBinaries(jitCaches, resolvedCaches.dynamic),
     )
 
     runAndMeasurePhase(LinkerPhase, linkerPhaseInput)
 
-    return HotReloadCompilationOutput(
-            hostExecutable = java.io.File(outputFiles.nativeBinaryFile),
+    return HotReloadFinalCompilationOutput(
+            hostExecutable = File(outputFiles.nativeBinaryFile),
             bootstrapObject = bootstrapObjectFile,
     )
 }
@@ -330,7 +331,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
 internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReloadGuest(
         userModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
-        bootstrapBitcodeFile: java.io.File,
+        bootstrapBitcodeFile: File,
         cExportFiles: CExportFiles?,
 ) {
 
@@ -364,10 +365,36 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ): HotReloadGuestResult {
-    val bootstrapObjectFile = java.io.File(outputFiles.outputName + ".bootstrap.o")
+    val (bootstrapObjectFile, ) = compileBootstrapObjectAndManifest(outputFiles, guestOutput)
+    return HotReloadGuestResult(bootstrapObjectFile)
+}
+
+/**
+ * Compile bootstrap (initial user guest code) into an object file and emit the `cache-deps` manifest file.
+ * The manifest file contains the paths of platform caches code that need to be loaded at runtime.
+ */
+private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileBootstrapObjectAndManifest(
+        outputFiles: OutputFiles,
+        guestOutput: HotReloadCompilationOutput
+): BootstrapCompilationMetadata {
+
+    // This is the final bootstrap.o that will be loaded by JITLink
+    // The bootstrap is not a temporary file (at least for now), since it needs to be loaded by the runtime to start the actual program
+    val bootstrapObjectFile = File(outputFiles.outputName + ".bootstrap.o")
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(guestOutput.bootstrapBitcodeFile, bootstrapObjectFile))
 
-    return HotReloadGuestResult(bootstrapObjectFile)
+    // Resolve cache binaries (stdlib, platform libs, etc.) that the host must link against
+    val resolvedCaches = resolveCacheBinaries(context.config.cachedLibraries, guestOutput.dependenciesTrackingResult)
+
+    val isForceLoadCache = { path: String ->
+        path.contains("stdlib-cache") || path.contains("skiko")
+    }
+    val (forceLoadCaches, jitCaches) = resolvedCaches.static.partition(isForceLoadCache)
+
+    val cacheManifestFile = File(outputFiles.outputName + ".bootstrap.o.$MANIFEST_DEPS_FILE_EXTENSION")
+    cacheManifestFile.writeText(jitCaches.joinToString("\n"))
+
+    return BootstrapCompilationMetadata(bootstrapObjectFile, forceLoadCaches, jitCaches, resolvedCaches)
 }
 
 /**
@@ -375,40 +402,34 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
  *
  * If the archive has no duplicates, it returns the original path unchanged.
  */
+// TODO: this function is a temporary fix, it needs to be removed. Symbol duplication should not happen.
+// TODO: Some cache archives (e.g. skiko) contain duplicate `.o` members which cause
+// TODO: "duplicate symbol" errors when used with `-force_load`.
 private fun deduplicateArchive(
         archivePath: String,
-        dedupDir: java.io.File,
+        dedupDir: File,
         config: NativeSecondStageCompilationConfig,
 ): String {
-
-    // TODO: this function is a temporary fix, it needs to be removed. Symbol duplication should not happen.
-    // TODO: Some cache archives (e.g. skiko) contain duplicate `.o` members which cause
-    // TODO: "duplicate symbol" errors when used with `-force_load`.
-
-    val archiveFile = java.io.File(archivePath)
+    val archiveFile = File(archivePath)
     if (!archiveFile.exists()) return archivePath
 
     val ar = "${config.platform.configurables.absoluteLlvmHome}/bin/llvm-ar"
 
-    // List members and check for duplicates
     val listProcess = ProcessBuilder(ar, "t", archivePath)
             .redirectErrorStream(true).start()
 
     val members = listProcess.inputStream.bufferedReader().readLines()
     listProcess.waitFor()
 
-    // No duplicates, we can use the original archive
     if (members.size == members.toSet().size) return archivePath
 
-    // Extract to temp dir (duplicates overwrite earlier copies, last wins)
     val name = archiveFile.nameWithoutExtension
-    val extractDir = java.io.File(dedupDir, name).also { it.mkdirs() }
+    val extractDir = File(dedupDir, name).also { it.mkdirs() }
     ProcessBuilder(ar, "x", archivePath)
             .directory(extractDir)
             .redirectErrorStream(true).start().waitFor()
 
-    // Re-create archive from unique members
-    val dedupPath = java.io.File(dedupDir, "${name}-dedup.a")
+    val dedupPath = File(dedupDir, "${name}-dedup.a")
     val objectFiles = extractDir.listFiles()?.filter { it.extension == "o" }?.map { it.name } ?: return archivePath
     val arCreateCmd = listOf(ar, "rcs", dedupPath.absolutePath) + objectFiles
     ProcessBuilder(arCreateCmd)
@@ -417,3 +438,4 @@ private fun deduplicateArchive(
 
     return dedupPath.absolutePath
 }
+

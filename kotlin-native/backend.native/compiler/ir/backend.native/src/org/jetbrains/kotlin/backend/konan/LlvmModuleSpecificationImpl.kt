@@ -84,13 +84,12 @@ internal class CacheLlvmModuleSpecification(
  * - Platform library code IS generated in bootstrap (they reference stdlib types as external)
  *
  * This enables the hot reload architecture where:
- * - Host: C++ runtime + Kotlin stdlib (from stdlib-cache.a with all TypeInfos)
- * - Bootstrap: User code + Platform libraries (references stdlib types as external)
+ * - Host: C++ runtime + Kotlin stdlib (from stdlib-cache.a with all TypeInfos), Platform libraries (references stdlib types as external)
+ * - Bootstrap: User code
  *
  * Platform libraries (AppKit, Foundation, etc.) are included in bootstrap because:
- * 1. They don't have pre-compiled caches like stdlib
- * 2. Their code must be compiled along with user code that uses them
- * 3. They reference stdlib types which become external symbols resolved from host
+ * 1. Their code must be compiled along with user code that uses them
+ * 2. They reference stdlib types which become external symbols resolved from host
  *
  * @param cachedLibraries The cached libraries configuration
  * @param excludedLibraries Libraries to exclude from this module (typically ONLY stdlib)
@@ -100,14 +99,10 @@ internal class HotReloadBootstrapLlvmModuleSpecification(
         private val excludedLibraries: Set<KotlinLibrary>,
 ) : LlvmModuleSpecificationBase(cachedLibraries) {
 
-    // For hot reload bootstrap: Exclude ONLY stdlib (which has pre-compiled cache).
-    // Platform libraries (isFromKotlinNativeDistribution) are INCLUDED in bootstrap
-    // because they don't have caches and their code must be compiled with user code.
-    //
     // Architecture:
-    // - Stdlib types (Any, String, etc.) → imported as external (from stdlib-cache.a in host)
-    // - Platform library types → generated in bootstrap (they reference stdlib as external)
-    // - User types → generated in bootstrap
+    // - Stdlib types (Any, String, etc.) → imported as external (from stdlib-cache.a in host), platform library types ->
+    //      generated in bootstrap (they reference stdlib as external)
+    // - User types -> generated in bootstrap
     //
     // This way platform library code compiles successfully because:
     // - Their IR is merged into the module (in finalizeLowerings)
