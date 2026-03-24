@@ -21,6 +21,7 @@ kotlin {
         freeCompilerArgs.addAll(
             "-Xreturn-value-checker=full",
             "-Xallow-kotlin-package",
+            "-Xklib-relative-path-base=$rootDir"
         )
     }
 
