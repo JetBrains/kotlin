@@ -150,10 +150,29 @@ class WasmCompiledModuleFragment(
         )
     }
 
+    private fun generateResumeBlockTypes(definedDeclarations: DefinedDeclarationsResolver) {
+        val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
+        val blockType =
+            WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(Synthetics.FunctionHeapTypes.wasmContFunctionType)))
+        definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type] = blockType
+
+        if (definedDeclarations.contTypes.containsKey(1)) {
+            val zeroArgContHeapType = ContHeapTypeSymbol(1)
+            val resumeBlockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContHeapType)))
+            definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type] = resumeBlockType
+        }
+
+        val finalResumeBlockType = definedDeclarations.functionTypes.getValue(Synthetics.FunctionHeapTypes.resumeBlockType.type)
+        for (fragment in wasmCompiledCodeFileFragments) {
+            fragment.definedTypes.resumeBlockTypeSymbol.bind(finalResumeBlockType)
+        }
+    }
+
     fun linkWasmCompiledFragments(
         multimoduleOptions: MultimoduleCompileOptions?,
         exceptionTagType: ExceptionTagType,
-        wasmCommandModuleInitialization: Boolean
+        wasmCommandModuleInitialization: Boolean,
+        wasmCoroutinesStackSwitching: Boolean
     ): WasmModule {
         val definedDeclarations = getDefinedDeclarationsFromFragments()
 
@@ -174,10 +193,9 @@ class WasmCompiledModuleFragment(
         val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType.type] = parameterlessNoReturnFunctionType
 
-        val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-        val blockType =
-            WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(Synthetics.FunctionHeapTypes.wasmContFunctionType)))
-        definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type] = blockType
+        if (wasmCoroutinesStackSwitching) {
+            generateResumeBlockTypes(definedDeclarations)
+        }
 
         val stringEntities = getStringLiteralWasmEntities(definedDeclarations)
 
@@ -203,8 +221,7 @@ class WasmCompiledModuleFragment(
 
         val globals = getGlobals(definedDeclarations)
 
-        val tags = getTags(definedDeclarations, exceptionTagType)
-        require(tags.size <= 2) { "Having more than 2 tags (exception & cont) is not supported" }
+        val tags = getTags(definedDeclarations, exceptionTagType, wasmCoroutinesStackSwitching)
 
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
 
@@ -219,11 +236,6 @@ class WasmCompiledModuleFragment(
         importsInOrder.addAll(importedMemories)
 
         val recursiveTypeGroups = getTypes(definedDeclarations)
-
-        val finalResumeBlockType = definedDeclarations.functionTypes.getValue(Synthetics.FunctionHeapTypes.resumeBlockType.type)
-        for (fragment in wasmCompiledCodeFileFragments) {
-            fragment.definedTypes.resumeBlockTypeSymbol.bind(finalResumeBlockType)
-        }
 
         return WasmModule(
             resolver = definedDeclarations,
@@ -276,7 +288,11 @@ class WasmCompiledModuleFragment(
         definedDeclarations.gcTypes[Synthetics.GcTypes.specialSlotITableType.value] = specialSlotITableType
     }
 
-    private fun getTags(definedDeclarations: DefinedDeclarationsResolver, exceptionTagType: ExceptionTagType): List<WasmTag> {
+    private fun getTags(
+        definedDeclarations: DefinedDeclarationsResolver,
+        exceptionTagType: ExceptionTagType,
+        wasmCoroutinesStackSwitching: Boolean
+    ): List<WasmTag> {
         val exceptionTag = when (exceptionTagType) {
             ExceptionTagType.TRAP -> null
             ExceptionTagType.JS_TAG -> {
@@ -299,19 +315,20 @@ class WasmCompiledModuleFragment(
             }
         }
 
-        val contTagFuncParamType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-        val contTagFuncType = WasmFunctionType(listOf(contTagFuncParamType), listOf(contTagFuncParamType))
-        definedDeclarations.contFunctionTypes.getOrPut(Synthetics.FunctionHeapTypes.wasmContFunctionType.arity) { contTagFuncType }
-        val contTagType = WasmTag(Synthetics.FunctionHeapTypes.wasmContFunctionType)
-
-        if (definedDeclarations.contTypes.containsKey(1)) {
-            val zeroArgContHeapType = ContHeapTypeSymbol(1)
+        val contTagType = wasmCoroutinesStackSwitching.takeIf { it }?.run {
             val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-            val resumeBlockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContHeapType)))
-            definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type] = resumeBlockType
+            val contTagFuncType = WasmFunctionType(listOf(kotlinAnyRefType), listOf(kotlinAnyRefType))
+            definedDeclarations.contFunctionTypes[Synthetics.FunctionHeapTypes.wasmContFunctionType.arity] = contTagFuncType
+            WasmTag(Synthetics.FunctionHeapTypes.wasmContFunctionType)
         }
 
-        return listOfNotNull(exceptionTag, contTagType)
+        val tags = listOfNotNull(exceptionTag, contTagType)
+        val limit = if (wasmCoroutinesStackSwitching) 2 else 1
+
+        require(tags.size <= limit) {
+            "Expected at most $limit tag(s), but found ${tags.size}."
+        }
+        return tags
     }
 
     private fun getTypes(definedDeclarations: DefinedDeclarationsResolver): List<RecursiveTypeGroup> {
@@ -330,10 +347,8 @@ class WasmCompiledModuleFragment(
         //Rebind cont function types to canonical (if equal to a functionTypes entry)
         val contFunctionTypes = definedDeclarations.contFunctionTypes
         for (contFunctionType in contFunctionTypes) {
-            val canonicalSignature = reversedFunctionTypeMap[contFunctionType.value]
-            if (canonicalSignature != null) {
-                contFunctionTypes[contFunctionType.key] = allFunctionTypes.getValue(canonicalSignature)
-            }
+            val canonicalSignature = reversedFunctionTypeMap.getValue(contFunctionType.value)
+            contFunctionTypes[contFunctionType.key] = allFunctionTypes.getValue(canonicalSignature)
         }
 
         val heapTypeResolver: (WasmHeapType.Type) -> WasmTypeDeclaration = definedDeclarations::resolve
