@@ -425,16 +425,26 @@ private fun deduplicateArchive(
 
     val name = archiveFile.nameWithoutExtension
     val extractDir = File(dedupDir, name).also { it.mkdirs() }
-    ProcessBuilder(ar, "x", archivePath)
+    val arExtractProcess = ProcessBuilder(ar, "x", archivePath)
             .directory(extractDir)
-            .redirectErrorStream(true).start().waitFor()
+            .redirectErrorStream(true)
+            .start()
+
+    require(arExtractProcess.waitFor() == 0) {
+        "ar (extraction) failed with exit code different from zero"
+    }
 
     val dedupPath = File(dedupDir, "${name}-dedup.a")
     val objectFiles = extractDir.listFiles()?.filter { it.extension == "o" }?.map { it.name } ?: return archivePath
     val arCreateCmd = listOf(ar, "rcs", dedupPath.absolutePath) + objectFiles
-    ProcessBuilder(arCreateCmd)
+    val arCreateProcess = ProcessBuilder(arCreateCmd)
             .directory(extractDir)
-            .redirectErrorStream(true).start().waitFor()
+            .redirectErrorStream(true)
+            .start()
+
+    require(arCreateProcess.waitFor() == 0) {
+        "ar (creation) failed with exit code different from zero"
+    }
 
     return dedupPath.absolutePath
 }
