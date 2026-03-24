@@ -61,39 +61,41 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         val javaFiles = FileUtil.findFilesByMask(JAVA_FILES, sourceDir)
         val kotlinFiles = FileUtil.findFilesByMask(KOTLIN_FILES, sourceDir)
         assert(javaFiles.isNotEmpty() || kotlinFiles.isNotEmpty()) { "There should be either .kt or .java files in the directory" }
-
         val isJar = destination.name.endsWith(".jar")
-
         val outputDir = if (isJar) File(tmpdir, "output-$libraryName") else destination
-        if (kotlinFiles.isNotEmpty()) {
-            val output = compileKotlin(libraryName, outputDir, extraClassPath, K2JVMCompiler(), additionalOptions, expectedFileName = null)
-            checkKotlinOutput(normalizeOutput(output))
-        }
 
-        if (javaFiles.isNotEmpty()) {
-            outputDir.mkdirs()
-            compileJava(sourceDir, javaFiles, outputDir).assertSuccessful()
-        }
-
-        if (isJar) {
-            destination.delete()
-            val stream =
-                if (manifest != null) JarOutputStream(destination.outputStream(), manifest)
-                else JarOutputStream(destination.outputStream())
-            stream.use { jar ->
-                ZipUtil.addDirToZipRecursively(jar, destination, outputDir, "", null, null)
+        try {
+            if (kotlinFiles.isNotEmpty()) {
+                val output =
+                    compileKotlin(libraryName, outputDir, extraClassPath, K2JVMCompiler(), additionalOptions, expectedFileName = null)
+                checkKotlinOutput(normalizeOutput(output))
             }
-        } else {
-            assertNull("Manifest is ignored if destination is not a .jar file", manifest)
-        }
 
-        if (cleanupAfterCompilation) {
+            if (javaFiles.isNotEmpty()) {
+                outputDir.mkdirs()
+                compileJava(sourceDir, javaFiles, outputDir).assertSuccessful()
+            }
+
             if (isJar) {
-                sourceDir.deleteRecursively()
-                outputDir.deleteRecursively()
+                destination.delete()
+                val stream =
+                    if (manifest != null) JarOutputStream(destination.outputStream(), manifest)
+                    else JarOutputStream(destination.outputStream())
+                stream.use { jar ->
+                    ZipUtil.addDirToZipRecursively(jar, destination, outputDir, "", null, null)
+                }
             } else {
-                kotlinFiles.forEach { it.delete() }
-                javaFiles.forEach { it.delete() }
+                assertNull("Manifest is ignored if destination is not a .jar file", manifest)
+            }
+        } finally {
+            if (cleanupAfterCompilation) {
+                if (isJar) {
+                    sourceDir.deleteRecursively()
+                    outputDir.deleteRecursively()
+                } else {
+                    kotlinFiles.forEach { it.delete() }
+                    javaFiles.forEach { it.delete() }
+                }
             }
         }
 
