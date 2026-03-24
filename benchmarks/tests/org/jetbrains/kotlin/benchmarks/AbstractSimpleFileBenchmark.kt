@@ -58,7 +58,6 @@ private val RUNTIME_JAR = File(System.getProperty("kotlin.runtime.path") ?: "dis
 private fun newConfiguration(): CompilerConfiguration {
     val configuration = CompilerConfiguration.create()
     configuration.put(CommonConfigurationKeys.MODULE_NAME, "benchmark")
-    configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../compiler/cli/cli-base/resources")
     configuration.addJvmClasspathRoot(JDK_PATH)
     configuration.addJvmClasspathRoot(RUNTIME_JAR)
     configuration.configureJdkClasspathRoots()
