@@ -391,7 +391,7 @@ internal class ComposableTargetSessionStorage(session: FirSession) : FirExtensio
                 lambdaToExpression[element.anonymousFunction] = element
                 FirLambdaInferenceNode(element)
             }
-            is FirFunctionTypeConversionExpression -> run {
+            is FirFunctionTypeConversionExpression if element.kind is FirFunctionConversionKind.Sam -> run {
                 (element.expression as? FirAnonymousFunctionExpression)?.let {
                     lambdaToExpression[it.anonymousFunction] = element
                 }
