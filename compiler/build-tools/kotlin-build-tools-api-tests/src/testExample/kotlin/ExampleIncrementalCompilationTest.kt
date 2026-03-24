@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.KEEP_IC_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
@@ -65,7 +66,7 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
             module1.compileIncrementally(
                 SourcesChanges.Known(modifiedFiles = listOf(barKt.toFile()), removedFiles = emptyList()),
                 icOptionsConfigAction = {
-                    it[KEEP_IC_CACHES_IN_MEMORY] = false
+                    it[BaseIncrementalCompilationConfiguration.KEEP_IC_CACHES_IN_MEMORY] = false
                 }
             )
 

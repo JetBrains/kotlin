@@ -7,10 +7,11 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jvm
 
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Option
+import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
@@ -71,12 +72,12 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private c
 
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V {
+    override fun <V> get(key: Option<V>): V {
         return options.options[key]
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
+    override fun <V> set(key: Option<V>, value: V) {
         options.options[key] = value
     }
 
@@ -87,13 +88,28 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private c
     operator fun <V> set(key: JvmSnapshotBasedIncrementalCompilationOptionsImpl.Option<V>, value: V) {
         options.options[key] = value
     }
+
+    @UseFromImplModuleRestricted
+    override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V = options.options[key]
+
+    @UseFromImplModuleRestricted
+    override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
+        options.options[key] = value
+    }
+
+    override operator fun <V> get(key: BaseIncrementalCompilationConfigurationImpl.Option<V>): V = options.options[key]
+
+    @OptIn(UseFromImplModuleRestricted::class)
+    operator fun <V> set(key: BaseIncrementalCompilationConfigurationImpl.Option<V>, value: V) {
+        options.options[key] = value
+    }
 }
 
 // Remove in 2.7
 @Deprecated("Use `JvmSnapshotBasedIncrementalCompilationConfiguration` and `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`. This interface will be removed in a future release.")
 internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constructor(
-    internal val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
-) : JvmSnapshotBasedIncrementalCompilationOptions, DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsImpl>, HasSnapshotBasedIcOptionsAccessor {
+    public override val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
+) : BaseIncrementalCompilationConfigurationImpl(), JvmSnapshotBasedIncrementalCompilationOptions, DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsImpl>, HasSnapshotBasedIcOptionsAccessor {
 
     constructor() : this(Options(JvmSnapshotBasedIncrementalCompilationOptions::class)) {
         initializeOptions(this::class, options)
@@ -117,42 +133,30 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constr
         options[key] = value
     }
 
+    @UseFromImplModuleRestricted
+    override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
+        return options[key]
+    }
+
     open class Option<V> : BaseOptionWithDefault<V> {
         constructor(id: String) : super(id)
         constructor(id: String, default: V) : super(id, default = default)
     }
 
     companion object {
-        val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)
-
-        val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR", null)
 
         val PRECISE_JAVA_TRACKING: Option<Boolean> = Option("PRECISE_JAVA_TRACKING", false)
-
-        val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES", false)
-
-        val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY", false)
-
-        val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION", false)
-
-        val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
 
         val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =
             Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
 
         val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
-
-        val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
-            Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", false)
-
-        val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", false)
-
-        val TRACK_CONFIGURATION_INPUTS: Option<Boolean> = Option("TRACK_CONFIGURATION_INPUTS", false)
     }
 }
 
 // Remove in 2.7
 internal interface HasSnapshotBasedIcOptionsAccessor {
+    operator fun <V> get(key: BaseIncrementalCompilationConfigurationImpl.Option<V>): V
     operator fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptionsImpl.Option<V>): V
 }
 

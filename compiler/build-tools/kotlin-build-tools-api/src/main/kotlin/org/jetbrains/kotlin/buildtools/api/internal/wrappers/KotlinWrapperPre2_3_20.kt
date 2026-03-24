@@ -266,6 +266,11 @@ internal class KotlinWrapperPre2_3_20(
                         }
                     )
                 }
+
+                override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
+                    val oldOption = Option<V>(key.id)
+                    options[oldOption] = value
+                }
             }
 
 
