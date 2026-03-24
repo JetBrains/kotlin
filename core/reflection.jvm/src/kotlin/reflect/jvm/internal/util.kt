@@ -289,12 +289,6 @@ internal inline fun <R> reflectionCall(block: () -> R): R =
         throw IllegalCallableAccessException(e)
     }
 
-internal fun Any?.asReflectFunction(): ReflectKFunction? = when (this) {
-    is ReflectKFunction -> this
-    is FunctionReference -> compute() as? ReflectKFunction
-    else -> null
-}
-
 internal fun Any?.asReflectProperty(): ReflectKProperty<*>? = when (this) {
     is LazyKProperty<*, *> -> delegate.asReflectProperty()
     is ReflectKProperty<*> -> this
