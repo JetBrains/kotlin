@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.benchmarks
+package org.jetbrains.kotlin.benchmarks.compiler
 
+import org.jetbrains.kotlin.benchmarks.compiler.infra.AbstractSimpleFileBenchmark
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
 import java.util.concurrent.TimeUnit
@@ -12,9 +13,9 @@ import java.util.concurrent.TimeUnit
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-open class SimpleDataFlowBenchmark : AbstractSimpleFileBenchmark(){
+open class InferenceFromArgumentCallsBenchmark : AbstractSimpleFileBenchmark() {
 
-    @Param("1", "100", "1000", "3000", "5000", "7000", "10000")
+    @Param("1", "10", "100", "1000", "5000", "10000")
     private var size: Int = 0
 
     @Benchmark
@@ -24,10 +25,10 @@ open class SimpleDataFlowBenchmark : AbstractSimpleFileBenchmark(){
 
     override fun buildText() =
             """
-            |fun foo(x: Int): Int = 1
-            |var x = 1
+            |fun <T> foo(x: T): Int = 1
+            |fun expectsInt(x: Int) {}
             |fun bar(v: Int) {
-            |${(1..size).joinToString("\n") { "    x = foo(v)" }}
+            |${(1..size).map { "    expectsInt(foo(v))" }.joinToString("\n")}
             |}
             """.trimMargin()
 }
