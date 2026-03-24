@@ -85,3 +85,8 @@ open class WasmBoxRunner(
         processExceptions(allExceptions)
     }
 }
+
+class WasmStackSwitchingRunner(
+    testServices: TestServices,
+    functionToRun: String = "box"
+) : WasmBoxRunner(testServices, executeWithV8Only = true, functionToRun)

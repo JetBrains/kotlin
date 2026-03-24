@@ -145,6 +145,10 @@ fun main(args: Array<String>) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
+            testClass<AbstractFirWasmJsStackSwitchingCodegenBoxTest> {
+                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
             testClass<AbstractFirWasmJsBenchmarkTest> {
                 model("codegen/boxWasmBenchmark")
             }
@@ -183,6 +187,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirWasmWasiStackSwitchingCodegenBoxTest> {
+                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
             testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> {
