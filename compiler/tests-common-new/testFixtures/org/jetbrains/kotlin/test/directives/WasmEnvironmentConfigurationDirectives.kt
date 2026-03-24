@@ -41,6 +41,10 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
     )
 
+    val WASM_COROUTINES_STACK_SWITCHING by directive(
+        description = "Use WebAssembly Stack Switching proposal for compiling Kotlin Coroutines"
+    )
+
     val WASM_INTERNAL_LOCAL_VARIABLE_PREFIX by stringDirective(
         description = "Prefix to use for internally generated local variables",
     )

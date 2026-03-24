@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_COROUTINES_STACK_SWITCHING
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
@@ -55,6 +56,7 @@ internal fun CompilerConfiguration.configureWith(directives: RegisteredDirective
     useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG || useDebuggerCustomFormatters
     wasmGenerateWat = debugMode >= DebugMode.DEBUG || wasmGenerateWat
     propertyLazyInitialization = true
+    wasmCoroutinesStackSwitching = WASM_COROUTINES_STACK_SWITCHING in directives
     wasmDebug = true
 }
 
