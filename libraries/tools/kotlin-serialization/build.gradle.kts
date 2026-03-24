@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     id("gradle-plugin-common-configuration")
 }
@@ -13,6 +15,12 @@ gradlePlugin {
             displayName = "Kotlin compiler plugin for kotlinx.serialization library"
             description = displayName
             implementationClass = "org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

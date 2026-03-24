@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.GradlePluginVariant
+import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -451,6 +452,12 @@ gradlePlugin {
             description = "Kotlin JVM plugin"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
         create("kotlinJsPlugin") {
             id = "org.jetbrains.kotlin.js"
@@ -463,12 +470,24 @@ gradlePlugin {
             description = "Kotlin Multiplatform plugin"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
         create("kotlinAndroidPlugin") {
             id = "org.jetbrains.kotlin.android"
             description = "Kotlin Android plugin"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
         create("kotlinAndroidExtensionsPlugin") {
             id = "org.jetbrains.kotlin.android.extensions"
@@ -481,24 +500,48 @@ gradlePlugin {
             description = "Kotlin Parcelize plugin"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.internal.ParcelizeSubplugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
         create("kotlinKaptPlugin") {
             id = "org.jetbrains.kotlin.kapt"
             description = "Kotlin Kapt plugin"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
         create("kotlinScriptingPlugin") {
             id = "org.jetbrains.kotlin.plugin.scripting"
             description = "Gradle plugin for kotlin scripting"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
         create("kotlinNativeCocoapodsPlugin") {
             id = "org.jetbrains.kotlin.native.cocoapods"
             description = "Kotlin Native plugin for CocoaPods integration"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     id("gradle-plugin-common-configuration")
 }
@@ -13,6 +15,12 @@ gradlePlugin {
             displayName = "Kotlin Power-Assert compiler plugin"
             description = displayName
             implementationClass = "org.jetbrains.kotlin.powerassert.gradle.PowerAssertGradlePlugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

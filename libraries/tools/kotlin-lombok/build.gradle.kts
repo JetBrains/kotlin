@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 description = "Kotlin lombok compiler plugin"
 
 plugins {
@@ -15,6 +17,12 @@ gradlePlugin {
             displayName = "Kotlin Lombok plugin"
             description = displayName
             implementationClass = "org.jetbrains.kotlin.lombok.gradle.LombokSubplugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }
