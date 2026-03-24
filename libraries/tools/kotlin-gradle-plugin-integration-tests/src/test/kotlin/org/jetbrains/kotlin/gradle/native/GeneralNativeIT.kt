@@ -715,6 +715,61 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Does not leak native stderr output into Gradle log (KT-69896)")
+    @GradleTest
+    @TestMetadata("native-tests")
+    fun testNativeStderrOutputStaysInTestLog(gradleVersion: GradleVersion) {
+        nativeProject("native-tests", gradleVersion) {
+            val marker = "KT_69896_MARKER"
+            projectPath.resolve("src/commonTest/kotlin/test.kt")
+                .appendText(
+                    """
+
+                    @Test
+                    fun stderrOutputShouldStayInTestReport() {
+                        repeat(200) { i ->
+                            IllegalStateException("$marker-${'$'}i").printStackTrace()
+                        }
+                    }
+                    """.trimIndent()
+                )
+
+            build(
+                "hostTest",
+                // Use QUIET log level so that only our test-reporting path can surface the marker.
+                // This ensures assertOutputDoesNotContain(marker) tests our TC message handling,
+                // not Gradle's default logging infrastructure.
+                buildOptions = defaultBuildOptions.copy(
+                    logLevel = LogLevel.QUIET,
+                    // The native-tests project has iOS targets that emit DisabledNativeTargetTaskWarning
+                    // on Linux. With warningMode=Fail (CI default), these diagnostics abort the build
+                    // before tests run. Keep warningMode=Fail but prevent severity escalation.
+                    ignoreWarningModeSeverityOverride = true,
+                ),
+            ) {
+                assertTasksExecuted(":hostTest")
+                assertOutputDoesNotContain(marker)
+            }
+
+            val hostTestReports = projectPath.resolve("build/test-results/hostTest")
+                .listDirectoryEntries("*.xml")
+            assertTrue(hostTestReports.isNotEmpty(), "No hostTest XML reports found")
+
+            val targetCaseName = "stderrOutputShouldStayInTestReport"
+            val markerInReport = hostTestReports.any { report ->
+                val reportElement = JDOMUtil.load(report)
+                val targetCase = reportElement.getChildren("testcase")
+                    .firstOrNull { it.getAttributeValue("name")?.startsWith(targetCaseName) == true }
+                    ?: return@any false
+
+                val testCaseSystemOut = targetCase.getChild("system-out")?.text.orEmpty()
+                val suiteSystemOut = reportElement.getChild("system-out")?.text.orEmpty()
+                testCaseSystemOut.contains(marker) || suiteSystemOut.contains(marker)
+            }
+            assertTrue(markerInReport, "Expected marker '$marker' in hostTest system-out output")
+        }
+    }
+
     @DisplayName("Checks that build fails if a test executable crashes")
     @GradleTest
     @TestMetadata("native-tests")
