@@ -63,8 +63,12 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 this.buildGradleKts.writeText("")
                 checkDeprecatedProperties(isDeprecationExpected = true)
 
-                this.gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic,PreHMPPFlagsError${System.lineSeparator()}")
-                checkDeprecatedProperties(isDeprecationExpected = false)
+                checkDeprecatedProperties(
+                    isDeprecationExpected = false,
+                    buildOptions = buildOptions.copy(
+                        freeArgs = listOf("-Pkotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic,PreHMPPFlagsError")
+                    ),
+                )
             }
         }
     }
@@ -145,7 +149,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testSuppressGradlePluginErrors(gradleVersion: GradleVersion) {
         project("suppressGradlePluginErrors", gradleVersion) {
             // build succeeds
-            build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic") {
+            build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=CommonMainOrTestWithDependsOnDiagnostic,DeprecatedKotlinNativeTargetsDiagnostic") {
                 assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
             }
         }
@@ -334,8 +338,11 @@ class MppDiagnosticsIt : KGPBaseTest() {
         return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
     }
 
-    private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
-        build {
+    private fun TestProject.checkDeprecatedProperties(
+        isDeprecationExpected: Boolean,
+        buildOptions: BuildOptions = this.buildOptions,
+    ) {
+        build(buildOptions = buildOptions) {
             if (isDeprecationExpected)
                 output.assertHasDiagnostic(KotlinToolingDiagnostics.PreHMPPFlagsError)
             else
