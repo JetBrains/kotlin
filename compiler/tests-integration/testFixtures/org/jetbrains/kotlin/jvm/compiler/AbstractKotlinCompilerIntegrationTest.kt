@@ -54,7 +54,8 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         },
         checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) },
         manifest: Manifest? = null,
-        extraClassPath: List<File> = emptyList()
+        extraClassPath: List<File> = emptyList(),
+        cleanupAfterCompilation: Boolean = false,
     ): File {
         val sourceDir = File(testDataDirectory, libraryName)
         val javaFiles = FileUtil.findFilesByMask(JAVA_FILES, sourceDir)
@@ -82,7 +83,19 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             stream.use { jar ->
                 ZipUtil.addDirToZipRecursively(jar, destination, outputDir, "", null, null)
             }
-        } else assertNull("Manifest is ignored if destination is not a .jar file", manifest)
+        } else {
+            assertNull("Manifest is ignored if destination is not a .jar file", manifest)
+        }
+
+        if (cleanupAfterCompilation) {
+            if (isJar) {
+                sourceDir.deleteRecursively()
+                outputDir.deleteRecursively()
+            } else {
+                kotlinFiles.forEach { it.delete() }
+                javaFiles.forEach { it.delete() }
+            }
+        }
 
         return destination
     }
