@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.additionalIrCheckers
 import org.jetbrains.kotlin.config.disableIrCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.IrVarargCheckers
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -151,6 +152,7 @@ val IrCheckersDisabledByTestDirectives = mapOf<ValueDirective<TargetBackend>, St
     // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
     // so visibility checks are only performed if requested via a flag, and in tests.
     CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS to IrVisibilityChecker::class.java.simpleName,
+    CodegenTestDirectives.DISABLE_IR_FIELD_VISIBILITY_CHECK to IrFieldVisibilityChecker::class.java.simpleName,
     CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS to IrVarargCheckers::class.java.simpleName,
     CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS to IrNestedOffsetRangeChecker::class.java.simpleName,
 )
