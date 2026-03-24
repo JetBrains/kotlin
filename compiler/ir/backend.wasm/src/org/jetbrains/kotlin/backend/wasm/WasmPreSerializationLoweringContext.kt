@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.wasm.config.wasmCoroutinesStackSwitching
 
 class WasmPreSerializationLoweringContext(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
     diagnosticReporter: IrDiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
-    override val symbols: PreSerializationWasmSymbols = PreSerializationWasmSymbols.Impl(irBuiltIns)
+    override val symbols: PreSerializationWasmSymbols = PreSerializationWasmSymbols.Impl(configuration.wasmCoroutinesStackSwitching, irBuiltIns)
 
     override val sharedVariablesManager: SharedVariablesManager = KlibSharedVariablesManager(symbols)
 
