@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_COROUTINES_STACK_SWITCHING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_DISABLE_FQNAME_IN_KCLASS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -166,6 +167,7 @@ open class WasmSecondStageEnvironmentConfigurator(
         }
 
         configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, useNewExceptions)
+        configuration.put(WasmConfigurationKeys.WASM_COROUTINES_STACK_SWITCHING, WASM_COROUTINES_STACK_SWITCHING in registeredDirectives)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, WASM_NO_JS_TAG in registeredDirectives)
         configuration.put(
             WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX,

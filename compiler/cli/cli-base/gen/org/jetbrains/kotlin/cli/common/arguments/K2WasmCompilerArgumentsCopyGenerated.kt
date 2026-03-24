@@ -19,6 +19,7 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     to.irDceDumpReachabilityInfoToFile = from.irDceDumpReachabilityInfoToFile
     @Suppress("DEPRECATION")
     to.wasm = from.wasm
+    to.wasmCoroutinesStackSwitching = from.wasmCoroutinesStackSwitching
     to.wasmDebug = from.wasmDebug
     to.wasmEnableArrayRangeChecks = from.wasmEnableArrayRangeChecks
     to.wasmEnableAsserts = from.wasmEnableAsserts

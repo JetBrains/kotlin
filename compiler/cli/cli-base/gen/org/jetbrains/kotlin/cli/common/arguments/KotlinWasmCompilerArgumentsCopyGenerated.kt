@@ -18,6 +18,7 @@ fun copyKotlinWasmCompilerArguments(from: KotlinWasmCompilerArguments, to: Kotli
     to.irDceDumpReachabilityInfoToFile = from.irDceDumpReachabilityInfoToFile
     @Suppress("DEPRECATION")
     to.wasm = from.wasm
+    to.wasmCoroutinesStackSwitching = from.wasmCoroutinesStackSwitching
     to.wasmDebug = from.wasmDebug
     to.wasmEnableArrayRangeChecks = from.wasmEnableArrayRangeChecks
     to.wasmEnableAsserts = from.wasmEnableAsserts

@@ -44,6 +44,16 @@ sealed class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-coroutines-stack-switching",
+        description = "Compile Kotlin Coroutines with Wasm Stack Switching Proposal",
+    )
+    var wasmCoroutinesStackSwitching: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-debug-friendly",
         description = "Avoid optimizations that can break debugging.",
     )

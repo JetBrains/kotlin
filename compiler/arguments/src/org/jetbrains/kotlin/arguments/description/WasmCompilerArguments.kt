@@ -241,4 +241,15 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
     }
+
+    compilerArgument {
+        name = "Xwasm-coroutines-stack-switching"
+        compilerName = "wasmCoroutinesStackSwitching"
+        description = "Compile Kotlin Coroutines with Wasm Stack Switching Proposal".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
 }
