@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 /**
  * Transforms suspend function into a `CoroutineImpl` instance and builds a state machine.
  */
-class JsSuspendFunctionsLowering(
+open class JsSuspendFunctionsLowering(
     ctx: JsCommonBackendContext
 ) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx), BodyLoweringPass {
     private val coroutineImplExceptionPropertyGetter = ctx.symbols.coroutineImplExceptionPropertyGetter.owner

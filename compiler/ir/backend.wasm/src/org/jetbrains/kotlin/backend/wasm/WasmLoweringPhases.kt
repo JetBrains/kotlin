@@ -193,6 +193,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::EnumUsageLowering,
     ::EnumClassRemoveEntriesLowering,
 
+    ::WasmSuspendFunctionsLowering,
     ::WasmInitializersLowering,
     ::WasmInitializersCleanupLowering,
 
