@@ -403,14 +403,22 @@ internal class SirFlowFromKtSymbol(
 
     internal companion object {
         val FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/Flow")
+        val SHARED_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/SharedFlow")
+        val MUTABLE_SHARED_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/MutableSharedFlow")
         val STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/StateFlow")
         val MUTABLE_STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/MutableStateFlow")
 
-        val CLASS_IDS = listOf(FLOW_CLASS_ID, STATE_FLOW_CLASS_ID, MUTABLE_STATE_FLOW_CLASS_ID)
+        val CLASS_IDS = listOf(
+            FLOW_CLASS_ID,
+            SHARED_FLOW_CLASS_ID, MUTABLE_SHARED_FLOW_CLASS_ID,
+            STATE_FLOW_CLASS_ID, MUTABLE_STATE_FLOW_CLASS_ID,
+        )
     }
 
     private val supportProtocol = when (ktSymbol.classId) {
         FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinFlow
+        SHARED_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinSharedFlow
+        MUTABLE_SHARED_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinMutableSharedFlow
         STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinStateFlow
         MUTABLE_STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinMutableStateFlow
         else -> throw IllegalArgumentException("Unsupported flow kind: ${ktSymbol.classId}")

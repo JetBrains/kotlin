@@ -74,6 +74,52 @@ extension ExportedKotlinPackages.namespace {
             return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Foo_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
         }
     }
+    open class MutableSharedFoo: ExportedKotlinPackages.namespace.SharedFoo {
+        @_nonoverride
+        open var voo: any KotlinCoroutineSupport.KotlinTypedMutableSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
+            get {
+                return KotlinCoroutineSupport._KotlinTypedMutableSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableSharedFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow)
+            }
+        }
+        public override init() {
+            if Self.self != ExportedKotlinPackages.namespace.MutableSharedFoo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.MutableSharedFoo ") }
+            let __kt = namespace_MutableSharedFoo_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { namespace_MutableSharedFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        open func foo() -> any KotlinCoroutineSupport.KotlinTypedMutableSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
+            return KotlinCoroutineSupport._KotlinTypedMutableSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableSharedFoo_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow)
+        }
+    }
+    open class MutableStateFoo: ExportedKotlinPackages.namespace.StateFoo {
+        @_nonoverride
+        open var voo: any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
+            get {
+                return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableStateFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow)
+            }
+        }
+        public override init() {
+            if Self.self != ExportedKotlinPackages.namespace.MutableStateFoo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.MutableStateFoo ") }
+            let __kt = namespace_MutableStateFoo_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { namespace_MutableStateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        open func foo() -> any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
+            return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_MutableStateFoo_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow)
+        }
+    }
     open class Nar: ExportedKotlinPackages.namespace.Foo {
         @_nonoverride
         open var voo: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Never> {
@@ -97,7 +143,30 @@ extension ExportedKotlinPackages.namespace {
             return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Never>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_Nar_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
         }
     }
-    open class StateFoo: ExportedKotlinPackages.namespace.Foo {
+    open class SharedFoo: ExportedKotlinPackages.namespace.Foo {
+        @_nonoverride
+        open var voo: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
+            get {
+                return KotlinCoroutineSupport._KotlinTypedSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_SharedFoo_voo_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow)
+            }
+        }
+        public override init() {
+            if Self.self != ExportedKotlinPackages.namespace.SharedFoo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.SharedFoo ") }
+            let __kt = namespace_SharedFoo_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { namespace_SharedFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        open func foo() -> any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
+            return KotlinCoroutineSupport._KotlinTypedSharedFlowImpl<Swift.Optional<any ExportedKotlinPackages.namespace.I1>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: namespace_SharedFoo_foo(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow)
+        }
+    }
+    open class StateFoo: ExportedKotlinPackages.namespace.SharedFoo {
         @_nonoverride
         open var voo: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any ExportedKotlinPackages.namespace.I1>> {
             get {

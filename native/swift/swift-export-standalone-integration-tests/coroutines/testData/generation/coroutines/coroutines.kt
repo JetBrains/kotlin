@@ -56,9 +56,24 @@ open class Foo {
     open val voo: Flow<I1?> get() = TODO()
 }
 
-open class StateFoo: Foo() {
+open class SharedFoo: Foo() {
+    override fun foo(): SharedFlow<I1?> = TODO()
+    override val voo: SharedFlow<I1?> get() = TODO()
+}
+
+open class MutableSharedFoo: SharedFoo() {
+    override fun foo(): MutableSharedFlow<I1?> = TODO()
+    override val voo: MutableSharedFlow<I1?> get() = TODO()
+}
+
+open class StateFoo: SharedFoo() {
     override fun foo(): StateFlow<I1?> = TODO()
     override val voo: StateFlow<I1?> get() = TODO()
+}
+
+open class MutableStateFoo: StateFoo() {
+    override fun foo(): MutableStateFlow<I1?> = TODO()
+    override val voo: MutableStateFlow<I1?> get() = TODO()
 }
 
 open class Bar: Foo() {

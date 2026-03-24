@@ -138,6 +138,42 @@ public object KotlinCoroutineSupportModule : SirModule() {
         visibility = SirVisibility.PUBLIC
     }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
 
+    public val kotlinSharedFlow: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinSharedFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedSharedFlow: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinTypedSharedFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedSharedFlowImpl: SirStruct = buildStruct {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinTypedSharedFlowImpl"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinMutableSharedFlow: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinMutableSharedFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedMutableSharedFlow: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinTypedMutableSharedFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedMutableSharedFlowImpl: SirStruct = buildStruct {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinTypedMutableSharedFlowImpl"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
     public val kotlinStateFlow: SirProtocol = buildProtocol {
         origin = KotlinRuntimeElement()
         name = "KotlinStateFlow"

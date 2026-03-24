@@ -186,11 +186,11 @@ func testStateFlow() async {
     }
 
     let emitTask = Task<(), any Error>.detached {
-        try await subject.update(value: Element1.shared)
+        subject.mutableStateFlow.value = Element1.shared
         try await Task.sleep(nanoseconds: 300_000_000)
-        try await subject.update(value: Element2.shared)
+        subject.mutableStateFlow.value = Element2.shared
         try await Task.sleep(nanoseconds: 300_000_000)
-        try await subject.update(value: Element3.shared)
+        subject.mutableStateFlow.value = Element3.shared
     }
 
     let (emitResult, collectResult) = try await (emitTask.result, collectTask.result)
@@ -219,6 +219,40 @@ func testCollectMutableStateFlowInKotlin() async {
         testUpdateValue(flow: mutableStateFlow, value: Element2.shared)
         try await Task.sleep(nanoseconds: 300_000_000)
         testUpdateValue(flow: mutableStateFlow, value: Element3.shared)
+    }
+
+    let (emitResult, collectResult) = try await (emitTask.result, collectTask.result)
+
+    #expect(!emitTask.isCancelled)
+    #expect(!collectTask.isCancelled)
+    #expect(emitResult == .success(()))
+    #expect(collectResult == .success(expected))
+}
+
+@Test
+@MainActor
+func testSharedFlow() async {
+    let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
+
+    let subject = CurrentSubject()
+
+    let collectTask = Task<[Elem], any Error>.detached {
+        var actual: [Elem] = []
+        var i = 0;
+        for try await element in subject.sharedFlow.asAsyncSequence() {
+            actual.append(element)
+            i += 1
+            guard i < 3 else { break }
+        }
+        return actual
+    }
+
+    let emitTask = Task<(), any Error>.detached {
+        try await subject.mutableSharedFlow.emit(value: Element1.shared)
+        try await Task.sleep(nanoseconds: 300_000_000)
+        try await subject.mutableSharedFlow.emit(value: Element2.shared)
+        try await Task.sleep(nanoseconds: 300_000_000)
+        try await subject.mutableSharedFlow.emit(value: Element3.shared)
     }
 
     let (emitResult, collectResult) = try await (emitTask.result, collectTask.result)

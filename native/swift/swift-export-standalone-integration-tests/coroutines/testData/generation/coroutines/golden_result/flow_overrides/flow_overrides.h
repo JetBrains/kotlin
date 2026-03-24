@@ -19,6 +19,22 @@ _Bool namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoi
 
 void * namespace_Foo_voo_get(void * self);
 
+void * namespace_MutableSharedFoo_foo(void * self);
+
+void * namespace_MutableSharedFoo_init_allocate();
+
+_Bool namespace_MutableSharedFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * namespace_MutableSharedFoo_voo_get(void * self);
+
+void * namespace_MutableStateFoo_foo(void * self);
+
+void * namespace_MutableStateFoo_init_allocate();
+
+_Bool namespace_MutableStateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * namespace_MutableStateFoo_voo_get(void * self);
+
 void * namespace_Nar_foo(void * self);
 
 void * namespace_Nar_init_allocate();
@@ -26,6 +42,14 @@ void * namespace_Nar_init_allocate();
 _Bool namespace_Nar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * namespace_Nar_voo_get(void * self);
+
+void * namespace_SharedFoo_foo(void * self);
+
+void * namespace_SharedFoo_init_allocate();
+
+_Bool namespace_SharedFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * namespace_SharedFoo_voo_get(void * self);
 
 void * namespace_StateFoo_foo(void * self);
 

@@ -68,11 +68,68 @@ public struct _KotlinTypedFlowImpl<Element>: KotlinTypedFlow {
     }
 }
 
-public protocol KotlinStateFlow: KotlinFlow {
+public protocol KotlinSharedFlow: KotlinFlow {
+    var replayCache: [(any KotlinRuntimeSupport._KotlinBridgeable)?] { get }
+}
+
+public protocol KotlinTypedSharedFlow<Element>: KotlinTypedFlow { }
+
+extension KotlinTypedSharedFlow {
+    public var wrapped: any KotlinSharedFlow { _flow as! (any KotlinSharedFlow) }
+
+    public var replayCache: [Element] { wrapped.replayCache as! [Element] }
+}
+
+public struct _KotlinTypedSharedFlowImpl<Element>: KotlinTypedSharedFlow {
+    public let _flow: any KotlinFlow
+
+    public init(_ flow: any KotlinSharedFlow) {
+        self._flow = flow
+    }
+}
+
+public protocol KotlinMutableSharedFlow: KotlinSharedFlow {
+    var subscriptionCount: any KotlinTypedStateFlow<Int32> { get }
+    func emit(value: (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws
+    func resetReplayCache()
+    func tryEmit(value: (any KotlinRuntimeSupport._KotlinBridgeable)?) -> Bool
+}
+
+public protocol KotlinTypedMutableSharedFlow<Element>: KotlinTypedSharedFlow { }
+
+extension KotlinTypedMutableSharedFlow {
+    public var wrapped: any KotlinMutableSharedFlow { _flow as! (any KotlinMutableSharedFlow) }
+
+    public var subscriptionCount: any KotlinTypedStateFlow<Int32> {
+        wrapped.subscriptionCount
+    }
+
+    public func emit(value: Element) async throws {
+        try await wrapped.emit(value: value as! (any KotlinRuntimeSupport._KotlinBridgeable)?)
+    }
+
+    public func resetReplayCache() {
+        wrapped.resetReplayCache()
+    }
+
+    public func tryEmit(value: Element) -> Bool {
+        wrapped.tryEmit(value: value as! (any KotlinRuntimeSupport._KotlinBridgeable)?)
+    }
+}
+
+public struct _KotlinTypedMutableSharedFlowImpl<Element>: KotlinTypedMutableSharedFlow {
+    public let _flow: any KotlinFlow
+
+    public init(_ flow: any KotlinMutableSharedFlow) {
+        self._flow = flow
+    }
+}
+
+public protocol KotlinStateFlow: KotlinSharedFlow {
     var value: (any KotlinRuntimeSupport._KotlinBridgeable)? { get }
 }
 
-public protocol KotlinTypedStateFlow<Element>: KotlinTypedFlow { }
+public protocol KotlinTypedStateFlow<Element>: KotlinTypedSharedFlow { }
 
 extension KotlinTypedStateFlow {
     public var wrapped: any KotlinStateFlow { _flow as! (any KotlinStateFlow) }
@@ -88,18 +145,26 @@ public struct _KotlinTypedStateFlowImpl<Element>: KotlinTypedStateFlow {
     }
 }
 
-public protocol KotlinMutableStateFlow: KotlinStateFlow {
+public protocol KotlinMutableStateFlow: KotlinStateFlow, KotlinMutableSharedFlow {
     var value: (any KotlinRuntimeSupport._KotlinBridgeable)? { get set }
+    func compareAndSet(expect: (any KotlinRuntimeSupport._KotlinBridgeable)?, update: (any KotlinRuntimeSupport._KotlinBridgeable)?) -> Bool
 }
 
-public protocol KotlinTypedMutableStateFlow<Element>: KotlinTypedStateFlow { }
+public protocol KotlinTypedMutableStateFlow<Element>: KotlinTypedStateFlow, KotlinTypedMutableSharedFlow { }
 
 extension KotlinTypedMutableStateFlow {
     public var wrapped: any KotlinMutableStateFlow { _flow as! (any KotlinMutableStateFlow) }
 
     public var value: Element {
         get { wrapped.value as! Element }
-        set { wrapped.value = newValue as! (any KotlinRuntimeSupport._KotlinBridgeable)? }
+        nonmutating set { wrapped.value = newValue as! (any KotlinRuntimeSupport._KotlinBridgeable)? }
+    }
+
+    public func compareAndSet(expect: Element, update: Element) -> Bool {
+        wrapped.compareAndSet(
+            expect: expect as! (any KotlinRuntimeSupport._KotlinBridgeable)?,
+            update: update as! (any KotlinRuntimeSupport._KotlinBridgeable)?
+        )
     }
 }
 

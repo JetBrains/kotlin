@@ -488,6 +488,8 @@ internal sealed class Bridge(
         private val structType = SirNominalType(
             typeDeclaration = when (swiftType.typedProtocol) {
                 KotlinCoroutineSupportModule.kotlinTypedFlow -> KotlinCoroutineSupportModule.kotlinTypedFlowImpl
+                KotlinCoroutineSupportModule.kotlinTypedSharedFlow -> KotlinCoroutineSupportModule.kotlinTypedSharedFlowImpl
+                KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlow -> KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlowImpl
                 KotlinCoroutineSupportModule.kotlinTypedStateFlow -> KotlinCoroutineSupportModule.kotlinTypedStateFlowImpl
                 KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow -> KotlinCoroutineSupportModule.kotlinTypedMutableStateFlowImpl
                 else -> error("Unsupported typed flow type: ${swiftType.typedProtocol}")

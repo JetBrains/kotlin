@@ -20,9 +20,9 @@ class CurrentSubject {
 
     public val stateFlow: StateFlow<Elem> get() = mutableStateFlow
 
-    public fun update(value: Elem) {
-        mutableStateFlow.value = value
-    }
+    public val mutableSharedFlow: MutableSharedFlow<Elem> = MutableSharedFlow(3)
+
+    public val sharedFlow: SharedFlow<Elem> get() = mutableSharedFlow
 }
 
 fun testRegular(): Flow<Elem> = flowOf(Element1, Element2, Element3)

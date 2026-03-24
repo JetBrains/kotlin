@@ -65,6 +65,8 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         is SirNominalType -> kotlinFqName(type)
         is SirTypedFlowType -> when (type.typedProtocol) {
             KotlinCoroutineSupportModule.kotlinTypedFlow -> "kotlinx.coroutines.flow.Flow<${kotlinParametrizedName(type.elementType)}>"
+            KotlinCoroutineSupportModule.kotlinTypedSharedFlow -> "kotlinx.coroutines.flow.SharedFlow<${kotlinParametrizedName(type.elementType)}>"
+            KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlow -> "kotlinx.coroutines.flow.MutableSharedFlow<${kotlinParametrizedName(type.elementType)}>"
             KotlinCoroutineSupportModule.kotlinTypedStateFlow -> "kotlinx.coroutines.flow.StateFlow<${kotlinParametrizedName(type.elementType)}>"
             KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow -> "kotlinx.coroutines.flow.MutableStateFlow<${kotlinParametrizedName(type.elementType)}>"
             else -> error("TypedFlowType $type can not be named")
