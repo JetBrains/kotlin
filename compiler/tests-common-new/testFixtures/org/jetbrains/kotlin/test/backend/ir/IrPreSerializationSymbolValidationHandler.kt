@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.backend.handlers.AbstractIrHandler
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_COROUTINES_STACK_SWITCHING
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.KVisibility
@@ -122,7 +124,8 @@ class IrPreSerializationJsSymbolValidationHandler(testServices: TestServices) : 
 
 class IrPreSerializationWasmSymbolValidationHandler(testServices: TestServices) : IrPreSerializationSymbolValidationHandler(testServices) {
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
-        return listOf(PreSerializationWasmSymbols.Impl(irBuiltIns))
+        val directives = testServices.moduleStructure.allDirectives
+        return listOf(PreSerializationWasmSymbols.Impl(WASM_COROUTINES_STACK_SWITCHING in directives, irBuiltIns))
     }
 }
 

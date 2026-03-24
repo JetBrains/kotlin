@@ -189,20 +189,23 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
 }
 
 interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
-    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWasmSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
+
+    val wasmCoroutinesStackSwitching: Boolean
+
+    open class Impl(override val wasmCoroutinesStackSwitching: Boolean, irBuiltIns: IrBuiltIns) : PreSerializationWasmSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
+        private val coroutineSuspendOrReturnName =
+            "suspendCoroutineUninterceptedOrReturn${if (wasmCoroutinesStackSwitching) "StackSwitching" else "StateMachine"}"
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
-            CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
+            coroutineSuspendOrReturnName.internalCallableId.functionSymbol()
         override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.coroutineGetContext.functionSymbol()
 
         companion object {
             private val wasmInternalFqName = FqName.fromSegments(listOf("kotlin", "wasm", "internal"))
-            private const val COROUTINE_SUSPEND_OR_RETURN_NAME = "suspendCoroutineUninterceptedOrReturn"
+
+            private val String.internalCallableId: CallableId
+                get() = CallableId(wasmInternalFqName, Name.identifier(this))
 
             private object CallableIds {
-                private val String.internalCallableId: CallableId
-                    get() = CallableId(wasmInternalFqName, Name.identifier(this))
-
-                val suspendCoroutineUninterceptedOrReturn: CallableId = COROUTINE_SUSPEND_OR_RETURN_NAME.internalCallableId
                 val coroutineGetContext: CallableId = PreSerializationKlibSymbols.GET_COROUTINE_CONTEXT_NAME.internalCallableId
             }
         }
