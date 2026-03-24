@@ -202,7 +202,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
 
         val arguments = createAndPrepareCompilerArguments()
-        arguments.addSources() // TODO: pass the sources explicitly KT-62759
+        arguments.addSources()
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
 
         val rootProjectDir = getRootProjectDir()
