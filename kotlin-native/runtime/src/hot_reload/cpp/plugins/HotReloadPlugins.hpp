@@ -11,12 +11,10 @@
 #include "WeakSymbolFallbackGenerator.hpp"
 #include "ObjCSelectorFixupPlugin.hpp"
 #include "KotlinSymbolExternalizerPlugin.hpp"
-#include "CompactUnwindStripperPlugin.hpp"
 #include "MachOHostDataSymbolGenerator.hpp"
 
 using kotlin::hot::orc::plugins::WeakSymbolFallbackGenerator;
 using kotlin::hot::orc::plugins::KotlinSymbolExternalizerPlugin;
-using kotlin::hot::orc::plugins::CompactUnwindStripperPlugin;
 
 #if defined(__APPLE__)
 using kotlin::hot::orc::plugins::ObjCSelectorFixupPlugin;

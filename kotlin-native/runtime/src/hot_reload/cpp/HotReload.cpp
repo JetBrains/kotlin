@@ -210,9 +210,6 @@ void HotReloadImpl::SetupORC() {
                         // the JITLink PostFixup pass before any code runs.
                         oll->addPlugin(std::make_unique<ObjCSelectorFixupPlugin>());
 #endif
-                        // Strip compact unwind sections to avoid 32-bit delta overflow
-                        // when JIT-allocated code is far from the host process image.
-                        oll->addPlugin(std::make_unique<CompactUnwindStripperPlugin>());
                         return oll;
                     })
                     .setNotifyCreatedCallback([this](llvm::orc::LLJIT& J) {
