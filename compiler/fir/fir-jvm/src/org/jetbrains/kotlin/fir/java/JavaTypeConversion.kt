@@ -308,10 +308,18 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 // Resolve the name - this handles both simple names and nested class references like "Map.Entry"
                 resolveTypeName(qualifiedName, this, session, source)
             } else {
-                // Even for resolved names, use findClassId to correctly handle nested class FQNs.
+                // For resolved names, try the resolve callback to correctly handle nested class FQNs.
                 // ClassId.topLevel would incorrectly split "a.X.Y" as package "a.X", class "Y"
                 // when the actual class is package "a", nested class "X.Y".
-                findClassId(qualifiedName, session) ?: ClassId.topLevel(FqName(qualifiedName))
+                // We use the resolve callback instead of findClassId because findClassId probes the
+                // session's symbol provider directly, which in LL-FIR can trigger lazy resolution of
+                // the very class being resolved, causing infinite recursion (stack overflow).
+                // The resolve callback returns null by default (PSI types), safely falling back to
+                // ClassId.topLevel. For java-direct types, it uses the resolution context to generate
+                // correct ClassId candidates without triggering LL-FIR lazy resolution cycles.
+                resolve { candidateClassId ->
+                    session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
+                } ?: ClassId.topLevel(FqName(qualifiedName))
             }
 
             classId = if (mode.insideAnnotation) {
