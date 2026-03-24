@@ -623,7 +623,7 @@ void HotReloadImpl::Reload(const std::string& objectPath) noexcept {
     CallsCheckerIgnoreGuard allowWait;
 
     statsCollector_.RegisterStart(static_cast<int64_t>(utility::getCurrentEpoch()));
-    statsCollector_.RegisterLoadedObject(objectPath);
+    statsCollector_.RegisterLoadedObject(objectPaths);
 
     /// 1. Load new object in JIT engine
     if (const auto objFile = LoadObjectAndUpdateFunctionPointers(objectPath); !objFile) {

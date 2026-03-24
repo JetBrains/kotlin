@@ -23,7 +23,7 @@ internal fun invokeReloadSuccessHandler() {
 private class HotReloadStatsBuilder(
         var start: Long = 0,
         var end: Long = 0,
-        var loadedLibrary: String = "",
+        var loadedLibraries: List<String> = emptyList(),
         var reboundSymbols: Int = 0,
         var successful: Boolean = false,
 ) {
@@ -31,7 +31,7 @@ private class HotReloadStatsBuilder(
     @OptIn(NativeRuntimeApi::class)
     fun build(): HotReload.Stats {
         fill()
-        return HotReload.Stats(start, end, loadedLibrary, reboundSymbols, successful)
+        return HotReload.Stats(start, end, loadedLibraries, reboundSymbols, successful)
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStartEpoch")
@@ -45,8 +45,8 @@ private class HotReloadStatsBuilder(
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary")
-    private fun setLoadedLibrary(path: String) {
-        loadedLibrary = path
+    private fun setLoadedLibrary(paths: List<String>) {
+        loadedLibraries = paths
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setReboundSymbols")
@@ -78,14 +78,14 @@ public object HotReload {
      *
      * @property start The timestamp (in milliseconds since Epoch) when the reload command was received.
      * @property end The timestamp (in milliseconds since Epoch) when the reload process finished.
-     * @property loadedLibrary The absolute path or filename of the dynamic library loaded by the runtime.
+     * @property loadedLibraries The absolute path or filename of the dynamic library loaded by the runtime.
      * @property reboundSymbols The total count of function symbols that were successfully rebound.
      * @property successful True if the reload command completed without errors, false otherwise.
      */
     public data class Stats(
             val start: Long,
             val end: Long,
-            val loadedLibrary: String,
+            val loadedLibraries: List<String>,
             val reboundSymbols: Int,
             val successful: Boolean,
     )
