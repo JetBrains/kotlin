@@ -55,6 +55,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
             (arguments.wasmUseNewExceptionProposal ?: (wasmTarget == WasmTarget.WASI))
         )
 
+        configuration.put(WasmConfigurationKeys.WASM_COROUTINES_STACK_SWITCHING, arguments.wasmCoroutinesStackSwitching)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, arguments.wasmNoJsTag)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, arguments.generateDwarf)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, arguments.forceDebugFriendlyCompilation)

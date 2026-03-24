@@ -74,6 +74,8 @@ object WasmConfigurationKeys {
     @JvmField
     val WASM_GENERATE_CLOSED_WORLD_MULTIMODULE = CompilerConfigurationKey.create<Boolean>("WASM_GENERATE_CLOSED_WORLD_MULTIMODULE")
 
+    @JvmField
+    val WASM_COROUTINES_STACK_SWITCHING = CompilerConfigurationKey.create<Boolean>("WASM_COROUTINES_STACK_SWITCHING")
 }
 
 var CompilerConfiguration.wasmEnableArrayRangeChecks: Boolean
@@ -144,3 +146,6 @@ var CompilerConfiguration.wasmGenerateClosedWorldMultimodule: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
     set(value) { put(WasmConfigurationKeys.WASM_GENERATE_CLOSED_WORLD_MULTIMODULE, value) }
 
+var CompilerConfiguration.wasmCoroutinesStackSwitching: Boolean
+    get() = getBoolean(WasmConfigurationKeys.WASM_COROUTINES_STACK_SWITCHING)
+    set(value) { put(WasmConfigurationKeys.WASM_COROUTINES_STACK_SWITCHING, value) }
