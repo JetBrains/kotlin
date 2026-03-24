@@ -1200,11 +1200,11 @@ class BodyGenerator(
             }
 
 
-            wasmSymbols.suspendIntrinsic -> {
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendIntrinsic -> {
                 body.buildSuspend(contTagId, location)
             }
 
-            wasmSymbols.resumeThrowIntrinsic -> {
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowIntrinsic -> {
                 val objectToThrow = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
 
@@ -1221,19 +1221,19 @@ class BodyGenerator(
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)
-                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicValueResult), location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
-                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
+                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicSuspendResult), location)
             }
 
-            wasmSymbols.nullableContrefIntrinsic -> {
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullableContrefIntrinsic -> {
                 val wasmToType = typeCodegenContext.referenceHeapContType(1)
                 val type = WasmImmediate.HeapType(wasmToType)
                 body.buildInstr(WasmOp.REF_NULL, location, type)
             }
 
-            wasmSymbols.resumeWithIntrinsic -> {
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic -> {
                 val kotlinContinuation = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
 
@@ -1245,14 +1245,17 @@ class BodyGenerator(
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResume(zeroArgContType, contHandle, location)
-                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicValueResult), location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
-                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
+                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicSuspendResult), location)
             }
 
-            in wasmSymbols.suspendFunctionToContref -> {
-                val intrinsicIndex = wasmSymbols.suspendFunctionToContref.indexOfFirst { it == function.symbol }
+            in wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunctionToContref ?: emptyList() -> {
+                val intrinsicIndex =
+                    wasmSymbols.coroutinesStackSwitchingIntrinsics
+                        ?.suspendFunctionToContref!!
+                        .indexOfFirst { it == function.symbol }
                 val arity = intrinsicIndex + 2
                 val suspendFunctionClassType = function.parameters[0].type
                 val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
@@ -1265,7 +1268,6 @@ class BodyGenerator(
                 castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
                 body.buildContNew(contType, location)
                 body.buildContBind(contType, bindContType, location)
-                body.buildInstr(WasmOp.RETURN, location)
             }
 
             wasmSymbols.wasmArrayCopy -> {
