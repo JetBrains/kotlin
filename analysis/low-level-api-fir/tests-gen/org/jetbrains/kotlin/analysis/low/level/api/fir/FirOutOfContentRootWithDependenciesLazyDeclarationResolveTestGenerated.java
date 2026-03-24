@@ -2652,7 +2652,7 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     @Test
     @TestMetadata("invokeGeneratedCompanionObject.kt")
     public void testInvokeGeneratedCompanionObject() {
-      run("invokeGeneratedCompanionObject.kt");
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/invokeGeneratedCompanionObject.kt");
     }
 
     @Test
