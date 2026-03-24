@@ -31,10 +31,10 @@ abstract class ModulesApiHistoryBase(rootProjectDir: File, protected val modules
     // be the same as root project path. Some projects map output outside of the root project dir, typically
     // with <some_dir>/<project_path>/build, and in that case, this path will be <some_dir>.
     // This is using set in order to de-dup paths, and avoid duplicate checks when possible.
-    protected val possibleParentsToBuildDirs: Set<Path> = setOf(
-        Paths.get(modulesInfo.rootProjectBuildDir.parentFile.absolutePath),
-        Paths.get(rootProjectDir.absolutePath)
-    )
+    protected val possibleParentsToBuildDirs: Set<Path> = buildSet {
+        modulesInfo.rootProjectBuildDir?.let { add(Paths.get(it.parentFile.absolutePath)) }
+        add(Paths.get(rootProjectDir.absolutePath))
+    }
     private val dirToHistoryFileCache = HashMap<File, Set<File>>()
 
     override fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>> {
@@ -242,14 +242,14 @@ class ModulesApiHistoryAndroid(rootProjectDir: File, modulesInfo: IncrementalMod
         return path.listFiles().filter { it.name.endsWith(".kotlin_module", ignoreCase = true) }.map { it.nameWithoutExtension }
     }
 
-    private fun getHistoryForModuleNames(path: Path, moduleNames: Iterable<String>, fileLocation: (IncrementalModuleEntry) -> File): Either<Set<File>> {
+    private fun getHistoryForModuleNames(path: Path, moduleNames: Iterable<String>, fileLocation: (IncrementalModuleEntry) -> File?): Either<Set<File>> {
         val possibleModules =
             moduleNames.flatMapTo(HashSet()) { modulesInfo.nameToModules[it] ?: emptySet() }
         val modules = possibleModules.filter { Paths.get(it.buildDir.absolutePath).isParentOf(path) }
         if (modules.isEmpty()) return Either.Error("Unknown module for $path (candidates: ${possibleModules.joinToString()})")
 
         val result = modules.mapTo(HashSet()) { fileLocation(it) }
-        return Either.Success(result)
+        return Either.Success(result.filterNotNull().toSet())
     }
 }
 
