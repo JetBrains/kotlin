@@ -63,7 +63,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 this.buildGradleKts.writeText("")
                 checkDeprecatedProperties(isDeprecationExpected = true)
 
-                this.gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError${System.lineSeparator()}")
+                this.gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic,PreHMPPFlagsError${System.lineSeparator()}")
                 checkDeprecatedProperties(isDeprecationExpected = false)
             }
         }

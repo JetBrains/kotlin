@@ -73,8 +73,7 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
 
             build(
                 "assemble",
-                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError",
-                "-Pkotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic",
+                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError,DeprecatedKotlinNativeTargetsDiagnostic",
             ) {
                 assertNoUnnamedInputsOutputs()
             }

@@ -59,8 +59,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
     ) {
         val additionalBuildArgs = buildList {
-            add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
-            add("-Pkotlin.internal.suppressGradlePluginErrors=DeprecatedKotlinNativeTargetsDiagnostic")
+            add("-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError,DeprecatedKotlinNativeTargetsDiagnostic")
         }
 
         val localRepoDir = defaultLocalRepo(gradleVersion)
