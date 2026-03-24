@@ -226,6 +226,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Don't check for visibility violations when validating IR on the target backend"
     )
 
+    val DISABLE_IR_FIELD_VISIBILITY_CHECK by enumDirective<TargetBackend>(
+        description = "Don't check for fields having non-private visibility when validating IR on the target backend"
+    )
+
     val DISABLE_IR_VARARG_TYPE_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for vararg type mismatches when validating IR on the target backend"
     )
