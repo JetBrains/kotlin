@@ -13,7 +13,7 @@ import kotlin.wasm.internal.ExcludedFromCodegen
 internal abstract class CoroutineImpl<T> : Continuation<T> {
     protected var state = 0
     protected var exceptionState = 0
-    protected var result: Any? = null
+    internal var result: Any? = null
     protected var exception: Throwable? = null
     protected var finallyPath: Array<Int>? = null
 

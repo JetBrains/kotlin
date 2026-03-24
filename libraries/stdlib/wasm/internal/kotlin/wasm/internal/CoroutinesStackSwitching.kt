@@ -62,7 +62,7 @@ internal fun nullableContrefIntrinsic(): contref1? {
 @DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturnStackSwitching(block: (Continuation<T>) -> Any?): T {
-    return (suspendIntrinsic(block) as CoroutineImplStackSwitching<*, *>).resultValue as T
+    return suspendIntrinsic(block) as T
 }
 
 @Suppress("UNUSED_PARAMETER")
@@ -74,10 +74,10 @@ internal fun <T> suspendIntrinsic(block: (Continuation<T>) -> Any?): Any? {
 }
 
 @UsedFromCompilerGeneratedCode
-internal fun <R> resumeWasmContinuationAndReturnResult(contref1: contref1, completion: Continuation<R>): Any? {
-    val wasmContinuation = WasmContinuation<Continuation<R>, R>(contref1, completion, rethrowExceptions = true)
+internal fun <R> resumeWasmContinuationAndReturnResult(contref: contref1, completion: Continuation<R>): Any? {
+    val wasmContinuation = WasmContinuation<Continuation<R>, R>(contref, completion, rethrowExceptions = true)
     wasmContinuation.resume(completion)
-    return if (wasmContinuation.wasSuspended) COROUTINE_SUSPENDED else wasmContinuation.resultValue
+    return if (wasmContinuation.wasSuspended) COROUTINE_SUSPENDED else wasmContinuation.result
 }
 
 internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T)): contref1 {

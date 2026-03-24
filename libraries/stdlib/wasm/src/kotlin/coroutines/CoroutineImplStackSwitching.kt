@@ -16,10 +16,9 @@ import kotlin.wasm.internal.resumeWithImpl
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
 internal abstract class CoroutineImplStackSwitching<T, R>(
-    private val resultContinuation: Continuation<R>,
+    protected val resultContinuation: Continuation<R>,
     val rethrowExceptions: Boolean = false
 ) : CoroutineImpl<T>() {
-    val resultValue: Any? get() = result
 
     internal var wasSuspended = false
 
@@ -66,14 +65,22 @@ internal class WasmContinuation<T, R>(
     rethrowExceptions: Boolean = false
 ) : CoroutineImplStackSwitching<T, R>(completion, rethrowExceptions) {
 
-    internal var isResumed = false
+    private var isResumed = false
+    private var isFreshInstance = true
     override fun doResume(): Any? {
         do {
             require(!isResumed) { "WasmContinuation can be resumed only once" }
             isResumed = true
+
+            val resultValue = if (isFreshInstance && exception == null) {
+                require(result == Unit || result == resultContinuation)
+                isFreshInstance = false
+                resultContinuation
+            } else result
             val resumeResult: ResumeIntrinsicResult = exception?.let {
                 resumeThrowImpl(it, wasmContBox)
-            } ?: resumeWithImpl(this, wasmContBox)
+            } ?: resumeWithImpl(resultValue, wasmContBox)
+
             wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
             isResumed = false
             wasSuspended = true
