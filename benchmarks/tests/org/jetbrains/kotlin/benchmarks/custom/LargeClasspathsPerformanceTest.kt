@@ -3,19 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("KotlinConstantConditions") // Avoid warnings on generation constant changing during experimenting
+
 package org.jetbrains.kotlin.benchmarks.custom
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.measureTime
 
 /**
  * Reproduction of https://youtrack.jetbrains.com/issue/KT-83191
+ *
+ * It simulates a large classpath scenario by creating a large number of modules with nested packages and classes.
+ * After that, it measures the kotlin compilation performance of files that import generated classes from first and last roots (best and worst scenarios).
  */
 class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String get() = tmpdir.absolutePath
@@ -53,7 +55,7 @@ class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
         val importedClassesDepthIndex = packageDepth - 1
         val importedClassesBranchingDepthIndex = packageBranchingDepth - 1
 
-        println("Timestamp: ${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}")
+        printTimeStamp()
         println("Roots count: $rootsCount")
         println("Package depth: $packageDepth")
         println("Package branching depth: $packageBranchingDepth")
@@ -149,15 +151,15 @@ class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
         println("Total number of generated Java classes: $totalNumberOfGeneratedJavaFiles")
         println()
 
-        fun generateAndCompileKotlinFile(compilationType: LargeClasspathsCompilationType): Duration {
+        fun generateAndCompileKotlinFile(compilationType: LargeClasspathsCompilationMode): Duration {
             val fileName = "$compilationType.kt"
             // It looks like it's enough to have only a single kotlin file that simulates multiple files by one super huge import list
             // Because each declaration is being cached once it's resolved.
             File(testDataDirectory, fileName).apply {
                 val content = buildString {
                     val rootIndex: Int
-                    val importedClassesFileInfo = if (compilationType != LargeClasspathsCompilationType.Warmup) {
-                        rootIndex = if (compilationType == LargeClasspathsCompilationType.FirstClasspathClasses) {
+                    val importedClassesFileInfo = if (compilationType != LargeClasspathsCompilationMode.Warmup) {
+                        rootIndex = if (compilationType == LargeClasspathsCompilationMode.FirstClasspathClasses) {
                             firstRootIndex
                         } else {
                             lastRootIndex
@@ -207,20 +209,20 @@ class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
             return compilationTime
         }
 
-        generateAndCompileKotlinFile(LargeClasspathsCompilationType.Warmup)
-        val classesFromFirstClasspathCompileTime = generateAndCompileKotlinFile(LargeClasspathsCompilationType.FirstClasspathClasses)
-        val classesFromLastClasspathCompileTime = generateAndCompileKotlinFile(LargeClasspathsCompilationType.LastClasspathClasses)
-        val diff = classesFromLastClasspathCompileTime - classesFromFirstClasspathCompileTime
-        val ratio = classesFromLastClasspathCompileTime / classesFromFirstClasspathCompileTime
-        require(diff.inWholeNanoseconds > 0) { "Increase the number of generated files because the current number doesn't provide meaningful performance difference" }
+        generateAndCompileKotlinFile(LargeClasspathsCompilationMode.Warmup)
 
-        println(
-            "${LargeClasspathsCompilationType.LastClasspathClasses}/${LargeClasspathsCompilationType.FirstClasspathClasses} diff: ${diff.inWholeMilliseconds} ms " +
-                    "(ratio: ${String.format(Locale.ENGLISH, "%.4f", ratio)})"
+        val classesFromFirstClasspathCompileTime = generateAndCompileKotlinFile(LargeClasspathsCompilationMode.FirstClasspathClasses)
+        val classesFromLastClasspathCompileTime = generateAndCompileKotlinFile(LargeClasspathsCompilationMode.LastClasspathClasses)
+
+        printTimeDiff(
+            classesFromLastClasspathCompileTime.inWholeNanoseconds,
+            classesFromFirstClasspathCompileTime.inWholeNanoseconds,
+            LargeClasspathsCompilationMode.LastClasspathClasses,
+            LargeClasspathsCompilationMode.FirstClasspathClasses,
         )
     }
 
-    enum class LargeClasspathsCompilationType {
+    enum class LargeClasspathsCompilationMode {
         Warmup,
         FirstClasspathClasses,
         LastClasspathClasses;
