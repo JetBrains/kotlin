@@ -204,7 +204,16 @@ public fun Path.copyToRecursively(
 
     fun destination(source: Path): Path {
         val relativePath = source.relativeTo(this@copyToRecursively)
-        val destination = target.resolve(relativePath.pathString)
+
+        // Source and target filesystems may use different path separators,
+        // so the only correct way to resolve a relative path from a source filesystem against
+        // a directory in a destination filesystem is by taking all its segments individually
+        // and iteratively resolving a file path starting from the `target`.
+        val destination = if (source.fileSystem === target.fileSystem) {
+            relativePath.fold(target) { acc, segment -> acc.resolve(segment) }
+        } else {
+            relativePath.fold(target) { acc, segment -> acc.resolve(segment.name) }
+        }
         if (!destination.normalize().startsWith(normalizedTarget)) {
             throw IllegalFileNameException(
                 source,
