@@ -7,15 +7,18 @@ package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineImplStateMachine
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
-internal fun <T> createCoroutineUninterceptedIntrinsics0StateMachine(
+@UsedFromCompilerGeneratedCode
+internal fun <T> createCoroutineUninterceptedIntrinsic0StateMachine(
     f: suspend () -> T,
     completion: Continuation<T>
 ): Continuation<Unit> = createSimpleCoroutineFromSuspendFunction(completion) {
     f.startCoroutineUninterceptedOrReturn(completion)
 }
 
-internal fun <R, T> createCoroutineUninterceptedIntrinsics1StateMachine(
+@UsedFromCompilerGeneratedCode
+internal fun <R, T> createCoroutineUninterceptedIntrinsic1StateMachine(
     f: suspend R.() -> T,
     receiver: R,
     completion: Continuation<T>
@@ -37,6 +40,7 @@ private inline fun <T> createSimpleCoroutineFromSuspendFunction(
 }
 
 @Suppress("UNCHECKED_CAST")
+@UsedFromCompilerGeneratedCode
 internal fun <T> createSimpleCoroutineFromSuspendFunctionStateMachine(
     completion: Continuation<T>
 ): CoroutineImplStateMachine = object : CoroutineImplStateMachine(completion as Continuation<Any?>) {

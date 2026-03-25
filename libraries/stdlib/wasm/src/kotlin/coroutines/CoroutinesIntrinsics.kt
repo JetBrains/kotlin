@@ -23,7 +23,7 @@ import kotlin.wasm.internal.*
 @kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsics0(this, completion)
+): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(this, completion)
 
 /**
  * Starts an unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
@@ -41,7 +41,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsics1(
+): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(
     this, receiver, completion
 )
 
@@ -50,7 +50,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsics2(
+): Any? = startCoroutineUninterceptedOrReturnIntrinsic2(
     this, receiver, param, completion
 )
 
@@ -77,7 +77,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
  */
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
-): Continuation<Unit> = createCoroutineUninterceptedIntrinsics0(this, completion)
+): Continuation<Unit> = createCoroutineUninterceptedIntrinsic0(this, completion)
 
 /**
  * Creates unintercepted coroutine with receiver type [R] and result type [T].
@@ -103,7 +103,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
-): Continuation<Unit> = createCoroutineUninterceptedIntrinsics1(this, receiver, completion)
+): Continuation<Unit> = createCoroutineUninterceptedIntrinsic1(this, receiver, completion)
 
 /**
  * Intercepts this continuation with [ContinuationInterceptor].
@@ -117,16 +117,18 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
     (this as? CoroutineImpl)?.intercepted() ?: this
 
+// Is replaced by Stack Switching or State Machine implementation
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <T> createCoroutineUninterceptedIntrinsics0(
+internal fun <T> createCoroutineUninterceptedIntrinsic0(
     f: suspend () -> T,
     completion: Continuation<T>
 ): Continuation<Unit> = EmptyContinuation
 
+// Is replaced by Stack Switching or State Machine implementation
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <R, T> createCoroutineUninterceptedIntrinsics1(
+internal fun <R, T> createCoroutineUninterceptedIntrinsic1(
     f: suspend R.() -> T,
     receiver: R,
     completion: Continuation<T>

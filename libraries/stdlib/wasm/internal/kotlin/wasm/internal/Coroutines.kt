@@ -34,7 +34,7 @@ internal fun <T> interceptContinuationIfNeeded(
 @UsedFromCompilerGeneratedCode
 internal suspend inline fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
-// For Bootstrap
+// Is replaced by Stack Switching or State Machine implementation
 @PublishedApi
 @DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
@@ -45,7 +45,7 @@ internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(block: (Co
 @ExcludedFromCodegen
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal fun <T> startCoroutineUninterceptedOrReturnIntrinsics0(
+internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
     f: (suspend () -> T),
     completion: Continuation<T>
 ): Any? {
@@ -56,7 +56,7 @@ internal fun <T> startCoroutineUninterceptedOrReturnIntrinsics0(
 @ExcludedFromCodegen
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsics1(
+internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
     f: (suspend R.() -> T),
     receiver: R,
     completion: Continuation<T>
@@ -68,7 +68,7 @@ internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsics1(
 @ExcludedFromCodegen
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsics2(
+internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
     f: (suspend R.(P) -> T),
     receiver: R,
     param: P,

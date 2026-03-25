@@ -231,27 +231,27 @@ class BackendWasmSymbols(
     }
 
     val startCoroutineUninterceptedOrReturnIntrinsics = listOf(
-        CallableIds.startCoroutineUninterceptedOrReturnIntrinsics0.functionSymbol(),
-        CallableIds.startCoroutineUninterceptedOrReturnIntrinsics1.functionSymbol(),
-        CallableIds.startCoroutineUninterceptedOrReturnIntrinsics2.functionSymbol(),
+        CallableIds.startCoroutineUninterceptedOrReturnIntrinsic0.functionSymbol(),
+        CallableIds.startCoroutineUninterceptedOrReturnIntrinsic1.functionSymbol(),
+        CallableIds.startCoroutineUninterceptedOrReturnIntrinsic2.functionSymbol(),
     )
 
     val createCoroutineUninterceptedIntrinsics =
         if (configuration.wasmCoroutinesStackSwitching) {
             listOf(
-                CallableIds.createCoroutineUninterceptedIntrinsics0StackSwitching.functionSymbol(),
-                CallableIds.createCoroutineUninterceptedIntrinsics1StackSwitching.functionSymbol(),
+                CallableIds.createCoroutineUninterceptedIntrinsic0StackSwitching.functionSymbol(),
+                CallableIds.createCoroutineUninterceptedIntrinsic1StackSwitching.functionSymbol(),
             )
         } else {
             listOf(
-                CallableIds.createCoroutineUninterceptedIntrinsics0StateMachine.functionSymbol(),
-                CallableIds.createCoroutineUninterceptedIntrinsics1StateMachine.functionSymbol(),
+                CallableIds.createCoroutineUninterceptedIntrinsic0StateMachine.functionSymbol(),
+                CallableIds.createCoroutineUninterceptedIntrinsic1StateMachine.functionSymbol(),
             )
         }
     val createCoroutineUninterceptedIntrinsicsGeneral =
         listOf(
-            CallableIds.createCoroutineUninterceptedIntrinsics0.functionSymbol(),
-            CallableIds.createCoroutineUninterceptedIntrinsics1.functionSymbol(),
+            CallableIds.createCoroutineUninterceptedIntrinsic0.functionSymbol(),
+            CallableIds.createCoroutineUninterceptedIntrinsic1.functionSymbol(),
         )
 
     inner class CoroutinesStateMachineIntrinsics {
@@ -528,9 +528,9 @@ private object CallableIds {
     val nullableDoubleIeee754Equals = "nullableDoubleIeee754Equals".wasmCallableId
     val returnArgumentIfItIsKotlinAny = "returnArgumentIfItIsKotlinAny".wasmCallableId
 
-    val startCoroutineUninterceptedOrReturnIntrinsics0 = "startCoroutineUninterceptedOrReturnIntrinsics0".wasmCallableId
-    val startCoroutineUninterceptedOrReturnIntrinsics1 = "startCoroutineUninterceptedOrReturnIntrinsics1".wasmCallableId
-    val startCoroutineUninterceptedOrReturnIntrinsics2 = "startCoroutineUninterceptedOrReturnIntrinsics2".wasmCallableId
+    val startCoroutineUninterceptedOrReturnIntrinsic0 = "startCoroutineUninterceptedOrReturnIntrinsic0".wasmCallableId
+    val startCoroutineUninterceptedOrReturnIntrinsic1 = "startCoroutineUninterceptedOrReturnIntrinsic1".wasmCallableId
+    val startCoroutineUninterceptedOrReturnIntrinsic2 = "startCoroutineUninterceptedOrReturnIntrinsic2".wasmCallableId
 
     val suspendCoroutineUninterceptedOrReturnStackSwitching = "suspendCoroutineUninterceptedOrReturnStackSwitching".wasmCallableId
     val suspendCoroutineUninterceptedOrReturnStateMachine = "suspendCoroutineUninterceptedOrReturnStateMachine".wasmCallableId
@@ -599,14 +599,14 @@ private object CallableIds {
     val createSimpleCoroutineFromSuspendFunctionStateMachine =
         "createSimpleCoroutineFromSuspendFunctionStateMachine".coroutinesIntrinsicsCallableId
 
-    val createCoroutineUninterceptedIntrinsics0 = "createCoroutineUninterceptedIntrinsics0".coroutinesIntrinsicsCallableId
-    val createCoroutineUninterceptedIntrinsics1 = "createCoroutineUninterceptedIntrinsics1".coroutinesIntrinsicsCallableId
+    val createCoroutineUninterceptedIntrinsic0 = "createCoroutineUninterceptedIntrinsic0".coroutinesIntrinsicsCallableId
+    val createCoroutineUninterceptedIntrinsic1 = "createCoroutineUninterceptedIntrinsic1".coroutinesIntrinsicsCallableId
 
-    val createCoroutineUninterceptedIntrinsics0StateMachine = "createCoroutineUninterceptedIntrinsics0StateMachine".coroutinesIntrinsicsCallableId
-    val createCoroutineUninterceptedIntrinsics1StateMachine = "createCoroutineUninterceptedIntrinsics1StateMachine".coroutinesIntrinsicsCallableId
+    val createCoroutineUninterceptedIntrinsic0StateMachine = "createCoroutineUninterceptedIntrinsic0StateMachine".coroutinesIntrinsicsCallableId
+    val createCoroutineUninterceptedIntrinsic1StateMachine = "createCoroutineUninterceptedIntrinsic1StateMachine".coroutinesIntrinsicsCallableId
 
-    val createCoroutineUninterceptedIntrinsics0StackSwitching = "createCoroutineUninterceptedIntrinsics0StackSwitching".coroutinesIntrinsicsCallableId
-    val createCoroutineUninterceptedIntrinsics1StackSwitching = "createCoroutineUninterceptedIntrinsics1StackSwitching".coroutinesIntrinsicsCallableId
+    val createCoroutineUninterceptedIntrinsic0StackSwitching = "createCoroutineUninterceptedIntrinsic0StackSwitching".coroutinesIntrinsicsCallableId
+    val createCoroutineUninterceptedIntrinsic1StackSwitching = "createCoroutineUninterceptedIntrinsic1StackSwitching".coroutinesIntrinsicsCallableId
 
     // Collection functions
     private val String.collectionCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
