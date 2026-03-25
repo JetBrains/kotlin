@@ -46,20 +46,28 @@ projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
+val generatorProject: Project = project(":compiler:build-tools:kotlin-build-tools-options-generator")
+val sinceVersionsRegistry = generatorProject.projectDir.resolve("resources/since-versions.properties")
+
 generatedSourcesTask(
     taskName = "generateBtaArguments",
-    generatorProject = ":compiler:build-tools:kotlin-build-tools-options-generator",
+    generatorProject = generatorProject.path,
     generatorRoot = "compiler/build-tools/kotlin-build-tools-options-generator/src",
     generatorMainClass = "org.jetbrains.kotlin.buildtools.options.generator.MainKt",
     argsProvider = { generationRoot ->
         listOf(
             generationRoot.toString(),
             version.toString(),
+            sinceVersionsRegistry.absolutePath,
             "api",
             "jvmCompilerArguments",
         )
     }
 )
+
+tasks.named<JavaExec>("generateBtaArguments") {
+    inputs.file(sinceVersionsRegistry)
+}
 
 // Everything below is copied from "generated-sources" plugin, as applying it in this particular module creates a dependency cycle and
 // breaks the build. This should be deleted when a solution for the cyclical dependency problem is solved.

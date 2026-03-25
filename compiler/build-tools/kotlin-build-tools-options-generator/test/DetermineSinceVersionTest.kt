@@ -4,11 +4,13 @@
  */
 
 import com.squareup.kotlinpoet.ClassName
-import org.jetbrains.kotlin.buildtools.options.generator.determineSinceVersion
+import org.jetbrains.kotlin.buildtools.options.generator.SinceVersionsRegistry
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
 internal class DetermineSinceVersionTest {
@@ -18,55 +20,53 @@ internal class DetermineSinceVersionTest {
 
     private val currentVersion = "2.4.0"
     private val className = ClassName("org.jetbrains.kotlin.buildtools.api.arguments.enums", "SomeMode")
-    private val relativeFilePath = "${className.packageName.replace('.', '/')}/${className.simpleName}.kt"
+
+    private val registryFile get() = tempDir.resolve("since-versions.properties")
 
     @Test
-    @DisplayName("Returns currentVersion when the output file does not yet exist")
-    fun newFileShouldUseCurrentVersion() {
-        val result = determineSinceVersion(tempDir, currentVersion, className)
+    @DisplayName("Returns currentVersion when the registry file does not exist")
+    fun missingRegistryFileUsesCurrentVersion() {
+        val result = SinceVersionsRegistry(registryFile).getOrPut(className, currentVersion)
 
         assertEquals(currentVersion, result)
     }
 
     @Test
-    @DisplayName("returns the @since version read from an existing file")
-    fun existingFileShouldPreserveItsVersion() {
-        writeFileWithSince("2.3.0")
-        val result = determineSinceVersion(tempDir, currentVersion, className)
+    @DisplayName("Returns the version stored in the registry for an existing entry")
+    fun existingEntryPreservesItsVersion() {
+        registryFile.writeText("${className.canonicalName}=2.3.0\n")
+
+        val result = SinceVersionsRegistry(registryFile).getOrPut(className, currentVersion)
+
         assertEquals("2.3.0", result)
     }
 
     @Test
-    @DisplayName("returns currentVersion when the existing file has no @since tag")
-    fun existingFileWithNoSinceTagFallsBackToCurrentVersion() {
-        writeFile("/** No @since annotation here. */\nclass SomeMode")
-        val result = determineSinceVersion(tempDir, currentVersion, className)
+    @DisplayName("Returns currentVersion and adds the entry when the class is not in the registry")
+    fun newClassGetsCurrentVersionAndIsPersisted() {
+        registryFile.writeText("org.example.OtherClass=2.3.0\n")
+        val registry = SinceVersionsRegistry(registryFile)
+
+        val result = registry.getOrPut(className, currentVersion)
+        registry.writeToFile()
+
         assertEquals(currentVersion, result)
+        val written = registryFile.readText()
+        assert("${className.canonicalName}=$currentVersion" in written) {
+            "Expected new entry in registry, got:\n$written"
+        }
     }
 
     @Test
-    @DisplayName("returns the first @since version when there are multiple occurrences")
-    fun existingFileWithMultipleSinceTagsReturnsFirst() {
-        writeFile("/** @since 2.3.0 */\nfun foo() {}\n/** @since 2.4.0 */\nfun bar() {}")
-        val result = determineSinceVersion(tempDir, currentVersion, className)
-        assertEquals("2.3.0", result)
-    }
+    @DisplayName("writeToFile produces alphabetically sorted key=value lines")
+    fun writeToFileProducesSortedOutput() {
+        val registry = SinceVersionsRegistry(registryFile)
+        registry.getOrPut(ClassName("org.example", "ZClass"), "2.4.0")
+        registry.getOrPut(ClassName("org.example", "AClass"), "2.3.0")
+        registry.writeToFile()
 
-    @Test
-    @DisplayName("existing file version is preserved even when currentVersion is older")
-    fun existingFileVersionPreservedRegardlessOfCurrentVersion() {
-        writeFileWithSince("2.3.0")
-        val result = determineSinceVersion(tempDir, "2.2.0", className)
-        assertEquals("2.3.0", result)
-    }
-
-    private fun writeFileWithSince(version: String) {
-        writeFile("/*\n * @since $version\n */\nenum class SomeMode { ENTRY }")
-    }
-
-    private fun writeFile(content: String) {
-        val file = tempDir.resolve(relativeFilePath).toFile()
-        file.parentFile.mkdirs()
-        file.writeText(content)
+        val lines = registryFile.readText().trimEnd().lines()
+        assertEquals("org.example.AClass=2.3.0", lines[0])
+        assertEquals("org.example.ZClass=2.4.0", lines[1])
     }
 }

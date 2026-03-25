@@ -22,7 +22,7 @@ internal class BtaApiGenerator(
     private val targetPackage: String,
     private val skipXX: Boolean,
     private val kotlinVersion: KotlinReleaseVersion,
-    private val outputDirectory: Path,
+    private val sinceVersionsRegistry: SinceVersionsRegistry
 ) : BtaGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
@@ -199,7 +199,7 @@ internal class BtaApiGenerator(
     }
 
     private fun determineSinceVersion(className: ClassName): String =
-        determineSinceVersion(outputDirectory, kotlinVersion.releaseName, className)
+        sinceVersionsRegistry.getOrPut(className, kotlinVersion.releaseName)
 
     private fun PropertySpec.Builder.maybeAddExperimentalAnnotation(experimental: Boolean) {
         if (experimental) {

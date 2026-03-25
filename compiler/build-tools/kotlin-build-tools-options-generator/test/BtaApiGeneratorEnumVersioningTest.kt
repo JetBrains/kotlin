@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.buildtools.options.generator.API_ARGUMENTS_PACKAGE
 import org.jetbrains.kotlin.buildtools.options.generator.API_ENUMS_PACKAGE
 import org.jetbrains.kotlin.buildtools.options.generator.BtaApiGenerator
+import org.jetbrains.kotlin.buildtools.options.generator.SinceVersionsRegistry
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.writeText
 import kotlin.test.assertFalse
@@ -24,6 +24,9 @@ internal class BtaApiGeneratorEnumVersioningTest {
 
     @TempDir
     private lateinit var genDir: Path
+
+    @TempDir
+    private lateinit var registryDir: Path
 
     private lateinit var testJvmCompilerArgumentsLevel: KotlinCompilerArgumentsLevel
     private lateinit var testJvmCompilerArguments: Set<KotlinCompilerArgument>
@@ -83,18 +86,16 @@ internal class BtaApiGeneratorEnumVersioningTest {
     }
 
     @Test
-    @DisplayName("Modifying enum class content does not change the version")
-    fun modifyingEnumFileContentPreservesVersion() {
+    @DisplayName("Re-running the generator with same version preserves the version from the registry")
+    fun registryVersionPreservedOnRegeneration() {
         val kotlinVersion = KotlinReleaseVersion.v2_0_0
-        val (targetPath, originalContent) = generateAndWriteArgumentsForLevel(kotlinVersion).enumFiles().first()
-        val modifiedContent = originalContent.plus("\n// Extra content appended by a previous toolchain run")
-        genDir.resolve(targetPath).toFile().writeText(modifiedContent)
+        generateAndWriteArgumentsForLevel(kotlinVersion)
 
         val (_, content) = generateAndWriteArgumentsForLevel(kotlinVersion).enumFiles().first()
 
         assertTrue(
             "@since ${kotlinVersion.releaseName}" in content,
-            "After content modification, version should be re-read from the existing file unchanged"
+            "After regeneration, version should be re-read from the registry unchanged"
         )
     }
 
@@ -123,22 +124,6 @@ internal class BtaApiGeneratorEnumVersioningTest {
         )
     }
 
-    @Test
-    @DisplayName("Existing enum file with no @since tag falls back to the current version")
-    fun existingEnumFileWithNoSinceTagFallsBackToCurrentVersion() {
-        val enumsRelPath = "org/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode.kt"
-        genDir.resolve(enumsRelPath).toFile().also { it.parentFile.mkdirs() }
-            .writeText("enum class AssertionsMode { ALWAYS_ENABLE }")
-
-        val kotlinVersion = KotlinReleaseVersion.v2_0_0
-        val content = generateAndWriteArgumentsForLevel(kotlinVersion).enumFiles().first().second
-
-        assertTrue(
-            "@since ${kotlinVersion.releaseName}" in content,
-            "When the existing file has no @since tag the generator should fall back to the current version ${kotlinVersion.releaseName}"
-        )
-    }
-
     private fun createKotlinCompilerArgument(name: String, valueType: KotlinArgumentValueType<*>) =
         KotlinCompilerArgument(
             name = name,
@@ -164,15 +149,18 @@ internal class BtaApiGeneratorEnumVersioningTest {
         kotlinVersion: KotlinReleaseVersion,
         level: KotlinCompilerArgumentsLevel = testJvmCompilerArgumentsLevel,
     ): List<Pair<Path, String>> {
-        val output = createBtaApiGenerator(kotlinVersion).generateArgumentsForLevel(level)
+        val registry = SinceVersionsRegistry(registryDir.resolve("since-versions.properties"))
+        val generator = createBtaApiGenerator(kotlinVersion, registry)
+        val output = generator.generateArgumentsForLevel(level)
         output.generatedFiles.forEach { (relativePath, content) ->
             genDir.resolve(relativePath).toFile().also { it.parentFile.mkdirs() }.writeText(content)
         }
+        registry.writeToFile()
         return output.generatedFiles
     }
 
-    private fun createBtaApiGenerator(kotlinVersion: KotlinReleaseVersion) =
-        BtaApiGenerator(API_ARGUMENTS_PACKAGE, skipXX = true, kotlinVersion, genDir)
+    private fun createBtaApiGenerator(kotlinVersion: KotlinReleaseVersion, registry: SinceVersionsRegistry) =
+        BtaApiGenerator(API_ARGUMENTS_PACKAGE, skipXX = true, kotlinVersion, registry)
 
     private fun List<Pair<Path, String>>.enumFiles() =
         filter { (path, _) -> path.toString().contains(API_ENUMS_PACKAGE.replace('.', '/')) }

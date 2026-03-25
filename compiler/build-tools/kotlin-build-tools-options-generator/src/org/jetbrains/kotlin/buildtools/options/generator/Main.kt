@@ -21,6 +21,7 @@ import kotlin.io.path.walk
  * Arguments are as follows:
  * 1. `<path>` - Output directory for generated classes
  * 1. `<kotlin-version>` - the release of Kotlin for which arguments should be generated, e.g. "2.2.0"
+ * 1. `<since-versions-registry>` - path to the `.properties` file tracking each generated class's `@since` version
  * 1. `"api"` - (optional) turns on API classes generation and marks the start of parameters for the API generator:
  *     1. `"*"` or `<argumentsLevelName1,argumentsLevelName2>` -
  *     generate classes for all levels (`*`) or only generate classes for the specified list of argument level names and their parents
@@ -44,6 +45,9 @@ fun main(args: Array<String>) {
             parseLastKotlinReleaseVersion(argVersionString)
         }
     }
+    val sinceVersionsRegistryFile = Paths.get(args[2])
+    val sinceVersionsRegistry = SinceVersionsRegistry(sinceVersionsRegistryFile)
+
     val apiArgsStart = args.indexOf("api").let { if (it == -1) null else it }
     val implArgsStart = args.indexOf("impl").let { if (it == -1) null else it }
 
@@ -63,7 +67,12 @@ fun main(args: Array<String>) {
         val generateCompatLayer = localArgs.size > 3 && localArgs[3] == "compat"
         when (localArgs[0]) {
             "api" -> {
-                BtaApiGenerator(targetPackage ?: API_ARGUMENTS_PACKAGE, skipXX = true, kotlinVersion, genDir) to allowedLevels
+                BtaApiGenerator(
+                    targetPackage ?: API_ARGUMENTS_PACKAGE,
+                    skipXX = true,
+                    kotlinVersion,
+                    sinceVersionsRegistry
+                ) to allowedLevels
             }
             "impl" -> {
                 BtaImplGenerator(
@@ -92,6 +101,7 @@ fun main(args: Array<String>) {
             }
             levelsToProcess += currentLevel.level.nestedLevels.map { LevelWithParent(it, output.argumentTypeName) }
         }
+        sinceVersionsRegistry.writeToFile()
     }
     genDir.walk().filter { it.isRegularFile() }.forEach {
         if (it !in generatedFiles) {
