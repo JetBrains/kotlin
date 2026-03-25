@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_FIR_METADATA_LOADING_K1
+// IGNORE_FIR_METADATA_LOADING_K1: ANY
 // IGNORE_BACKEND_K1: ANY
 
 package test
