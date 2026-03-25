@@ -82,7 +82,10 @@ projectTests {
         requirePlatformLibs = true,
         customTestDependencies = listOf(litmusKt),
         allowParallelExecution = false,
-    )
+    ) {
+        // nativeTest sets workingDir to rootDir so here we need to override it
+        workingDir = projectDir
+    }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateLitmusTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
