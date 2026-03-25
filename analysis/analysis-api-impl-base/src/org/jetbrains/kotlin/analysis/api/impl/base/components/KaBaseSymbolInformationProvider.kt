@@ -10,9 +10,13 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 @KaImplementationDetail
 abstract class KaBaseSymbolInformationProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaSymbolInformationProvider {
+    override val KaSymbol.isDeprecated: Boolean
+        get() = withValidityAssertion { deprecation != null }
+
     override val KaKotlinPropertySymbol.isInline: Boolean
         get() = withValidityAssertion {
             getter?.isInline == true && (isVal || setter?.isInline == true)

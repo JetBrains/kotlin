@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
 import org.jetbrains.kotlin.types.Variance
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
@@ -89,7 +89,7 @@ public class KaDebugRenderer(
                     renderComputedValue("annotationApplicableTargets", printer, currentSymbolStack) { symbol.annotationApplicableTargets }
                 }
 
-                renderComputedValue("deprecationStatus", printer, currentSymbolStack) { symbol.deprecationStatus }
+                renderComputedValue("deprecation", printer, currentSymbolStack) { symbol.deprecation }
 
                 if (symbol is KaNamedFunctionSymbol) {
                     renderComputedValue("returnValueStatus", printer, currentSymbolStack) { symbol.returnValueStatus }
@@ -340,12 +340,11 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun renderDeprecationInfo(info: DeprecationInfo, printer: PrettyPrinter) {
+    private fun renderKaDeprecation(deprecation: KaDeprecation, printer: PrettyPrinter) {
         with(printer) {
-            append("DeprecationInfo(")
-            append("deprecationLevel=${info.deprecationLevel}, ")
-            append("propagatesToOverrides=${info.propagatesToOverrides}, ")
-            append("message=${info.message}")
+            append("KaDeprecation(")
+            append("level=${deprecation.level}, ")
+            append("isPropagatedToOverrides=${deprecation.isPropagatedToOverrides}")
             append(")")
         }
     }
@@ -375,7 +374,7 @@ public class KaDebugRenderer(
             is Name -> printer.append(value.asString())
             is FqName -> printer.append(value.asString())
             is ClassId -> printer.append(value.asString())
-            is DeprecationInfo -> renderDeprecationInfo(value, printer)
+            is KaDeprecation -> renderKaDeprecation(value, printer)
             is Visibility -> printer.append(value::class.java.simpleName)
             // Unsigned integers
             is UByte -> printer.append(value.toString())

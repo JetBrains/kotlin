@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -64,4 +65,144 @@ public interface KaAnnotation : KaLifetimeOwner {
      * the annotation application is unresolved.
      */
     public val constructorSymbol: KaConstructorSymbol?
+}
+
+/**
+ * Represents an [annotation use-site target](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets) that specifies
+ * which element a particular annotation applies to.
+ *
+ * In Kotlin, when a declaration (such as a property) maps to multiple underlying elements (backing field, getter, setter, etc.),
+ * a use-site target disambiguates which element receives the annotation.
+ *
+ * #### Example:
+ *
+ * ```kotlin
+ * class Person(@field:NotNull @get:JsonProperty("name") val name: String)
+ * ```
+ *
+ * Here, `@field:NotNull` targets the backing field, while `@get:JsonProperty("name")` targets the getter.
+ *
+ * @property keyword The keyword used in source code for this use-site target (e.g., `"field"`, `"get"`, `"param"`).
+ */
+@KaExperimentalApi
+public enum class KaAnnotationUseSiteTarget(public val keyword: String) {
+    /**
+     * A meta-target for properties that propagates the annotation to all applicable use sites, including the constructor parameter,
+     * property, backing field, getter, and setter parameter.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * class Person(@all:NotNull val name: String)
+     * ```
+     */
+    ALL("all"),
+
+    /**
+     * The backing field of a property.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * @field:NotNull
+     * val name: String = ""
+     * ```
+     */
+    FIELD("field"),
+
+    /**
+     * The file itself.
+     * File-level annotations are placed at the top of the file, before the `package` statement.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * @file:JvmName("Utils")
+     * package org.example
+     * ```
+     */
+    FILE("file"),
+
+    /**
+     * The Kotlin property itself.
+     * This target is not visible from Java.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * @property:Deprecated("Use 'fullName' instead")
+     * val name: String = ""
+     * ```
+     */
+    PROPERTY("property"),
+
+    /**
+     * The property getter.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * @get:JsonProperty("name")
+     * val name: String = ""
+     * ```
+     */
+    PROPERTY_GETTER("get"),
+
+    /**
+     * The property setter.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * @set:Inject
+     * var dependency: Service? = null
+     * ```
+     */
+    PROPERTY_SETTER("set"),
+
+    /**
+     * The extension receiver parameter of an extension function or property.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * fun @receiver:NotNull String.isNonEmpty(): Boolean = isNotEmpty()
+     * ```
+     */
+    RECEIVER("receiver"),
+
+    /**
+     * A constructor parameter corresponding to a property declared in the primary constructor.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * class Person(@param:NotNull val name: String)
+     * ```
+     */
+    CONSTRUCTOR_PARAMETER("param"),
+
+    /**
+     * The parameter of a property setter.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * @setparam:NotNull
+     * var name: String = ""
+     * ```
+     */
+    SETTER_PARAMETER("setparam"),
+
+    /**
+     * The field storing the delegate instance for a delegated property.
+     *
+     * #### Example:
+     *
+     * ```kotlin
+     * @delegate:Inject
+     * val lazyValue: String by lazy { "Hello" }
+     * ```
+     */
+    PROPERTY_DELEGATE_FIELD("delegate");
 }

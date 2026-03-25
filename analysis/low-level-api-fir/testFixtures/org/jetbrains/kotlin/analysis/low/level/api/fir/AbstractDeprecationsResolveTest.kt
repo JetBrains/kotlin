@@ -92,7 +92,7 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
         val targetSymbol = symbolSupplier(rootSymbol) ?: return
         testServices.assertions.assertEqualsToTestOutputFile(beforeRendered, extension = ".${name}.before.txt")
         val deprecationStatus = buildString {
-            appendLine("Declaration deprecation: " + targetSymbol.deprecationStatus)
+            appendLine("Declaration deprecation: " + targetSymbol.deprecation)
         }
         testServices.assertions.assertEqualsToTestOutputFile(
             renderFirElement(rootSymbolFir.fir),
