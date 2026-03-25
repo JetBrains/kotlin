@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 @Suppress("UNUSED")
 class FlexibleTypeProjectionCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
-    AbstractTypeCreatorDslTest.TestCases(session, caretToType) {
+    DslTypeCreationTestCases(session, caretToType) {
     fun testAnyAndNullableAny(): KaType? {
         val lowerBound = getTypeByCaret("lower")
         val upperBound = getTypeByCaret("upper")

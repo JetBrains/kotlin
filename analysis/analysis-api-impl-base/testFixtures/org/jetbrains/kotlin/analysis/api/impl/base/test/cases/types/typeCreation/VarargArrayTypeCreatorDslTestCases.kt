@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 
 @Suppress("UNUSED")
 class VarargArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
-    AbstractTypeCreatorDslTest.TestCases(session, caretToType) {
+    DslTypeCreationTestCases(session, caretToType) {
     fun testBoxedArray(): KaType {
         val type = getTypeByCaret("type")
         return session.typeCreator.varargArrayType(type)
