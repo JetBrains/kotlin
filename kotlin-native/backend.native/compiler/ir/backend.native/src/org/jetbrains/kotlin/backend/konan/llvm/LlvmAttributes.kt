@@ -20,8 +20,6 @@ internal fun addDefaultLlvmFunctionAttributes(context: Context, llvmFunction: LL
         // Note: this is default for clang on at least on iOS and macOS.
         enforceFramePointer(llvmFunction, context)
     }
-    // Emit .eh_frame unwind tables so that the hot-reload runtime can do proper exception handling.
-    addLlvmFunctionEnumAttribute(llvmFunction, getLlvmAttributeKindId("uwtable"), 2) // 2 = async
 }
 
 /**
