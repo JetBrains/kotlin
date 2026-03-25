@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -67,11 +66,11 @@ internal object KDocReferenceResolver {
 
     context(_: KaSession)
     private fun <T : KaSymbol> Iterable<T>.getNonHiddenDeclarations(): List<T> =
-        this.filter { it.deprecationStatus?.deprecationLevel != DeprecationLevelValue.HIDDEN }
+        this.filter { it.deprecation?.level != KaDeprecationLevel.HIDDEN }
 
     context(_: KaSession)
     private fun <T : KaSymbol> Sequence<T>.getNonHiddenDeclarations(): Sequence<T> =
-        this.filter { it.deprecationStatus?.deprecationLevel != DeprecationLevelValue.HIDDEN }
+        this.filter { it.deprecation?.level != KaDeprecationLevel.HIDDEN }
 
     /**
      * Resolves the [selectedFqName] of KDoc
