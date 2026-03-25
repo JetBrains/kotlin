@@ -315,15 +315,10 @@ class ObjHolder {
    ObjHeader* obj_;
 };
 
-// ExceptionObjHolder needs default visibility so its typeinfo (__ZTI18ExceptionObjHolder)
-// is exported to the dynamic symbol table. This is required for hot reload: when JITLink
-// loads bootstrap.o, it needs to resolve the typeinfo for C++ exception handling.
-// Without default visibility, the typeinfo would be hidden and dlsym() couldn't find it.
-//
 // NOTE: The destructor is declared here but defined in ExceptionObjHolder.cpp to serve as
 // the "key function". This ensures the typeinfo is emitted exactly once (in that .cpp file)
 // with proper linkage, rather than being emitted as weak in every translation unit.
-class __attribute__((visibility("default"))) ExceptionObjHolder {
+class ExceptionObjHolder {
 public:
     static void Throw(ObjHeader* exception) RUNTIME_NORETURN;
 
