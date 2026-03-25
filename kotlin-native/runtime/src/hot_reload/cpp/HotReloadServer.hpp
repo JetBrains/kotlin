@@ -31,10 +31,10 @@ public:
                     throw std::out_of_range("Port number out of range");
                 return port;
             } catch (std::invalid_argument&) {
-                HRLogWarning("(HotReloadServer) Parsed invalid server port, falling back to the default one");
+                HRLogWarning("Parsed invalid server port, falling back to the default one");
                 return kDefaultServerPort;
             } catch (std::out_of_range&) {
-                HRLogWarning("(HotReloadServer) Out of range server port, falling back to the default one");
+                HRLogWarning("Out of range server port, falling back to the default one");
                 return kDefaultServerPort;
             }
         }
@@ -53,14 +53,14 @@ public:
         // Create socket
         serverFd = socket(AF_INET, SOCK_STREAM, 0);
         if (serverFd == -1) {
-            HRLogError("(HotReloadServer) Failed to create TCP socket for reload requests");
+            HRLogError("Server failed to create TCP socket for reload requests");
             return false;
         }
 
         // Set socket options to reuse address
         int opt = 1;
         if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
-            HRLogError("(HotReloadServer) Failed to set socket options");
+            HRLogError("Server failed to set socket options");
             close(serverFd);
             return false;
         }
@@ -72,20 +72,20 @@ public:
         address.sin_port = htons(port);
 
         if (bind(serverFd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) < 0) {
-            HRLogError("(HotReloadServer) Failed to bind to port %s:%d", kServerEndpoint, port);
+            HRLogError("Server failed to bind to port %s:%d", kServerEndpoint, port);
             close(serverFd);
             return false;
         }
 
         // Listen for connections
         if (listen(serverFd, 3) < 0) {
-            HRLogError("(HotReloadServer) Failed to listen on socket");
+            HRLogError("Server failed to listen on socket");
             close(serverFd);
             return false;
         }
 
         running = true;
-        HRLogInfo("(HotReloadServer) Listening on %s:%d", kServerEndpoint, port);
+        HRLogInfo("Server listening on %s:%d", kServerEndpoint, port);
         return true;
     }
 
@@ -99,7 +99,7 @@ public:
 #endif
 
             if (!running) {
-                HRLogError("(HotReloadServer) Server not started!");
+                HRLogError("Server not started!");
                 return;
             }
 
@@ -110,12 +110,12 @@ public:
                 const int clientSocket = accept(serverFd, reinterpret_cast<struct sockaddr*>(&clientAddress), &clientLen);
                 if (clientSocket < 0) {
                     if (running) {
-                        HRLogError("(HotReloadServer) Failed to accept connection, moving to next one...");
+                        HRLogError("Server failed to accept connection, moving to next one...");
                     }
                     continue;
                 }
 
-                HRLogDebug("(HotReloadServer) Accepting incoming client");
+                HRLogDebug("Server started accepting incoming client");
                 handleReloadMessage(clientSocket, onReloadMessageCallback);
                 close(clientSocket);
             }
