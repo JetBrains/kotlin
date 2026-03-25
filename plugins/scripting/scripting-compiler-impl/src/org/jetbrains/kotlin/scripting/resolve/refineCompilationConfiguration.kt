@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.scripting.resolve
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
@@ -157,16 +158,17 @@ typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCom
 val ScriptCompilationConfigurationKeys.resolvedImportScripts by PropertiesCollection.key<List<SourceCode>>(isTransient = true)
 
 // left for binary compatibility with Kotlin Notebook plugin
-fun refineScriptCompilationConfiguration(
+fun refineScriptCompilationConfigurationBlocking(
     script: SourceCode,
     definition: ScriptDefinition,
     project: Project,
     providedConfiguration: ScriptCompilationConfiguration? = null,
 ): ScriptCompilationConfigurationResult {
-    return refineScriptCompilationConfiguration(script, definition, project, providedConfiguration, null)
+    return refineScriptCompilationConfigurationBlocking(script, definition, project, providedConfiguration, null)
 }
 
-fun refineScriptCompilationConfiguration(
+@Deprecated("Use 'refineScriptCompilationConfiguration' instead")
+fun refineScriptCompilationConfigurationBlocking(
     script: SourceCode,
     definition: ScriptDefinition,
     project: Project,
@@ -180,6 +182,32 @@ fun refineScriptCompilationConfiguration(
         runReadAction {
             getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, definition.contextClassLoader)
         }
+    return compilationConfiguration.refineOnAnnotations(script, collectedData)
+        .onSuccess {
+            it.refineBeforeCompiling(script, collectedData)
+        }.onSuccess {
+            it.resolveImportsToVirtualFiles(knownVirtualFileSources)
+        }.onSuccess {
+            ScriptCompilationConfigurationWrapper(
+                ktFileSource,
+                it.adjustByDefinition(definition)
+            ).asSuccess()
+        }
+}
+
+suspend fun refineScriptCompilationConfiguration(
+    script: SourceCode,
+    definition: ScriptDefinition,
+    project: Project,
+    providedConfiguration: ScriptCompilationConfiguration? = null, // if null - take from definition
+    knownVirtualFileSources: MutableMap<String, VirtualFileScriptSource>? = null,
+): ScriptCompilationConfigurationResult {
+    // TODO: add location information on refinement errors
+    val ktFileSource = script.toKtFileSource(definition, project)
+    val compilationConfiguration = providedConfiguration ?: definition.compilationConfiguration
+    val collectedData = readAction {
+        getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, definition.contextClassLoader)
+    }
     return compilationConfiguration.refineOnAnnotations(script, collectedData)
         .onSuccess {
             it.refineBeforeCompiling(script, collectedData)

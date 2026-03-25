@@ -63,7 +63,7 @@ class CliScriptConfigurationsProvider(
             val scriptDef = scriptDefinitionProvider.findDefinition(source)
             if (scriptDef != null) {
                 val result =
-                    refineScriptCompilationConfiguration(
+                    refineScriptCompilationConfigurationBlocking(
                         source, scriptDef, project, providedConfiguration, knownVirtualFileSources
                     )
 
