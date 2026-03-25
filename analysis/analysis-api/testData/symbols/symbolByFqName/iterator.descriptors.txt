@@ -38,7 +38,7 @@ KaNamedClassSymbol:
       getContainingFileSymbol: null
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescTypeParameterSymbol
 
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -46,5 +46,5 @@ KaNamedClassSymbol:
   getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
 
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: kotlin.collections.Iterator

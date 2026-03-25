@@ -45,12 +45,12 @@ KaNamedClassSymbol:
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: kotlin.Array

@@ -33,7 +33,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(custom_variable_param_property.kt)
     getContainingJvmClassName: Custom_variable_param_propertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /prop
   contextParameters: []
@@ -63,7 +63,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(custom_variable_param_property.kt)
     getContainingJvmClassName: Custom_variable_param_propertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -133,7 +133,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(custom_variable_param_property.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -170,21 +170,21 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(custom_variable_param_property.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(custom_variable_param_property.kt)
     getContainingJvmClassName: Custom_variable_param_propertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(custom_variable_param_property.kt)
   getContainingJvmClassName: Custom_variable_param_propertyKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getProp
   javaSetterName: setProp
   isInline: false

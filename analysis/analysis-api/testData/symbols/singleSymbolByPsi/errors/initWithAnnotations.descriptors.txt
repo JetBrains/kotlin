@@ -9,5 +9,5 @@ KaClassInitializerSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(initWithAnnotations.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

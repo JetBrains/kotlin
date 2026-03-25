@@ -46,12 +46,12 @@ KaAnonymousFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextReceivers.kt)
       getContainingJvmClassName: AnonymousFunctionWithContextReceiversKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextReceivers.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

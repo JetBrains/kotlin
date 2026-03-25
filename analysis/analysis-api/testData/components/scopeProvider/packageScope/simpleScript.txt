@@ -33,7 +33,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: test.testFunction
 
@@ -63,7 +63,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script simpleScript.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: test/testValue
   contextParameters: []
@@ -93,7 +93,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script simpleScript.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -125,7 +125,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getTestValue
   javaSetterName: null
   isInline: false
@@ -159,7 +159,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.C
 
 KaNamedClassSymbol:
@@ -190,7 +190,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.I
 
 KaNamedClassSymbol:
@@ -221,5 +221,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.O

@@ -33,7 +33,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: TopLevelFunctionsKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: x
 
@@ -72,6 +72,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: TopLevelFunctionsKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: y

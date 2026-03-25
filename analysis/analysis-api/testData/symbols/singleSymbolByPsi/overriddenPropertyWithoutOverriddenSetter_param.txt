@@ -32,7 +32,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_param.kt)
       getContainingJvmClassName: pack.Impl
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     callableId: pack/Impl.bar
     contextParameters: []
@@ -66,7 +66,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_param.kt)
       getContainingJvmClassName: pack.Impl
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     hasBackingField: true
     hasGetter: true
@@ -136,7 +136,7 @@ KaValueParameterSymbol:
         getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_param.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -173,7 +173,7 @@ KaValueParameterSymbol:
           getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_param.kt)
           getContainingJvmClassName: null
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
       ]
       visibility: PUBLIC
@@ -184,7 +184,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_param.kt)
       getContainingJvmClassName: pack.Impl
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     typeParameters: []
     visibility: PUBLIC
@@ -195,7 +195,7 @@ KaValueParameterSymbol:
     getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_param.kt)
     getContainingJvmClassName: pack.Impl
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     javaGetterName: getBar
     javaSetterName: setBar
     isInline: false
@@ -224,5 +224,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_param.kt)
   getContainingJvmClassName: pack.Impl
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

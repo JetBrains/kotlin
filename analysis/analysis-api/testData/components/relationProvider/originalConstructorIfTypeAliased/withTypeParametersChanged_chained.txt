@@ -48,7 +48,7 @@ Resolved constructor:
         visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     valueParameters: [
@@ -90,14 +90,14 @@ Resolved constructor:
         getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyTypeAliasSecond
 
 Original constructor if type aliased:
@@ -140,7 +140,7 @@ Original constructor if type aliased:
         visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     valueParameters: [
@@ -172,12 +172,12 @@ Original constructor if type aliased:
         getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
         getContainingJvmClassName: test.MyClass
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyClass

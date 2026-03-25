@@ -28,7 +28,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(openConstructorPropertyInFinalClass.kt)
     getContainingJvmClassName: Test
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Test.property
   contextParameters: []
@@ -62,7 +62,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(openConstructorPropertyInFinalClass.kt)
     getContainingJvmClassName: Test
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -98,7 +98,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(openConstructorPropertyInFinalClass.kt)
   getContainingJvmClassName: Test
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getProperty
   javaSetterName: null
   isInline: false

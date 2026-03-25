@@ -27,5 +27,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(parameterWithImplicitDefaultValueInOverride.kt)
   getContainingJvmClassName: test.pkg.Child
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

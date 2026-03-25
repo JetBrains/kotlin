@@ -28,7 +28,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Foo.default
   contextParameters: []
@@ -62,7 +62,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -98,7 +98,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getDefault
   javaSetterName: null
   isInline: false
@@ -134,7 +134,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Foo.defaultWithOpen
   contextParameters: []
@@ -168,7 +168,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -204,7 +204,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getDefaultWithOpen
   javaSetterName: null
   isInline: false
@@ -240,7 +240,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Foo.defaultWithOpenAndBody
   contextParameters: []
@@ -270,7 +270,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -306,7 +306,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getDefaultWithOpenAndBody
   javaSetterName: null
   isInline: false
@@ -351,7 +351,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Foo
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -394,7 +394,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Foo
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -437,7 +437,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Foo
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -469,5 +469,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(interfaceMemberWithRedundantOpen.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Foo

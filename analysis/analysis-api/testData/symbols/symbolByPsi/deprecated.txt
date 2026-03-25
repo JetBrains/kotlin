@@ -27,7 +27,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /i
   contextParameters: []
@@ -57,7 +57,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+    deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -89,7 +89,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   javaGetterName: getI
   javaSetterName: null
   isInline: false
@@ -121,7 +121,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /i2
   contextParameters: []
@@ -154,7 +154,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+    deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -186,7 +186,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getI2
   javaSetterName: null
   isInline: false
@@ -218,7 +218,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /i3
   contextParameters: []
@@ -248,7 +248,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -321,7 +321,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(deprecated.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -358,21 +358,21 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(deprecated.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+    deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getI3
   javaSetterName: setI3
   isInline: false
@@ -404,7 +404,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /i4
   contextParameters: []
@@ -437,7 +437,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+    deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -510,7 +510,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(deprecated.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -547,21 +547,21 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(deprecated.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+    deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getI4
   javaSetterName: setI4
   isInline: false
@@ -605,7 +605,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: DeprecatedKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
   importableFqName: f
 
@@ -640,7 +640,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   importableFqName: MyClass
 
 KaKotlinPropertySymbol:
@@ -676,7 +676,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Foo.i2
   contextParameters: []
@@ -710,7 +710,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+    deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -746,7 +746,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   javaGetterName: getI2
   javaSetterName: null
   isInline: false
@@ -794,7 +794,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Foo
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -826,7 +826,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Foo
 
 KaKotlinPropertySymbol:
@@ -858,7 +858,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /j
   contextParameters: []
@@ -888,7 +888,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
+    deprecation: KaDeprecation(level=ERROR, isPropagatedToOverrides=true)
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -920,7 +920,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=ERROR, isPropagatedToOverrides=true)
   javaGetterName: getJ
   javaSetterName: null
   isInline: false
@@ -955,7 +955,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /j2
   contextParameters: []
@@ -985,7 +985,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+    deprecation: KaDeprecation(level=HIDDEN, isPropagatedToOverrides=true)
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1017,7 +1017,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=HIDDEN, isPropagatedToOverrides=true)
   javaGetterName: getJ2
   javaSetterName: null
   isInline: false
@@ -1052,7 +1052,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /j3
   contextParameters: []
@@ -1082,7 +1082,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1114,7 +1114,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getJ3
   javaSetterName: null
   isInline: false

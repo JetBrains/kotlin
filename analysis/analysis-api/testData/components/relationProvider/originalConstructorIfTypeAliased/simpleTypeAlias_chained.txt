@@ -24,7 +24,7 @@ Resolved constructor:
     getContainingFileSymbol: KaFileSymbol(simpleTypeAlias_chained.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyTypeAliasSecond
 
 Original constructor if type aliased:
@@ -53,5 +53,5 @@ Original constructor if type aliased:
     getContainingFileSymbol: KaFileSymbol(simpleTypeAlias_chained.kt)
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyClass

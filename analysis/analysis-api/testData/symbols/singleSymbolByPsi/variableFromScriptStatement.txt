@@ -21,5 +21,5 @@ KaLocalVariableSymbol:
   getContainingFileSymbol: KaFileSymbol(variableFromScriptStatement.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script variableFromScriptStatement.kts"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

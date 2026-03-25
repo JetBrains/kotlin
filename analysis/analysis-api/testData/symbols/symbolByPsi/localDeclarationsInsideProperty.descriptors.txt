@@ -21,7 +21,7 @@ KaLocalVariableSymbol:
   getContainingFileSymbol: KaFileSymbol(localDeclarationsInsideProperty.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -59,7 +59,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -91,7 +91,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(localDeclarationsInsideProperty.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeAliasSymbol:
@@ -112,7 +112,7 @@ KaTypeAliasSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(localDeclarationsInsideProperty.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -141,7 +141,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(localDeclarationsInsideProperty.kt)
     getContainingJvmClassName: LocalDeclarationsInsidePropertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /x
   contextParameters: []
@@ -171,7 +171,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(localDeclarationsInsideProperty.kt)
     getContainingJvmClassName: LocalDeclarationsInsidePropertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -203,7 +203,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(localDeclarationsInsideProperty.kt)
   getContainingJvmClassName: LocalDeclarationsInsidePropertyKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getX
   javaSetterName: null
   isInline: false

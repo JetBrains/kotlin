@@ -28,7 +28,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(A.kt)
     getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /I.p
   contextParameters: []
@@ -62,7 +62,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(A.kt)
     getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -98,7 +98,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingJvmClassName: I
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getP
   javaSetterName: null
   isInline: false
@@ -159,7 +159,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(A.kt)
           getContainingJvmClassName: I
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         callableId: /I.p
         contextParameters: []
@@ -193,7 +193,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(A.kt)
           getContainingJvmClassName: I
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         hasBackingField: true
         hasGetter: true
@@ -229,7 +229,7 @@ KaConstructorSymbol:
         getContainingFileSymbol: KaFileSymbol(A.kt)
         getContainingJvmClassName: I
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         javaGetterName: getP
         javaSetterName: null
         isInline: false
@@ -258,12 +258,12 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(A.kt)
       getContainingJvmClassName: I
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingJvmClassName: I
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: I

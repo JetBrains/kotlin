@@ -34,5 +34,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: kotlin.IntArray

@@ -26,7 +26,7 @@ KaKotlinPropertySymbol:
 
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /MyClass.Companion.extension
   contextParameters: []
@@ -71,7 +71,7 @@ KaKotlinPropertySymbol:
 
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
@@ -88,7 +88,7 @@ KaKotlinPropertySymbol:
 
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
-    deprecationStatus: null
+    deprecation: null
     importableFqName: MyClass.Companion.extension
   hasBackingField: true
   hasGetter: true
@@ -134,7 +134,7 @@ KaKotlinPropertySymbol:
 
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -152,7 +152,7 @@ KaKotlinPropertySymbol:
 
   getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getExtension
   javaSetterName: null
   isInline: true

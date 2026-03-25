@@ -173,14 +173,14 @@ CONSTRUCTOR:
       getContainingFileSymbol: null
       getContainingJvmClassName: null
       getContainingModule: KaDanglingFileModule "Temporary file"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaDanglingFileModule "Temporary file"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: IntPredicate
 
 FUNCTIONAL INTERFACE:
@@ -223,5 +223,5 @@ FUNCTIONAL INTERFACE:
   getContainingFileSymbol: KaFileSymbol(samClassInScript.kts)
   getContainingModule: KaScriptModule "Script samClassInScript.kts"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: IntPredicate

@@ -25,5 +25,5 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(contextParameterOnClass.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

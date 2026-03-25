@@ -37,6 +37,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: one.DataClass
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library lib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null

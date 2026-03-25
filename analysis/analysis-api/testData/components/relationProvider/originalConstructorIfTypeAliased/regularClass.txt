@@ -24,7 +24,7 @@ Resolved constructor:
     getContainingFileSymbol: KaFileSymbol(regularClass.kt)
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyClass
 
 Original constructor if type aliased:

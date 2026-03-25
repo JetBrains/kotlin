@@ -53,7 +53,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
           getContainingJvmClassName: Anno
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         callableId: /Anno.position
         contextParameters: []
@@ -87,7 +87,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
           getContainingJvmClassName: Anno
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         hasBackingField: true
         hasGetter: true
@@ -123,7 +123,7 @@ KaConstructorSymbol:
         getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
         getContainingJvmClassName: Anno
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         javaGetterName: getPosition
         javaSetterName: null
         isInline: false
@@ -152,14 +152,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
       getContainingJvmClassName: Anno
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: Anno
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Anno
 
 KaNamedClassSymbol:
@@ -193,7 +193,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE, VALUE_PARAMETER]
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Anno
 
 KaContextParameterSymbol:
@@ -223,7 +223,7 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaContextParameterSymbol:
@@ -255,7 +255,7 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -286,7 +286,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Foo
 
 KaContextParameterSymbol:
@@ -316,7 +316,7 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaContextParameterSymbol:
@@ -348,7 +348,7 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -379,7 +379,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -417,7 +417,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: DanglingContextParameterKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: foo
 
@@ -448,7 +448,7 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaContextParameterSymbol:
@@ -480,5 +480,5 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

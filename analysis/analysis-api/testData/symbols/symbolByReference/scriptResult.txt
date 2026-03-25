@@ -29,7 +29,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(scriptResult.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script scriptResult.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -61,7 +61,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(scriptResult.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script scriptResult.kts"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: get$$result
   javaSetterName: null
   isInline: false

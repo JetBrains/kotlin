@@ -27,5 +27,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingJvmClassName: test.pkg.MainKt
   getContainingModule: KaSourceModule "Sources of jvm"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

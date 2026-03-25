@@ -43,7 +43,7 @@ KaNamedFunctionSymbol:
                   getContainingFileSymbol: KaFileSymbol(castForDispatchReceiver.kt)
                   getContainingModule: KaSourceModule "Sources of main"
                   annotationApplicableTargets: null
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: Result
           type:
             KaUsualClassType:
@@ -85,6 +85,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Result
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

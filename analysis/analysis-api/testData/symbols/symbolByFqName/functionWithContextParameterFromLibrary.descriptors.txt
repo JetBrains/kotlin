@@ -26,7 +26,7 @@ KaNamedFunctionSymbol:
 
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescContextReceiverBasedContextParameterSymbol
 
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
       annotations: []
@@ -52,7 +52,7 @@ KaNamedFunctionSymbol:
 
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescContextReceiverBasedContextParameterSymbol
 
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -99,6 +99,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: one.LibraryKt
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: one.foo

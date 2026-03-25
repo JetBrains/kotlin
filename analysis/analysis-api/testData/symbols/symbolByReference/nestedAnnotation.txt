@@ -36,6 +36,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: lib.LibKt
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library lib"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
   importableFqName: lib.foo

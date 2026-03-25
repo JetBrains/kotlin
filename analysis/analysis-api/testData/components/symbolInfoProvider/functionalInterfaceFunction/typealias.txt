@@ -38,7 +38,7 @@ CLASS:
   getContainingFileSymbol: KaFileSymbol(typealias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: IntPredicate
 
 FUNCTIONAL INTERFACE FUNCTION:
@@ -123,7 +123,7 @@ FUNCTIONAL INTERFACE FUNCTION:
       getContainingFileSymbol: KaFileSymbol(typealias.kt)
       getContainingJvmClassName: IntPredicate
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -146,6 +146,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   getContainingJvmClassName: IntPredicate
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

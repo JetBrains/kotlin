@@ -27,5 +27,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(primaryConstructorValueParameter.kt)
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

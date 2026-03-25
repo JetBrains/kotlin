@@ -44,7 +44,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(annotationConstructorProperty_first_only.kt)
       getContainingJvmClassName: MyClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     callableId: /MyClass.prop
     contextParameters: []
@@ -78,7 +78,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(annotationConstructorProperty_first_only.kt)
       getContainingJvmClassName: MyClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     hasBackingField: true
     hasGetter: true
@@ -114,7 +114,7 @@ KaValueParameterSymbol:
     getContainingFileSymbol: KaFileSymbol(annotationConstructorProperty_first_only.kt)
     getContainingJvmClassName: MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     javaGetterName: getProp
     javaSetterName: null
     isInline: false
@@ -143,5 +143,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(annotationConstructorProperty_first_only.kt)
   getContainingJvmClassName: MyClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

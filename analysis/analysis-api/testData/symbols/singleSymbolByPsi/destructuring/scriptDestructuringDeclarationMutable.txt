@@ -13,5 +13,5 @@ KaDestructuringDeclarationSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(scriptDestructuringDeclarationMutable.kts)
   getContainingModule: KaScriptModule "Script scriptDestructuringDeclarationMutable.kts"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

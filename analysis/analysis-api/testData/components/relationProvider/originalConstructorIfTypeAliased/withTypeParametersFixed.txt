@@ -54,14 +54,14 @@ Resolved constructor:
         getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyTypeAlias
 
 Original constructor if type aliased:
@@ -104,7 +104,7 @@ Original constructor if type aliased:
         visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     valueParameters: [
@@ -136,12 +136,12 @@ Original constructor if type aliased:
         getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
         getContainingJvmClassName: test.MyClass
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyClass

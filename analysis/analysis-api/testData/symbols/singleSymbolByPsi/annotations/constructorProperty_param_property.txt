@@ -51,7 +51,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(constructorProperty_param_property.kt)
       getContainingJvmClassName: MyClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     callableId: /MyClass.prop
     contextParameters: []
@@ -85,7 +85,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(constructorProperty_param_property.kt)
       getContainingJvmClassName: MyClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     hasBackingField: true
     hasGetter: true
@@ -155,7 +155,7 @@ KaValueParameterSymbol:
         getContainingFileSymbol: KaFileSymbol(constructorProperty_param_property.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -192,7 +192,7 @@ KaValueParameterSymbol:
           getContainingFileSymbol: KaFileSymbol(constructorProperty_param_property.kt)
           getContainingJvmClassName: null
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
       ]
       visibility: PUBLIC
@@ -203,7 +203,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(constructorProperty_param_property.kt)
       getContainingJvmClassName: MyClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     typeParameters: []
     visibility: PUBLIC
@@ -214,7 +214,7 @@ KaValueParameterSymbol:
     getContainingFileSymbol: KaFileSymbol(constructorProperty_param_property.kt)
     getContainingJvmClassName: MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     javaGetterName: getProp
     javaSetterName: setProp
     isInline: false
@@ -243,5 +243,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(constructorProperty_param_property.kt)
   getContainingJvmClassName: MyClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

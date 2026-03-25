@@ -23,7 +23,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(ofOperatorWithContext.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: []
@@ -70,7 +70,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(ofOperatorWithContext.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
@@ -102,7 +102,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(ofOperatorWithContext.kt)
       getContainingJvmClassName: MyList.Companion
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -114,6 +114,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: MyList.Companion
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: MyList.Companion.of

@@ -28,7 +28,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(abstractPropertyInInterface.kt)
     getContainingJvmClassName: Check
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Check.prop
   contextParameters: []
@@ -62,7 +62,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(abstractPropertyInInterface.kt)
     getContainingJvmClassName: Check
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -132,7 +132,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(abstractPropertyInInterface.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -169,7 +169,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(abstractPropertyInInterface.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
@@ -180,7 +180,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(abstractPropertyInInterface.kt)
     getContainingJvmClassName: Check
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -191,7 +191,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(abstractPropertyInInterface.kt)
   getContainingJvmClassName: Check
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getProp
   javaSetterName: setProp
   isInline: false

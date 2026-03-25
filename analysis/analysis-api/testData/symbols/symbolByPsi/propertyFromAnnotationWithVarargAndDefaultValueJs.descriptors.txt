@@ -49,7 +49,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(propertyFromAnnotationWithVarargAndDefaultValueJs.kt)
           getContainingJvmClassName: null
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         callableId: one/Anno.value
         contextParameters: []
@@ -83,7 +83,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(propertyFromAnnotationWithVarargAndDefaultValueJs.kt)
           getContainingJvmClassName: null
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         hasBackingField: true
         hasGetter: true
@@ -119,7 +119,7 @@ KaConstructorSymbol:
         getContainingFileSymbol: KaFileSymbol(propertyFromAnnotationWithVarargAndDefaultValueJs.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         javaGetterName: getValue
         javaSetterName: null
         isInline: false
@@ -148,14 +148,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(propertyFromAnnotationWithVarargAndDefaultValueJs.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(propertyFromAnnotationWithVarargAndDefaultValueJs.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: one.Anno
 
 KaNamedClassSymbol:
@@ -186,5 +186,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(propertyFromAnnotationWithVarargAndDefaultValueJs.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
-  deprecationStatus: null
+  deprecation: null
   importableFqName: one.Anno

@@ -28,7 +28,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(annotationPropertyWithoutDefaultValue.kt)
       getContainingJvmClassName: pack.Anno
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     callableId: pack/Anno.an
     contextParameters: []
@@ -62,7 +62,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(annotationPropertyWithoutDefaultValue.kt)
       getContainingJvmClassName: pack.Anno
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     hasBackingField: true
     hasGetter: true
@@ -98,7 +98,7 @@ KaValueParameterSymbol:
     getContainingFileSymbol: KaFileSymbol(annotationPropertyWithoutDefaultValue.kt)
     getContainingJvmClassName: pack.Anno
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     javaGetterName: getAn
     javaSetterName: null
     isInline: false
@@ -127,5 +127,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(annotationPropertyWithoutDefaultValue.kt)
   getContainingJvmClassName: pack.Anno
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

@@ -33,7 +33,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ReturnValueStatusFullKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: mustUse
 
@@ -75,6 +75,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ReturnValueStatusFullKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: ExplicitlyIgnorable
   importableFqName: ignorable

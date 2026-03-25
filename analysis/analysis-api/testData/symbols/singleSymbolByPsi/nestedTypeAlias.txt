@@ -35,7 +35,7 @@ KaTypeAliasSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(nestedTypeAlias.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
@@ -52,11 +52,11 @@ KaTypeAliasSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(nestedTypeAlias.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(nestedTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Outer.MyAlias

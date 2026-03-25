@@ -48,14 +48,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(contextReceiversOnClass.kt)
       getContainingJvmClassName: A
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextReceiversOnClass.kt)
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: A
 
 KaNamedClassSymbol:
@@ -99,5 +99,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(contextReceiversOnClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: A

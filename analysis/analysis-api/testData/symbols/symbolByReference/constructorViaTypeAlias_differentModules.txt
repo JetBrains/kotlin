@@ -23,5 +23,5 @@ KaConstructorSymbol:
   getContainingFileSymbol: KaFileSymbol(Dep.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of dep"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: two.SimpleTypeAlias

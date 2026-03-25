@@ -37,7 +37,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Marked
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -83,7 +83,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Marked
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -118,7 +118,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(returnValueStatusCheck.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Marked
 
 KaNamedFunctionSymbol:
@@ -156,6 +156,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ReturnValueStatusCheckKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: unspecified

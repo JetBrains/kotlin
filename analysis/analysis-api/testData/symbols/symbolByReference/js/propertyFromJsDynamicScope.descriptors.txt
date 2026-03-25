@@ -37,7 +37,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(propertyFromJsDynamicScope.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getDynamicPropertyAccess
   javaSetterName: setDynamicPropertyAccess
   isInline: false

@@ -27,5 +27,5 @@ KaBackingFieldSymbol:
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldTopLevel.kt)
   getContainingJvmClassName: one.ExplicitBackingFieldTopLevelKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

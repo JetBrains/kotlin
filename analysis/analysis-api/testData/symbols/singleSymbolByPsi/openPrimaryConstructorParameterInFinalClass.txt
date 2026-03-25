@@ -32,7 +32,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
       getContainingJvmClassName: Test
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     callableId: /Test.ctx
     contextParameters: []
@@ -66,7 +66,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
       getContainingJvmClassName: Test
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     hasBackingField: true
     hasGetter: true
@@ -102,7 +102,7 @@ KaValueParameterSymbol:
     getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
     getContainingJvmClassName: Test
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     javaGetterName: getCtx
     javaSetterName: null
     isInline: false
@@ -131,5 +131,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
   getContainingJvmClassName: Test
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

@@ -34,7 +34,7 @@ KaAnonymousFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -45,7 +45,7 @@ KaAnonymousFunctionSymbol:
   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -91,7 +91,7 @@ KaNamedFunctionSymbol:
                   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
                   getContainingJvmClassName: BaseConditionsKt
                   getContainingModule: KaSourceModule "Sources of main"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
           isNegated: true
   ]
@@ -148,7 +148,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
       getContainingJvmClassName: BaseConditionsKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -156,7 +156,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: BaseConditionsKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: decode
 
@@ -196,7 +196,7 @@ KaAnonymousFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -207,7 +207,7 @@ KaAnonymousFunctionSymbol:
   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -253,7 +253,7 @@ KaNamedFunctionSymbol:
                   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
                   getContainingJvmClassName: BaseConditionsKt
                   getContainingModule: KaSourceModule "Sources of main"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
           isNegated: false
   ]
@@ -310,7 +310,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
       getContainingJvmClassName: BaseConditionsKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -318,7 +318,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: BaseConditionsKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: decodeFake
 
@@ -358,7 +358,7 @@ KaAnonymousFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -369,7 +369,7 @@ KaAnonymousFunctionSymbol:
   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -415,7 +415,7 @@ KaNamedFunctionSymbol:
                   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
                   getContainingJvmClassName: BaseConditionsKt
                   getContainingModule: KaSourceModule "Sources of main"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
           type:
             KaUsualClassType:
@@ -477,7 +477,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
       getContainingJvmClassName: BaseConditionsKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -485,7 +485,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: BaseConditionsKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: decodeIfString
 
@@ -525,7 +525,7 @@ KaAnonymousFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -536,7 +536,7 @@ KaAnonymousFunctionSymbol:
   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -582,7 +582,7 @@ KaNamedFunctionSymbol:
                   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
                   getContainingJvmClassName: BaseConditionsKt
                   getContainingModule: KaSourceModule "Sources of main"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
           type:
             KaUsualClassType:
@@ -644,7 +644,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
       getContainingJvmClassName: BaseConditionsKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -652,6 +652,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: BaseConditionsKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: decodeNotNumber

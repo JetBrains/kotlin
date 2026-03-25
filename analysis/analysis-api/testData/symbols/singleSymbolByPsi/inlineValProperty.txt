@@ -28,7 +28,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(inlineValProperty.kt)
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /A.something
   contextParameters: []
@@ -58,7 +58,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(inlineValProperty.kt)
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -94,7 +94,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(inlineValProperty.kt)
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getSomething
   javaSetterName: null
   isInline: true

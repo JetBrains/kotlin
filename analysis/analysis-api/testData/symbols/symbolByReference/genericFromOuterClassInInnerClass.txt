@@ -40,6 +40,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: test.TopLevel.Base
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

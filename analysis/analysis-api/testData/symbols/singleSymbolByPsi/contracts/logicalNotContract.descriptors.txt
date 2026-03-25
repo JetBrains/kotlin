@@ -46,7 +46,7 @@ KaNamedFunctionSymbol:
                       getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
                       getContainingJvmClassName: LogicalNotContractKt
                       getContainingModule: KaSourceModule "Sources of main"
-                      deprecationStatus: null
+                      deprecation: null
                       importableFqName: null
   ]
   hasStableParameterNames: true
@@ -102,7 +102,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
       getContainingJvmClassName: LogicalNotContractKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -110,6 +110,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: LogicalNotContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: logicalNotContract

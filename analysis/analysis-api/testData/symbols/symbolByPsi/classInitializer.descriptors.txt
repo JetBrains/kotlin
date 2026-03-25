@@ -24,7 +24,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /A.i
   contextParameters: []
@@ -58,7 +58,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -94,7 +94,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getI
   javaSetterName: null
   isInline: false
@@ -111,7 +111,7 @@ KaClassInitializerSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -142,5 +142,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: A

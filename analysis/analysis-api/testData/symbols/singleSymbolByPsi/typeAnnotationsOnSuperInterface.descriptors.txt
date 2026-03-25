@@ -37,5 +37,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnSuperInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Foo

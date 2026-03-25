@@ -53,7 +53,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(main.kt)
           getContainingJvmClassName: A
           getContainingModule: KaSourceModule "Sources of jvm"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         callableId: /A.name
         contextParameters: []
@@ -87,7 +87,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(main.kt)
           getContainingJvmClassName: A
           getContainingModule: KaSourceModule "Sources of jvm"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         hasBackingField: true
         hasGetter: true
@@ -123,7 +123,7 @@ KaConstructorSymbol:
         getContainingFileSymbol: KaFileSymbol(main.kt)
         getContainingJvmClassName: A
         getContainingModule: KaSourceModule "Sources of jvm"
-        deprecationStatus: null
+        deprecation: null
         javaGetterName: getName
         javaSetterName: null
         isInline: false
@@ -152,14 +152,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(main.kt)
       getContainingJvmClassName: A
       getContainingModule: KaSourceModule "Sources of jvm"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of jvm"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: A
 
 KaNamedClassSymbol:
@@ -190,7 +190,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingModule: KaSourceModule "Sources of jvm"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
-  deprecationStatus: null
+  deprecation: null
   importableFqName: A
 
 KaConstructorSymbol:
@@ -248,7 +248,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(main.kt)
           getContainingJvmClassName: B
           getContainingModule: KaSourceModule "Sources of jvm"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         callableId: /B.name
         contextParameters: []
@@ -282,7 +282,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(main.kt)
           getContainingJvmClassName: B
           getContainingModule: KaSourceModule "Sources of jvm"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         hasBackingField: true
         hasGetter: true
@@ -318,7 +318,7 @@ KaConstructorSymbol:
         getContainingFileSymbol: KaFileSymbol(main.kt)
         getContainingJvmClassName: B
         getContainingModule: KaSourceModule "Sources of jvm"
-        deprecationStatus: null
+        deprecation: null
         javaGetterName: getName
         javaSetterName: null
         isInline: false
@@ -347,14 +347,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(main.kt)
       getContainingJvmClassName: B
       getContainingModule: KaSourceModule "Sources of jvm"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingJvmClassName: B
   getContainingModule: KaSourceModule "Sources of jvm"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: B
 
 KaNamedClassSymbol:
@@ -385,7 +385,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingModule: KaSourceModule "Sources of jvm"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: B
 
 KaConstructorSymbol:
@@ -443,7 +443,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(main.kt)
           getContainingJvmClassName: C
           getContainingModule: KaSourceModule "Sources of jvm"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         callableId: /C.s
         contextParameters: []
@@ -477,7 +477,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(main.kt)
           getContainingJvmClassName: C
           getContainingModule: KaSourceModule "Sources of jvm"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         hasBackingField: true
         hasGetter: true
@@ -513,7 +513,7 @@ KaConstructorSymbol:
         getContainingFileSymbol: KaFileSymbol(main.kt)
         getContainingJvmClassName: C
         getContainingModule: KaSourceModule "Sources of jvm"
-        deprecationStatus: null
+        deprecation: null
         javaGetterName: getS
         javaSetterName: null
         isInline: false
@@ -542,14 +542,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(main.kt)
       getContainingJvmClassName: C
       getContainingModule: KaSourceModule "Sources of jvm"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingJvmClassName: C
   getContainingModule: KaSourceModule "Sources of jvm"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: C
 
 KaNamedClassSymbol:
@@ -580,5 +580,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingModule: KaSourceModule "Sources of jvm"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: C

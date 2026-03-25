@@ -57,7 +57,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(topLevelScriptFunction.kts)
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script topLevelScriptFunction.kts"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -65,6 +65,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaScriptModule "Script topLevelScriptFunction.kts"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: pack.topLevelFun

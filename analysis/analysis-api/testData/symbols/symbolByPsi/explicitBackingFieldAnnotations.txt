@@ -29,7 +29,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [FIELD]
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Anno
 
 KaKotlinPropertySymbol:
@@ -65,7 +65,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
     getContainingJvmClassName: Test
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Test.foo
   contextParameters: []
@@ -99,7 +99,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
     getContainingJvmClassName: Test
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -135,7 +135,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
   getContainingJvmClassName: Test
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getFoo
   javaSetterName: null
   isInline: false
@@ -169,5 +169,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Test

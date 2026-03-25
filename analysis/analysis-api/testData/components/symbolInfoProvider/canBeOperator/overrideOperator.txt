@@ -80,7 +80,7 @@ FUNCTION:
       getContainingFileSymbol: KaFileSymbol(overrideOperator.kt)
       getContainingJvmClassName: B
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -103,7 +103,7 @@ FUNCTION:
   getContainingJvmClassName: B
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 CAN_BE_OPERATOR:

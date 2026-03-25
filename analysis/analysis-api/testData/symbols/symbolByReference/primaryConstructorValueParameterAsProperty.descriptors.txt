@@ -24,7 +24,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(primaryConstructorValueParameterAsProperty.kt)
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /A.abc
   contextParameters: []
@@ -58,7 +58,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(primaryConstructorValueParameterAsProperty.kt)
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -94,7 +94,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(primaryConstructorValueParameterAsProperty.kt)
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getAbc
   javaSetterName: null
   isInline: false

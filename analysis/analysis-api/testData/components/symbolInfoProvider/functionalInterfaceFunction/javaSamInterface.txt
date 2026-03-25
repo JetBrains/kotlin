@@ -38,7 +38,7 @@ CLASS:
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: JavaRunnable
 
 FUNCTIONAL INTERFACE FUNCTION:
@@ -103,6 +103,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   getContainingJvmClassName: JavaRunnable
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

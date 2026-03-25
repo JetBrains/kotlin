@@ -24,7 +24,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(contextReceiversOnFunction.kt)
       getContainingJvmClassName: ContextReceiversOnFunctionKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
       annotations: []
@@ -48,7 +48,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(contextReceiversOnFunction.kt)
       getContainingJvmClassName: ContextReceiversOnFunctionKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -95,6 +95,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ContextReceiversOnFunctionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: y

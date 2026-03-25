@@ -23,7 +23,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: []
@@ -65,7 +65,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
@@ -82,7 +82,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
@@ -99,7 +99,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
@@ -153,7 +153,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -208,7 +208,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -260,7 +260,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -312,7 +312,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -350,7 +350,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -358,6 +358,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: lib.ContextParametersInTypesKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: lib.myContext

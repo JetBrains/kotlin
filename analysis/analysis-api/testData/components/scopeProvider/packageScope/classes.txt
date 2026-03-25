@@ -26,7 +26,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.A
 
 KaNamedClassSymbol:
@@ -57,7 +57,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.InternalA
 
 KaNamedClassSymbol:
@@ -88,7 +88,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.PrivateA
 
 KaNamedClassSymbol:
@@ -119,7 +119,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(B.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.B
 
 KaNamedClassSymbol:
@@ -150,7 +150,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(B.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.InternalB
 
 KaNamedClassSymbol:
@@ -181,5 +181,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(B.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.PrivateB

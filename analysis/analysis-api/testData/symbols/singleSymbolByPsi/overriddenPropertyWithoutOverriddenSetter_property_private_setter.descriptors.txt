@@ -24,7 +24,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt)
     getContainingJvmClassName: pack.Impl
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: pack/Impl.bar
   contextParameters: []
@@ -58,7 +58,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt)
     getContainingJvmClassName: pack.Impl
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -128,7 +128,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -165,7 +165,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PRIVATE
@@ -176,7 +176,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt)
     getContainingJvmClassName: pack.Impl
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -187,7 +187,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt)
   getContainingJvmClassName: pack.Impl
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getBar
   javaSetterName: setBar
   isInline: false

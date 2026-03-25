@@ -29,5 +29,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(valueClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: ValueClass

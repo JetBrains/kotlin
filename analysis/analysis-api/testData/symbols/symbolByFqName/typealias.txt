@@ -32,5 +32,5 @@ KaTypeAliasSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: kotlin.DeepRecursiveFunctionBlock

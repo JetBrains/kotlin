@@ -26,7 +26,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: A
 
 KaNamedClassSymbol:
@@ -57,7 +57,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: B
 
 KaNamedFunctionSymbol:
@@ -86,7 +86,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -127,7 +127,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SimilarSignaturesKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: tooo
 
@@ -157,7 +157,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -198,7 +198,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SimilarSignaturesKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: tooo
 
@@ -228,7 +228,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
       annotations: []
@@ -252,7 +252,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -299,7 +299,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SimilarSignaturesKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: tooo
 
@@ -329,7 +329,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
       annotations: []
@@ -353,7 +353,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -400,6 +400,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SimilarSignaturesKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: tooo

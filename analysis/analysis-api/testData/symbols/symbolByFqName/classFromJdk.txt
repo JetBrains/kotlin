@@ -42,5 +42,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "SDK jdk"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String

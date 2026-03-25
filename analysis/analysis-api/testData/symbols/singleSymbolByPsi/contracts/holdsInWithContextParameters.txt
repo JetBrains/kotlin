@@ -24,7 +24,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(holdsInWithContextParameters.kt)
       getContainingJvmClassName: HoldsInWithContextParametersKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -64,7 +64,7 @@ KaNamedFunctionSymbol:
                   getContainingFileSymbol: KaFileSymbol(holdsInWithContextParameters.kt)
                   getContainingJvmClassName: HoldsInWithContextParametersKt
                   getContainingModule: KaSourceModule "Sources of main"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
       valueParameterReference:
         KaContractExplicitParameterValue:
@@ -103,7 +103,7 @@ KaNamedFunctionSymbol:
               getContainingFileSymbol: KaFileSymbol(holdsInWithContextParameters.kt)
               getContainingJvmClassName: HoldsInWithContextParametersKt
               getContainingModule: KaSourceModule "Sources of main"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
   ]
   hasStableParameterNames: true
@@ -164,7 +164,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(holdsInWithContextParameters.kt)
       getContainingJvmClassName: HoldsInWithContextParametersKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -172,6 +172,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: HoldsInWithContextParametersKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: conditionInContext
