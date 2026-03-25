@@ -46,7 +46,7 @@ KaNamedFunctionSymbol:
               getContainingFileSymbol: KaFileSymbol(callsInPlaceAtMostOnceContract.kt)
               getContainingJvmClassName: CallsInPlaceAtMostOnceContractKt
               getContainingModule: KaSourceModule "Sources of main"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
       invocationKind: AT_MOST_ONCE
   ]
@@ -110,7 +110,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(callsInPlaceAtMostOnceContract.kt)
       getContainingJvmClassName: CallsInPlaceAtMostOnceContractKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -118,6 +118,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: CallsInPlaceAtMostOnceContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: atMostOnceContract

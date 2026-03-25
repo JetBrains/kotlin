@@ -38,7 +38,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: InterfaceA
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -70,7 +70,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: InterfaceA
 
 KaNamedFunctionSymbol:
@@ -113,7 +113,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -157,7 +157,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -201,7 +201,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -245,7 +245,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -280,7 +280,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /SealedClassWithImplicitConstructor.variable
   contextParameters: []
@@ -315,7 +315,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -388,7 +388,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -426,7 +426,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
@@ -437,7 +437,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -448,7 +448,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getVariable
   javaSetterName: setVariable
   isInline: false
@@ -485,7 +485,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /SealedClassWithImplicitConstructor.privateVariable
   contextParameters: []
@@ -520,7 +520,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -593,7 +593,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -631,7 +631,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PRIVATE
@@ -642,7 +642,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PRIVATE
@@ -653,7 +653,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getPrivateVariable
   javaSetterName: setPrivateVariable
   isInline: false
@@ -690,7 +690,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /SealedClassWithImplicitConstructor.internalVariable
   contextParameters: []
@@ -725,7 +725,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -798,7 +798,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -836,7 +836,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: INTERNAL
@@ -847,7 +847,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
     getContainingJvmClassName: SealedClassWithImplicitConstructor
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: INTERNAL
@@ -858,7 +858,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingJvmClassName: SealedClassWithImplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getInternalVariable
   javaSetterName: setInternalVariable
   isInline: false
@@ -892,7 +892,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithImplicitConstructor.NestedClass
 
 KaNamedClassSymbol:
@@ -923,7 +923,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithImplicitConstructor.InnerClass
 
 KaNamedClassSymbol:
@@ -954,7 +954,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithImplicitConstructor.NestedObject
 
 KaNamedClassSymbol:
@@ -985,7 +985,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithImplicitConstructor.NestedInterface
 
 KaNamedClassSymbol:
@@ -1016,7 +1016,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithImplicitConstructor.NestedAnnotation
 
 KaTypeAliasSymbol:
@@ -1037,7 +1037,7 @@ KaTypeAliasSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithImplicitConstructor.NestedTypeAlias
 
 KaNamedClassSymbol:
@@ -1068,7 +1068,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithImplicitConstructor
 
 KaConstructorSymbol:
@@ -1128,7 +1128,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
           getContainingJvmClassName: SealedClassWithExplicitConstructor
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         callableId: /SealedClassWithExplicitConstructor.constructorProperty
         contextParameters: []
@@ -1163,7 +1163,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
           getContainingJvmClassName: SealedClassWithExplicitConstructor
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         hasBackingField: true
         hasGetter: true
@@ -1200,7 +1200,7 @@ KaConstructorSymbol:
         getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
         getContainingJvmClassName: SealedClassWithExplicitConstructor
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         javaGetterName: getConstructorProperty
         javaSetterName: null
         isInline: false
@@ -1230,7 +1230,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
       getContainingJvmClassName: SealedClassWithExplicitConstructor
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -1262,14 +1262,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
       getContainingJvmClassName: SealedClassWithExplicitConstructor
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PROTECTED
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingJvmClassName: SealedClassWithExplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithExplicitConstructor
 
 KaConstructorSymbol:
@@ -1298,7 +1298,7 @@ KaConstructorSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingJvmClassName: SealedClassWithExplicitConstructor
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithExplicitConstructor
 
 KaNamedClassSymbol:
@@ -1329,5 +1329,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedClassWithExplicitConstructor

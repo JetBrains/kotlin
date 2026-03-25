@@ -25,7 +25,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
     getContainingJvmClassName: PropertyWithContextParametersKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /foo
   contextParameters: [
@@ -55,7 +55,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
       getContainingJvmClassName: PropertyWithContextParametersKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
       annotations: []
@@ -88,7 +88,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
       getContainingJvmClassName: PropertyWithContextParametersKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -142,7 +142,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
     getContainingJvmClassName: PropertyWithContextParametersKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -175,7 +175,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
   getContainingJvmClassName: PropertyWithContextParametersKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getFoo
   javaSetterName: null
   isInline: false

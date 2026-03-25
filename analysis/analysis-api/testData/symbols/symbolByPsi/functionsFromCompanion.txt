@@ -59,7 +59,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(functionsFromCompanion.kt)
       getContainingJvmClassName: MyClass.Companion
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -71,7 +71,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: MyClass.Companion
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: MyClass.Companion.functionFromCompanion
 
@@ -118,7 +118,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: MyClass.Companion
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: MyClass.Companion.staticFunctionFromCompanion
 
@@ -150,7 +150,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(functionsFromCompanion.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: MyClass.Companion
 
 KaNamedClassSymbol:
@@ -181,5 +181,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(functionsFromCompanion.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: MyClass

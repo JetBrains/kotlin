@@ -22,7 +22,7 @@ KaEnumEntrySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Regular.Entry1
 
 KaNamedFunctionSymbol:
@@ -65,7 +65,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -100,7 +100,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: null
   contextParameters: []
@@ -135,7 +135,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -208,7 +208,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -246,7 +246,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
@@ -257,7 +257,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -268,7 +268,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getVariable2
   javaSetterName: setVariable2
   isInline: false
@@ -314,7 +314,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -358,7 +358,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -393,7 +393,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: null
   contextParameters: []
@@ -428,7 +428,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -501,7 +501,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -539,7 +539,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PRIVATE
@@ -550,7 +550,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PRIVATE
@@ -561,7 +561,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getPrivateVariable2
   javaSetterName: setPrivateVariable2
   isInline: false
@@ -598,7 +598,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: null
   contextParameters: []
@@ -633,7 +633,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -706,7 +706,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -744,7 +744,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: INTERNAL
@@ -755,7 +755,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: INTERNAL
@@ -766,7 +766,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getInternalVariable2
   javaSetterName: setInternalVariable2
   isInline: false
@@ -800,7 +800,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaEnumEntrySymbol:
@@ -827,7 +827,7 @@ KaEnumEntrySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Regular.EntryWithBody
 
 KaNamedFunctionSymbol:
@@ -870,7 +870,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Regular
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -914,7 +914,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Regular
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -958,7 +958,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Regular
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -993,7 +993,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Regular.variable
   contextParameters: []
@@ -1028,7 +1028,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1101,7 +1101,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -1139,7 +1139,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
@@ -1150,7 +1150,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -1161,7 +1161,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getVariable
   javaSetterName: setVariable
   isInline: false
@@ -1198,7 +1198,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Regular.privateVariable
   contextParameters: []
@@ -1233,7 +1233,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1306,7 +1306,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -1344,7 +1344,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PRIVATE
@@ -1355,7 +1355,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PRIVATE
@@ -1366,7 +1366,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getPrivateVariable
   javaSetterName: setPrivateVariable
   isInline: false
@@ -1403,7 +1403,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Regular.internalVariable
   contextParameters: []
@@ -1438,7 +1438,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1511,7 +1511,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -1549,7 +1549,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: INTERNAL
@@ -1560,7 +1560,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: INTERNAL
@@ -1571,7 +1571,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: Regular
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getInternalVariable
   javaSetterName: setInternalVariable
   isInline: false
@@ -1605,7 +1605,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Regular.NestedClass
 
 KaNamedClassSymbol:
@@ -1636,7 +1636,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Regular.InnerClass
 
 KaNamedClassSymbol:
@@ -1667,7 +1667,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Regular.NestedObject
 
 KaNamedClassSymbol:
@@ -1698,7 +1698,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Regular.NestedInterface
 
 KaNamedClassSymbol:
@@ -1729,7 +1729,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Regular.NestedAnnotation
 
 KaTypeAliasSymbol:
@@ -1750,7 +1750,7 @@ KaTypeAliasSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Regular.NestedTypeAlias
 
 KaNamedClassSymbol:
@@ -1786,7 +1786,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Regular
 
 KaConstructorSymbol:
@@ -1846,7 +1846,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(enum.kt)
           getContainingJvmClassName: WithConstructor
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         callableId: /WithConstructor.property
         contextParameters: []
@@ -1881,7 +1881,7 @@ KaConstructorSymbol:
           getContainingFileSymbol: KaFileSymbol(enum.kt)
           getContainingJvmClassName: WithConstructor
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         hasBackingField: true
         hasGetter: true
@@ -1918,7 +1918,7 @@ KaConstructorSymbol:
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: WithConstructor
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         javaGetterName: getProperty
         javaSetterName: null
         isInline: false
@@ -1948,7 +1948,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: WithConstructor
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -1980,14 +1980,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: WithConstructor
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: WithConstructor
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: WithConstructor
 
 KaEnumEntrySymbol:
@@ -2014,7 +2014,7 @@ KaEnumEntrySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: WithConstructor
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: WithConstructor.Entry
 
 KaEnumEntrySymbol:
@@ -2041,7 +2041,7 @@ KaEnumEntrySymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: WithConstructor
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: WithConstructor.WithBody
 
 KaNamedClassSymbol:
@@ -2077,5 +2077,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: WithConstructor

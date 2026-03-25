@@ -25,7 +25,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(duplicatedContextParameter.kt)
       getContainingJvmClassName: DuplicatedContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
       annotations: []
@@ -50,7 +50,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(duplicatedContextParameter.kt)
       getContainingJvmClassName: DuplicatedContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -98,7 +98,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: DuplicatedContextParameterKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: bar
 
@@ -129,7 +129,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(duplicatedContextParameter.kt)
     getContainingJvmClassName: DuplicatedContextParameterKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /foo
   contextParameters: [
@@ -156,7 +156,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(duplicatedContextParameter.kt)
       getContainingJvmClassName: DuplicatedContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
       annotations: []
@@ -181,7 +181,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(duplicatedContextParameter.kt)
       getContainingJvmClassName: DuplicatedContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -224,7 +224,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(duplicatedContextParameter.kt)
     getContainingJvmClassName: DuplicatedContextParameterKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -257,7 +257,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(duplicatedContextParameter.kt)
   getContainingJvmClassName: DuplicatedContextParameterKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getFoo
   javaSetterName: null
   isInline: false

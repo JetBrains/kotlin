@@ -29,7 +29,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(dependency.kt)
     getContainingJvmClassName: one.two.TopLevelObject
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: one/two/TopLevelObject.bar
   contextParameters: []
@@ -64,7 +64,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(dependency.kt)
     getContainingJvmClassName: one.two.TopLevelObject
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -101,7 +101,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(dependency.kt)
   getContainingJvmClassName: one.two.TopLevelObject
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getBar
   javaSetterName: null
   isInline: false

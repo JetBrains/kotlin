@@ -49,14 +49,14 @@ CLASS:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: GenericPredicate
 
 FUNCTIONAL INTERFACE FUNCTION:
@@ -143,7 +143,7 @@ FUNCTIONAL INTERFACE FUNCTION:
           visibility: LOCAL
           getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         isMarkedNullable: false
         isNullable: true
@@ -152,7 +152,7 @@ FUNCTIONAL INTERFACE FUNCTION:
       getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
       getContainingJvmClassName: GenericPredicate
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -184,7 +184,7 @@ FUNCTIONAL INTERFACE FUNCTION:
               visibility: LOCAL
               getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
               getContainingModule: KaSourceModule "Sources of main"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
             isMarkedNullable: false
             isNullable: true
@@ -212,7 +212,7 @@ FUNCTIONAL INTERFACE FUNCTION:
           visibility: LOCAL
           getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         isMarkedNullable: false
         isNullable: true
@@ -225,6 +225,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   getContainingJvmClassName: GenericPredicate
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

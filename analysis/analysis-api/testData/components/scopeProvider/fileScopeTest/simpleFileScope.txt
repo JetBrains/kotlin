@@ -34,7 +34,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SimpleFileScopeKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: test
 
@@ -65,7 +65,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(simpleFileScope.kt)
     getContainingJvmClassName: SimpleFileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /testVal
   contextParameters: []
@@ -96,7 +96,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(simpleFileScope.kt)
     getContainingJvmClassName: SimpleFileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -129,7 +129,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(simpleFileScope.kt)
   getContainingJvmClassName: SimpleFileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getTestVal
   javaSetterName: null
   isInline: false
@@ -163,7 +163,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(simpleFileScope.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: C
 
 KaNamedClassSymbol:
@@ -194,5 +194,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(simpleFileScope.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: I
