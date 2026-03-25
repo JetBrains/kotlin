@@ -24,7 +24,6 @@
 
 #include "Runtime.h"
 #include "HotReloadUtility.hpp"
-#include "plugins/PluginsCommon.hpp"
 #include "plugins/HotReloadPlugins.hpp"
 
 #include "llvm/Support/TargetSelect.h"
@@ -32,7 +31,9 @@
 #include "llvm/ExecutionEngine/Orc/Debugging/DebuggerSupportPlugin.h"
 #include "llvm/ExecutionEngine/Orc/MachOPlatform.h"
 #include "llvm/ExecutionEngine/Orc/ExecutionUtils.h"
-#include "plugins/EHFrameRegistrarPlugin.hpp"
+#include "llvm/ExecutionEngine/Orc/UnwindInfoRegistrationPlugin.h"
+#include "llvm/ExecutionEngine/Orc/MapperJITLinkMemoryManager.h"
+#include "llvm/ExecutionEngine/Orc/MemoryMapper.h"
 
 #if KONAN_OBJC_INTEROP
 #include "ObjCExportInit.h"
@@ -200,9 +201,15 @@ void HotReloadImpl::SetupORC() {
                     .setJITTargetMachineBuilder(std::move(JTMB))
                     .setPlatformSetUp(llvm::orc::ExecutorNativePlatform(orcRuntimePath))
                     .setObjectLinkingLayerCreator([](llvm::orc::ExecutionSession& ES) {
+                        // This prevents 32-bit delta overflow in __unwind_info
+                        constexpr uint64_t slabSize = 1024 * 1024 * 1024; // 1 GB
                         auto oll = std::make_unique<llvm::orc::ObjectLinkingLayer>(
-                                ES, ExitOnErr(llvm::jitlink::InProcessMemoryManager::Create()));
+                                ES,
+                                ExitOnErr(
+                                        llvm::orc::MapperJITLinkMemoryManager::CreateWithMapper<llvm::orc::InProcessMemoryMapper>(
+                                                slabSize)));
 #if defined(__APPLE__)
+                        // TODO: this is a temporary fix, it should be fixed in MachOPlatform
                         // Add ObjC selector fixup plugin. MachOPlatform may not reliably fix up
                         // selectors in all JIT'd object files, so we do it explicitly during
                         // the JITLink PostFixup pass before any code runs.
@@ -236,7 +243,7 @@ void HotReloadImpl::SetupORC() {
                         if (const auto jol = llvm::dyn_cast<llvm::orc::ObjectLinkingLayer>(&oll)) {
                             rsm_ = ExitOnErr(llvm::orc::JITLinkRedirectableSymbolManager::Create(*jol));
                             jol->addPlugin(std::make_unique<KotlinSymbolExternalizerPlugin>(stubsJD));
-                            jol->addPlugin(std::make_unique<orc::plugins::EHFrameRegistrarPlugin>());
+                            jol->addPlugin(ExitOnErr(llvm::orc::UnwindInfoRegistrationPlugin::Create(es)));
 
             // Setup GDB/LLDB Debugger Plugin to resolve loaded symbols
 #if defined(__APPLE__)
@@ -637,9 +644,7 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
 
         auto [kotlinFunctions, kotlinClasses] = ParseKotlinObjectFile(*objMemoryBuff);
 
-        HRLogDebug(
-                "Found: %zu function symbols and %zu classes symbols.", kotlinFunctions.size(),
-                kotlinClasses.size());
+        HRLogDebug("Found: %zu function symbols and %zu classes symbols.", kotlinFunctions.size(), kotlinClasses.size());
 
         // Create stubs for any NEW functions not seen before
         if (auto err = CreateRedirectableStubs(kotlinFunctions)) {
