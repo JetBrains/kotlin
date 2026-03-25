@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.originalParent
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
 import org.jetbrains.kotlin.ir.declarations.*
@@ -86,8 +87,12 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
             }
         }
 
-        if (declaration.isEffectivelyExternal() && (irFile.getJsModule() != null || irFile.getJsQualifier() != null)) {
+        if (declaration is IrPossiblyExternalDeclaration
+            && declaration.isEffectivelyExternal()
+            && (irFile.getJsModule() != null || irFile.getJsQualifier() != null)
+        ) {
             externalPackageFragment.declarations += declaration
+            declaration.originalParent = irFile
             declaration.parent = externalPackageFragment
 
             context.packageLevelJsModules += externalPackageFragment

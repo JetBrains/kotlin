@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
 import org.jetbrains.kotlin.ir.backend.js.originalCallableReference
+import org.jetbrains.kotlin.ir.backend.js.originalParent
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.addChild
@@ -72,9 +74,7 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
  * ```
  *
  * All callable reference implementations supposed to be relocated are always moved to a file level as top-level declarations.
- *
  * Cross-module references are not movable at this point, they remain at the consumer site.
- *
  * Deduplication is happening next in [DeduplicateCallableFactoriesLowering].
  */
 class MoveCallableFactoriesToDeclarationsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
@@ -94,8 +94,7 @@ class MoveCallableFactoriesToDeclarationsLowering(private val context: JsIrBacke
     private fun getOriginalFile(declaration: IrSimpleFunction): IrFile? {
         return when {
             declaration.isEffectivelyExternal() -> {
-                val shadowFile = declaration.getPackageFragment() as? IrFile
-                shadowFile?.module?.files?.firstOrNull { it.fileEntry == shadowFile.fileEntry }
+                declaration.originalParent?.getPackageFragment() as? IrFile
             }
             else -> declaration.getPackageFragment() as? IrFile
         }
