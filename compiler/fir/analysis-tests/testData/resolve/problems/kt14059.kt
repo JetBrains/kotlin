@@ -7,9 +7,13 @@ open class A {
     class B
 }
 
-class B
+class B {
+    fun foo() {}
+}
+
 class C : A() {
     fun test(b: B) { // should resolve to top-level B, not A.B
+        b.foo()
     }
 }
 
