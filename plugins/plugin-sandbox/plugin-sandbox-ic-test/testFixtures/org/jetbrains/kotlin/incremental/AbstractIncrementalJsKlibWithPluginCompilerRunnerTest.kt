@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.incremental.utils.findAnnotationsRuntimeKlib
 import org.jetbrains.kotlin.incremental.utils.findPluginJar
 import java.io.File
 
-abstract class AbstractIncrementalK2JsKlibWithPluginCompilerRunnerTest : AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest() {
+abstract class AbstractIncrementalJsKlibWithPluginCompilerRunnerTest : AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
             val annotationsKlib = findAnnotationsRuntimeKlib()

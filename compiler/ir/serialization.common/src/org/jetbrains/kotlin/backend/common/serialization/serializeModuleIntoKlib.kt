@@ -126,7 +126,7 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
 
     val compiledKotlinFiles = buildList {
         addAll(cleanFiles)
-        metadataSerializer.forEachFile { i, sourceFile, ktSourceFile, packageFqName ->
+        metadataSerializer.forEachFile { i, ioFile, sourceFile, ktSourceFile, packageFqName ->
             val binaryFile = serializedFiles?.get(i)?.also {
                 assert(ktSourceFile == null || ktSourceFile.path == it.path) {
                     """The Kt and Ir files are put in different order
@@ -143,15 +143,6 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
                 KotlinFileSerializedData(metadata, binaryFile)
 
             if (processCompiledFileData != null) {
-                val ioFile = ktSourceFile?.toIoFileOrNull() ?: error(
-                    buildString {
-                        appendLine("No file found for source ${ktSourceFile?.path}")
-                        appendLine("This happened because there is a compiler plugin which generates new top-level declarations")
-                        appendLine("and the incremental compilation is enabled.")
-                        appendLine("Consider disabling the incremental compilation for this module or disable the plugin.")
-                        appendLine("If you met this error, please describe your use-case in https://youtrack.jetbrains.com/issue/KT-82395")
-                    }
-                )
                 processCompiledFileData(ioFile, compiledKotlinFile)
             }
 

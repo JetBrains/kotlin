@@ -14,6 +14,9 @@ fun main(args: Array<String>) {
             testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
+            testClass<AbstractIncrementalJsKlibWithPluginCompilerRunnerTest> {
+                model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JS_IR)
+            }
         }
     }
 }

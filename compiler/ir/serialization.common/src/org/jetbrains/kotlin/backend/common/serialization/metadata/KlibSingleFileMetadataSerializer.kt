@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization.metadata
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
+import java.io.File
 
 /**
  * Something capable of serializing the metadata of a source file to a protobuf message, one file at a time.
@@ -15,9 +16,9 @@ import org.jetbrains.kotlin.name.FqName
 interface KlibSingleFileMetadataSerializer<SourceFile> {
 
     /**
-     * The number of source files whose metadata is to be serialized.
+     * The source files whose metadata is to be serialized.
      */
-    val numberOfSourceFiles: Int
+    val sourceFiles: Set<File>
 
     /**
      * Serializes the metadata of a single source file to a protobuf message and returns the message.
@@ -31,5 +32,15 @@ interface KlibSingleFileMetadataSerializer<SourceFile> {
      * @param block A closure that accepts the index of the file in the list of source files, the source file, its corresponding
      *   [KtSourceFile], and the fully qualified name of the package containing the file.
      */
-    fun forEachFile(block: (Int, SourceFile, KtSourceFile?, FqName) -> Unit)
+    fun forEachFile(block: FileVisitor<SourceFile>)
+}
+
+fun interface FileVisitor<SourceFile> {
+    fun visit(
+        index: Int,
+        ioFile: File,
+        sourceFile: SourceFile,
+        ktSourceFile: KtSourceFile?,
+        packageName: FqName
+    )
 }

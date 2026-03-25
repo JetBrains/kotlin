@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.LoadedKlibs
@@ -62,6 +61,7 @@ import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.toSmartList
+import java.io.File
 
 val KotlinLibrary.moduleName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)
@@ -622,11 +622,11 @@ fun <SourceFile> shouldGoToNextIcRound(
 ): Boolean {
     val nextRoundChecker = compilerConfiguration.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return false
     createMetadataSerializer().run {
-        forEachFile { _, sourceFile, ktSourceFile, _ ->
+        forEachFile { _, ioFile, sourceFile, _, _ ->
             val protoBuf = serializeSingleFileMetadata(sourceFile)
             // to minimize the number of IC rounds, we should inspect all proto for changes first,
             // then go to the next round if needed, with all new dirty files
-            nextRoundChecker.checkProtoChanges(ktSourceFile!!.toIoFileOrNull()!!, protoBuf.toByteArray())
+            nextRoundChecker.checkProtoChanges(ioFile, protoBuf.toByteArray())
         }
     }
     return nextRoundChecker.shouldGoToNextRound()
@@ -638,8 +638,7 @@ private fun List<IrModuleFragment>.getUniqueNameForEachFragment(): Map<IrModuleF
     }.toMap()
 }
 
-fun IncrementalDataProvider.getSerializedData(newSources: List<KtSourceFile>): List<KotlinFileSerializedData> {
-    val nonCompiledSources = newSources.associateBy { it.toIoFileOrNull()!! }
+fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): List<KotlinFileSerializedData> {
     val compiledIrFiles = serializedIrFiles
     val compiledMetaFiles = compiledPackageParts
 
@@ -672,6 +671,7 @@ fun IncrementalDataProvider.getSerializedData(newSources: List<KtSourceFile>): L
     return storage
 }
 
+
 @JvmName("getSerializedDataByPsiFiles")
 fun IncrementalDataProvider.getSerializedData(newSources: List<KtFile>): List<KotlinFileSerializedData> =
-    getSerializedData(newSources.map(::KtPsiSourceFile))
+    getSerializedData(newSources.mapNotNullTo(mutableSetOf()) { KtPsiSourceFile(it).toIoFileOrNull() })
