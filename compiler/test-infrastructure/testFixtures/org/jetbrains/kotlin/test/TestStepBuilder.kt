@@ -84,6 +84,10 @@ sealed class TestStepBuilder<InputArtifact, OutputArtifact, out FacadeStep>
             handlers += constructors
         }
 
+        fun removeHandlers(vararg constructors: Constructor<Handler>) {
+            handlers.removeAll(constructors)
+        }
+
         @TestInfrastructureInternals
         override fun createTestStep(testServices: TestServices): HandlersStep {
             val handlers = handlers.map { constructor ->

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializa
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
+import org.jetbrains.kotlin.konan.test.headerMode.AbstractNativeCodegenBoxCoreHeaderModeTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
@@ -155,6 +156,16 @@ fun main(args: Array<String>) {
                 // TODO Uncomment the following line during work on OSIP-286 Migrate Kotlin Native box tests to common compiler test infra
                 //      Meanwhile let's not run these thousands of tests in `box` to make experimental test runs much faster.
                 // model("box", excludeDirs = k1BoxTestDir)
+                model("boxInline")
+            }
+            // Codegen/box tests based on Compiler Core testinfra
+            testClass<AbstractNativeCodegenBoxCoreHeaderModeTest>(
+                suiteTestClassName = "NativeCodegenBoxHeaderModeTestGenerated",
+                annotations = listOf(
+                    provider<UseDummyTestCaseGroupProvider>(),
+                )
+            ) {
+                model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
             }
         }
