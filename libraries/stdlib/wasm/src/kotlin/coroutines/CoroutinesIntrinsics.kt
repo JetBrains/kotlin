@@ -116,4 +116,3 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
  */
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
     (this as? CoroutineImpl<T, *>)?.intercepted() ?: this
-
