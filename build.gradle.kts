@@ -676,7 +676,7 @@ allprojects {
 
         mirrorRepo?.let(::maven)
 
-        maven { setUrl("https://packages.jetbrains.team/maven/p/kt/dokka-test") }
+        maven { setUrl("https://redirector.kotlinlang.org/maven/dokka-dev") }
         maven(intellijRepo) {
             content {
                 includeGroupByRegex("com\\.jetbrains\\.intellij(\\..+)?")

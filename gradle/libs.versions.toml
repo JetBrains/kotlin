@@ -1,7 +1,7 @@
 [versions]
 kotlin-release = "2.3.20-RC"
 dexMemberList = "4.1.1"
-dokka = "2.2.0-test-64fd2849ed526f081ddf797a3967549d7587517f"
+dokka = "2.2.0-dev-419"
 gradle-custom-user-data = "2.4.0"
 develocity = "4.2.2"
 gradle-plugin-publish = "2.1.1"

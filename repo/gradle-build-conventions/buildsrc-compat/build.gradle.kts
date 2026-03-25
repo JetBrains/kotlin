@@ -44,7 +44,7 @@ plugins {
 }
 
 repositories {
-    maven { setUrl("https://packages.jetbrains.team/maven/p/kt/dokka-test") }
+    maven { setUrl("https://redirector.kotlinlang.org/maven/dokka-dev") }
     mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
     maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
