@@ -17,7 +17,7 @@ plugins {
     id("native-dependencies")
 }
 
-val library = solib("callbacks")
+val library = solib("kotlinx", "cinterop", "jvmcallbacks")
 
 native {
     val isWindows = PlatformInfo.isWindows()

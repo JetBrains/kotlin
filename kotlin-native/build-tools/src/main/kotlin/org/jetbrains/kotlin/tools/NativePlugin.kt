@@ -282,6 +282,7 @@ open class NativeToolsExtension(val project: Project) {
     }
 }
 
+fun solib(vararg nameFragments: String) = solib(name = nameFragments.joinToString(""))
 
 fun solib(name: String) = when {
     hostIsMingw -> "$name.dll"

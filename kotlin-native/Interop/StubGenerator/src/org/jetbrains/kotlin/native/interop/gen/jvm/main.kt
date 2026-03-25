@@ -305,7 +305,7 @@ private fun processCLib(
         else -> listOf()
     }
 
-    val libName = additionalArgs.cstubsName ?: fqParts.joinToString("") + "stubs"
+    val libName = additionalArgs.cstubsName ?: (fqParts.joinToString("") + "stubs")
 
     val tempFiles = TempFiles(cinteropArguments.tempDir)
 

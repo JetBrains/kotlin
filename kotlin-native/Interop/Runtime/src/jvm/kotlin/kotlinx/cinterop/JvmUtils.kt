@@ -194,6 +194,10 @@ private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDae
 fun loadKonanLibrary(name: String, konanHome: String? = null) {
     val runFromDaemon = System.getProperty("kotlin.native.tool.runFromDaemon") == "true"
     val fullLibraryName = System.mapLibraryName(name)
+    // During build of some tasks (e.g. :kotlin-native:llvmInterop:genInteropStubs), native libraries
+    // like jvmcallbacks are not yet available in konanHome/konan/nativelib (dist is not built yet),
+    // while other tasks (e.g. unit tests) don't rely on the distribution and don't use konanHome at all.
+    // Instead, the libraries are placed in build directories and made available via `java.library.path`.
     val paths = initializePath()
     for (dir in paths) {
         if (tryLoadKonanLibrary(dir, fullLibraryName, runFromDaemon)) return

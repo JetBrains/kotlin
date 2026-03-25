@@ -97,9 +97,9 @@ tasks.withType<Test>().configureEach {
                 .filterNot { it.isBlank() }
                 .flatMap {
                     listOf(
-                        """permission java.io.FilePermission "$it/libcallbacks.dylib", "read";""",
-                        """permission java.io.FilePermission "$it/libcallbacks.so", "read";""",
-                        """permission java.io.FilePermission "$it/libcallbacks.dll", "read";""",
+                        """permission java.io.FilePermission "$it/libkotlinxcinteropjvmcallbacks.dylib", "read";""",
+                        """permission java.io.FilePermission "$it/libkotlinxcinteropjvmcallbacks.so", "read";""",
+                        """permission java.io.FilePermission "$it/libkotlinxcinteropjvmcallbacks.dll", "read";""",
                         """permission java.io.FilePermission "$it/libclangstubs.dylib", "read";""",
                         """permission java.io.FilePermission "$it/libclangstubs.so", "read";""",
                         """permission java.io.FilePermission "$it/libclangstubs.dll", "read";""",
@@ -200,9 +200,9 @@ tasks.withType<Test>().configureEach {
                                     """permission java.net.SocketPermission "download.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                     """permission java.net.SocketPermission "download-cdn.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                     """permission java.net.SocketPermission "repo.labs.intellij.net:443", "connect,resolve";""", // DependencyDownloader.kt
-                                    // add link permission to load `libcallbacks.dylib`, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
+                                    // add link permission to load jvmcallbacks library, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
                                     // This happens in case of `catch (e: UnsatisfiedLinkError)` in `JvmUtilsKt.tryLoadKonanLibrary()`
-                                    // with message `Native Library <...>/kotlin-native/dist/konan/nativelib/libcallbacks.dylib already loaded in another classloader`
+                                    // with message `Native Library <...>/kotlin-native/dist/konan/nativelib/libkotlinxcinteropjvmcallbacks.dylib already loaded in another classloader`
                                     """permission java.nio.file.LinkPermission "hard";""",
                                 )
                                 if (nativeHome.isPresent) {
