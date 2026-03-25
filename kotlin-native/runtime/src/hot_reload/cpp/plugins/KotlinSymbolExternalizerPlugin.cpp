@@ -63,8 +63,9 @@ static void retargetEdges(llvm::jitlink::LinkGraph& Graph, const std::vector<Sym
 void KotlinSymbolExternalizerPlugin::modifyPassConfig(
         llvm::orc::MaterializationResponsibility& MR, llvm::jitlink::LinkGraph& G, llvm::jitlink::PassConfiguration& Config) {
 
-    // Skip StubsJD materializations, those are the stubs themselves
     if (&MR.getTargetJITDylib() == &stubsJD_) return;
+    // Ignore symbols coming from cache artifacts (i.e., non user-defined code)
+    if (G.getName().find("-cache.a") != std::string::npos) return;
 
     // Note from the documentation: graph nodes still have their original vmaddrs.
     Config.PrePrunePasses.emplace_back([&MR, this](llvm::jitlink::LinkGraph& Graph) -> llvm::Error {

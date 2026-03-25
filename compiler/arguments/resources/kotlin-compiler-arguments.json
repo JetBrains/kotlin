@@ -6452,11 +6452,11 @@
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.LiteralPathType",
                                     "defaultValue": {
-                                      "current": [],
+                                        "current": [],
                                         "valueInVersions": []
                                     },
                                     "isNullable": {
-                                      "current": false,
+                                        "current": false,
                                         "valueInVersions": []
                                     }
                                 }
@@ -6746,11 +6746,11 @@
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.LiteralPathType",
                                     "defaultValue": {
-                                      "current": [],
+                                        "current": [],
                                         "valueInVersions": []
                                     },
                                     "isNullable": {
-                                      "current": false,
+                                        "current": false,
                                         "valueInVersions": []
                                     }
                                 }

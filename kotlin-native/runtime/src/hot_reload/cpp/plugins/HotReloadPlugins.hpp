@@ -12,7 +12,9 @@
 #include "ObjCSelectorFixupPlugin.hpp"
 #include "KotlinSymbolExternalizerPlugin.hpp"
 #include "MachOHostDataSymbolGenerator.hpp"
+#include "CompactUnwindStripperPlugin.hpp"
 
+using kotlin::hot::orc::plugins::CompactUnwindStripperPlugin;
 using kotlin::hot::orc::plugins::WeakSymbolFallbackGenerator;
 using kotlin::hot::orc::plugins::KotlinSymbolExternalizerPlugin;
 
