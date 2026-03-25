@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.extension.*
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
@@ -64,7 +67,7 @@ annotation class AnalysisApiTestEnvironmentStorage
 class AnalysisApiExecutionTestEnvironment(
     val testServices: TestServices,
     val mainFile: KtFile?,
-    val mainModule: KtTestModule
+    val mainModule: KtTestModule?
 )
 
 private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, AfterTestExecutionCallback, ParameterResolver {
@@ -97,13 +100,7 @@ private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, A
     override fun beforeTestExecution(context: ExtensionContext) {
         val testInstance = context.requiredTestInstance as AbstractAnalysisApiExecutionTest
 
-        // The test name itself can contain a path. However, '/' cannot appear in JVM method names.
-        // The letter-digit filtering allows including further information in the test name (e.g., an output file extension).
-        val testNamePath = context.requiredTestMethod.name
-            .split(' ')
-            .takeWhile { it.first().isLetterOrDigit() }
-            .joinToString("/")
-
+        val testNamePath = computeTestFilePath(context.requiredTestMethod)
         val testFilePath = getTestFilePath(testInstance.testDirPathString, testNamePath)
 
         @Suppress("DEPRECATION")
@@ -119,6 +116,20 @@ private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, A
 
             context.updateTestEnvironmentStorage(testEnvironment)
         }
+    }
+
+    private fun computeTestFilePath(testMethod: Method): String {
+        val testMetadataAnnotation = testMethod.getAnnotation(TestMetadata::class.java)
+        if (testMetadataAnnotation != null) {
+            return testMetadataAnnotation.value
+        }
+
+        // The test name itself can contain a path. However, '/' cannot appear in JVM method names, so we use spaces instead.
+        // The letter-digit filtering allows including further information in the test name (e.g., an output file extension).
+        return testMethod.name
+            .split(' ')
+            .takeWhile { it.first().isLetterOrDigit() }
+            .joinToString("/")
     }
 
     override fun afterTestExecution(context: ExtensionContext) {
@@ -160,10 +171,15 @@ private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, A
     }
 
     private fun getTestFilePath(testDirPathString: String, testFileName: String): Path {
-        return Paths.get(testDirPathString, "$testFileName.kt").takeIf { it.exists() }
-            ?: Paths.get(testDirPathString, "$testFileName.kts").takeIf { it.exists() }
-            ?: Paths.get(testDirPathString, "$testFileName.repl.kts").takeIf { it.exists() }
-            ?: Paths.get(testDirPathString, "$testFileName.kotlin_builtins").takeIf { it.exists() }
+        fun tryPath(extension: String): Path? {
+            return Paths.get(testDirPathString, testFileName + extension).takeIf { it.exists() }
+        }
+
+        return tryPath("")
+            ?: tryPath(".kt")
+            ?: tryPath(".kts")
+            ?: tryPath(".repl.kts")
+            ?: tryPath(".kotlin_builtins")
             ?: error("Cannot find test file $testFileName.kt(s) in $testDirPathString")
     }
 }
