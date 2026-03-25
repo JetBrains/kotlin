@@ -46,6 +46,27 @@ abstract class AbstractAnalysisApiExecutionTest(val testDirPathString: String) :
     }
 }
 
+/**
+ * Marks a field for automatic injection of the [AnalysisApiExecutionTestEnvironment].
+ *
+ * The annotated field must be a `private lateinit var` of type [AnalysisApiExecutionTestEnvironment].
+ * It is set before test execution and cleared after.
+ */
+@Target(AnnotationTarget.FIELD)
+annotation class AnalysisApiTestEnvironmentStorage
+
+/**
+ * Holds the test environment created during execution of an [AbstractAnalysisApiExecutionTest].
+ *
+ * Instances are injected into fields annotated with [AnalysisApiTestEnvironmentStorage].
+ * Alternatively, individual components can be received as test method parameters.
+ */
+class AnalysisApiExecutionTestEnvironment(
+    val testServices: TestServices,
+    val mainFile: KtFile?,
+    val mainModule: KtTestModule
+)
+
 private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, AfterTestExecutionCallback, ParameterResolver {
     private companion object {
         private val SUPPORTED_PARAMETER_TYPES = listOf(
@@ -55,9 +76,7 @@ private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, A
         )
     }
 
-    private class State(val testServices: TestServices, val mainFile: KtFile?, val mainModule: KtTestModule?)
-
-    private var cachedState = ThreadLocal<State>()
+    private var cachedTestEnvironment = ThreadLocal<AnalysisApiExecutionTestEnvironment>()
 
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
         val parameterType = parameterContext.parameter.type
@@ -65,29 +84,79 @@ private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, A
     }
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any? {
-        val cachedState = this.cachedState.get() ?: error("State is not cached yet")
+        val cachedEnvironment = this.cachedTestEnvironment.get() ?: error("Test environment is not cached yet")
         val parameterType = parameterContext.parameter.type
         return when {
-            parameterType.isAssignableFrom(TestServices::class.java) -> cachedState.testServices
-            parameterType.isAssignableFrom(KtFile::class.java) -> cachedState.mainFile
-            parameterType.isAssignableFrom(KtTestModule::class.java) -> cachedState.mainModule
+            parameterType.isAssignableFrom(TestServices::class.java) -> cachedEnvironment.testServices
+            parameterType.isAssignableFrom(KtFile::class.java) -> cachedEnvironment.mainFile
+            parameterType.isAssignableFrom(KtTestModule::class.java) -> cachedEnvironment.mainModule
             else -> error("Unsupported parameter type $parameterType")
         }
     }
 
     override fun beforeTestExecution(context: ExtensionContext) {
         val testInstance = context.requiredTestInstance as AbstractAnalysisApiExecutionTest
-        val testFilePath = getTestFilePath(testInstance.testDirPathString, context.requiredTestMethod.name)
+
+        // The test name itself can contain a path. However, '/' cannot appear in JVM method names.
+        // The letter-digit filtering allows including further information in the test name (e.g., an output file extension).
+        val testNamePath = context.requiredTestMethod.name
+            .split(' ')
+            .takeWhile { it.first().isLetterOrDigit() }
+            .joinToString("/")
+
+        val testFilePath = getTestFilePath(testInstance.testDirPathString, testNamePath)
 
         @Suppress("DEPRECATION")
         testInstance.performTest(testFilePath.toString()) { testServices, mainFile, mainModule ->
-            require(cachedState.get() == null)
-            cachedState.set(State(testServices, mainFile, mainModule))
+            val testEnvironment = AnalysisApiExecutionTestEnvironment(
+                testServices,
+                mainFile,
+                mainModule
+            )
+
+            require(cachedTestEnvironment.get() == null)
+            cachedTestEnvironment.set(testEnvironment)
+
+            context.updateTestEnvironmentStorage(testEnvironment)
         }
     }
 
-    override fun afterTestExecution(context: ExtensionContext?) {
-        cachedState.remove()
+    override fun afterTestExecution(context: ExtensionContext) {
+        cachedTestEnvironment.remove()
+        context.updateTestEnvironmentStorage(null)
+    }
+
+    private fun ExtensionContext.updateTestEnvironmentStorage(newValue: AnalysisApiExecutionTestEnvironment?) {
+        val testInstance = requiredTestInstance
+
+        tailrec fun update(klass: Class<*>) {
+            for (field in klass.declaredFields) {
+                if (!field.isAnnotationPresent(AnalysisApiTestEnvironmentStorage::class.java)) {
+                    continue
+                }
+
+                require(field.type == AnalysisApiExecutionTestEnvironment::class.java) {
+                    "Field '${field.name}' annotated with @AnalysisApiTestEnvironmentStorage must have type " +
+                            "'AnalysisApiExecutionTestEnvironment', but has type '${field.type.name}'"
+                }
+
+                require(Modifier.isPrivate(field.modifiers)) {
+                    "Field '${field.name}' annotated with @AnalysisApiTestEnvironmentStorage must be private to avoid exposing " +
+                            "the test environment to the entire test hierarchy"
+                }
+
+                field.isAccessible = true
+
+                val currentValue = field.get(testInstance)
+                require((currentValue == null) xor (newValue == null))
+                field.set(testInstance, newValue)
+            }
+
+            val superclass = klass.superclass ?: return
+            update(superclass)
+        }
+
+        update(testInstance.javaClass)
     }
 
     private fun getTestFilePath(testDirPathString: String, testFileName: String): Path {
