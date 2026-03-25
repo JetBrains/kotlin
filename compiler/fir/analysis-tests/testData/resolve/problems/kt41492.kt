@@ -24,5 +24,10 @@ fun test(a: A, b: B) {
     r.foo
 }
 
+fun test2(a: A, b: B) {
+    val r = listOf(select(a, b))
+    r.joinToString { it.foo }
+}
+
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, intersectionType, javaProperty, javaType,
 localProperty, nullableType, propertyDeclaration, typeParameter */
