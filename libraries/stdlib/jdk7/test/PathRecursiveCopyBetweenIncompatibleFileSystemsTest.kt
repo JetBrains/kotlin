@@ -5,7 +5,6 @@
 
 package kotlin.jdk7.test
 
-import junit.framework.TestCase.assertTrue
 import java.io.File
 import java.net.URI
 import java.nio.channels.SeekableByteChannel
@@ -179,17 +178,12 @@ private class SharpFileSystem(
         return wrap(delegateFileSystem.getPath(convertedFirst, *convertedMore))
     }
 
-    override fun getPathMatcher(syntaxAndPattern: String): PathMatcher {
-        throw UnsupportedOperationException("Path matchers are not supported in test file system")
-    }
+    override fun getPathMatcher(syntaxAndPattern: String): PathMatcher = TODO()
 
     override fun getUserPrincipalLookupService(): UserPrincipalLookupService =
         delegateFileSystem.userPrincipalLookupService
 
-    override fun newWatchService(): WatchService {
-        throw UnsupportedOperationException("Watch service is not supported in test file system")
-    }
-
+    override fun newWatchService(): WatchService = TODO()
     fun wrap(delegatePath: Path): SharpPath = SharpPath(this, delegatePath)
 
     private fun String.fromTestSeparators(): String =
@@ -254,13 +248,9 @@ private class SharpPath(
         watcher: WatchService,
         events: Array<out WatchEvent.Kind<*>>,
         vararg modifiers: WatchEvent.Modifier,
-    ): WatchKey {
-        throw UnsupportedOperationException("Watch service is not supported in test file system")
-    }
+    ): WatchKey = TODO()
 
-    override fun register(watcher: WatchService, vararg events: WatchEvent.Kind<*>): WatchKey {
-        throw UnsupportedOperationException("Watch service is not supported in test file system")
-    }
+    override fun register(watcher: WatchService, vararg events: WatchEvent.Kind<*>): WatchKey = TODO()
 
     override fun iterator(): MutableIterator<Path> =
         delegatePath.mapTo(ArrayList()) { fileSystem.wrap(it) }.iterator()
