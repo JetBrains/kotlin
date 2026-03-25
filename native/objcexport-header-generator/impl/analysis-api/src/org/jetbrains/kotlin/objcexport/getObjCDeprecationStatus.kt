@@ -2,16 +2,15 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 /**
  * Returns `deprecated`, `unavailable` or null
  *
  * Objective-C method, property or constructor may have two attributes
- * - `deprecated` which is returned when [KaSymbol] is `@Deprecated` and has level [DeprecationLevelValue.WARNING]
- * - `unavailable` which is returned when [KaSymbol] is `@Deprecated` and has level [DeprecationLevelValue.WARNING] or [DeprecationLevelValue.HIDDEN]
+ * - `deprecated` which is returned when [KaSymbol] is `@Deprecated` and has level [KaDeprecation.Level.WARNING]
+ * - `unavailable` which is returned when [KaSymbol] is `@Deprecated` and has level [KaDeprecation.Level.WARNING] or [KaDeprecation.Level.HIDDEN]
  *
  * Edge case when [KaSymbol] is constructor, then [getObjCDeprecationStatus] is called on containing symbol.
  *
@@ -19,22 +18,21 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
  */
 @OptIn(KaExperimentalApi::class)
 internal fun KaSession.getObjCDeprecationStatus(symbol: KaSymbol): String? {
-    return symbol.deprecationStatus?.toDeprecationAttribute() ?: if (symbol.isConstructor) {
-        symbol.containingDeclaration?.deprecationStatus?.toDeprecationAttribute()
+    return symbol.deprecation?.toDeprecationAttribute() ?: if (symbol.isConstructor) {
+        symbol.containingDeclaration?.deprecation?.toDeprecationAttribute()
     } else null
 }
 
-private fun DeprecationInfo.toDeprecationAttribute(): String {
-    val attribute = when (deprecationLevel) {
-        DeprecationLevelValue.WARNING -> "deprecated"
-        DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> "unavailable"
+@KaExperimentalApi
+private fun KaDeprecation.toDeprecationAttribute(): String {
+    val attribute = when (level) {
+        KaDeprecation.Level.WARNING -> "deprecated"
+        KaDeprecation.Level.ERROR, KaDeprecation.Level.HIDDEN -> "unavailable"
     }
 
     // TODO: consider avoiding code generation for unavailable.
 
-    val message = this.message.orEmpty()
-
-    return renderDeprecationAttribute(attribute, message)
+    return renderDeprecationAttribute(attribute, message = "")
 }
 
 private fun renderDeprecationAttribute(attribute: String, message: String) = "$attribute(${quoteAsCStringLiteral(message)})"

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
@@ -486,9 +486,9 @@ internal class SymbolLightAccessorMethod private constructor(
             val accessorCanExist = lightAccessorCanExist(
                 accessorSymbol = accessor,
                 siteTarget = if (accessor is KaPropertyGetterSymbol)
-                    AnnotationUseSiteTarget.PROPERTY_GETTER
+                    KaAnnotationUseSiteTarget.PROPERTY_GETTER
                 else
-                    AnnotationUseSiteTarget.PROPERTY_SETTER,
+                    KaAnnotationUseSiteTarget.PROPERTY_SETTER,
             )
 
             if (!accessorCanExist) return
@@ -602,7 +602,7 @@ internal class SymbolLightAccessorMethod private constructor(
         context(context: Context)
         private fun KaSession.lightAccessorCanExist(
             accessorSymbol: KaPropertyAccessorSymbol,
-            siteTarget: AnnotationUseSiteTarget,
+            siteTarget: KaAnnotationUseSiteTarget,
         ): Boolean = when {
             context.staticsFromCompanion && !accessorSymbol.hasJvmStaticAnnotation() && !property.hasJvmStaticAnnotation() -> false
             isHiddenByDeprecation(property) -> false

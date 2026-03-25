@@ -71,6 +71,5 @@ org/jetbrains/kotlin/psi/KtTypeReference
 org/jetbrains/kotlin/psi/KtWhenConditionInRange
 org/jetbrains/kotlin/resolution/KtResolvable
 org/jetbrains/kotlin/resolution/KtResolvableCall
-org/jetbrains/kotlin/resolve/deprecation/DeprecationInfo
 org/jetbrains/kotlin/types/Variance
 org/jetbrains/kotlin/util/ImplementationStatus

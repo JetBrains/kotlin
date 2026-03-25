@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationUseSiteTarget
+import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -14,7 +16,10 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseDeprecation
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolInformationProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.components.toCompilerTarget
+import org.jetbrains.kotlin.analysis.api.impl.base.components.toKaLevel
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -24,6 +29,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -43,9 +49,11 @@ internal class KaFirSymbolInformationProvider(
             propagatesToOverrides = true,
             message = null,
         )
+
+        private val OBSOLETE_SYMBOL_DEPRECATION = KaBaseDeprecation(KaDeprecation.Level.HIDDEN, isPropagatedToOverrides = true)
     }
 
-    override val KaSymbol.deprecationStatus: DeprecationInfo?
+    override val KaSymbol.deprecation: KaDeprecation?
         get() = withValidityAssertion {
             if (this is KaFirPackageSymbol || this is KaReceiverParameterSymbol) return null
             require(this is KaFirSymbol<*>) { "${this::class}" }
@@ -62,32 +70,62 @@ internal class KaFirSymbolInformationProvider(
                     || (firSymbol is FirSimpleSyntheticPropertySymbol && firSymbol.noJavaOrigin)
 
             if (isObsoleteSymbol) {
-                return OBSOLETE_SYMBOL_DEPRECATION_INFO
+                return OBSOLETE_SYMBOL_DEPRECATION
             }
 
-            return when (firSymbol) {
-                is FirPropertySymbol -> firSymbol.getDeprecationForCallSite(
-                    analysisSession.firSession,
-                    AnnotationUseSiteTarget.PROPERTY,
-                    AnnotationUseSiteTarget.ALL,
-                )
-
-                is FirBackingFieldSymbol -> firSymbol.getDeprecationForCallSite(
-                    analysisSession.firSession,
-                    AnnotationUseSiteTarget.FIELD,
-                    AnnotationUseSiteTarget.ALL,
-                )
-
-                is FirPropertyAccessorSymbol -> firSymbol.propertySymbol.getDeprecationForCallSite(
-                    analysisSession.firSession,
-                    if (firSymbol.isGetter) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER,
-                    AnnotationUseSiteTarget.PROPERTY,
-                    AnnotationUseSiteTarget.ALL,
-                )
-
-                else -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.ALL)
-            }?.toDeprecationInfo()
+            return firSymbol.computeDeprecationInfo()?.toKaDeprecation()
         }
+
+    @Deprecated("Use 'deprecation' instead", level = DeprecationLevel.HIDDEN)
+    override val KaSymbol.deprecationStatus: DeprecationInfo?
+        get() = withValidityAssertion { computeDeprecationInfo() }
+
+    private fun KaSymbol.computeDeprecationInfo(): DeprecationInfo? {
+        if (this is KaFirPackageSymbol || this is KaReceiverParameterSymbol) return null
+        require(this is KaFirSymbol<*>) { "${this::class}" }
+
+        // Optimization: Avoid building `firSymbol` of `KtFirPsiJavaClassSymbol` if it definitely isn't deprecated.
+        if (this is KaFirPsiJavaClassSymbol && !mayHaveDeprecation()) {
+            return null
+        }
+
+        val firSymbol = this.firSymbol
+
+        // A symbol exists for compatibility reasons and should never be referenced in user code
+        val isObsoleteSymbol = (firSymbol.fir as? FirCallableDeclaration)?.hiddenEverywhereBesideSuperCallsStatus != null
+                || (firSymbol is FirSimpleSyntheticPropertySymbol && firSymbol.noJavaOrigin)
+
+        if (isObsoleteSymbol) {
+            return OBSOLETE_SYMBOL_DEPRECATION_INFO
+        }
+
+        return firSymbol.computeDeprecationInfo()?.toDeprecationInfo()
+    }
+
+    private fun FirBasedSymbol<*>.computeDeprecationInfo(): FirDeprecationInfo? {
+        return when (this) {
+            is FirPropertySymbol -> getDeprecationForCallSite(
+                analysisSession.firSession,
+                AnnotationUseSiteTarget.PROPERTY,
+                AnnotationUseSiteTarget.ALL,
+            )
+
+            is FirBackingFieldSymbol -> getDeprecationForCallSite(
+                analysisSession.firSession,
+                AnnotationUseSiteTarget.FIELD,
+                AnnotationUseSiteTarget.ALL,
+            )
+
+            is FirPropertyAccessorSymbol -> propertySymbol.getDeprecationForCallSite(
+                analysisSession.firSession,
+                if (isGetter) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER,
+                AnnotationUseSiteTarget.PROPERTY,
+                AnnotationUseSiteTarget.ALL,
+            )
+
+            else -> getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.ALL)
+        }
+    }
 
     override val KaNamedFunctionSymbol.canBeOperator: Boolean
         get() = withValidityAssertion {
@@ -110,6 +148,20 @@ internal class KaFirSymbolInformationProvider(
         return annotationSimpleNames.any { it != null && it in deprecationAnnotationSimpleNames }
     }
 
+    override fun KaSymbol.deprecation(useSiteTarget: KaAnnotationUseSiteTarget?): KaDeprecation? = withValidityAssertion {
+        if (this is KaReceiverParameterSymbol) return null
+
+        require(this is KaFirSymbol<*>)
+
+        val firDeprecationInfo = when {
+            useSiteTarget != null -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, useSiteTarget.toCompilerTarget())
+            else -> firSymbol.getDeprecationForCallSite(analysisSession.firSession)
+        }
+
+        return firDeprecationInfo?.toKaDeprecation()
+    }
+
+    @Deprecated("Use 'deprecation()' instead", level = DeprecationLevel.HIDDEN)
     override fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? = withValidityAssertion {
         if (this is KaReceiverParameterSymbol) return null
 
@@ -121,17 +173,22 @@ internal class KaFirSymbolInformationProvider(
         }?.toDeprecationInfo()
     }
 
-    @Deprecated("Use 'deprecationStatus' directly instead", replaceWith = ReplaceWith("this.getter?.deprecationStatus"))
+    @Deprecated("Use 'deprecation' directly instead", replaceWith = ReplaceWith("this.getter?.deprecation"))
     override val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
-            this.getter?.deprecationStatus
+            this.getter?.computeDeprecationInfo()
         }
 
-    @Deprecated("Use 'deprecationStatus' directly instead", replaceWith = ReplaceWith("this.setter?.deprecationStatus"))
+    @Suppress("DEPRECATION")
+    @Deprecated("Use 'deprecation' directly instead", replaceWith = ReplaceWith("this.setter?.deprecation"))
     override val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
-            this.setter?.deprecationStatus
+            this.setter?.computeDeprecationInfo()
         }
+
+    private fun FirDeprecationInfo.toKaDeprecation(): KaDeprecation {
+        return KaBaseDeprecation(deprecationLevel.toKaLevel(), propagatesToOverrides)
+    }
 
     private fun FirDeprecationInfo.toDeprecationInfo(): DeprecationInfo {
         // We pass null as the message, otherwise we can trigger a contract violation

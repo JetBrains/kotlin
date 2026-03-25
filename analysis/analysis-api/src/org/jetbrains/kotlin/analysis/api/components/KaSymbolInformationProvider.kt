@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -17,9 +18,29 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaSymbolInformationProvider : KaSessionComponent {
     /**
+     * The deprecation status of the given symbol, or `null` if the symbol is not deprecated.
+     *
+     * This considers deprecation annotations applied to the symbol itself and, for property-related
+     * symbols, deprecation annotations with appropriate use-site targets.
+     */
+    @KaExperimentalApi
+    public val KaSymbol.deprecation: KaDeprecation?
+
+    /**
+     * Whether the symbol is deprecated at any level ([WARNING][KaDeprecation.Level.WARNING], [ERROR][KaDeprecation.Level.ERROR],
+     * or [HIDDEN][KaDeprecation.Level.HIDDEN]).
+     *
+     * This is a convenience property equivalent to `deprecation != null`.
+     */
+    @KaExperimentalApi
+    public val KaSymbol.isDeprecated: Boolean
+
+    /**
      * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.
      */
     @KaExperimentalApi
+    @Deprecated("Use 'deprecation' instead", level = DeprecationLevel.HIDDEN)
+    @KaNoContextParameterBridgeRequired
     public val KaSymbol.deprecationStatus: DeprecationInfo?
 
     /**
@@ -49,10 +70,21 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
     public val KaNamedFunctionSymbol.canBeOperator: Boolean
 
     /**
+     * The deprecation status of the given symbol for the given [annotation use-site target][useSiteTarget],
+     * or `null` if the symbol is not deprecated for that target.
+     *
+     * @param useSiteTarget the annotation use-site target to check deprecation for
+     */
+    @KaExperimentalApi
+    public fun KaSymbol.deprecation(useSiteTarget: KaAnnotationUseSiteTarget?): KaDeprecation?
+
+    /**
      * The deprecation status of the given symbol for the given [annotation use-site target](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets),
      * or `null` if the declaration is not deprecated.
      */
     @KaExperimentalApi
+    @Deprecated("Use 'deprecation()' instead", level = DeprecationLevel.HIDDEN)
+    @KaNoContextParameterBridgeRequired
     public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?
 
     /**
@@ -60,9 +92,11 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     @Deprecated(
-        message = "Use 'deprecationStatus' directly instead",
-        replaceWith = ReplaceWith("this.getter?.deprecationStatus"),
+        message = "Use 'deprecation' directly instead",
+        replaceWith = ReplaceWith("this.getter?.deprecation"),
+        level = DeprecationLevel.HIDDEN,
     )
+    @KaNoContextParameterBridgeRequired
     public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
 
     /**
@@ -70,9 +104,11 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     @Deprecated(
-        message = "Use 'deprecationStatus' directly instead",
-        replaceWith = ReplaceWith("this.setter?.deprecationStatus"),
+        message = "Use 'deprecation' directly instead",
+        replaceWith = ReplaceWith("this.setter?.deprecation"),
+        level = DeprecationLevel.HIDDEN,
     )
+    @KaNoContextParameterBridgeRequired
     public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
 
     /**
@@ -102,6 +138,52 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
     @KaExperimentalApi
     @KaK1Unsupported
     public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
+}
+
+/**
+ * Represents the deprecation status of a symbol.
+ *
+ * @see KaSymbolInformationProvider.deprecation
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaDeprecation {
+    /** The deprecation level. */
+    public val level: Level
+
+    /** Whether this deprecation propagates to overriding members. */
+    public val isPropagatedToOverrides: Boolean
+
+    /**
+     * Deprecation severity levels, corresponding to [DeprecationLevel] in the Kotlin standard library.
+     *
+     * The levels form a progression from least to most restrictive: [WARNING] produces a compiler warning, [ERROR] produces a compiler
+     * error, and [HIDDEN] makes the declaration invisible to new code.
+     */
+    @KaExperimentalApi
+    public enum class Level {
+        /**
+         * The deprecated symbol can still be used, but a warning is reported at the call site.
+         *
+         * Corresponds to [DeprecationLevel.WARNING].
+         */
+        WARNING,
+
+        /**
+         * The deprecated symbol can still be referenced, but a compilation error is reported at the call site.
+         *
+         * Corresponds to [DeprecationLevel.ERROR].
+         */
+        ERROR,
+
+        /**
+         * The deprecated symbol is no longer visible to new code.
+         * Existing compiled code that references it will still work, but new source code cannot reference it.
+         *
+         * Corresponds to [DeprecationLevel.HIDDEN].
+         */
+        HIDDEN,
+    }
 }
 
 /**
@@ -140,14 +222,30 @@ public sealed class KaReturnValueStatus(public val name: String) {
 }
 
 /**
- * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.
+ * The deprecation status of the given symbol, or `null` if the symbol is not deprecated.
+ *
+ * This considers deprecation annotations applied to the symbol itself and, for property-related
+ * symbols, deprecation annotations with appropriate use-site targets.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public val KaSymbol.deprecationStatus: DeprecationInfo?
-    get() = with(session) { deprecationStatus }
+public val KaSymbol.deprecation: KaDeprecation?
+    get() = with(session) { deprecation }
+
+/**
+ * Whether the symbol is deprecated at any level ([WARNING][KaDeprecation.Level.WARNING], [ERROR][KaDeprecation.Level.ERROR],
+ * or [HIDDEN][KaDeprecation.Level.HIDDEN]).
+ *
+ * This is a convenience property equivalent to `deprecation != null`.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public val KaSymbol.isDeprecated: Boolean
+    get() = with(session) { isDeprecated }
 
 /**
  * Whether the function symbol meets all the requirements to be declared as an [operator function](https://kotlinlang.org/docs/operator-overloading.html).
@@ -180,50 +278,22 @@ public val KaNamedFunctionSymbol.canBeOperator: Boolean
     get() = with(session) { canBeOperator }
 
 /**
- * The deprecation status of the given symbol for the given [annotation use-site target](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets),
- * or `null` if the declaration is not deprecated.
+ * The deprecation status of the given symbol for the given [annotation use-site target][useSiteTarget],
+ * or `null` if the symbol is not deprecated for that target.
+ *
+ * @param useSiteTarget the annotation use-site target to check deprecation for
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
+public fun KaSymbol.deprecation(useSiteTarget: KaAnnotationUseSiteTarget?): KaDeprecation? {
     return with(session) {
-        deprecationStatus(
-            annotationUseSiteTarget = annotationUseSiteTarget,
+        deprecation(
+            useSiteTarget = useSiteTarget,
         )
     }
 }
-
-/**
- * The deprecation status of the given property getter, or `null` if the getter is not deprecated.
- */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaExperimentalApi
-@Deprecated(
-    message = "Use 'deprecationStatus' directly instead",
-    replaceWith = ReplaceWith("this.getter?.deprecationStatus"),
-)
-@KaContextParameterApi
-context(session: KaSession)
-public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
-    @Suppress("DEPRECATION")
-    get() = with(session) { getterDeprecationStatus }
-
-/**
- * The deprecation status of the given property setter, or `null` if the setter is not deprecated or doesn't exist.
- */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaExperimentalApi
-@Deprecated(
-    message = "Use 'deprecationStatus' directly instead",
-    replaceWith = ReplaceWith("this.setter?.deprecationStatus"),
-)
-@KaContextParameterApi
-context(session: KaSession)
-public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
-    @Suppress("DEPRECATION")
-    get() = with(session) { setterDeprecationStatus }
 
 /**
  * A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class.
