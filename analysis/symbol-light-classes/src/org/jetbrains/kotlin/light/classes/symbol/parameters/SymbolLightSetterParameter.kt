@@ -13,17 +13,13 @@ import org.jetbrains.kotlin.light.classes.symbol.NullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
-import org.jetbrains.kotlin.name.SpecialNames
 
 internal class SymbolLightSetterParameter(
     private val containingPropertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     parameterSymbol: KaValueParameterSymbol,
     containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
-    override fun getName(): String {
-        if (isDefaultSetterParameter) return SpecialNames.IMPLICIT_SET_PARAMETER.asString()
-        return super.getName()
-    }
+    override fun getName(): String = if (isDefaultSetterParameter) "value" else super.getName()
 
     private val isDefaultSetterParameter: Boolean by lazyPub {
         containingPropertySymbolPointer.withSymbol(ktModule) {

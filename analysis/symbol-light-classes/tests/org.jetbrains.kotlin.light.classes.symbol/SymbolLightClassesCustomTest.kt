@@ -88,6 +88,25 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
     }
 
     /**
+     * A regression test for KT-85252 to ensure that the implicit setter parameter gets a Java-friendly name.
+     */
+    @Test
+    fun defaultSetterParameterName(file: KtFile, testServices: TestServices) {
+        val topLevelClass = file.declarations.first() as KtClass
+        val topLevelLightClass = topLevelClass.toLightClass() ?: error("Light class was not found")
+
+        val defaultSetter = topLevelLightClass.findMethodsByName("setFoo", false).single()
+        testServices.assertions.assertEquals("value", defaultSetter.parameterList.parameters.single().name) {
+            "Expected the implicit setter parameter name to be 'value'"
+        }
+
+        val explicitSetter = topLevelLightClass.findMethodsByName("setBar", false).single()
+        testServices.assertions.assertEquals("newBar", explicitSetter.parameterList.parameters.single().name) {
+            "Expected an explicit setter parameter name to stay unchanged"
+        }
+    }
+
+    /**
      * A regression test for KT-84875 to ensure that light classes are not created for dangling file modules.
      */
     @Test
