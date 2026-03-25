@@ -1,0 +1,14 @@
+FILE: chainedFunSuspendConversionForSimpleExpression.kt
+    public abstract fun interface SuspendRunnable : R|kotlin/Any| {
+        public abstract suspend fun invoke(): R|kotlin/Unit|
+
+    }
+    public final fun foo(s: R|SuspendRunnable|): R|kotlin/Unit| {
+    }
+    public final fun test(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        R|/foo|(<L> = SAM(foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo Unit
+        }
+        ))
+        R|/foo|(SAM(FConversion(R|<local>/f|)))
+    }
