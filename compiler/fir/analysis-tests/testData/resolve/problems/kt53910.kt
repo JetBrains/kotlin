@@ -7,7 +7,8 @@
 fun overloadedFunction(vararg args: Int, func: () -> Unit) {}
 fun overloadedFunction(args: Iterable<Int>, func: () -> Unit) {}
 
-// referencedFunction is intentionally NOT defined to trigger the bug
+// referencedFunction is intentionally declared in a comment to trigger the bug in K1
+//fun referencedFunction(): Unit
 
 fun foo() {
     // Bug: ::referencedFunction should produce UNRESOLVED_REFERENCE but doesn't
