@@ -26,7 +26,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(staticProperty.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Foo.staticProperty
   contextParameters: []
@@ -57,7 +57,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(staticProperty.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -90,7 +90,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(staticProperty.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getStaticProperty
   javaSetterName: null
   isInline: false

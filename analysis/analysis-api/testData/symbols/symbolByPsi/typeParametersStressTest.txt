@@ -18,7 +18,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -71,7 +71,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: []
@@ -80,7 +80,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: TypeParametersStressTestKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: topLevelFunction
 
@@ -99,7 +99,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -129,7 +129,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
     getContainingJvmClassName: TypeParametersStressTestKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /topLevelProperty
   contextParameters: []
@@ -174,7 +174,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingJvmClassName: TypeParametersStressTestKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     returnType: KaTypeParameterType:
       annotations: []
@@ -184,7 +184,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
     getContainingJvmClassName: TypeParametersStressTestKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -230,7 +230,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
     getContainingJvmClassName: TypeParametersStressTestKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaTypeParameterType:
     annotations: []
@@ -252,14 +252,14 @@ KaKotlinPropertySymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: TypeParametersStressTestKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getTopLevelProperty
   javaSetterName: null
   isInline: false
@@ -280,7 +280,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -302,7 +302,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaConstructorSymbol:
@@ -348,7 +348,7 @@ KaConstructorSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
@@ -369,7 +369,7 @@ KaConstructorSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
@@ -403,14 +403,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingJvmClassName: TopLevelClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: TopLevelClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: TopLevelClass
 
 KaTypeParameterSymbol:
@@ -428,7 +428,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -446,7 +446,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -464,7 +464,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -482,7 +482,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -500,7 +500,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -548,7 +548,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: []
@@ -565,7 +565,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -584,7 +584,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -626,14 +626,14 @@ KaNamedClassSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -675,14 +675,14 @@ KaNamedClassSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -730,7 +730,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: []
@@ -739,7 +739,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -788,7 +788,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: []
@@ -805,7 +805,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: TopLevelClass.NestedClass
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -848,14 +848,14 @@ KaNamedClassSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: TopLevelClass.NestedClass
 
 KaTypeParameterSymbol:
@@ -873,7 +873,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -891,7 +891,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -909,7 +909,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -927,7 +927,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -945,7 +945,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -993,7 +993,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: []
@@ -1010,7 +1010,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1029,7 +1029,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -1071,14 +1071,14 @@ KaNamedClassSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -1120,14 +1120,14 @@ KaNamedClassSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1175,7 +1175,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: []
@@ -1184,7 +1184,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1213,7 +1213,7 @@ KaLocalVariableSymbol:
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1261,7 +1261,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: []
@@ -1278,7 +1278,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: TopLevelClass.InnerClass
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1321,14 +1321,14 @@ KaNamedClassSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: TopLevelClass.InnerClass
 
 KaNamedClassSymbol:
@@ -1370,7 +1370,7 @@ KaNamedClassSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
@@ -1391,14 +1391,14 @@ KaNamedClassSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: TopLevelClass
 
 KaTypeParameterSymbol:
@@ -1416,7 +1416,7 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaTypeAliasSymbol:
@@ -1449,11 +1449,11 @@ KaTypeAliasSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: TopLevelTypeAlias

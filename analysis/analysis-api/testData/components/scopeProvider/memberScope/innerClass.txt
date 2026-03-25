@@ -60,7 +60,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -72,7 +72,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Any
   canBeOperator: true
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -116,7 +116,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Any
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -160,7 +160,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Any
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -192,7 +192,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.B.ClassInB
 
 KaNamedClassSymbol:
@@ -223,7 +223,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.B.InnerClassInB
 
 KaNamedClassSymbol:
@@ -254,7 +254,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.A.ClassInA
 
 KaNamedClassSymbol:
@@ -285,7 +285,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.A.InnerClassInA
 
 KaConstructorSymbol:
@@ -314,5 +314,5 @@ KaConstructorSymbol:
   getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingJvmClassName: test.B
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.B

@@ -26,7 +26,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: A
 
 KaTypeAliasSymbol:
@@ -47,7 +47,7 @@ KaTypeAliasSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: TypeAlias
 
 KaNamedFunctionSymbol:
@@ -112,7 +112,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -120,7 +120,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: FunctionWithTypeAliasKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: function
 
@@ -186,7 +186,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -194,6 +194,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: FunctionWithTypeAliasKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: function

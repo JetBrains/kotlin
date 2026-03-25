@@ -38,7 +38,7 @@ CLASS:
   getContainingFileSymbol: KaFileSymbol(regularClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: RegularClass
 
 FUNCTIONAL INTERFACE FUNCTION:

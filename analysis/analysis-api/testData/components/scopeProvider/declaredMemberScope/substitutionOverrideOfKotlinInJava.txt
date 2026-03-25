@@ -40,7 +40,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: JavaC
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -81,7 +81,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: JavaC
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -117,7 +117,7 @@ KaSyntheticJavaPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaC
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getProp
   javaSetterName: null
   importableFqName: null
@@ -174,12 +174,12 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaC
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaC
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: JavaC

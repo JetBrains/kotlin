@@ -26,7 +26,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.KotlinClass
 
 KaNamedClassSymbol:
@@ -61,7 +61,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.SuperClass
 
 KaNamedClassSymbol:
@@ -92,5 +92,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.JavaClass

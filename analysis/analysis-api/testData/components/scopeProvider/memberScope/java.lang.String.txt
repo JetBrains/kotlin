@@ -26,7 +26,7 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaJavaFieldSymbol:
@@ -58,7 +58,7 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -101,7 +101,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -134,7 +134,7 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaSyntheticJavaPropertySymbol:
@@ -172,7 +172,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: java.lang.String
     getContainingModule: KaLibraryModule "SDK jdk"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -209,7 +209,7 @@ KaSyntheticJavaPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: length
   javaSetterName: null
   importableFqName: null
@@ -254,7 +254,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -320,7 +320,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -332,7 +332,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -398,7 +398,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -410,7 +410,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -476,7 +476,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -509,7 +509,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -521,7 +521,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -587,7 +587,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -620,7 +620,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -632,7 +632,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -697,7 +697,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -730,7 +730,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PACKAGE_PRIVATE
@@ -742,7 +742,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -808,7 +808,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -841,7 +841,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -873,7 +873,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -906,7 +906,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -918,7 +918,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -987,7 +987,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -1020,7 +1020,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -1052,7 +1052,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -1085,7 +1085,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1097,7 +1097,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1161,7 +1161,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1173,7 +1173,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1237,7 +1237,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1249,7 +1249,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1292,7 +1292,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1358,7 +1358,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1370,7 +1370,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -1435,7 +1435,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1447,7 +1447,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1512,7 +1512,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1524,7 +1524,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1589,7 +1589,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1601,7 +1601,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1666,7 +1666,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1678,7 +1678,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -1743,7 +1743,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1755,7 +1755,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1821,7 +1821,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -1853,7 +1853,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -1886,7 +1886,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -1919,7 +1919,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1931,7 +1931,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -1997,7 +1997,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -2030,7 +2030,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -2062,7 +2062,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -2095,7 +2095,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -2128,7 +2128,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2140,7 +2140,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -2205,7 +2205,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -2238,7 +2238,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2250,7 +2250,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -2315,7 +2315,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2327,7 +2327,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -2392,7 +2392,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2404,7 +2404,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -2448,7 +2448,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -2514,7 +2514,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2526,7 +2526,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -2592,7 +2592,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -2625,7 +2625,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2637,7 +2637,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -2702,7 +2702,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2714,7 +2714,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -2779,7 +2779,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -2812,7 +2812,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2824,7 +2824,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -2890,7 +2890,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -2923,7 +2923,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PRIVATE
@@ -2935,7 +2935,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3001,7 +3001,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3013,7 +3013,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3079,7 +3079,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -3112,7 +3112,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3124,7 +3124,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3189,7 +3189,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3201,7 +3201,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3266,7 +3266,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -3299,7 +3299,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3311,7 +3311,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3377,7 +3377,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -3410,7 +3410,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PRIVATE
@@ -3422,7 +3422,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3487,7 +3487,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3499,7 +3499,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3564,7 +3564,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -3597,7 +3597,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3609,7 +3609,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3675,7 +3675,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -3708,7 +3708,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3720,7 +3720,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -3784,7 +3784,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3796,7 +3796,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3861,7 +3861,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -3894,7 +3894,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3906,7 +3906,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -3970,7 +3970,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -4002,7 +4002,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4014,7 +4014,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4079,7 +4079,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4091,7 +4091,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4156,7 +4156,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4168,7 +4168,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4232,7 +4232,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -4264,7 +4264,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4276,7 +4276,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4340,7 +4340,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -4372,7 +4372,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4384,7 +4384,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4448,7 +4448,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -4481,7 +4481,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4493,7 +4493,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4557,7 +4557,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4569,7 +4569,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4633,7 +4633,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4645,7 +4645,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4688,7 +4688,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4752,7 +4752,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4764,7 +4764,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4807,7 +4807,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4850,7 +4850,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4894,7 +4894,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -4937,7 +4937,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -4980,7 +4980,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -5046,7 +5046,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -5058,7 +5058,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -5102,7 +5102,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "SDK jdk"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String.CaseInsensitiveComparator
 
 KaConstructorSymbol:
@@ -5131,7 +5131,7 @@ KaConstructorSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5186,14 +5186,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5248,14 +5248,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5310,7 +5310,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5343,7 +5343,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5376,14 +5376,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5438,7 +5438,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5471,7 +5471,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5504,14 +5504,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5569,7 +5569,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5602,7 +5602,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5635,7 +5635,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5668,14 +5668,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5733,7 +5733,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5766,14 +5766,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5828,7 +5828,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5861,7 +5861,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5894,7 +5894,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -5926,14 +5926,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -5988,7 +5988,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6021,7 +6021,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6054,7 +6054,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6086,14 +6086,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6148,7 +6148,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6180,14 +6180,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6242,7 +6242,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6274,14 +6274,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6336,7 +6336,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6369,7 +6369,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6402,14 +6402,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6464,14 +6464,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6526,14 +6526,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6588,14 +6588,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6650,7 +6650,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6683,14 +6683,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PACKAGE_PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
@@ -6749,7 +6749,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6782,7 +6782,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -6814,12 +6814,12 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PACKAGE_PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   importableFqName: java.lang.String

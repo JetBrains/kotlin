@@ -23,7 +23,7 @@ KaReceiverParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaReceiverParameterSymbol:
@@ -51,7 +51,7 @@ KaReceiverParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaReceiverParameterSymbol:
@@ -79,7 +79,7 @@ KaReceiverParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaReceiverParameterSymbol:
@@ -107,5 +107,5 @@ KaReceiverParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(accessorsAllowed.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

@@ -26,5 +26,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldLocal.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

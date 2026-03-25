@@ -23,7 +23,7 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: JavaClass.foo
 
 KaNamedFunctionSymbol:
@@ -61,7 +61,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: JavaClass
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: JavaClass.bar
 
@@ -90,7 +90,7 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: SuperClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SuperClass.superFoo
 
 KaNamedFunctionSymbol:
@@ -128,7 +128,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SuperClass
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: SuperClass.superBar
 
@@ -160,7 +160,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: JavaClass.NestedClass
 
 KaNamedClassSymbol:
@@ -191,5 +191,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: JavaClass.InnerClass

@@ -34,7 +34,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.fooApi3
 
@@ -74,7 +74,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalFooApi3
 
@@ -114,7 +114,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateFooApi3
 
@@ -167,7 +167,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: dependency.api.ExtensionKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -180,7 +180,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.barApi3
 
@@ -233,7 +233,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: dependency.api.ExtensionKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -246,7 +246,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalBarApi3
 
@@ -299,7 +299,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: dependency.api.ExtensionKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -312,7 +312,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateBarApi3
 
@@ -352,7 +352,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.fooApi1
 
@@ -392,7 +392,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalFooApi1
 
@@ -432,7 +432,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateFooApi1
 
@@ -485,7 +485,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(I.kt)
     getContainingJvmClassName: dependency.api.IKt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -498,7 +498,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.barApi1
 
@@ -551,7 +551,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(I.kt)
     getContainingJvmClassName: dependency.api.IKt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -564,7 +564,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalBarApi1
 
@@ -617,7 +617,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(I.kt)
     getContainingJvmClassName: dependency.api.IKt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -630,7 +630,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateBarApi1
 
@@ -670,7 +670,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.fooApi2
 
@@ -710,7 +710,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalFooApi2
 
@@ -750,7 +750,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateFooApi2
 
@@ -803,7 +803,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(C1.kt)
     getContainingJvmClassName: dependency.api.C1Kt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -816,7 +816,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.barApi2
 
@@ -869,7 +869,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(C1.kt)
     getContainingJvmClassName: dependency.api.C1Kt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -882,7 +882,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalBarApi2
 
@@ -935,7 +935,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(C1.kt)
     getContainingJvmClassName: dependency.api.C1Kt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -948,7 +948,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateBarApi2
 
@@ -980,7 +980,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: dependency.api.I
 
 KaNamedClassSymbol:
@@ -1011,7 +1011,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: dependency.api.InternalI
 
 KaNamedClassSymbol:
@@ -1042,7 +1042,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: dependency.api.PrivateI
 
 KaNamedClassSymbol:
@@ -1073,7 +1073,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: dependency.api.C1
 
 KaNamedClassSymbol:
@@ -1104,7 +1104,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: dependency.api.InternalC1
 
 KaNamedClassSymbol:
@@ -1135,7 +1135,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: dependency.api.PrivateC1
 
 KaNamedClassSymbol:
@@ -1166,7 +1166,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: dependency.api.FakeI
 
 KaNamedClassSymbol:
@@ -1197,7 +1197,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: dependency.api.InternalFakeI
 
 KaNamedClassSymbol:
@@ -1228,5 +1228,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: dependency.api.PrivateFakeI

@@ -50,7 +50,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass.InnerClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PACKAGE_PRIVATE
@@ -61,5 +61,5 @@ KaConstructorSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass.InnerClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

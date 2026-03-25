@@ -41,7 +41,7 @@ KaNamedFunctionSymbol:
               getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
               getContainingJvmClassName: ReferenceReceiverInContractKt
               getContainingModule: KaSourceModule "Sources of main"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
       invocationKind: EXACTLY_ONCE
   ]
@@ -93,7 +93,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
     getContainingJvmClassName: ReferenceReceiverInContractKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -106,6 +106,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ReferenceReceiverInContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: referenceReceiverInContract

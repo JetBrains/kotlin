@@ -38,7 +38,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SealedInterface
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -82,7 +82,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SealedInterface
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -126,7 +126,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: SealedInterface
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -162,7 +162,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /SealedInterface.variable
   contextParameters: []
@@ -197,7 +197,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -271,7 +271,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -310,7 +310,7 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
@@ -321,7 +321,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -332,7 +332,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingJvmClassName: SealedInterface
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getVariable
   javaSetterName: setVariable
   isInline: false
@@ -370,7 +370,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /SealedInterface.defaultVariable
   contextParameters: []
@@ -401,7 +401,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -475,7 +475,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -514,14 +514,14 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -532,7 +532,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingJvmClassName: SealedInterface
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getDefaultVariable
   javaSetterName: setDefaultVariable
   isInline: false
@@ -570,7 +570,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /SealedInterface.privateDefaultVariable
   contextParameters: []
@@ -601,7 +601,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -675,7 +675,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -714,14 +714,14 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PRIVATE
@@ -732,7 +732,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingJvmClassName: SealedInterface
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getPrivateDefaultVariable
   javaSetterName: setPrivateDefaultVariable
   isInline: false
@@ -766,7 +766,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedInterface.NestedClass
 
 KaNamedClassSymbol:
@@ -797,7 +797,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedInterface.InnerClass
 
 KaNamedClassSymbol:
@@ -828,7 +828,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedInterface.NestedObject
 
 KaNamedClassSymbol:
@@ -859,7 +859,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedInterface.NestedInterface
 
 KaNamedClassSymbol:
@@ -890,7 +890,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedInterface.NestedAnnotation
 
 KaTypeAliasSymbol:
@@ -911,7 +911,7 @@ KaTypeAliasSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedInterface.NestedTypeAlias
 
 KaNamedClassSymbol:
@@ -942,5 +942,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SealedInterface

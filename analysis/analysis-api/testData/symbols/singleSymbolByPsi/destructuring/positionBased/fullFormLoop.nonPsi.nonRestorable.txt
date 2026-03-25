@@ -13,5 +13,5 @@ KaDestructuringDeclarationSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(fullFormLoop.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

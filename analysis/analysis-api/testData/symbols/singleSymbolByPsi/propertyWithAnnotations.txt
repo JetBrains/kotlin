@@ -32,7 +32,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
     getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /prop
   contextParameters: []
@@ -66,7 +66,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
     getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -146,7 +146,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -188,21 +188,21 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
     getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
   getContainingJvmClassName: PropertyWithAnnotationsKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getProp
   javaSetterName: setProp
   isInline: false

@@ -30,7 +30,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: null
   contextParameters: []
@@ -65,7 +65,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -102,7 +102,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getX
   javaSetterName: null
   isInline: false
@@ -152,7 +152,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -218,7 +218,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
       getContainingJvmClassName: test.E
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -230,7 +230,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: test.E
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -296,7 +296,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Enum
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -312,7 +312,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: true
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -360,7 +360,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -408,7 +408,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
@@ -451,7 +451,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: kotlin/Enum.name
   contextParameters: []
@@ -490,7 +490,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -531,7 +531,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getName
   javaSetterName: null
   isInline: false
@@ -573,7 +573,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: kotlin/Enum.ordinal
   contextParameters: []
@@ -612,7 +612,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -653,7 +653,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getOrdinal
   javaSetterName: null
   isInline: false
@@ -698,7 +698,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: test.E
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=HIDDEN, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -746,7 +746,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=HIDDEN, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -778,7 +778,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: kotlin.Enum.Companion
 
 KaConstructorSymbol:
@@ -807,5 +807,5 @@ KaConstructorSymbol:
   getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

@@ -36,7 +36,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(annotatedReturnType.kt)
     getContainingJvmClassName: test.MyInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: test/MyInterface.property
   contextParameters: []
@@ -74,7 +74,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(annotatedReturnType.kt)
     getContainingJvmClassName: test.MyInterface
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -114,7 +114,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(annotatedReturnType.kt)
   getContainingJvmClassName: test.MyInterface
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getProperty
   javaSetterName: null
   isInline: false
@@ -194,7 +194,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(annotatedReturnType.kt)
       getContainingJvmClassName: test.MyInterface
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -206,6 +206,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: test.MyInterface
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

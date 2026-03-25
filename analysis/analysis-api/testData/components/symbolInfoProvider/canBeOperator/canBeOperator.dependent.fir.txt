@@ -83,7 +83,7 @@ FUNCTION:
       getContainingFileSymbol: KaFileSymbol(canBeOperator.kt)
       getContainingJvmClassName: A
       getContainingModule: KaDanglingFileModule "Temporary file"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -106,7 +106,7 @@ FUNCTION:
   getContainingJvmClassName: A
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 CAN_BE_OPERATOR:

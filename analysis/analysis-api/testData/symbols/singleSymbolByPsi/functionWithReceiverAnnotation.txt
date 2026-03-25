@@ -53,7 +53,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(functionWithReceiverAnnotation.kt)
     getContainingJvmClassName: FunctionWithReceiverAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -66,6 +66,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: FunctionWithReceiverAnnotationKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: foo

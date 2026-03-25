@@ -23,7 +23,7 @@ KaLocalVariableSymbol:
   getContainingFileSymbol: KaFileSymbol(forLoopVariable.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -62,6 +62,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ForLoopVariableKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: usage
