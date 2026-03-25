@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,11 @@ class FirDeclarationRendererWithFilteredAttributes : FirDeclarationRendererWithA
     }
 
     private companion object {
-        private val IGNORED_ATTRIBUTES = setOf("FirVersionRequirementsTableKey", "SourceElementKey", "KlibSourceFile")
+        private val IGNORED_ATTRIBUTES: Set<String> = hashSetOf(
+            "FirVersionRequirementsTableKey",
+            "SourceElementKey",
+            "KlibSourceFile",
+            "KlibFileAnnotationsKey",
+        )
     }
 }

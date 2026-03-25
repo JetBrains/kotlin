@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -21,6 +23,9 @@ open class FirAnnotationRenderer {
     protected val callArgumentsRenderer: FirCallArgumentsRenderer? get() = components.callArgumentsRenderer
 
     fun render(annotationContainer: FirAnnotationContainer, explicitAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null) {
+        (annotationContainer as? FirDeclaration)?.klibFileAnnotations?.let { fileAnnotations ->
+            renderAnnotations(fileAnnotations)
+        }
         renderAnnotations(annotationContainer.annotations, explicitAnnotationUseSiteTarget)
     }
 

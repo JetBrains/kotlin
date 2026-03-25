@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -249,6 +249,29 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
       @TestMetadata("WithMultipleArguments.kt")
       public void testWithMultipleArguments() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/WithMultipleArguments.kt");
+      }
+    }
+
+    @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/fileAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FileAnnotations extends AbstractLoadKotlinWithTypeTableTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInFileAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/fileAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @TestMetadata("standard.kt")
+      public void testStandard() {
+        runTest("compiler/testData/loadJava/compiledKotlin/annotations/fileAnnotations/standard.kt");
+      }
+
+      @TestMetadata("userDefined.kt")
+      public void testUserDefined() {
+        runTest("compiler/testData/loadJava/compiledKotlin/annotations/fileAnnotations/userDefined.kt");
       }
     }
 
