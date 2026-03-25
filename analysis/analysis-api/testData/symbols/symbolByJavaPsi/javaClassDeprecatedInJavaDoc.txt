@@ -29,5 +29,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   importableFqName: JavaClass

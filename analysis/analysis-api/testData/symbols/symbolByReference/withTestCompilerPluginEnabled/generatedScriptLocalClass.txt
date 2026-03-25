@@ -30,7 +30,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: null
   contextParameters: []
@@ -81,7 +81,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
@@ -96,7 +96,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -148,7 +148,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -164,7 +164,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script generatedScriptLocalClass.kts"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getColumn
   javaSetterName: null
   isInline: false

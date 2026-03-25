@@ -51,7 +51,7 @@ KaNamedFunctionSymbol:
                       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
                       getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KaSourceModule "Sources of main"
-                      deprecationStatus: null
+                      deprecation: null
                       importableFqName: null
               isNegated: false
           right:
@@ -90,7 +90,7 @@ KaNamedFunctionSymbol:
                       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
                       getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KaSourceModule "Sources of main"
-                      deprecationStatus: null
+                      deprecation: null
                       importableFqName: null
               isNegated: true
           operation: AND
@@ -134,7 +134,7 @@ KaNamedFunctionSymbol:
               getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
               getContainingJvmClassName: TwoContractsKt
               getContainingModule: KaSourceModule "Sources of main"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
       invocationKind: EXACTLY_ONCE
   ]
@@ -194,7 +194,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -227,7 +227,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
@@ -265,7 +265,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -273,6 +273,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: TwoContractsKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: twoContracts

@@ -65,7 +65,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -73,7 +73,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: foo
 
@@ -109,7 +109,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -142,7 +142,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: get$$result
   javaSetterName: null
   isInline: false
@@ -176,5 +176,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
   getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Person

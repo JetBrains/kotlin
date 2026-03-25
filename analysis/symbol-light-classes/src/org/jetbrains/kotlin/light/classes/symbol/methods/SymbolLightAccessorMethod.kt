@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
@@ -480,13 +479,7 @@ internal class SymbolLightAccessorMethod private constructor(
             accessor: KaPropertyAccessorSymbol,
             result: MutableList<PsiMethod>,
         ) {
-            val accessorCanExist = lightAccessorCanExist(
-                accessorSymbol = accessor,
-                siteTarget = if (accessor is KaPropertyGetterSymbol)
-                    AnnotationUseSiteTarget.PROPERTY_GETTER
-                else
-                    AnnotationUseSiteTarget.PROPERTY_SETTER,
-            )
+            val accessorCanExist = lightAccessorCanExist(accessorSymbol = accessor)
 
             if (!accessorCanExist) return
 
@@ -597,13 +590,10 @@ internal class SymbolLightAccessorMethod private constructor(
          * Whether a light class potentially can be generated for the given accessor symbol
          */
         context(context: Context)
-        private fun KaSession.lightAccessorCanExist(
-            accessorSymbol: KaPropertyAccessorSymbol,
-            siteTarget: AnnotationUseSiteTarget,
-        ): Boolean = when {
+        private fun KaSession.lightAccessorCanExist(accessorSymbol: KaPropertyAccessorSymbol): Boolean = when {
             context.staticsFromCompanion && !accessorSymbol.hasJvmStaticAnnotation() && !property.hasJvmStaticAnnotation() -> false
             isHiddenByDeprecation(property) -> false
-            isHiddenOrSynthetic(accessorSymbol, siteTarget) -> false
+            isHiddenOrSynthetic(accessorSymbol) -> false
             !accessorSymbol.isNotDefault && accessorSymbol.visibility == KaSymbolVisibility.PRIVATE -> false
             // Value classes have special logic
             context.destinationLightClass.isValueClass -> when {

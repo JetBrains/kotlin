@@ -47,7 +47,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(companionMethod.kt)
     getContainingJvmClassName: CompanionMethodKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -60,6 +60,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: CompanionMethodKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: static1

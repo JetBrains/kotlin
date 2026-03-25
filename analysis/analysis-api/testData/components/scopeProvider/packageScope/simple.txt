@@ -34,7 +34,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: test.SimpleKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: test.testFunction
 
@@ -66,7 +66,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingJvmClassName: test.SimpleKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: test/testValue
   contextParameters: []
@@ -97,7 +97,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingJvmClassName: test.SimpleKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -130,7 +130,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingJvmClassName: test.SimpleKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getTestValue
   javaSetterName: null
   isInline: false
@@ -164,7 +164,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.C
 
 KaNamedClassSymbol:
@@ -195,7 +195,7 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.I
 
 KaNamedClassSymbol:
@@ -226,5 +226,5 @@ KaNamedClassSymbol:
   getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.O

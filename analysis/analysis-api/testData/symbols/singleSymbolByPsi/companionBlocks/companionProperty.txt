@@ -26,7 +26,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
     getContainingJvmClassName: CompanionPropertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /static1
   contextParameters: []
@@ -72,7 +72,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
       getContainingJvmClassName: CompanionPropertyKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
@@ -83,7 +83,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
     getContainingJvmClassName: CompanionPropertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -130,7 +130,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
     getContainingJvmClassName: CompanionPropertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -142,7 +142,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
   getContainingJvmClassName: CompanionPropertyKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getStatic1
   javaSetterName: null
   isInline: false

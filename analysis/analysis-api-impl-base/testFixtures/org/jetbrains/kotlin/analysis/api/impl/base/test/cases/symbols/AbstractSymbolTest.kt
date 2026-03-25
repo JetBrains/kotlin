@@ -9,6 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.components.containingFile
+import org.jetbrains.kotlin.analysis.api.components.deprecation
+import org.jetbrains.kotlin.analysis.api.components.isDeprecated
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseIllegalPsiException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer.Companion.isCacheable
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
@@ -106,7 +108,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         }
                     }
 
-                checkContainingFiles(symbols, mainFile, testServices)
+                checkSymbols(symbols, mainFile, testServices)
 
                 val pointerWithRenderedSymbol = symbols
                     .asSequence()
@@ -175,12 +177,14 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     context(_: KaSession)
-    private fun checkContainingFiles(symbols: List<KaSymbol>, mainFile: KtFile, testServices: TestServices) {
+    private fun checkSymbols(symbols: List<KaSymbol>, mainFile: KtFile, testServices: TestServices) {
         val allowedContainingFileSymbols = getAllowedContainingFiles(mainFile, testServices).mapToSetOrEmpty {
             it.takeIf { it.canBeAnalysed() }?.symbol
         }
 
         for (symbol in symbols) {
+            checkSymbol(symbol)
+
             if (symbol.origin != KaSymbolOrigin.SOURCE) continue
 
             val containingFileSymbol = symbol.containingFile
@@ -198,6 +202,11 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                 }
             }
         }
+    }
+
+    context(_: KaSession)
+    private fun checkSymbol(symbol: KaSymbol) {
+        check(symbol.isDeprecated == (symbol.deprecation != null)) { "'isDeprecated' should be consistent with 'deprecation'" }
     }
 
     /**

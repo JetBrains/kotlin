@@ -42,7 +42,7 @@ CONSTRUCTOR:
               visibility: LOCAL
               getContainingFileSymbol: null
               getContainingModule: KaDanglingFileModule "Temporary file"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
             isMarkedNullable: false
             isNullable: true
@@ -70,7 +70,7 @@ CONSTRUCTOR:
           visibility: LOCAL
           getContainingFileSymbol: null
           getContainingModule: KaDanglingFileModule "Temporary file"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         isMarkedNullable: false
         isNullable: true
@@ -95,7 +95,7 @@ CONSTRUCTOR:
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaDanglingFileModule "Temporary file"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
@@ -151,7 +151,7 @@ CONSTRUCTOR:
               visibility: LOCAL
               getContainingFileSymbol: null
               getContainingModule: KaDanglingFileModule "Temporary file"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
             isMarkedNullable: false
             isNullable: true
@@ -184,7 +184,7 @@ CONSTRUCTOR:
                   visibility: LOCAL
                   getContainingFileSymbol: null
                   getContainingModule: KaDanglingFileModule "Temporary file"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
                 isMarkedNullable: false
                 isNullable: true
@@ -243,7 +243,7 @@ CONSTRUCTOR:
               visibility: LOCAL
               getContainingFileSymbol: null
               getContainingModule: KaDanglingFileModule "Temporary file"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
             isMarkedNullable: false
             isNullable: true
@@ -271,14 +271,14 @@ CONSTRUCTOR:
       getContainingFileSymbol: null
       getContainingJvmClassName: null
       getContainingModule: KaDanglingFileModule "Temporary file"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaDanglingFileModule "Temporary file"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Predicate
 
 FUNCTIONAL INTERFACE:
@@ -332,12 +332,12 @@ FUNCTIONAL INTERFACE:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Predicate

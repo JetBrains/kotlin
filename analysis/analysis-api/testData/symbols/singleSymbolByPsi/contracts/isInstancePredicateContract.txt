@@ -46,7 +46,7 @@ KaNamedFunctionSymbol:
                   getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
                   getContainingJvmClassName: IsInstancePredicateContractKt
                   getContainingModule: KaSourceModule "Sources of main"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
           type:
             KaUsualClassType:
@@ -111,7 +111,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
       getContainingJvmClassName: IsInstancePredicateContractKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -119,6 +119,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: IsInstancePredicateContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: isInstancePredicateContract
