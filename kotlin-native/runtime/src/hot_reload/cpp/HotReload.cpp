@@ -189,6 +189,7 @@ void HotReloadImpl::SetupORC() {
 
     // Initialize LLVM
     llvm::InitializeNativeTarget();
+
     // Required for debug symbols in JITted code
     llvm::InitializeNativeTargetAsmPrinter();
     llvm::InitializeNativeTargetAsmParser();
@@ -222,8 +223,7 @@ void HotReloadImpl::SetupORC() {
                         auto& es = J.getExecutionSession();
                         auto& oll = J.getObjLinkingLayer();
 
-                        auto psg = ExitOnErr(
-                                llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(J.getDataLayout().getGlobalPrefix()));
+                        auto psg = ExitOnErr(llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(J.getDataLayout().getGlobalPrefix()));
 
                         mainJD.addGenerator(std::move(psg));
 
@@ -258,34 +258,6 @@ void HotReloadImpl::SetupORC() {
                     .create());
 
     HRLogDebug("JIT Engine setup completed successfully.");
-}
-
-KotlinObjectFile HotReloadImpl::ParseKotlinObjectFile(const llvm::MemoryBufferRef& Buf) const {
-    KotlinObjectFile kotlinObjectFile{};
-    auto graphOrErr = llvm::jitlink::createLinkGraphFromObject(Buf, jit_->getExecutionSession().getSymbolStringPool());
-
-    if (!graphOrErr) {
-        HRLogError("Failed to create link graph from object file: %s", llvm::toString(graphOrErr.takeError()).c_str());
-        return kotlinObjectFile;
-    }
-
-    const auto& linkGraph = *graphOrErr;
-    for (auto& section : linkGraph->sections()) {
-        for (const auto* symbol : section.symbols()) {
-            if (!symbol->hasName()) continue;
-            if (symbol->getScope() == llvm::jitlink::Scope::Local) continue;
-
-            const auto symbolName = *symbol->getName();
-
-            if (symbolName.starts_with(kKotlinFunPrefix)) {
-                kotlinObjectFile.functions.push_back(symbolName.str());
-            } else if (symbolName.starts_with(kKotlinClassPrefix)) {
-                kotlinObjectFile.classes.push_back(symbolName.str());
-            }
-        }
-    }
-
-    return kotlinObjectFile;
 }
 
 std::unique_ptr<llvm::MemoryBuffer> HotReloadImpl::ReadObjectFileFromPath(const std::string_view objectPath) {
@@ -533,7 +505,7 @@ KonanStartFunc HotReloadImpl::LoadBootstrapFile(const std::string_view bootstrap
         return nullptr;
     }
 
-    auto bootstrapObject = ParseKotlinObjectFile(*objMemoryBuff);
+    auto bootstrapObject = KotlinObjectFile::Create(*objMemoryBuff, jit_->getExecutionSession().getSymbolStringPool());
 
     // Create redirectable stubs in StubsJD (addr=0, will be redirected after materialization)
     ExitOnErr(CreateRedirectableStubs(bootstrapObject.functions));
@@ -642,7 +614,7 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
         const auto objMemoryBuff = ReadObjectFileFromPath(objectPath);
         if (!objMemoryBuff) return false;
 
-        auto [kotlinFunctions, kotlinClasses] = ParseKotlinObjectFile(*objMemoryBuff);
+        auto [kotlinFunctions, kotlinClasses] = KotlinObjectFile::Create(*objMemoryBuff, jit_->getExecutionSession().getSymbolStringPool());
 
         HRLogDebug("Found: %zu function symbols and %zu classes symbols.", kotlinFunctions.size(), kotlinClasses.size());
 
@@ -661,8 +633,7 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
         }
 
         // Add object file _kfun:foo will be renamed to _kfun:foo$impl by KotlinSymbolExternalizer
-        if (auto err = jit_->addObjectFile(
-                    reloadedJD, llvm::MemoryBuffer::getMemBufferCopy(objMemoryBuff->getBuffer(), objMemoryBuff->getBufferIdentifier()))) {
+        if (auto err = jit_->addObjectFile(reloadedJD, llvm::MemoryBuffer::getMemBufferCopy(objMemoryBuff->getBuffer(), objMemoryBuff->getBufferIdentifier()))) {
             HRLogError("Failed to add object file: %s", llvm::toString(std::move(err)).c_str());
             return false;
         }

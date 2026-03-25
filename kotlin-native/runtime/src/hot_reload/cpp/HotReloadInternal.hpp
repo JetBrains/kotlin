@@ -41,6 +41,9 @@ namespace kotlin::hot {
 struct KotlinObjectFile {
     std::vector<std::string> functions{};
     std::vector<std::string> classes{};
+
+    /// Parse an Object File to filter Kotlin/Native symbols (functions and classes)
+    static KotlinObjectFile Create(const llvm::MemoryBufferRef& Buf, std::shared_ptr<llvm::orc::SymbolStringPool> SSP);
 };
 
 /// Full implementation of HotReload with LLVM dependencies.
@@ -61,7 +64,6 @@ private:
     void StartServer();
     void SetupORC();
 
-    KotlinObjectFile ParseKotlinObjectFile(const llvm::MemoryBufferRef& Buf) const;
     llvm::Error CreateRedirectableStubs(const std::vector<std::string>& functionSymbols);
     llvm::Error RedirectStubsToImpl(llvm::orc::JITDylib& JD, const std::unordered_set<std::string>& symbolNames) const;
     void LoadCacheDependencies(std::string_view bootstrapFilePath, llvm::orc::JITDylib& targetJD) const;
