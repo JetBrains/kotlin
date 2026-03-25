@@ -22,6 +22,7 @@ internal class BtaApiGenerator(
     private val targetPackage: String,
     private val skipXX: Boolean,
     private val kotlinVersion: KotlinReleaseVersion,
+    private val outputDirectory: Path,
 ) : BtaGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
@@ -184,6 +185,7 @@ internal class BtaApiGenerator(
             if (enumsExperimental.getOrDefault(type, false)) {
                 typeSpecBuilder.addAnnotation(ANNOTATION_EXPERIMENTAL)
             }
+            typeSpecBuilder.addKdoc("@since ${determineSinceVersion(type.toBtaEnumClassName())}")
             writeEnumFile(typeSpecBuilder.build(), type)
         }
 
@@ -191,10 +193,13 @@ internal class BtaApiGenerator(
             if (customTypesExperimental.getOrDefault(type, false)) {
                 typeSpecBuilder.addAnnotation(ANNOTATION_EXPERIMENTAL)
             }
-
+            typeSpecBuilder.addKdoc("@since ${determineSinceVersion(type.toBtaCustomClassName())}")
             writeCustomClassFile(typeSpecBuilder.build(), type)
         }
     }
+
+    private fun determineSinceVersion(className: ClassName): String =
+        determineSinceVersion(outputDirectory, kotlinVersion.releaseName, className)
 
     private fun PropertySpec.Builder.maybeAddExperimentalAnnotation(experimental: Boolean) {
         if (experimental) {
@@ -227,7 +232,6 @@ internal class BtaApiGenerator(
             property<String>("stringValue") {
                 initializer("stringValue")
             }
-            addKdoc(KDOC_SINCE_2_3_0)
             primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
             val nameAccessor = WithStringRepresentation::stringRepresentation
             sourceEnum.forEach {
@@ -253,7 +257,6 @@ internal class BtaApiGenerator(
         val className = sourceClass.toBtaCustomClassName()
 
         return TypeSpec.classBuilder(className).apply {
-            addKdoc(KDOC_SINCE_2_4_0)
             if (sourceClass.isData) {
                 addModifiers(KModifier.DATA)
             }

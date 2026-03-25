@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments.enums
 import kotlin.String
 
 /**
- * @since 2.3.0
+ * @since 2.4.0
  */
 public enum class JvmDefaultMode(
   public val stringValue: String,

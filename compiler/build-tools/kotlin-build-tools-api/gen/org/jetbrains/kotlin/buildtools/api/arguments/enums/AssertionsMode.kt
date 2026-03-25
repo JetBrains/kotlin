@@ -7,7 +7,7 @@ import kotlin.String
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 
 /**
- * @since 2.3.0
+ * @since 2.4.0
  */
 @ExperimentalCompilerArgument
 public enum class AssertionsMode(

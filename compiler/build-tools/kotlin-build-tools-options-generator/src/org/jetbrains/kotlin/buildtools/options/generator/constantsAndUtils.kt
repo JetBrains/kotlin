@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 import kotlin.math.max
 import kotlin.reflect.KClass
 
@@ -32,7 +35,6 @@ internal val ANNOTATION_EXPERIMENTAL = ClassName(API_ARGUMENTS_PACKAGE, "Experim
 internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")
 
 internal const val KDOC_SINCE_2_3_0 = "@since 2.3.0"
-internal const val KDOC_SINCE_2_4_0 = "@since 2.4.0"
 
 internal val KDOC_BASE_OPTIONS_CLASS = """
     An option for configuring [%T].
@@ -98,3 +100,15 @@ internal fun getOldestSupportedVersion(kotlinVersion: KotlinReleaseVersion): Kot
 internal fun KotlinCompilerArgumentsLevel.isLeaf(): Boolean = nestedLevels.isEmpty()
 
 internal val kotlinVersionType = ClassName(API_PACKAGE, "KotlinReleaseVersion")
+
+private val SINCE_VERSION_REGEX = Regex("@since (\\d+\\.\\d+\\.\\d+)")
+
+internal fun determineSinceVersion(outputDirectory: Path, currentVersionName: String, className: ClassName): String {
+    val relativePath = "${className.packageName.replace('.', '/')}/${className.simpleName}.kt"
+    val existingFile = outputDirectory.resolve(relativePath)
+    return if (existingFile.exists()) {
+        SINCE_VERSION_REGEX.find(existingFile.readText())?.groupValues?.get(1) ?: currentVersionName
+    } else {
+        currentVersionName
+    }
+}

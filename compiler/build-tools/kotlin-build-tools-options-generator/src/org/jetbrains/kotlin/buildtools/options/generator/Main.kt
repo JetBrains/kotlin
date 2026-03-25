@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
         val generateCompatLayer = localArgs.size > 3 && localArgs[3] == "compat"
         when (localArgs[0]) {
             "api" -> {
-                BtaApiGenerator(targetPackage ?: API_ARGUMENTS_PACKAGE, skipXX = true, kotlinVersion) to allowedLevels
+                BtaApiGenerator(targetPackage ?: API_ARGUMENTS_PACKAGE, skipXX = true, kotlinVersion, genDir) to allowedLevels
             }
             "impl" -> {
                 BtaImplGenerator(
