@@ -2,6 +2,7 @@
 
 #include "KotlinSymbolExternalizerPlugin.hpp"
 #include "PluginsCommon.hpp"
+#include "llvm/ExecutionEngine/Orc/Shared/MachOObjectFormat.h"
 
 namespace kotlin::hot::orc::plugins {
 
@@ -24,9 +25,6 @@ static std::vector<SymbolRename> findSymbolsToExternalize(llvm::jitlink::LinkGra
         llvm::StringRef Name = *symbol->getName();
         if (!Name.starts_with(kKotlinFunPrefix)) continue;
 
-        // TODO: Skip platform interop symbols, they don't need redirection (should be done at compiler level, not runtime).
-        if (Name.starts_with("_kfun:platform.")) continue;
-
         auto originalName = G.getSymbolStringPool()->intern(Name);
         auto implementationName = G.getSymbolStringPool()->intern((Name + kImplSymbolSuffix).str());
 
@@ -43,8 +41,17 @@ static void retargetEdges(llvm::jitlink::LinkGraph& Graph, const std::vector<Sym
         // Create external symbol for the original name
         auto& externalSymbol = Graph.addExternalSymbol(*originalSymName, 0, false);
 
-        // Retarget all edges pointing to this symbol → point to external instead
+        // IMPORTANT note on exceptions and stack unwinding:
+        // To keep exceptions working, we need to skip MachOCompactUnwindSectionName and
+        // MachOEHFrameSectionName sections. Their edges must point to the actual function implementation,
+        // not the stub! The unwinder uses these addresses to find unwind info for the current PC.
+
         for (auto& section : Graph.sections()) {
+            const auto sectionName = section.getName();
+            if (sectionName == llvm::orc::MachOCompactUnwindSectionName ||
+                sectionName == llvm::orc::MachOEHFrameSectionName)
+                continue;
+
             for (auto* block : section.blocks()) {
                 for (auto& edge : block->edges()) {
                     if (&edge.getTarget() == symbol) {
@@ -63,8 +70,9 @@ static void retargetEdges(llvm::jitlink::LinkGraph& Graph, const std::vector<Sym
 void KotlinSymbolExternalizerPlugin::modifyPassConfig(
         llvm::orc::MaterializationResponsibility& MR, llvm::jitlink::LinkGraph& G, llvm::jitlink::PassConfiguration& Config) {
 
-    // Skip StubsJD materializations, those are the stubs themselves
     if (&MR.getTargetJITDylib() == &stubsJD_) return;
+    // Ignore symbols coming from cache artifacts (i.e., non user-defined code)
+    if (G.getName().find("-cache.a") != std::string::npos) return;
 
     // Note from the documentation: graph nodes still have their original vmaddrs.
     Config.PrePrunePasses.emplace_back([&MR, this](llvm::jitlink::LinkGraph& Graph) -> llvm::Error {

@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "HotReloadServer.hpp"
 #include "HotReloadStats.hpp"
@@ -49,7 +50,7 @@ public:
 
     HotReloadImpl();
 
-    void Reload(const std::string& objectPath) noexcept;
+    void Reload(const std::vector<std::string>& objectPaths) noexcept;
 
     /// Load bootstrap file and return the Konan_start symbol.
     KonanStartFunc LoadBootstrapFile(std::string_view bootstrapFilePath);
@@ -62,10 +63,11 @@ private:
 
     KotlinObjectFile ParseKotlinObjectFile(const llvm::MemoryBufferRef& Buf) const;
     llvm::Error CreateRedirectableStubs(const std::vector<std::string>& functionSymbols);
-    llvm::Error RedirectStubsToImpl(llvm::orc::JITDylib& JD, const std::vector<std::string>& symbolNames) const;
+    llvm::Error RedirectStubsToImpl(llvm::orc::JITDylib& JD, const std::unordered_set<std::string>& symbolNames) const;
+    void LoadCacheDependencies(std::string_view bootstrapFilePath, llvm::orc::JITDylib& targetJD) const;
 
     static std::unique_ptr<llvm::MemoryBuffer> ReadObjectFileFromPath(std::string_view objectPath);
-    bool LoadObjectAndUpdateFunctionPointers(std::string_view objectPath);
+    bool LoadObjectsAndUpdateFunctionStubs(const std::vector<std::string>& objectPaths);
 
 #if KONAN_OBJC_INTEROP
     void InitializeObjCUniquePrefixFromJIT(llvm::orc::JITDylib& BootstrapJD) const;
@@ -90,8 +92,11 @@ private:
     std::unique_ptr<llvm::orc::RedirectableSymbolManager> rsm_{};
     llvm::DenseSet<llvm::orc::SymbolStringPtr> redirectableSymbols_;
     std::vector<llvm::orc::JITDylib*> jds_;
+    std::string orcRuntimePath_;
 
-    std::unique_ptr<KotlinObjectFile> latestLoadedObject_{};
+    // Set containing all the Kotlin symbols that were loaded after a reload action.
+    std::unordered_set<std::string> latestLoadedFunctionSymbols_{};
+    std::unordered_set<std::string> latestLoadedClassSymbols_{};
 };
 
 } // namespace kotlin::hot
