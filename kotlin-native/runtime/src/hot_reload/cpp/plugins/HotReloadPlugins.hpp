@@ -8,19 +8,18 @@
 
 #ifdef KONAN_HOT_RELOAD
 
+#include "PluginsCommon.hpp"
 #include "WeakSymbolFallbackGenerator.hpp"
 #include "ObjCSelectorFixupPlugin.hpp"
 #include "KotlinSymbolExternalizerPlugin.hpp"
 #include "MachOHostDataSymbolGenerator.hpp"
-#include "CompactUnwindStripperPlugin.hpp"
 
-using kotlin::hot::orc::plugins::CompactUnwindStripperPlugin;
-using kotlin::hot::orc::plugins::WeakSymbolFallbackGenerator;
-using kotlin::hot::orc::plugins::KotlinSymbolExternalizerPlugin;
+using orc::plugins::WeakSymbolFallbackGenerator;
+using orc::plugins::KotlinSymbolExternalizerPlugin;
 
 #if defined(__APPLE__)
-using kotlin::hot::orc::plugins::ObjCSelectorFixupPlugin;
-using kotlin::hot::orc::plugins::MachOHostDataSymbolGenerator;
+using orc::plugins::ObjCSelectorFixupPlugin;
+using orc::plugins::MachOHostDataSymbolGenerator;
 #endif
 
 #endif // KONAN_HOT_RELOAD
