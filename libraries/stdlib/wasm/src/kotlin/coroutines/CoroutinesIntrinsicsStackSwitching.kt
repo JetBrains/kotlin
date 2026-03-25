@@ -8,9 +8,11 @@ package kotlin.coroutines.intrinsics
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineImplStackSwitching
 import kotlin.coroutines.WasmContinuation
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.*
 
-internal fun <T> createCoroutineUninterceptedIntrinsics0StackSwitching(
+@UsedFromCompilerGeneratedCode
+internal fun <T> createCoroutineUninterceptedIntrinsic0StackSwitching(
     f: suspend () -> T,
     completion: Continuation<T>
 ): Continuation<Unit> = WasmContinuation<Unit, T>(
@@ -18,7 +20,8 @@ internal fun <T> createCoroutineUninterceptedIntrinsics0StackSwitching(
     createSimpleCoroutineFromSuspendFunctionStackSwitching(completion)
 )
 
-internal fun <R, T> createCoroutineUninterceptedIntrinsics1StackSwitching(
+@UsedFromCompilerGeneratedCode
+internal fun <R, T> createCoroutineUninterceptedIntrinsic1StackSwitching(
     f: suspend R.() -> T,
     receiver: R,
     completion: Continuation<T>
@@ -28,6 +31,7 @@ internal fun <R, T> createCoroutineUninterceptedIntrinsics1StackSwitching(
 )
 
 @Suppress("UNCHECKED_CAST")
+@UsedFromCompilerGeneratedCode
 internal fun <T> createSimpleCoroutineFromSuspendFunctionStackSwitching(
     completion: Continuation<T>
 ): CoroutineImplStackSwitching<Any?, T> = object : CoroutineImplStackSwitching<Any?, T>(completion) {
