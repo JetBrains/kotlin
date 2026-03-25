@@ -251,3 +251,12 @@ public final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, AsyncI
         }()
     }
 }
+
+/// This function provides source compatibility with KMP-NativeCoroutines during the migration to Swift Export.
+/// It should be replaced with a call to `asAsyncSequence()` once you have fully migrated to Swift Export.
+@available(*, deprecated, message: "Use `asAsyncSequence()` from Swift Export")
+public func asyncSequence<T>(
+    for flow: any KotlinTypedFlow<T>
+) -> KotlinFlowSequence<T> {
+    return flow.asAsyncSequence()
+}
