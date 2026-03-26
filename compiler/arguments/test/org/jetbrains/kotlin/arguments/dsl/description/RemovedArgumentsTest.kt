@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.description.actualMetadataArguments
 import org.jetbrains.kotlin.arguments.description.actualNativeArguments
 import org.jetbrains.kotlin.arguments.description.actualWasmArguments
+import org.jetbrains.kotlin.arguments.description.actualWasmArgumentsKlibStage
+import org.jetbrains.kotlin.arguments.description.actualWasmArgumentsLinkingStage
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
@@ -81,6 +83,16 @@ class RemovedArgumentsTest {
             CompilerArgsLevelDescription(
                 actualWasmArguments,
                 "actualWasmArguments",
+                "removedWasmArguments",
+            ),
+            CompilerArgsLevelDescription(
+                actualWasmArgumentsKlibStage,
+                "actualWasmArgumentsKlibStage",
+                "removedWasmArguments",
+            ),
+            CompilerArgsLevelDescription(
+                actualWasmArgumentsLinkingStage,
+                "actualWasmArgumentsLinkingStage",
                 "removedWasmArguments",
             ),
         ).asStream()

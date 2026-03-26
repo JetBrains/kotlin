@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
@@ -45,7 +45,7 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
     public val destination: Path
 
     @OptIn(ExperimentalCompilerArgument::class)
-    public val compilerArguments: JsArguments
+    public val compilerArguments: JsCompilerKlibArguments
 
     /**
      * A builder for configuring and instantiating the [JsKlibCompilationOperation].
@@ -65,7 +65,7 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
          * Kotlin compiler configurable options for klib-based compilation.
          */
         @OptIn(ExperimentalCompilerArgument::class)
-        public val compilerArguments: JsArguments.Builder
+        public val compilerArguments: JsCompilerKlibArguments.Builder
 
         /**
          * Creates the configuration object for history-based incremental compilation (IC) in JS projects.

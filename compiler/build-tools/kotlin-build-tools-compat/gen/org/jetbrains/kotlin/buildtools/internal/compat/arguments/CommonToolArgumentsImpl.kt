@@ -41,6 +41,15 @@ internal abstract class CommonToolArgumentsImpl(
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
+
+  private operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
+
+  @Suppress("UNCHECKED_CAST")
   override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
     return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
@@ -59,15 +68,6 @@ internal abstract class CommonToolArgumentsImpl(
     level = DeprecationLevel.WARNING,
   )
   override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
-
-  @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
-
-  private operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
-  }
-
-  public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonToolArguments): CommonToolArguments {

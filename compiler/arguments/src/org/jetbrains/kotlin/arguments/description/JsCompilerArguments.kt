@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.firstPhaseOnly
+import org.jetbrains.kotlin.arguments.dsl.base.secondPhaseOnly
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.*
@@ -29,6 +31,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             introducedVersion = KotlinReleaseVersion.v1_0_0,
             stabilizedVersion = KotlinReleaseVersion.v1_0_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -39,6 +42,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
         )
+        secondPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -53,6 +57,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             introducedVersion = KotlinReleaseVersion.v1_0_4,
             stabilizedVersion = KotlinReleaseVersion.v1_0_4,
         )
+        secondPhaseOnly()
     }
 
     // Advanced options
@@ -65,6 +70,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -75,6 +81,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30
         )
+        secondPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -88,6 +95,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -98,6 +106,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -108,6 +117,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -118,6 +128,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -128,6 +139,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -141,6 +153,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -152,6 +165,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -163,6 +177,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -174,6 +189,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -185,6 +201,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -196,6 +213,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -208,6 +226,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_32,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -220,6 +239,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -232,6 +252,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -245,6 +266,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
         )
+        secondPhaseOnly()
     }
 }
 

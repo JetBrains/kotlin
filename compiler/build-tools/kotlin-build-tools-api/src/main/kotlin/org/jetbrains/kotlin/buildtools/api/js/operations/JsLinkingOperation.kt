@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import java.nio.file.Path
@@ -46,7 +46,7 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
     public operator fun <V> get(key: Option<V>): V
 
     @OptIn(ExperimentalCompilerArgument::class)
-    public val compilerArguments: JsArguments
+    public val compilerArguments: JsCompilerLinkingArguments
 
     /**
      * A builder for configuring and instantiating the [JsLinkingOperation].
@@ -56,7 +56,7 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
          * Kotlin compiler configurable options for JS linking.
          */
         @OptIn(ExperimentalCompilerArgument::class)
-        public val compilerArguments: JsArguments.Builder
+        public val compilerArguments: JsCompilerLinkingArguments.Builder
 
         /**
          * The input klib file.

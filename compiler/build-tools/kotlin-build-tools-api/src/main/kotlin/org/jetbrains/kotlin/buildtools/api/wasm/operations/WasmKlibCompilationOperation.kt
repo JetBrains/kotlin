@@ -5,13 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.api.wasm.operations
 
-import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
@@ -44,7 +40,7 @@ public interface WasmKlibCompilationOperation : BaseCompilationOperation, Cancel
     public val destination: Path
 
     @OptIn(ExperimentalCompilerArgument::class)
-    public val compilerArguments: WasmArguments
+    public val compilerArguments: WasmCompilerKlibArguments
 
     /**
      * A builder for configuring and instantiating the [WasmKlibCompilationOperation].
@@ -64,7 +60,7 @@ public interface WasmKlibCompilationOperation : BaseCompilationOperation, Cancel
          * Kotlin compiler configurable options for klib-based compilation.
          */
         @OptIn(ExperimentalCompilerArgument::class)
-        public val compilerArguments: WasmArguments.Builder
+        public val compilerArguments: WasmCompilerKlibArguments.Builder
 
         /**
          * Creates the configuration object for history-based incremental compilation (IC) in JS projects.

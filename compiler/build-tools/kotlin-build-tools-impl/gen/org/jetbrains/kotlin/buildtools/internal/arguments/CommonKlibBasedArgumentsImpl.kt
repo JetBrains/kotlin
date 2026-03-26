@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgum
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArgumentsKlibArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArgumentsLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KlibIrInlinerMode
@@ -49,8 +51,21 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
 ) : CommonCompilerArgumentsImpl(adapter, restrictedArgViolations),
     CommonKlibBasedArguments,
-    CommonKlibBasedArguments.Builder {
+    CommonKlibBasedArguments.Builder,
+    CommonKlibBasedArgumentsKlibArguments,
+    CommonKlibBasedArgumentsKlibArguments.Builder,
+    CommonKlibBasedArgumentsLinkingArguments,
+    CommonKlibBasedArgumentsLinkingArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = optionsMap[key.id] as V
+
+  private operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: CommonKlibBasedArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
@@ -68,13 +83,34 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   }
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = optionsMap[key.id] as V
-
-  private operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
   }
 
-  public operator fun contains(key: CommonKlibBasedArgument<*>): Boolean = key.id in optionsMap
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+  }
+
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {

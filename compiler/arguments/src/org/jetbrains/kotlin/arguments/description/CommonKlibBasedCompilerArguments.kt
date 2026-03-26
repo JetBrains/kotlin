@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.firstPhaseOnly
+import org.jetbrains.kotlin.arguments.dsl.base.secondPhaseOnly
 import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
@@ -35,6 +37,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -52,6 +55,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
             // TODO(KT-85591): Uncomment when 2.4.20 becomes the latest stable
             // removedVersion = KotlinReleaseVersion.v2_5_0,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -63,6 +67,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
+        firstPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -93,6 +98,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
             introducedVersion = KotlinReleaseVersion.v2_0_20,
             deprecatedVersion = KotlinReleaseVersion.v2_4_0,
         )
+        secondPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -110,6 +116,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
+        secondPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -144,6 +151,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -158,6 +166,7 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -181,5 +190,6 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
+        firstPhaseOnly()
     }
 }

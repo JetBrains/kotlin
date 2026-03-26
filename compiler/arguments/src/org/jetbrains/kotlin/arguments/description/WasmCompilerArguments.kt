@@ -39,6 +39,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -53,6 +54,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -64,6 +66,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -74,6 +77,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -84,6 +88,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -94,6 +99,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -105,6 +111,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -115,6 +122,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -125,6 +133,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -135,6 +144,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -145,6 +155,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -158,6 +169,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -177,6 +189,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -189,6 +202,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -200,6 +214,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -211,6 +226,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -222,6 +238,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -236,6 +253,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -251,5 +269,6 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        secondPhaseOnly()
     }
 }

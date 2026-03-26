@@ -19,6 +19,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_70,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -30,6 +31,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_0_0,
             stabilizedVersion = KotlinReleaseVersion.v1_0_0,
         )
+        secondPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -44,6 +46,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -124,6 +127,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_3_70,
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
         )
+        firstPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -165,6 +169,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -198,6 +203,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_3_70,
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
         )
+        firstPhaseOnly()
     }
 
     compilerArgument {
@@ -211,6 +217,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -221,6 +228,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_70,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -231,6 +239,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,
         )
+        firstPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -245,7 +254,9 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_0_0,
             stabilizedVersion = KotlinReleaseVersion.v1_0_0,
         )
+        secondPhaseOnly()
     }
+
     compilerArgument {
         name = "source-map-prefix"
         description = "Add the specified prefix to the paths in the source map.".asReleaseDependent()
@@ -255,6 +266,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_1_4,
             stabilizedVersion = KotlinReleaseVersion.v1_1_4,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -268,6 +280,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_1_60,
             stabilizedVersion = KotlinReleaseVersion.v1_1_60,
         )
+        secondPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -286,6 +299,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_1_4,
             stabilizedVersion = KotlinReleaseVersion.v1_1_4,
         )
+        secondPhaseOnly()
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -300,6 +314,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_8_20,
             stabilizedVersion = KotlinReleaseVersion.v1_8_20,
         )
+        secondPhaseOnly()
     }
     compilerArgument {
         name = "Xfriend-modules-disabled"
@@ -320,6 +335,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -343,6 +359,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_0,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -353,6 +370,7 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_70,
         )
+        secondPhaseOnly()
     }
 
     compilerArgument {
@@ -364,5 +382,6 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
         )
+        secondPhaseOnly()
     }
 }

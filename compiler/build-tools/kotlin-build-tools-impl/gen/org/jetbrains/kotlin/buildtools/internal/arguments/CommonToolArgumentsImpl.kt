@@ -52,6 +52,15 @@ internal abstract class CommonToolArgumentsImpl(
     get() = _restrictedArgViolations
 
   @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
+
+  private operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
+
+  @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
@@ -71,15 +80,6 @@ internal abstract class CommonToolArgumentsImpl(
     level = DeprecationLevel.WARNING,
   )
   override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
-
-  @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
-
-  private operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
-  }
-
-  public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonToolArguments): CommonToolArguments {

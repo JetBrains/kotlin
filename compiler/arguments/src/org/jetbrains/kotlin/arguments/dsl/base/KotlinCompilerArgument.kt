@@ -39,6 +39,7 @@ data class KotlinCompilerArgument(
     val description: ReleaseDependent<String>,
     val delimiter: Delimiter?,
     val affectsCompilationOutcome: Boolean = true,
+    val applicableCompilerPhases: Set<KotlinCompilerPhase> = setOf(KotlinCompilerPhase.FIRST, KotlinCompilerPhase.SECOND),
 
     val valueType: KotlinArgumentValueType<*>,
     val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
@@ -66,6 +67,10 @@ data class KotlinCompilerArgument(
         Space("space"),
         Semicolon("semicolon"),
     }
+}
+
+enum class KotlinCompilerPhase {
+    FIRST, SECOND
 }
 
 /**
@@ -136,6 +141,11 @@ internal class KotlinCompilerArgumentBuilder {
     private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
 
     /**
+     * @see KotlinCompilerArgument.applicableCompilerPhases
+     */
+    val applicableCompilerPhases: MutableSet<KotlinCompilerPhase> = mutableSetOf(KotlinCompilerPhase.FIRST, KotlinCompilerPhase.SECOND)
+
+    /**
      * Convenient method to define this argument [KotlinReleaseVersionLifecycle] metadata.
      */
     fun lifecycle(
@@ -176,6 +186,7 @@ internal class KotlinCompilerArgumentBuilder {
         compilerName = compilerName,
         delimiter = delimiter,
         affectsCompilationOutcome = affectsCompilationOutcome,
+        applicableCompilerPhases = applicableCompilerPhases.toSet()
     )
 }
 
@@ -203,4 +214,14 @@ internal fun compilerArgument(
     val builder = KotlinCompilerArgumentBuilder()
     config(builder)
     builder.build()
+}
+
+internal fun KotlinCompilerArgumentBuilder.firstPhaseOnly() {
+    applicableCompilerPhases.clear()
+    applicableCompilerPhases.add(KotlinCompilerPhase.FIRST)
+}
+
+internal fun KotlinCompilerArgumentBuilder.secondPhaseOnly() {
+    applicableCompilerPhases.clear()
+    applicableCompilerPhases.add(KotlinCompilerPhase.SECOND)
 }

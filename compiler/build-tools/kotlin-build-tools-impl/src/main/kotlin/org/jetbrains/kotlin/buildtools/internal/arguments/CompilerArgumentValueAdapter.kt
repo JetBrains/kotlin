@@ -10,11 +10,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.*
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.CommonJsAndWasmArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.CommonKlibBasedArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.JsArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.WasmArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.io.File
@@ -42,24 +37,42 @@ internal interface CommonCompilerArgumentValueAdapter : CommonToolArgumentValueA
 internal interface CommonJsAndWasmArgumentValueAdapter : CommonKlibBasedArgumentValueAdapter {
     fun <V, T> mapFrom(value: T, key: CommonJsAndWasmArgument<V>): V
     fun <T, V> mapTo(value: V, key: CommonJsAndWasmArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): T
+
 }
 
 @OptIn(ExperimentalCompilerArgument::class)
 internal interface CommonKlibBasedArgumentValueAdapter : CommonCompilerArgumentValueAdapter {
     fun <V, T> mapFrom(value: T, key: CommonKlibBasedArgument<V>): V
     fun <T, V> mapTo(value: V, key: CommonKlibBasedArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>): T
+
 }
 
 @OptIn(ExperimentalCompilerArgument::class)
 internal interface JsArgumentValueAdapter : CommonJsAndWasmArgumentValueAdapter {
-    fun <V, T> mapFrom(value: T, key: JsArgument<V>): V
-    fun <T, V> mapTo(value: V, key: JsArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: JsCompilerArguments.JsCompilerArgument<V>): V
+    fun <T, V> mapTo(value: V, key: JsCompilerArguments.JsCompilerArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>): V
+    fun <T, V> mapTo(value: V, key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>): V
+    fun <T, V> mapTo(value: V, key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>): T
 }
 
 @OptIn(ExperimentalCompilerArgument::class)
 internal interface WasmArgumentValueAdapter : CommonJsAndWasmArgumentValueAdapter {
-    fun <V, T> mapFrom(value: T, key: WasmArgument<V>): V
-    fun <T, V> mapTo(value: V, key: WasmArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: WasmCompilerArguments.WasmCompilerArgument<V>): V
+    fun <T, V> mapTo(value: V, key: WasmCompilerArguments.WasmCompilerArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): V
+    fun <T, V> mapTo(value: V, key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): T
+    fun <V, T> mapFrom(value: T, key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V
+    fun <T, V> mapTo(value: V, key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): T
 }
 
 internal interface JvmCompilerArgumentValueAdapter : CommonCompilerArgumentValueAdapter {

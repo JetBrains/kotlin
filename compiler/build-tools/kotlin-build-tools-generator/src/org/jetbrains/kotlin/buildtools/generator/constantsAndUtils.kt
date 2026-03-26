@@ -48,6 +48,7 @@ internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotl
 
 internal const val KDOC_SINCE = "@since"
 internal const val KDOC_SINCE_2_3_0 = "$KDOC_SINCE 2.3.0"
+internal const val KDOC_SINCE_2_4_0 = "$KDOC_SINCE 2.4.0"
 internal const val KDOC_SINCE_2_4_20 = "$KDOC_SINCE 2.4.20"
 
 internal val KDOC_BASE_OPTIONS_CLASS = """
@@ -91,7 +92,7 @@ internal val levelsSince = mapOf(
     CompilerArgumentsLevelNames.wasmArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.commonJsAndWasmArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.commonKlibBasedArguments to KDOC_SINCE_2_4_20,
-)
+) + syntheticArgumentInterfaces.associate { it.name to KDOC_SINCE_2_4_20 }
 
 internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {
     when {
@@ -118,6 +119,7 @@ internal fun getOldestSupportedVersion(kotlinVersion: KotlinReleaseVersion): Kot
 internal fun KotlinCompilerArgumentsLevel.isLeaf(): Boolean = nestedLevels.isEmpty()
 
 internal val kotlinVersionType = ClassName(API_PACKAGE, "KotlinReleaseVersion")
+
 
 internal val btaEnumVersionMap: Map<ClassName, KotlinReleaseVersion> =
     mapOf(

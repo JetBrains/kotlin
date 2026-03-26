@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgum
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlibArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsMainCallMode
@@ -66,8 +68,21 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
 ) : CommonKlibBasedArgumentsImpl(adapter, restrictedArgViolations),
     CommonJsAndWasmArguments,
-    CommonJsAndWasmArguments.Builder {
+    CommonJsAndWasmArguments.Builder,
+    CommonJsAndWasmCompilerKlibArguments,
+    CommonJsAndWasmCompilerKlibArguments.Builder,
+    CommonJsAndWasmCompilerLinkingArguments,
+    CommonJsAndWasmCompilerLinkingArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = optionsMap[key.id] as V
+
+  private operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: CommonJsAndWasmArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
@@ -85,13 +100,34 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   }
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = optionsMap[key.id] as V
-
-  private operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
   }
 
-  public operator fun contains(key: CommonJsAndWasmArgument<*>): Boolean = key.id in optionsMap
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+  }
+
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonJsAndWasmCompilerArguments): CommonJsAndWasmCompilerArguments {

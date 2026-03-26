@@ -613,7 +613,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
     }
 
-
+    /* first phase only */
     compilerArgument {
         name = "Xuse-fir-lt"
         compilerName = "useFirLT"
@@ -1019,6 +1019,7 @@ The argument should be used only if the new compilation scheme is enabled with -
     }
 
 
+    /* second phase only */
     compilerArgument {
         name = "Xignore-const-optimization-errors"
         description = "Ignore all compilation exceptions while optimizing some constant expressions.".asReleaseDependent()

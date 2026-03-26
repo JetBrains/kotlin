@@ -196,7 +196,7 @@ class DeprecatedArgumentsConsistencyTest {
             Arguments.of(stableJvmCompilerArguments, actualJvmCompilerArguments.mergeWith(removedJvmCompilerArguments)),
             Arguments.of(stableCommonKlibBasedArguments, actualCommonKlibBasedArguments),
             Arguments.of(stableJsArguments, actualJsArguments.mergeWith(removedJsArguments)),
-            Arguments.of(stableWasmArguments, actualWasmArguments.mergeWith(removedWasmArguments)),
+            Arguments.of(stableWasmArguments, actualWasmArgumentsLegacy.mergeWith(removedWasmArguments)),
             Arguments.of(stableNativeArguments, actualNativeArguments.mergeWith(removedNativeArguments)),
             Arguments.of(stableMetadataArguments, actualMetadataArguments.mergeWith(removedMetadataArguments)),
         )
