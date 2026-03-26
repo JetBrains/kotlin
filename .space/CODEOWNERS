@@ -290,7 +290,7 @@
 /core/names/ "Kotlin Frontend"
 /core/language.model/ "Kotlin Frontend"
 /core/language.targets/ "Kotlin Frontend"
-/core/language.targets.jvm/ "Kotlin Frontend"
+/core/language.targets.jvm/ "Kotlin Frontend" "Kotlin JVM"
 /core/language.version-settings/ "Kotlin Frontend"
 /core/language.version-settings/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
 /core/names/api/names.api "Kotlin Analysis API"
