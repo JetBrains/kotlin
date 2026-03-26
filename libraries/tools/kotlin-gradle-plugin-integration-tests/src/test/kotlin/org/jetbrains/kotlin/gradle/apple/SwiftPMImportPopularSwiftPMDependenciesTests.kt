@@ -7,39 +7,27 @@
 
 package org.jetbrains.kotlin.gradle.apple
 
-import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.OsCondition
-import org.junit.jupiter.api.condition.OS
 import org.gradle.api.file.ProjectLayout
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadata
 import org.jetbrains.kotlin.gradle.uklibs.include
-import kotlin.io.path.isDirectory
-import kotlin.io.path.listDirectoryEntries
-import kotlin.test.assertEquals
-import org.jetbrains.kotlin.gradle.util.isTeamCityRun
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsSource
 import java.nio.file.Path
 import java.util.stream.Stream
-import kotlin.collections.mapOf
-import kotlin.io.path.createDirectories
-import kotlin.io.path.createFile
-import kotlin.io.path.exists
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
+import kotlin.test.assertEquals
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -1011,7 +999,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
             testKotlinLinkage()
 
             // Xcode linkage
-            testXcodeLinkage(isStatic)
+            testXcodeLinkage()
 
             // Verify Package.swift in root project with exact content
             // Uses synthetic subpackage reference for the producer dependency
@@ -1132,7 +1120,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
 
             testVisibleSignatures(expectedCinteropAPIs)
             testKotlinLinkage()
-            testXcodeLinkage(isStatic)
+            testXcodeLinkage()
             if (expectedPackageManifest != null) {
                 testPackageManifest(expectedPackageManifest)
             }
@@ -1157,16 +1145,13 @@ private fun TestProject.testKotlinLinkage() {
 }
 
 @OptIn(EnvironmentalVariablesOverride::class)
-private fun TestProject.testXcodeLinkage(isStatic: Boolean) {
+private fun TestProject.testXcodeLinkage() {
     build(
         "integrateLinkagePackage",
         environmentVariables = EnvironmentalVariables(
             "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj"
         )
     )
-    if (!isStatic) {
-        addEmbedAndSignPhaseForSpmLibrary(projectPath.resolve("iosApp/iosApp.xcodeproj/project.pbxproj"))
-    }
     buildXcodeProject(
         xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
     )
@@ -1222,55 +1207,4 @@ private fun TestProject.testPackageManifest(
 
 internal fun KotlinMultiplatformExtension.swiftPMDependencies(configure: SwiftPMImportExtension.() -> Unit) {
     (this.extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension).configure()
-}
-
-private fun addEmbedAndSignPhaseForSpmLibrary(pbxprojFile: Path) {
-    var pbxprojFileContent = pbxprojFile.readText()
-    val buildFileRegex = Regex(
-        """/\* Begin PBXBuildFile section \*/\s+(\w+) = \{\s+isa = PBXBuildFile;\s+productRef = (\w+);\s+\};\s+/\* End PBXBuildFile section \*/"""
-    )
-
-    val match =
-        buildFileRegex.find(pbxprojFileContent) ?: throw IllegalStateException("PBXBuildFile section not found or has unexpected format")
-
-    val buildFileId = match.groupValues[1]
-    val productRefId = match.groupValues[2]
-    val embedFrameworksBuildFileId = "B638C8582EE09DAA00A788A3"
-    val copyFilesBuildPhaseId = "B638C8592EE09DAA00A788A3"
-
-    println("Found buildFileId: $buildFileId")
-    println("Found productRefId: $productRefId")
-
-    // 1. Replace PBXBuildFile section with PBXBuildFile and PBXCopyFilesBuildPhase
-    val newBuildFileSection = """/* Begin PBXBuildFile section */
-		$buildFileId /* KotlinMultiplatformLinkedPackage in Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* KotlinMultiplatformLinkedPackage */; };
-		$embedFrameworksBuildFileId /* KotlinMultiplatformLinkedPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* KotlinMultiplatformLinkedPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-/* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		$copyFilesBuildPhaseId /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				$embedFrameworksBuildFileId /* KotlinMultiplatformLinkedPackage in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */"""
-
-    pbxprojFileContent = buildFileRegex.replace(pbxprojFileContent, newBuildFileSection)
-
-    // 2. Add the new build phase to the target's buildPhases array
-    val buildPhasesRegex = Regex(
-        """(buildPhases = \(\s+(?:\w+,\s+)+)(\);)\s+(buildRules)"""
-    )
-
-    pbxprojFileContent = buildPhasesRegex.replace(pbxprojFileContent) { matchResult ->
-        "${matchResult.groupValues[1]}$copyFilesBuildPhaseId,\n\t\t\t${matchResult.groupValues[2]}\n\t\t\t${matchResult.groupValues[3]}"
-    }
-
-    pbxprojFile.writeText(pbxprojFileContent)
 }

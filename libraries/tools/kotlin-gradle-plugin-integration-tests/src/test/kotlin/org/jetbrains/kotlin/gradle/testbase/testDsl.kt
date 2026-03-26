@@ -287,7 +287,11 @@ private fun TestProject.buildWithAction(
         )
         val gradleRunnerForBuild = gradleRunner
             .also { if (forwardBuildOutput) it.forwardOutput() }
-            .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
+            .withEnvironment(
+                if (environmentVariables.environmentalVariables.isNotEmpty()) {
+                    System.getenv() + environmentVariables.environmentalVariables
+                } else null
+            )
             .withDebug(runWithDebug && !connectSubprocessVMToDebugger)
             .withArguments(allBuildArguments)
 

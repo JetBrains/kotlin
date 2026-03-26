@@ -339,7 +339,10 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             }
 
             // Unpacked XCFramework slices are passed as a CLI path
-            if (arg.startsWith("/")) {
+            if (arg.startsWith("/")
+                &&
+                // We don't want to link with the magic product - it will not exist in the actual app
+                !arg.endsWith("/" + GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME)) {
                 if (arg.endsWith(".a")) {
                     ldArgs.add(arg)
                 }

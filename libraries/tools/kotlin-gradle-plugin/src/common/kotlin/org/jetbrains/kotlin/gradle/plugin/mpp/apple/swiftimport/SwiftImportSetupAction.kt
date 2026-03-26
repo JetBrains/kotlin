@@ -444,6 +444,7 @@ internal fun Project.locateOrRegisterRegenerateLinkageImportProjectTask(): TaskP
              * linkage package well if it regenerates during the build.
              */
             it.failOnNonIdempotentChanges.set(true)
+            it.produceIndirectionForFrameworkCopying.set(true)
             it.buildingFromXcode.set(project.providers.systemProperty("idea.active").map { _ -> false }.orElse(true))
             it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
             it.onlyIf {
@@ -514,6 +515,7 @@ private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
     ) {
         it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
         it.configureWithExtension(swiftPMImportExtension)
+        it.produceIndirectionForFrameworkCopying.set(true)
         it.syntheticImportProjectRoot.set(
             projectPathProvider.flatMap {
                 project.layout.dir(
