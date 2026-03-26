@@ -20,14 +20,12 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.ir.IrElement
@@ -102,21 +100,6 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             registerInProject(project)
         }
 
-        val compilerConfiguration = CompilerConfiguration.create().apply {
-            put(CommonConfigurationKeys.MODULE_NAME, mainModule.testModule.name)
-            put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.testModule.languageVersionSettings)
-
-            testFile.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()
-                ?.let { put(CODE_FRAGMENT_CLASS_NAME, it) }
-
-            testFile.directives[Directives.CODE_FRAGMENT_METHOD_NAME].singleOrNull()
-                ?.let { put(CODE_FRAGMENT_METHOD_NAME, it) }
-
-            mainModule.testModule.directives[Directives.ACTUALIZATION]
-                .takeIf { it.isNotEmpty() }
-                ?.let { put(MODULE_ACTUALIZER, createModuleActualizer(it, testServices)) }
-        }
-
         val callStack = mutableListOf<PsiElement>()
         var stackDepth = 0
         while (true) {
@@ -130,15 +113,28 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
 
         analyzeForTest(mainFile) {
-            val target = KaCompilerTarget.Jvm(
-                isTestMode = true,
-                compiledClassHandler = null,
-                debuggerExtension = KaDebuggerExtension(callStack.asSequence())
-            )
+            val options = createCompilationOptions {
+                target(KaCompilationTarget.JVM)
+                moduleName(mainModule.testModule.name)
+                languageVersionSettings(mainModule.testModule.languageVersionSettings)
+                jvmOutputAsmListing(true)
+                jvmExecutionStack(callStack.asSequence())
+                allowedErrorFilter(TestAllowedErrorFilter)
+
+                testFile.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()
+                    ?.let { codeFragmentClassName(it) }
+
+                testFile.directives[Directives.CODE_FRAGMENT_METHOD_NAME].singleOrNull()
+                    ?.let { codeFragmentMethodName(it) }
+
+                mainModule.testModule.directives[Directives.ACTUALIZATION]
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { moduleActualizer(createModuleActualizer(it, testServices)) }
+            }
 
             val exceptionExpected = mainModule.testModule.directives.contains(Directives.CODE_COMPILATION_EXCEPTION)
             val result = try {
-                compile(mainFile, compilerConfiguration, target, TestAllowedErrorFilter)
+                compile(mainFile, options)
             } catch (e: Throwable) {
                 if (exceptionExpected && e is KaCodeCompilationException) {
                     e.cause?.message?.let { testServices.assertions.assertEqualsToTestOutputFile("CODE_COMPILATION_EXCEPTION:\n$it") }
@@ -192,7 +188,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
 
         return object : KaCompilerFacilityModuleActualizer {
-            override fun actualize(module: KaModule, target: KaCompilerTarget): KaModule? {
+            override fun actualize(module: KaModule, target: KaCompilationTarget): KaModule? {
                 val moduleName = namesByModule[module] ?: error("Unknown module $module")
                 val actualizedModuleName = mapping[moduleName] ?: return null
                 return testServices.ktTestModuleStructure.getKtTestModule(actualizedModuleName).ktModule

@@ -14,6 +14,7 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:cli-base"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:analysis-api"))
