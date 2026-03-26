@@ -470,6 +470,7 @@ public final class org/jetbrains/kotlin/config/LanguageFeature : java/lang/Enum 
 	public static final field ReleaseCoroutines Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field RepeatableAnnotationContainerConstraints Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field RepeatableAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportDeprecationsOfOuterImportedClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ReportErrorsForComparisonOperators Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ReportErrorsOnRecursiveTypeInsidePlusAssignment Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ReportExposedTypeForInternalTypeParameterBounds Lorg/jetbrains/kotlin/config/LanguageFeature;

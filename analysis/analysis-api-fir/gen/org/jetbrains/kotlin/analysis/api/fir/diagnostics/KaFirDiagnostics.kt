@@ -901,6 +901,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val message: String
     }
 
+    interface DeprecationOfOuterClass : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecationOfOuterClass::class
+        val reference: KaSymbol
+        val message: String
+    }
+
     interface OverrideDeprecation : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = OverrideDeprecation::class
         val overridenSymbol: KaSymbol

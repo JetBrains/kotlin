@@ -23,7 +23,7 @@ public class J {
 }
 
 // FILE: test.kt
-import my.C.Companion.a
+import <!DEPRECATION!>my.C.Companion.a<!>
 import <!DEPRECATION!>my.O.b<!>
 import <!DEPRECATION!>my.J.c<!>
 

@@ -385,15 +385,26 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
 
         val parentClassId = (import as? FirResolvedImport)?.resolvedParentClassId
 
+        var classId: ClassId? = parentClassId ?: ClassId.topLevel(importedFqName)
+        var isPreviouslyIgnoredOuterClass = false
+
         // When parentClassId is null, the import resolves to a top-level class (or callable declaration),
         // and a potential deprecation will be reported on the use-site anyway.
-        // If parentClassId is not null, the import is the only place where the deprecation of an outer class is reported.
-        if (parentClassId == null && LanguageFeature.NoDeprecationOnImportStatements.isEnabled()) return
+        if (parentClassId == null && LanguageFeature.NoDeprecationOnImportStatements.isEnabled()) {
+            classId = classId?.outerClassId
+            isPreviouslyIgnoredOuterClass = true
+        }
 
-        // TODO(KT-85230) report deprecations on indirect outer classes.
-
-        val classId = parentClassId ?: ClassId.topLevel(importedFqName)
-        val symbol = classId.toSymbol() ?: return
-        FirDeprecationChecker.reportApiStatusIfNeeded(import.source, symbol)
+        while (classId != null) {
+            classId.toSymbol()?.let {
+                FirDeprecationChecker.reportApiStatusIfNeeded(
+                    import.source,
+                    referencedSymbol = it,
+                    isOuterClassOfImportDuringMigration = isPreviouslyIgnoredOuterClass && LanguageFeature.ReportDeprecationsOfOuterImportedClasses.isDisabled()
+                )
+            }
+            classId = classId.outerClassId
+            isPreviouslyIgnoredOuterClass = true
+        }
     }
 }
