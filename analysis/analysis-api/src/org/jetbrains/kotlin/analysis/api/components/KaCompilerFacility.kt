@@ -13,9 +13,6 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaJvmTarget
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -25,33 +22,6 @@ import java.io.File
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaCompilerFacility : KaSessionComponent {
-    /**
-     * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
-     *
-     * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException]. The implementation should wrap the
-     * `compile()` call into a `try`/`catch` block when necessary.
-     *
-     * @param file A file to compile.
-     *  The file must be either a source module file, or a [KtCodeFragment].
-     *  For a [KtCodeFragment], a source module context, a compiled library source context, or an empty context(`null`) are supported.
-     *
-     * @param configuration The compiler configuration.
-     *  It is recommended to submit at least the module name ([CommonConfigurationKeys.MODULE_NAME])
-     *  and language version settings ([CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]).
-     *
-     * @param target The target platform of the compilation.
-     *
-     * @param allowedErrorFilter A filter for allowed errors. Compilation will be aborted if there are errors that this filter rejects.
-     */
-    @KaExperimentalApi
-    @Throws(KaCodeCompilationException::class)
-    public fun compile(
-        file: KtFile,
-        configuration: CompilerConfiguration,
-        target: KaCompilerTarget,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean,
-    ): KaCompilationResult
-
     /**
      * Compiles the given [file] in-memory using the specified [options].
      *
@@ -227,25 +197,6 @@ public interface KaCompilerOptionsBuilder {
     public fun jvmLinkViaSignatures(value: Boolean)
 }
 
-/** Simple class name for the code fragment facade class. */
-@KaExperimentalApi
-public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> = CompilerConfigurationKey("code fragment class name")
-
-/** Entry point method name for the code fragment. */
-@KaExperimentalApi
-public val CODE_FRAGMENT_METHOD_NAME: CompilerConfigurationKey<String> = CompilerConfigurationKey("code fragment method name")
-
-/**
- * A custom actualizer for the source module.
- * Use if the compiled file is in the common module.
- *
- * @see KaCompilerFacilityModuleActualizer
- */
-@KaK1Unsupported
-@KaExperimentalApi
-public val MODULE_ACTUALIZER: CompilerConfigurationKey<KaCompilerFacilityModuleActualizer> =
-    CompilerConfigurationKey("custom module actualizer")
-
 /**
  * An in-memory compilation result returned from [KaCompilerFacility].
  *
@@ -328,25 +279,6 @@ public val KaCompiledFile.isClassFile: Boolean
  * The target platform of the compilation performed by [KaCompilerFacility].
  */
 @KaExperimentalApi
-public sealed class KaCompilerTarget {
-    /**
-     * JVM target (produces '.class' files).
-     *
-     * @property isTestMode `true` if the underlying code should support dumping the bytecode of the resulting class files to text.
-     * @property compiledClassHandler A handler which is called whenever a new class file is produced.
-     */
-    @KaExperimentalApi
-    public class Jvm(
-        public val isTestMode: Boolean,
-        public val compiledClassHandler: KaCompiledClassHandler?,
-        public val debuggerExtension: KaDebuggerExtension?,
-    ) : KaCompilerTarget()
-}
-
-/**
- * The target platform of the compilation performed by [KaCompilerFacility].
- */
-@KaExperimentalApi
 public enum class KaCompilationTarget {
     /**
      * JVM target (produces '.class' files).
@@ -382,17 +314,6 @@ public fun interface KaCompiledClassHandler {
 public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cause)
 
 /**
- * Provides an extension point for compiler to retrieve additional information from debugger API
- *
- * Used for debugger's code fragments compilation.
- *
- * @property stack A sequence of PSI elements of the expressions (function calls or property accesses) in the current execution stack,
- * listed from the top to the bottom.
- */
-@KaExperimentalApi
-public class KaDebuggerExtension(public val stack: Sequence<PsiElement?>)
-
-/**
  * Actualizer for common source modules.
  *
  * The Kotlin compiler cannot directly compile classes from common modules, as it needs dependencies and language settings from the target
@@ -414,45 +335,6 @@ public fun interface KaCompilerFacilityModuleActualizer {
      */
     @KaSpiExtensionPoint
     public fun actualize(module: KaModule, target: KaCompilationTarget): KaModule?
-}
-
-/**
- * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
- *
- * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException]. The implementation should wrap the
- * `compile()` call into a `try`/`catch` block when necessary.
- *
- * @param file A file to compile.
- *  The file must be either a source module file, or a [KtCodeFragment].
- *  For a [KtCodeFragment], a source module context, a compiled library source context, or an empty context(`null`) are supported.
- *
- * @param configuration The compiler configuration.
- *  It is recommended to submit at least the module name ([CommonConfigurationKeys.MODULE_NAME])
- *  and language version settings ([CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]).
- *
- * @param target The target platform of the compilation.
- *
- * @param allowedErrorFilter A filter for allowed errors. Compilation will be aborted if there are errors that this filter rejects.
- */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaExperimentalApi
-@Throws(KaCodeCompilationException::class)
-@KaContextParameterApi
-context(session: KaSession)
-public fun compile(
-    file: KtFile,
-    configuration: CompilerConfiguration,
-    target: KaCompilerTarget,
-    allowedErrorFilter: (KaDiagnostic) -> Boolean,
-): KaCompilationResult {
-    return with(session) {
-        compile(
-            file = file,
-            configuration = configuration,
-            target = target,
-            allowedErrorFilter = allowedErrorFilter,
-        )
-    }
 }
 
 /**

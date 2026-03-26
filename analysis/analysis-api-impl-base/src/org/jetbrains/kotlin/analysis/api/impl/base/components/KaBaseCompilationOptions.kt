@@ -15,6 +15,19 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaJvmTarget
 import org.jetbrains.kotlin.config.*
 
+/** Simple class name for the code fragment facade class. */
+@KaImplementationDetail
+val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> = CompilerConfigurationKey("code fragment class name")
+
+/** Entry point method name for the code fragment. */
+@KaImplementationDetail
+val CODE_FRAGMENT_METHOD_NAME: CompilerConfigurationKey<String> = CompilerConfigurationKey("code fragment method name")
+
+/** A custom actualizer for the source module. */
+@KaImplementationDetail
+val MODULE_ACTUALIZER: CompilerConfigurationKey<KaCompilerFacilityModuleActualizer> =
+    CompilerConfigurationKey("custom module actualizer")
+
 /**
  * Whether unbound IR symbols should be stubbed instead of linked.
  *
@@ -23,6 +36,32 @@ import org.jetbrains.kotlin.config.*
  */
 @KaImplementationDetail
 val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey("stub unbound IR symbols")
+
+/**
+ * Internal representation of the compilation target with JVM-specific options.
+ *
+ * Used by [KaCompilerFacility] implementations to bridge between the public [KaCompilationOptions] and internal compiler APIs.
+ */
+@KaImplementationDetail
+sealed class KaCompilerTarget {
+    @KaImplementationDetail
+    class Jvm(
+        val isTestMode: Boolean,
+        val compiledClassHandler: KaCompiledClassHandler?,
+        val debuggerExtension: KaDebuggerExtension?,
+    ) : KaCompilerTarget()
+}
+
+/**
+ * Provides an extension point for the compiler to retrieve additional information from the debugger API.
+ *
+ * Used for debugger code fragment compilation.
+ *
+ * @property stack A sequence of PSI elements of the expressions (function calls or property accesses) in the current execution stack,
+ * listed from the top to the bottom.
+ */
+@KaImplementationDetail
+class KaDebuggerExtension(val stack: Sequence<PsiElement?>)
 
 @KaImplementationDetail
 class KaBaseCompilationOptions(

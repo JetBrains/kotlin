@@ -158,27 +158,17 @@ private val USE_STDLIB_BUILD_OUTPUT: Boolean by lazy(LazyThreadSafetyMode.PUBLIC
 internal class KaFirCompilerFacility(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseSessionComponent<KaFirSession>(), KaCompilerFacility, KaFirSessionComponent {
-    override fun compile(
-        file: KtFile,
-        configuration: CompilerConfiguration,
-        target: KaCompilerTarget,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean
-    ): KaCompilationResult = withPsiValidityAssertion(file) {
-        compileWithRetry(file, configuration, target, allowedErrorFilter)
-    }
-
     @OptIn(KaImplementationDetail::class)
     override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult {
-        require(options is KaBaseCompilationOptions)
-        require(options.target == KaCompilationTarget.JVM) {
-            "Unsupported compilation target: ${options.target}, expected ${KaCompilationTarget.JVM}"
-        }
+        val opts = options as KaBaseCompilationOptions
         val target = KaCompilerTarget.Jvm(
-            isTestMode = options.jvmOutputAsmListing,
-            compiledClassHandler = options.compiledClassHandler,
-            debuggerExtension = options.jvmExecutionStack?.let(::KaDebuggerExtension),
+            isTestMode = opts.jvmOutputAsmListing,
+            compiledClassHandler = opts.compiledClassHandler,
+            debuggerExtension = opts.jvmExecutionStack?.let(::KaDebuggerExtension),
         )
-        return compile(file, options.configuration, target, options.allowedErrorFilter)
+        return withPsiValidityAssertion(file) {
+            compileWithRetry(file, opts.configuration, target, opts.allowedErrorFilter)
+        }
     }
 
     @OptIn(KaImplementationDetail::class)
