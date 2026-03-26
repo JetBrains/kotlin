@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -99,7 +100,7 @@ internal var IrVariable.wasMovedFromItsDeclarationPlace: Boolean by irFlag(copyB
 /**
  * If the bodiless declaration has been moved to an externalPackageFragment, contains it's original parent.
  */
-var IrPossiblyExternalDeclaration.originalParent: IrDeclarationParent? by irAttribute(copyByDefault = false)
+var IrPossiblyExternalDeclaration.originalFileForExternalDeclaration: IrFile? by irAttribute(copyByDefault = false)
 
 /**
  * For callable references factories contain it's preceding anonymous class reference implementation.

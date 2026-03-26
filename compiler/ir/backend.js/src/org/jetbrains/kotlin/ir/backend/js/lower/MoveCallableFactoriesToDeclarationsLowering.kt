@@ -10,15 +10,12 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
 import org.jetbrains.kotlin.ir.backend.js.originalCallableReference
-import org.jetbrains.kotlin.ir.backend.js.originalParent
+import org.jetbrains.kotlin.ir.backend.js.originalFileForExternalDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.fileOrNull
 
 /**
  * This lowering moves callable references implementations from the consumer-site into the declaration-site.
@@ -75,7 +72,7 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
  *
  * All callable reference implementations supposed to be relocated are always moved to a file level as top-level declarations.
  * Cross-module references are not movable at this point, they remain at the consumer site.
- * Deduplication is happening next in [DeduplicateCallableFactoriesLowering].
+ * Deduplication is happening next in [DeduplicateCallableReferenceFactoriesLowering].
  */
 class MoveCallableFactoriesToDeclarationsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -84,23 +81,18 @@ class MoveCallableFactoriesToDeclarationsLowering(private val context: JsIrBacke
 
         val originalReference = declaration.richFunctionReference ?: return null
         val originalFunction = originalReference.reflectionTargetSymbol as? IrSimpleFunction ?: return null
-        val destinationFile = getOriginalFile(originalFunction) ?: return null
-        if (declaration.getPackageFragment() == destinationFile) return null
+        val destinationFile = originalFunction.originalFileForExternalDeclaration ?: originalFunction.fileOrNull ?: return null
+        if (declaration.fileOrNull == destinationFile) return null
 
         destinationFile.addChild(declaration)
         return listOf()
     }
 
-    private fun getOriginalFile(declaration: IrSimpleFunction): IrFile? {
-        return when {
-            declaration.isEffectivelyExternal() -> {
-                declaration.originalParent?.getPackageFragment() as? IrFile
-            }
-            else -> declaration.getPackageFragment() as? IrFile
-        }
-    }
 }
 
+/**
+ * For a callable reference factory returns it's corresponding [IrRichFunctionReference] instance.
+ */
 internal val IrSimpleFunction.richFunctionReference: IrRichFunctionReference?
     get() {
         val originalClass = originalCallableReferenceClass ?: return null
