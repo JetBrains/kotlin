@@ -68,6 +68,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
     override val whenExpressionCheckers: Set<FirWhenExpressionChecker>
         get() = setOf(
             FirWhenConditionJavaNullabilityWarningChecker,
+            FirJavaWhenExhaustivenessWarningChecker,
         )
 
     override val booleanOperatorExpressionCheckers: Set<FirBooleanOperatorExpressionChecker>

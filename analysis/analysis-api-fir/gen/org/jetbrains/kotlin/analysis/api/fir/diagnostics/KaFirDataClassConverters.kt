@@ -4706,6 +4706,13 @@ private fun KaDiagnosticConverterBuilder.addConversions105() {
             token,
         )
     }
+    add(FirJvmErrors.UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS) { firDiagnostic ->
+        UnexhaustiveWhenBasedOnJavaAnnotationsImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT) { firDiagnostic ->
         ExternalDeclarationCannotBeAbstractImpl(
             firDiagnostic as KtPsiDiagnostic,

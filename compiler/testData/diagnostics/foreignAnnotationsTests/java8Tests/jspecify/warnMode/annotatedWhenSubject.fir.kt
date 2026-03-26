@@ -1,0 +1,41 @@
+// ISSUE: KT-84106
+// JSPECIFY_STATE: warn
+
+// FILE: J.java
+import org.jspecify.annotations.*;
+
+public class J {
+    @Nullable
+    public static <T> T identity(T t) { return null; }
+}
+
+// FILE: test.kt
+sealed class Sealed1
+class C1 : Sealed1()
+
+sealed class Sealed2
+object O2 : Sealed2()
+
+fun test() {
+    <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (J.identity(C1() as Sealed1)) {
+        is C1 -> {}
+    }
+
+    when (J.identity(C1() as Sealed1)) {
+        is C1 -> {}
+        null -> {}
+    }
+
+    when (J.identity(C1() as Sealed1)) {
+        is C1? -> {}
+    }
+
+    <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (J.identity(O2 as Sealed2)) {
+        O2 -> {}
+    }
+
+    when (J.identity(O2 as Sealed2)) {
+        O2 -> {}
+        null -> {}
+    }
+}
