@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.util.SourceCodeAnalysisException
-import org.jetbrains.kotlin.util.getExceptionMessage
+import org.jetbrains.kotlin.utils.exceptions.getExceptionMessage
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 

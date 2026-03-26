@@ -1,0 +1,35 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.backend.common.descriptors
+
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.explicitParameters as _explicitParameters
+
+
+/**
+ * This function is here, because it's used from this package in Android Studio.
+ * Hopefully, it will be removed soon with K1 support.
+ *
+ * @return naturally-ordered list of the parameters that can have values specified at call site.
+ */
+@Deprecated(
+    message = "Please use org.jetbrains.kotlin.descriptors.explicitParameters",
+    ReplaceWith("explicitParameters", "org.jetbrains.kotlin.descriptors.explicitParameters")
+)
+val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
+    get() = _explicitParameters

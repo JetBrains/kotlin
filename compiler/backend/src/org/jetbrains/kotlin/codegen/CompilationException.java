@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils;
-import org.jetbrains.kotlin.util.ExceptionUtilKt;
+import org.jetbrains.kotlin.utils.exceptions.ExceptionUtilKt;
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
 
 public class CompilationException extends KotlinExceptionWithAttachments {
