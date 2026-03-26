@@ -57,7 +57,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     fun clear(bitIndex: Int) {
         lazy?.let { lazy ->
             lazy.remove(bitIndex)
-            size = lazy.max().ushr(6) + 1
+            size = if (lazy.isNotEmpty()) lazy.max().ushr(6) + 1 else 0
             return
         }
         val index = bitIndex shr 6
