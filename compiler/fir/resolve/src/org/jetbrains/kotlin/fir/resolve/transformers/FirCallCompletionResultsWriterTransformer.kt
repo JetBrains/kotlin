@@ -42,10 +42,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -468,6 +465,8 @@ class FirCallCompletionResultsWriterTransformer(
         result.transformArgumentList(expectedArgumentsTypeMapping)
         result.transformContextArguments(this, expectedArgumentsTypeMapping)
 
+        result.updateExplicitContextArgumentsFromArgumentList(subCandidate)
+
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
 
@@ -477,6 +476,30 @@ class FirCallCompletionResultsWriterTransformer(
 
         result.addNonFatalDiagnostics(subCandidate)
         return result
+    }
+
+    private fun FirFunctionCall.updateExplicitContextArgumentsFromArgumentList(
+        subCandidate: Candidate,
+    ) {
+        if (contextArguments.isEmpty()) return
+
+        val explicitArgumentMappingEntries = (argumentList as? FirResolvedArgumentList)
+            ?.mappingIncludingContextArguments?.filter { it.value.valueParameterKind == FirValueParameterKind.ContextParameter }
+        if (explicitArgumentMappingEntries.isNullOrEmpty()) return
+
+        val newContextArguments = contextArguments.toMutableList()
+        val contextParameterToIndex: Map<FirValueParameterSymbol, Int> = buildMap {
+            (subCandidate.symbol as? FirCallableSymbol)?.contextParameterSymbols?.withIndex()?.forEach { (index, parameter) ->
+                put(parameter, index)
+            }
+        }
+
+        explicitArgumentMappingEntries.forEach { (expression, parameter) ->
+            if (parameter.valueParameterKind == FirValueParameterKind.ContextParameter) {
+                newContextArguments[contextParameterToIndex.getValue(parameter.symbol)] = expression
+            }
+        }
+        replaceContextArguments(newContextArguments)
     }
 
     private fun FirNamedReferenceWithCandidate.computeAllArguments(
@@ -593,10 +616,6 @@ class FirCallCompletionResultsWriterTransformer(
                         kind = FirFunctionConversionKind.Sam,
                         newSourceKind = KtFakeSourceElementKind.SamConversion,
                     )
-
-                    if (this@transformArgumentList is FirContextArgumentListOwner && transformed in contextArguments) {
-                        replaceContextArguments(contextArguments.map { if (it == transformed) samConversionExpression else it })
-                    }
 
                     transformed = samConversionExpression
                 }

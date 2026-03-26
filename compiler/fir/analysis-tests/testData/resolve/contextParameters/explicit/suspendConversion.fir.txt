@@ -18,7 +18,7 @@ FILE: suspendConversion.kt
         }
         ) R|/simpleSuspend|()
         context(::R|/returnsString|) R|/simpleSuspend|()
-        context(R|<local>/x|) R|/simpleSuspend|()
+        context(FConversion(R|<local>/x|)) R|/simpleSuspend|()
         context(simpleSuspend@fun <anonymous>(it: <ERROR TYPE REF: Cannot infer type for parameter it>): R|kotlin/Unit| <inline=Unknown>  {
             ^@simpleSuspend Unit
         }

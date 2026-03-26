@@ -84,7 +84,7 @@ FILE: samConversion.kt
         )) R|/simpleSuspend|()
         context(SAM(::R|/doNothing|)) R|/simpleSuspend|()
         context(R|/SuspendSam|(::R|/doNothing|)) R|/simpleSuspend|()
-        context(R|<local>/x|) R|/simpleSuspend|()
+        context(SAM(FConversion(R|<local>/x|))) R|/simpleSuspend|()
         context(SAM(simpleSuspend@fun <anonymous>(it: <ERROR TYPE REF: Cannot infer type for parameter it>): R|kotlin/Unit| <inline=Unknown>  {
             ^@simpleSuspend Unit
         }

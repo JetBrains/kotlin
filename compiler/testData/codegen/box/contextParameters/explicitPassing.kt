@@ -7,6 +7,8 @@ fun fromDifferentModule() = a + b
 
 // MODULE: b(a)
 // FILE: b.kt
+import kotlin.coroutines.*
+
 context(s: String)
 fun simple1() = s
 
@@ -44,6 +46,24 @@ fun interface Fun {
 
 context(f: Fun)
 fun samConversion() = f.invoke()
+
+context(f: suspend () -> String)
+fun suspendConversion(): String {
+    var result = ""
+    f.startCoroutine(Continuation(EmptyCoroutineContext) { result = it.getOrThrow() })
+    return result
+}
+
+fun interface SuspendFun {
+    suspend fun invoke(): String
+}
+
+context(f: SuspendFun)
+fun samWithSuspendConversion(): String {
+    var result = ""
+    suspend { f.invoke() }.startCoroutine(Continuation(EmptyCoroutineContext) { result = it.getOrThrow() })
+    return result
+}
 
 context(s: String)
 fun overload() = "OK"
@@ -109,8 +129,13 @@ fun box(): String {
     if (fromDifferentModule(b = "K", a = "O") != "OK") return "FAIL 30"
 
     if (samConversion(f = { "OK" }) != "OK") return "FAIL 31"
+    val okFunction: () -> String = { "OK" }
+    if (suspendConversion(f = { "OK" }) != "OK") return "FAIL 32"
+    if (suspendConversion(f = okFunction) != "OK") return "FAIL 32"
+    if (samWithSuspendConversion(f = { "OK" }) != "OK") return "FAIL 32"
+    if (samWithSuspendConversion(f = okFunction) != "OK") return "FAIL 32"
 
-    if (overload(s = "OK") != "OK") return "FAIL 32"
+    if (overload(s = "OK") != "OK") return "FAIL 35"
 
     return "OK"
 }
