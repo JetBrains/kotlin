@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaIn
 
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
-import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
+import org.jetbrains.kotlin.analysis.api.components.KaCompilationTarget
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.TestAllowedErrorFilter
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.dumpClassFiles
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest.Directives.RENDER_CLASS_DUMP
@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
+
 import org.jetbrains.kotlin.psi.KtDeclarationWithReturnType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -67,12 +65,13 @@ abstract class AbstractDeclarationTypeAsPsiTypeTest : AbstractAnalysisApiBasedTe
 
                         val compilationResult = compile(
                             mainFile,
-                            configuration = CompilerConfiguration.create().apply {
-                                put(CommonConfigurationKeys.MODULE_NAME, mainModule.testModule.name)
-                                put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.testModule.languageVersionSettings)
-                            },
-                            target = KaCompilerTarget.Jvm(isTestMode = true, compiledClassHandler = null, debuggerExtension = null),
-                            allowedErrorFilter = TestAllowedErrorFilter
+                            createCompilationOptions {
+                                target(KaCompilationTarget.JVM)
+                                moduleName(mainModule.testModule.name)
+                                languageVersionSettings(mainModule.testModule.languageVersionSettings)
+                                jvmOutputAsmListing(true)
+                                allowedErrorFilter(TestAllowedErrorFilter)
+                            }
                         )
 
                         when (compilationResult) {

@@ -15,15 +15,15 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragmentContextDeclarationCache
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaClassBuilderFactory
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
@@ -165,6 +165,30 @@ internal class KaFirCompilerFacility(
         allowedErrorFilter: (KaDiagnostic) -> Boolean
     ): KaCompilationResult = withPsiValidityAssertion(file) {
         compileWithRetry(file, configuration, target, allowedErrorFilter)
+    }
+
+    @OptIn(KaImplementationDetail::class)
+    override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult {
+        require(options is KaBaseCompilationOptions)
+        require(options.target == KaCompilationTarget.JVM) {
+            "Unsupported compilation target: ${options.target}, expected ${KaCompilationTarget.JVM}"
+        }
+        val target = KaCompilerTarget.Jvm(
+            isTestMode = options.jvmOutputAsmListing,
+            compiledClassHandler = options.compiledClassHandler,
+            debuggerExtension = options.jvmExecutionStack?.let(::KaDebuggerExtension),
+        )
+        return compile(file, options.configuration, target, options.allowedErrorFilter)
+    }
+
+    @OptIn(KaImplementationDetail::class)
+    override fun createCompilationOptions(init: KaCompilerOptionsBuilder.() -> Unit): KaCompilationOptions {
+        return KaBaseCompilerOptionsBuilder(token, CompilerConfiguration.create()).apply(init).build()
+    }
+
+    @OptIn(KaImplementationDetail::class)
+    override fun KaCompilationOptions.copy(init: KaCompilerOptionsBuilder.() -> Unit): KaCompilationOptions {
+        return (this as KaBaseCompilationOptions).copy(init)
     }
 
     private fun compileWithRetry(
@@ -1421,13 +1445,13 @@ internal class KaFirCompilerFacility(
 private fun createPlatformActualizer(configuration: CompilerConfiguration, target: KaCompilerTarget): LLPlatformActualizer {
     val customActualizer = configuration[MODULE_ACTUALIZER]
 
-    val platformKind = when (target) {
-        is KaCompilerTarget.Jvm -> ImplementationPlatformKind.JVM
+    val (compilationTarget, platformKind) = when (target) {
+        is KaCompilerTarget.Jvm -> KaCompilationTarget.JVM to ImplementationPlatformKind.JVM
     }
 
     if (customActualizer != null) {
         return LLPlatformActualizer { module ->
-            val actualModule = customActualizer.actualize(module, target)
+            val actualModule = customActualizer.actualize(module, compilationTarget)
             if (actualModule != null) {
                 val actualPlatform = actualModule.targetPlatform
                 val actualPlatformKind = ImplementationPlatformKind.fromTargetPlatform(actualPlatform)

@@ -10,6 +10,7 @@ plugins {
 
 dependencies {
     implementation(project(":core:descriptors.jvm"))
+    implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":analysis:analysis-api-impl-base"))

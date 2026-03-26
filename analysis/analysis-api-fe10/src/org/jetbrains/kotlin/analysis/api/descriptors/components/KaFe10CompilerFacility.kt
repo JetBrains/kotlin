@@ -5,29 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.KaCodeCompilationException
-import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
-import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
-import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.InlineFunctionAnalyzer
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.collectReachableInlineDelegatedPropertyAccessors
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaClassBuilderFactory
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.backend.jvm.FacadeClassSourceShimForFragmentCompilation
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -40,14 +35,6 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
-
-/**
- * Whether unbound IR symbols should be stubbed instead of linked.
- * This should be enabled if the compiled file could refer to symbols defined in another file of the same module.
- * Such symbols are not compiled (only the file is passed to the backend) and so they cannot be linked from a dependency.
- */
-@KaNonPublicApi
-val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey<Boolean>("stub unbound IR symbols")
 
 internal class KaFe10CompilerFacility(
     override val analysisSessionProvider: () -> KaFe10Session
@@ -64,6 +51,30 @@ internal class KaFe10CompilerFacility(
             rethrowIntellijPlatformExceptionIfNeeded(e)
             throw KaCodeCompilationException(e)
         }
+    }
+
+    @OptIn(KaImplementationDetail::class)
+    override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult {
+        require(options is KaBaseCompilationOptions)
+        require(options.target == KaCompilationTarget.JVM) {
+            "Unsupported compilation target: ${options.target}, expected ${KaCompilationTarget.JVM}"
+        }
+        val target = KaCompilerTarget.Jvm(
+            isTestMode = options.jvmOutputAsmListing,
+            compiledClassHandler = options.compiledClassHandler,
+            debuggerExtension = options.jvmExecutionStack?.let(::KaDebuggerExtension),
+        )
+        return compile(file, options.configuration, target, options.allowedErrorFilter)
+    }
+
+    @OptIn(KaImplementationDetail::class, CompilerConfiguration.Internals::class)
+    override fun createCompilationOptions(init: KaCompilerOptionsBuilder.() -> Unit): KaCompilationOptions {
+        return KaBaseCompilerOptionsBuilder(token, CompilerConfiguration.create()).apply(init).build()
+    }
+
+    @OptIn(KaImplementationDetail::class)
+    override fun KaCompilationOptions.copy(init: KaCompilerOptionsBuilder.() -> Unit): KaCompilationOptions {
+        return (this as KaBaseCompilationOptions).copy(init)
     }
 
     private fun compileUnsafe(

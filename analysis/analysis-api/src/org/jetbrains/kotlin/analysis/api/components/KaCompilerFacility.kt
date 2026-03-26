@@ -10,10 +10,13 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaJvmTarget
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
@@ -48,6 +51,180 @@ public interface KaCompilerFacility : KaSessionComponent {
         target: KaCompilerTarget,
         allowedErrorFilter: (KaDiagnostic) -> Boolean,
     ): KaCompilationResult
+
+    /**
+     * Compiles the given [file] in-memory using the specified [options].
+     *
+     * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException]. The implementation should wrap the
+     * `compile()` call into a `try`/`catch` block when necessary.
+     *
+     * @param file A file to compile.
+     *  The file must be either a source module file, or a [KtCodeFragment].
+     *  For a [KtCodeFragment], a source module context, a compiled library source context, or an empty context (`null`) are supported.
+     *
+     * @param options The compilation options created via [createCompilationOptions].
+     *
+     * @see createCompilationOptions
+     */
+    @KaExperimentalApi
+    @Throws(KaCodeCompilationException::class)
+    public fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult
+
+    /**
+     * Creates a new [KaCompilationOptions] instance using the given DSL [init] block.
+     *
+     * Example usage:
+     * ```kotlin
+     * val options = createCompilationOptions {
+     *     target(KaCompilationTarget.JVM)
+     *     moduleName("myModule")
+     *     languageVersionSettings(languageSettings)
+     *     allowedErrorFilter { diagnostic -> diagnostic.factoryName in allowedErrors }
+     * }
+     * ```
+     *
+     * @param init A lambda that configures the [KaCompilerOptionsBuilder].
+     */
+    @KaExperimentalApi
+    public fun createCompilationOptions(init: KaCompilerOptionsBuilder.() -> Unit): KaCompilationOptions
+
+    /**
+     * Creates a copy of these [KaCompilationOptions], applying the given [init] modifications.
+     *
+     * Options not explicitly overridden in [init] retain their original values.
+     *
+     * @param init A lambda that configures the [KaCompilerOptionsBuilder] with modifications to apply.
+     */
+    @KaExperimentalApi
+    public fun KaCompilationOptions.copy(init: KaCompilerOptionsBuilder.() -> Unit): KaCompilationOptions
+}
+
+/**
+ * An immutable set of options for in-memory compilation via [KaCompilerFacility].
+ *
+ * Use [KaCompilerFacility.createCompilationOptions] to create an instance, and [KaCompilationOptions.copy]
+ * to produce a modified copy.
+ *
+ * @see KaCompilerOptionsBuilder
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaCompilationOptions : KaLifetimeOwner
+
+/**
+ * A DSL builder for [KaCompilationOptions].
+ *
+ * Provides methods to configure the compilation target, language settings, JVM-specific options, error handling, and code fragment
+ * parameters. Instances are created internally by [KaCompilerFacility.createCompilationOptions] and
+ * [KaCompilationOptions.copy].
+ *
+ * @see KaCompilationOptions
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaCompilerOptionsBuilder {
+    /** Sets the target platform for compilation. Must be provided. */
+    public fun target(value: KaCompilationTarget)
+
+    /** Sets the module name used for the compiled output. */
+    public fun moduleName(value: String)
+
+    /**
+     * Sets a custom actualizer for common source modules in multiplatform projects.
+     *
+     * @see KaCompilerFacilityModuleActualizer
+     */
+    public fun moduleActualizer(value: KaCompilerFacilityModuleActualizer)
+
+    /** Sets the language version settings used during compilation. */
+    public fun languageVersionSettings(value: LanguageVersionSettings)
+
+    /**
+     * Sets a filter for allowed errors. Compilation will be aborted if there are errors that this filter rejects.
+     *
+     * A filter returning `true` means the error is allowed and will not abort compilation.
+     * Defaults to rejecting all errors.
+     */
+    public fun allowedErrorFilter(value: (KaDiagnostic) -> Boolean)
+
+    /**
+     * Sets the simple class name for the code fragment facade class.
+     * Only relevant when compiling [KtCodeFragment] files.
+     */
+    public fun codeFragmentClassName(value: String)
+
+    /**
+     * Sets the entry point method name for the code fragment.
+     * Only relevant when compiling [KtCodeFragment] files.
+     */
+    public fun codeFragmentMethodName(value: String)
+
+    /** Sets the JVM bytecode target version. */
+    public fun jvmTarget(value: KaJvmTarget)
+
+    /**
+     * Sets a handler which is called whenever a new class file is produced.
+     *
+     * @see KaCompiledClassHandler
+     */
+    public fun jvmCompiledClassHandler(value: KaCompiledClassHandler)
+
+    /** Enables output of ASM bytecode listing. When `true`, selects the test-mode class builder factory. */
+    @KaNonPublicApi
+    public fun jvmOutputAsmListing(value: Boolean)
+
+    /**
+     * Whether unbound IR symbols should be stubbed instead of linked.
+     *
+     * This should be enabled if the compiled file could refer to symbols defined in another file of the same module.
+     */
+    @KaIdeApi
+    public fun stubUnboundIrSymbols(value: Boolean)
+
+    /** Disables inlining of `inline` functions. */
+    @KaIdeApi
+    public fun disableInline(value: Boolean)
+
+    /** Disables null-check assertions on receiver and arguments of platform-typed calls. */
+    @KaIdeApi
+    public fun disableCallAssertions(value: Boolean)
+
+    /** Disables optimizations in generated code. */
+    @KaIdeApi
+    public fun disableOptimization(value: Boolean)
+
+    /** Disables null-check assertions on parameters. */
+    @KaIdeApi
+    public fun disableParameterAssertions(value: Boolean)
+
+    /** Ignores errors from constant expression optimization. */
+    @KaIdeApi
+    public fun ignoreConstOptimizationErrors(value: Boolean)
+
+    /**
+     * Sets the execution stack for debugger code fragment compilation.
+     *
+     * A sequence of PSI elements representing function calls or property accesses in the current execution stack,
+     * listed from the top to the bottom.
+     */
+    @KaIdeApi
+    public fun jvmExecutionStack(value: Sequence<PsiElement?>)
+
+    /** Enables generation of parameter metadata (names and access flags) in class files. */
+    @KaIdeApi
+    public fun jvmGenerateParameterMetadata(value: Boolean)
+
+    /** Uses `invokedynamic` for SAM conversions instead of generating anonymous classes. */
+    @KaIdeApi
+    public fun jvmUseInvokeDynamicForSamConversions(value: Boolean)
+
+    /** Uses `invokedynamic` for lambdas instead of generating anonymous classes. */
+    @KaIdeApi
+    public fun jvmUseInvokeDynamicForLambdas(value: Boolean)
+
+    /** Links JVM IR symbols via signatures instead of by descriptors. */
+    @KaIdeApi
+    public fun jvmLinkViaSignatures(value: Boolean)
 }
 
 /** Simple class name for the code fragment facade class. */
@@ -167,9 +344,20 @@ public sealed class KaCompilerTarget {
 }
 
 /**
+ * The target platform of the compilation performed by [KaCompilerFacility].
+ */
+@KaExperimentalApi
+public enum class KaCompilationTarget {
+    /**
+     * JVM target (produces '.class' files).
+     */
+    JVM,
+}
+
+/**
  * A handler which is called whenever a new class file is produced, when compiling sources to the JVM target.
  *
- * @see KaCompilerTarget.Jvm
+ * @see KaCompilationTarget.JVM
  */
 @KaSpi
 @KaExperimentalApi
@@ -225,7 +413,7 @@ public fun interface KaCompilerFacilityModuleActualizer {
      * Returns an actual counterpart of [module], target of which matches the [target], or `null` if such a module does not exist.
      */
     @KaSpiExtensionPoint
-    public fun actualize(module: KaModule, target: KaCompilerTarget): KaModule?
+    public fun actualize(module: KaModule, target: KaCompilationTarget): KaModule?
 }
 
 /**
@@ -263,6 +451,80 @@ public fun compile(
             configuration = configuration,
             target = target,
             allowedErrorFilter = allowedErrorFilter,
+        )
+    }
+}
+
+/**
+ * Compiles the given [file] in-memory using the specified [options].
+ *
+ * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException]. The implementation should wrap the
+ * `compile()` call into a `try`/`catch` block when necessary.
+ *
+ * @param file A file to compile.
+ *  The file must be either a source module file, or a [KtCodeFragment].
+ *  For a [KtCodeFragment], a source module context, a compiled library source context, or an empty context (`null`) are supported.
+ *
+ * @param options The compilation options created via [createCompilationOptions].
+ *
+ * @see createCompilationOptions
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@Throws(KaCodeCompilationException::class)
+@KaContextParameterApi
+context(session: KaSession)
+public fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult {
+    return with(session) {
+        compile(
+            file = file,
+            options = options,
+        )
+    }
+}
+
+/**
+ * Creates a new [KaCompilationOptions] instance using the given DSL [init] block.
+ *
+ * Example usage:
+ * ```kotlin
+ * val options = createCompilationOptions {
+ *     target(KaCompilationTarget.JVM)
+ *     moduleName("myModule")
+ *     languageVersionSettings(languageSettings)
+ *     allowedErrorFilter { diagnostic -> diagnostic.factoryName in allowedErrors }
+ * }
+ * ```
+ *
+ * @param init A lambda that configures the [KaCompilerOptionsBuilder].
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun createCompilationOptions(init: KaCompilerOptionsBuilder.() -> Unit): KaCompilationOptions {
+    return with(session) {
+        createCompilationOptions(
+            init = init,
+        )
+    }
+}
+
+/**
+ * Creates a copy of these [KaCompilationOptions], applying the given [init] modifications.
+ *
+ * Options not explicitly overridden in [init] retain their original values.
+ *
+ * @param init A lambda that configures the [KaCompilerOptionsBuilder] with modifications to apply.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KaCompilationOptions.copy(init: KaCompilerOptionsBuilder.() -> Unit): KaCompilationOptions {
+    return with(session) {
+        copy(
+            init = init,
         )
     }
 }
