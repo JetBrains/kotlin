@@ -201,10 +201,8 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
         val pluginContext = IrPluginContextImpl(
             mainModule,
-            trace.bindingContext,
             configuration.languageVersionSettings,
             symbolTable,
-            typeTranslator,
             irBuiltIns,
             linker = linker,
             messageCollector = messageCollector,

@@ -230,10 +230,8 @@ class JvmIrCodegenFactory(
         // instantiated before we resolve unbound symbols and invoke any postprocessing steps.
         val pluginContext = IrPluginContextImpl(
             psi2irContext.moduleDescriptor,
-            psi2irContext.bindingContext,
             psi2irContext.languageVersionSettings,
             symbolTable,
-            psi2irContext.typeTranslator,
             psi2irContext.irBuiltIns,
             irProvider,
             messageCollector,

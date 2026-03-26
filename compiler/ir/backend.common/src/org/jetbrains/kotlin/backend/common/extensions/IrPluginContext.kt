@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -15,14 +14,10 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.BindingContext
 
 /**
  * Indicates methods and properties that are not available in backend after K2 compiler release
@@ -33,7 +28,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 @RequiresOptIn("This API is deprecated. It will be removed after the release of K2 compiler")
 annotation class FirIncompatiblePluginAPI(val hint: String = "")
 
-private const val K1_DEPRECATION_MESSAGE = "This API is deprecated. It will be removed after the 2.3 release"
 private const val OLD_REFERENCE_API_DEPRECATION_MESSAGE = "Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead."
 
 interface IrPluginContext : IrGeneratorContext {
@@ -142,43 +136,6 @@ interface IrPluginContext : IrGeneratorContext {
     @ObsoleteDescriptorBasedAPI
     val moduleDescriptor: ModuleDescriptor
 
-    // ------------------------------------ K2-incompatible API ------------------------------------
-
-    @ObsoleteDescriptorBasedAPI
-    @FirIncompatiblePluginAPI
-    @Deprecated(K1_DEPRECATION_MESSAGE, level = DeprecationLevel.WARNING)
-    val bindingContext: BindingContext
-
-    @ObsoleteDescriptorBasedAPI
-    @FirIncompatiblePluginAPI
-    @Deprecated(K1_DEPRECATION_MESSAGE, level = DeprecationLevel.WARNING)
-    val typeTranslator: TypeTranslator
-
-    // The following API is experimental
-    @FirIncompatiblePluginAPI("Use classId overload instead")
-    @Deprecated(K1_DEPRECATION_MESSAGE, level = DeprecationLevel.WARNING)
-    fun referenceClass(fqName: FqName): IrClassSymbol?
-
-    @FirIncompatiblePluginAPI("Use classId overload instead")
-    @Deprecated(K1_DEPRECATION_MESSAGE, level = DeprecationLevel.WARNING)
-    fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol?
-
-    @FirIncompatiblePluginAPI("Use classId overload instead")
-    @Deprecated(K1_DEPRECATION_MESSAGE, level = DeprecationLevel.WARNING)
-    fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol>
-
-    @FirIncompatiblePluginAPI("Use callableId overload instead")
-    @Deprecated(K1_DEPRECATION_MESSAGE, level = DeprecationLevel.WARNING)
-    fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol>
-
-    @FirIncompatiblePluginAPI("Use callableId overload instead")
-    @Deprecated(K1_DEPRECATION_MESSAGE, level = DeprecationLevel.WARNING)
-    fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol>
-
-    // temporary solution to load synthetic top-level declaration
-    @FirIncompatiblePluginAPI
-    @Deprecated(K1_DEPRECATION_MESSAGE, level = DeprecationLevel.WARNING)
-    fun referenceTopLevel(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleDescriptor: ModuleDescriptor): IrSymbol?
 }
 
 interface DeclarationFinder {

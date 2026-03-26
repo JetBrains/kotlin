@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.DeclarationFinder
-import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -36,15 +34,12 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrPluginContext(
@@ -59,22 +54,6 @@ class Fir2IrPluginContext(
     override val messageCollector: MessageCollector,
     diagnosticReporter: DiagnosticReporter,
 ) : IrPluginContext {
-    companion object {
-        private const val ERROR_MESSAGE = "This API is not supported for K2"
-    }
-
-    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
-    @ObsoleteDescriptorBasedAPI
-    @FirIncompatiblePluginAPI
-    override val bindingContext: BindingContext
-        get() = error(ERROR_MESSAGE)
-
-    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
-    @ObsoleteDescriptorBasedAPI
-    @FirIncompatiblePluginAPI
-    override val typeTranslator: TypeTranslator
-        get() = error(ERROR_MESSAGE)
-
     override val afterK2: Boolean = true
 
     override val languageVersionSettings: LanguageVersionSettings
@@ -229,44 +208,4 @@ class Fir2IrPluginContext(
 
     override val diagnosticReporter: IrDiagnosticReporter =
         KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
-
-    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
-    @FirIncompatiblePluginAPI
-    override fun referenceClass(fqName: FqName): IrClassSymbol {
-        error(ERROR_MESSAGE)
-    }
-
-    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
-    @FirIncompatiblePluginAPI
-    override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol {
-        error(ERROR_MESSAGE)
-    }
-
-    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
-    @FirIncompatiblePluginAPI
-    override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
-        error(ERROR_MESSAGE)
-    }
-
-    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
-    @FirIncompatiblePluginAPI
-    override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
-        error(ERROR_MESSAGE)
-    }
-
-    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
-    @FirIncompatiblePluginAPI
-    override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
-        error(ERROR_MESSAGE)
-    }
-
-    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
-    @FirIncompatiblePluginAPI
-    override fun referenceTopLevel(
-        signature: IdSignature,
-        kind: IrDeserializer.TopLevelSymbolKind,
-        moduleDescriptor: ModuleDescriptor
-    ): IrSymbol {
-        error(ERROR_MESSAGE)
-    }
 }
