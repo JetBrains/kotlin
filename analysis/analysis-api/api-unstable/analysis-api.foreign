@@ -12,8 +12,6 @@ com/intellij/psi/PsiType
 com/intellij/psi/search/GlobalSearchScope
 com/intellij/psi/tree/TokenSet
 org/jetbrains/kotlin/builtins/functions/FunctionTypeKind
-org/jetbrains/kotlin/config/CompilerConfiguration
-org/jetbrains/kotlin/config/CompilerConfigurationKey
 org/jetbrains/kotlin/config/LanguageVersionSettings
 org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget
 org/jetbrains/kotlin/descriptors/annotations/KotlinTarget
