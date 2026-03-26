@@ -69,14 +69,20 @@ fun test2() {
 fun test3(fn: Function1<Int, Unit>) {
   { // BLOCK
     val tmp_4: A = A
-    val tmp_5: SuspendFunction1<Int, Unit> = { // BLOCK
+    val tmp_5: Function1<Int, Unit> = fn
+    set(/* <this> = tmp_4, */ i = { // BLOCK
       local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
         $callee.invoke(p1 = p0)
       }
 
-      ::suspendConversion0/*($callee = fn) */
-    }
-    set(/* <this> = tmp_4, */ i = tmp_5 /*-> IFoo */, newValue = get(/* <this> = tmp_4, */ i = tmp_5 /*-> IFoo */).plus(other = 1))
+      ::suspendConversion0/*($callee = tmp_5) */ /*-> IFoo */
+    }, newValue = get(/* <this> = tmp_4, */ i = { // BLOCK
+      local suspend fun Function1<Int, Unit>.suspendConversion1(p0: Int) {
+        $callee.invoke(p1 = p0)
+      }
+
+      ::suspendConversion1/*($callee = tmp_5) */ /*-> IFoo */
+    }).plus(other = 1))
   }
 }
 
@@ -94,14 +100,20 @@ fun test5(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   { // BLOCK
     val tmp_8: A = A
-    val tmp_9: SuspendFunction1<Int, Unit> = { // BLOCK
+    val tmp_9: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
+    set(/* <this> = tmp_8, */ i = { // BLOCK
       local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
         $callee.invoke(p1 = p0)
       }
 
-      ::suspendConversion0/*($callee = a /*as Function1<Int, Unit> */) */
-    }
-    set(/* <this> = tmp_8, */ i = tmp_9 /*-> IFoo */, newValue = get(/* <this> = tmp_8, */ i = tmp_9 /*-> IFoo */).plus(other = 1))
+      ::suspendConversion0/*($callee = tmp_9) */ /*-> IFoo */
+    }, newValue = get(/* <this> = tmp_8, */ i = { // BLOCK
+      local suspend fun Function1<Int, Unit>.suspendConversion1(p0: Int) {
+        $callee.invoke(p1 = p0)
+      }
+
+      ::suspendConversion1/*($callee = tmp_9) */ /*-> IFoo */
+    }).plus(other = 1))
   }
 }
 
