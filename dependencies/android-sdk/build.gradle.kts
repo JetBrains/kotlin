@@ -183,6 +183,7 @@ fun androidBuildTools(version: String): TaskProvider<Task> {
     val revision = when (version) {
         "34.0.0" -> "r34"
         "35.0.0" -> "r35"
+        "36.0.0" -> "r36"
         else -> "r$version"
     }
 
@@ -232,6 +233,7 @@ androidBuildTools("30.0.3")
 androidBuildTools("33.0.1")
 androidBuildTools("34.0.0")
 androidBuildTools("35.0.0")
+androidBuildTools("36.0.0")
 
 // SDK artifacts are unpacked manually instead of using sdkmanager (recommended way),
 // so required package metadata (package.xml) is missing. Write the metadata manually.
