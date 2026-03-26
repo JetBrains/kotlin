@@ -50,7 +50,6 @@ dependencies {
 
     embedded(project(":core:names")) { isTransitive = false }
     embedded(project(":core:language.model")) { isTransitive = false }
-    embedded(project(":core:language.targets")) { isTransitive = false }
     embedded(project(":core:metadata")) { isTransitive = false }
     embedded(project(":core:metadata.jvm")) { isTransitive = false }
     embedded(project(":core:compiler.common")) { isTransitive = false }
