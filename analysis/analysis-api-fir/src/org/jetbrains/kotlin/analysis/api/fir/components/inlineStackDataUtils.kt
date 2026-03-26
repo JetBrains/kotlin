@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parents
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaDebuggerExtension
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.InlineLambdaArgument
@@ -39,10 +38,10 @@ class InlineStackData(
 internal fun retrieveInlineStackData(
     file: FirFile,
     resolutionFacade: LLResolutionFacade,
-    debuggerExtension: KaDebuggerExtension?,
+    executionStack: Sequence<PsiElement?>?,
 ): InlineStackData {
 
-    if (debuggerExtension == null) return InlineStackData(emptyMap(), emptyMap(), null)
+    if (executionStack == null) return InlineStackData(emptyMap(), emptyMap(), null)
 
     val unmappedTypeParameters = mutableSetOf<FirTypeParameterSymbol>()
     file.collectCapturedReifiedTypeParameters(unmappedTypeParameters, resolutionFacade)
@@ -60,7 +59,7 @@ internal fun retrieveInlineStackData(
     // E.g., we might reach the execution stack beginning or fail to extract relevant info from the call.
     // There are cases when a code fragment captures a reified type parameter, but we are still able to compile it
     // without reification, that is why we avoid fast-failing here when not all the type parameters are mapped.
-    val stackIterator = debuggerExtension.stack.iterator()
+    val stackIterator = executionStack.iterator()
     var depth = 0
     var firstNonInlineNonLocalFunInStack: KtDeclaration? = null
     while (stackIterator.hasNext() && (unmappedTypeParameters.isNotEmpty() || unsubstitutedInlineLambdaParameters.isNotEmpty())) {

@@ -42,14 +42,9 @@ internal class KaFe10CompilerFacility(
     @OptIn(KaImplementationDetail::class)
     override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult {
         val opts = options as KaBaseCompilationOptions
-        val target = KaCompilerTarget.Jvm(
-            isTestMode = opts.jvmOutputAsmListing,
-            compiledClassHandler = opts.compiledClassHandler,
-            debuggerExtension = opts.jvmExecutionStack?.let(::KaDebuggerExtension),
-        )
         return withPsiValidityAssertion(file) {
             try {
-                compileUnsafe(file, opts.configuration, target, opts.allowedErrorFilter)
+                compileUnsafe(file, opts)
             } catch (e: Throwable) {
                 rethrowIntellijPlatformExceptionIfNeeded(e)
                 throw KaCodeCompilationException(e)
@@ -69,15 +64,13 @@ internal class KaFe10CompilerFacility(
 
     private fun compileUnsafe(
         file: KtFile,
-        configuration: CompilerConfiguration,
-        target: KaCompilerTarget.Jvm,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean
+        options: KaBaseCompilationOptions,
     ): KaCompilationResult {
         if (file is KtCodeFragment) {
             throw UnsupportedOperationException("Code fragments are not supported in K1 implementation")
         }
 
-        val effectiveConfiguration = configuration
+        val effectiveConfiguration = options.configuration
             .copy()
             .apply {
                 put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
@@ -95,7 +88,7 @@ internal class KaFe10CompilerFacility(
         val filesToCompile = inlineAnalyzer.allFiles().collectReachableInlineDelegatedPropertyAccessors()
         val bindingContext = analysisContext.analyze(filesToCompile, AnalysisMode.ALL_COMPILER_CHECKS)
 
-        val frontendErrors = computeErrors(bindingContext.diagnostics, allowedErrorFilter)
+        val frontendErrors = computeErrors(bindingContext.diagnostics, options.allowedErrorFilter)
         if (frontendErrors.isNotEmpty()) {
             return KaCompilationResult.Failure(frontendErrors)
         }
@@ -118,11 +111,11 @@ internal class KaFe10CompilerFacility(
 
         val generateClassFilter = GenerateClassFilter()
 
-        val codegenFactory = createJvmIrCodegenFactory(effectiveConfiguration)
+        val codegenFactory = createJvmIrCodegenFactory(effectiveConfiguration, options.stubUnboundIrSymbols)
 
         val classBuilderFactory = KaClassBuilderFactory.create(
-            delegateFactory = if (target.isTestMode) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES,
-            compiledClassHandler = target.compiledClassHandler
+            delegateFactory = if (options.jvmOutputAsmListing) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES,
+            compiledClassHandler = options.compiledClassHandler
         )
 
         val state = GenerationState(
@@ -151,8 +144,7 @@ internal class KaFe10CompilerFacility(
         }
     }
 
-    private fun createJvmIrCodegenFactory(configuration: CompilerConfiguration): JvmIrCodegenFactory {
-        val stubUnboundIrSymbols = configuration[STUB_UNBOUND_IR_SYMBOLS] == true
+    private fun createJvmIrCodegenFactory(configuration: CompilerConfiguration, stubUnboundIrSymbols: Boolean): JvmIrCodegenFactory {
 
         val jvmGeneratorExtensions = if (stubUnboundIrSymbols) {
             object : JvmGeneratorExtensionsImpl(configuration) {

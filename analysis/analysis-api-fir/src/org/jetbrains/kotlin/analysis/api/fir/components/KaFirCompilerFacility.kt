@@ -161,13 +161,8 @@ internal class KaFirCompilerFacility(
     @OptIn(KaImplementationDetail::class)
     override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult {
         val opts = options as KaBaseCompilationOptions
-        val target = KaCompilerTarget.Jvm(
-            isTestMode = opts.jvmOutputAsmListing,
-            compiledClassHandler = opts.compiledClassHandler,
-            debuggerExtension = opts.jvmExecutionStack?.let(::KaDebuggerExtension),
-        )
         return withPsiValidityAssertion(file) {
-            compileWithRetry(file, opts.configuration, target, opts.allowedErrorFilter)
+            compileWithRetry(file, opts)
         }
     }
 
@@ -183,15 +178,13 @@ internal class KaFirCompilerFacility(
 
     private fun compileWithRetry(
         file: KtFile,
-        configuration: CompilerConfiguration,
-        target: KaCompilerTarget,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean,
+        options: KaBaseCompilationOptions,
     ): KaCompilationResult {
         val disabledIrExtensions = mutableListOf<Class<out IrGenerationExtension>>()
         val mutedExceptions = mutableListOf<Throwable>()
         while (true) {
             try {
-                val result = compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter, disabledIrExtensions)
+                val result = compileUnsafe(file, options, disabledIrExtensions)
                 if (mutedExceptions.isNotEmpty()) {
                     return when (result) {
                         is KaCompilationResult.Failure -> KaCompilationResult.Failure(
@@ -223,9 +216,7 @@ internal class KaFirCompilerFacility(
 
     private fun compileUnsafe(
         mainFile: KtFile,
-        configuration: CompilerConfiguration,
-        target: KaCompilerTarget.Jvm,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean,
+        options: KaBaseCompilationOptions,
         disabledIrExtensions: List<Class<out IrGenerationExtension>>,
     ): KaCompilationResult {
         val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.firSession) { it.asKaDiagnostic() }
@@ -237,19 +228,20 @@ internal class KaFirCompilerFacility(
 
         val mainFirFile = getFullyResolvedFirFile(mainFile)
 
-        val inlineStackData = retrieveInlineStackData(mainFirFile, resolutionFacade, target.debuggerExtension)
+        val inlineStackData = retrieveInlineStackData(mainFirFile, resolutionFacade, options.jvmExecutionStack)
 
         val codeFragmentMappings = runIf(mainFile is KtCodeFragment) {
             computeCodeFragmentMappings(
                 mainFirFile,
                 resolutionFacade,
-                configuration,
+                options.codeFragmentClassName,
+                options.codeFragmentMethodName,
                 inlineStackData.capturedReifiedTypeParameterMapping,
                 inlineStackData.inlineLambdaParameterMapping
             )
         }
 
-        val actualizer = createPlatformActualizer(configuration, target)
+        val actualizer = createPlatformActualizer(options.moduleActualizer)
         val compilationPeerData = CompilationPeerCollector.process(
             buildList {
                 add(mainFirFile)
@@ -258,7 +250,7 @@ internal class KaFirCompilerFacility(
             actualizer
         )
 
-        val chunkRegistrar = CompilationChunkRegistrar(mainFile, mainFirFile, target, actualizer)
+        val chunkRegistrar = CompilationChunkRegistrar(mainFile, mainFirFile, actualizer)
         val chunks = collectCompilationChunks(chunkRegistrar, compilationPeerData, codeFragmentMappings)
 
         val registeredCodeProviders = ArrayList<CompiledCodeProvider>()
@@ -290,7 +282,7 @@ internal class KaFirCompilerFacility(
                 // This is important for the code evaluation scenario, as people may modify code while debugging.
                 // The downside is that we can get unexpected exceptions from the backend (that we wrap into KaCompilationResult.Failure).
                 val diagnostics = mainFile.collectDiagnosticsForFile(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
-                val errors = computeErrors(diagnostics.filterIsInstance<KtDiagnostic>(), allowedErrorFilter)
+                val errors = computeErrors(diagnostics.filterIsInstance<KtDiagnostic>(), options.allowedErrorFilter)
                 if (errors.isNotEmpty()) {
                     return KaCompilationResult.Failure(errors)
                 }
@@ -318,9 +310,7 @@ internal class KaFirCompilerFacility(
             val result = compileChunk(
                 module,
                 chunk,
-                configuration,
-                target,
-                allowedErrorFilter,
+                options,
                 codeFragmentMappings?.takeIf { chunk.hasCodeFragments },
                 generateClassFilter,
                 KaFirDelegatingCompiledCodeProvider(registeredCodeProviders),
@@ -456,7 +446,6 @@ internal class KaFirCompilerFacility(
     private inner class CompilationChunkRegistrar(
         private val originalMainFile: KtFile,
         private val originalMainFirFile: FirFile,
-        private val target: KaCompilerTarget,
         private val actualizer: LLPlatformActualizer?
     ) {
         private val originalMainModule = originalMainFirFile.llFirModuleData.ktModule
@@ -555,9 +544,7 @@ internal class KaFirCompilerFacility(
          * Currently, only JVM modules are supported.
          */
         private val KaModule.isSupported: Boolean
-            get() = when (target) {
-                is KaCompilerTarget.Jvm -> targetPlatform.isJvm()
-            }
+            get() = targetPlatform.isJvm()
 
         private val KaModule.implementingJvmModule: KaModule?
             get() = actualizer?.actualize(this)
@@ -568,7 +555,7 @@ internal class KaFirCompilerFacility(
             require(module !is KaDanglingFileModule) { "Compilation of nested dangling file modules is not supported" }
 
             return moduleCache.computeIfAbsent(module) { module ->
-                if (module.targetPlatform.isCommon() && target is KaCompilerTarget.Jvm) {
+                if (module.targetPlatform.isCommon()) {
                     module.implementingJvmModule ?: module
                 } else {
                     module
@@ -879,7 +866,7 @@ internal class KaFirCompilerFacility(
         chunk: ChunkToCompile,
         fir2IrResult: Fir2IrActualizedResult,
         configuration: CompilerConfiguration,
-        target: KaCompilerTarget.Jvm,
+        options: KaBaseCompilationOptions,
         codeFragmentMappings: CodeFragmentMappings?,
         codegenFactory: JvmIrCodegenFactory,
         generateClassFilter: GenerationState.GenerateClassFilter,
@@ -890,9 +877,9 @@ internal class KaFirCompilerFacility(
         val matchingClassNames = mutableSetOf<String>()
 
         val classBuilderFactory = KaClassBuilderFactory.create(
-            delegateFactory = if (target.isTestMode) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES,
+            delegateFactory = if (options.jvmOutputAsmListing) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES,
             compiledClassHandler = { file, className ->
-                target.compiledClassHandler?.handleClassDefinition(file, className)
+                options.compiledClassHandler?.handleClassDefinition(file, className)
 
                 // Synthetic classes often don't have a source element attached, so judging whether the class should stay is hard
                 if (chunk.mainFile == null || file == chunk.mainFile) {
@@ -977,9 +964,7 @@ internal class KaFirCompilerFacility(
     private fun compileChunk(
         module: KaModule,
         chunk: ChunkToCompile,
-        baseConfiguration: CompilerConfiguration,
-        target: KaCompilerTarget.Jvm,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean,
+        options: KaBaseCompilationOptions,
         codeFragmentMappings: CodeFragmentMappings?,
         generateClassFilter: GenerationState.GenerateClassFilter,
         compiledCodeProvider: CompiledCodeProvider,
@@ -987,7 +972,7 @@ internal class KaFirCompilerFacility(
         disabledIrExtensions: List<Class<out IrGenerationExtension>>,
     ): KaCompilationResult {
         val session = resolutionFacade.sessionProvider.getResolvableSession(module)
-        val configuration = baseConfiguration.copy().apply {
+        val configuration = options.configuration.copy().apply {
             put(CommonConfigurationKeys.USE_FIR, true)
             put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, session.languageVersionSettings)
         }
@@ -1031,7 +1016,7 @@ internal class KaFirCompilerFacility(
         }
 
         if (diagnosticsCollector.hasErrors) {
-            val errors = computeErrors(diagnosticsCollector.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), allowedErrorFilter)
+            val errors = computeErrors(diagnosticsCollector.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), options.allowedErrorFilter)
             if (errors.isNotEmpty()) {
                 return KaCompilationResult.Failure(errors)
             }
@@ -1068,7 +1053,7 @@ internal class KaFirCompilerFacility(
             chunk,
             fir2IrResult,
             configuration,
-            target,
+            options,
             codeFragmentMappings,
             codegenFactory,
             generateClassFilter,
@@ -1078,7 +1063,7 @@ internal class KaFirCompilerFacility(
         )
 
         if (diagnosticsCollector.hasErrors) {
-            val errors = computeErrors(diagnosticsCollector.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), allowedErrorFilter)
+            val errors = computeErrors(diagnosticsCollector.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), options.allowedErrorFilter)
             if (errors.isNotEmpty()) {
                 return KaCompilationResult.Failure(errors)
             }
@@ -1257,7 +1242,8 @@ internal class KaFirCompilerFacility(
     private fun computeCodeFragmentMappings(
         mainFirFile: FirFile,
         resolutionFacade: LLResolutionFacade,
-        configuration: CompilerConfiguration,
+        codeFragmentClassName: String?,
+        codeFragmentMethodName: String?,
         reifiedTypeParametersMapping: Map<FirTypeParameterSymbol, ConeKotlinType>,
         inlineLambdaParametersMapping: Map<FirValueParameterSymbol, InlineLambdaArgument>,
     ): CodeFragmentMappings {
@@ -1270,8 +1256,8 @@ internal class KaFirCompilerFacility(
         val injectedValues = capturedSymbols.map { InjectedValue(it.symbol, it.typeRef, it.value.isMutated) }
 
         val conversionData = CodeFragmentConversionData(
-            classId = ClassId(FqName.ROOT, Name.identifier(configuration[CODE_FRAGMENT_CLASS_NAME] ?: "CodeFragment")),
-            methodName = Name.identifier(configuration[CODE_FRAGMENT_METHOD_NAME] ?: "run"),
+            classId = ClassId(FqName.ROOT, Name.identifier(codeFragmentClassName ?: "CodeFragment")),
+            methodName = Name.identifier(codeFragmentMethodName ?: "run"),
             injectedValues
         )
 
@@ -1432,16 +1418,12 @@ internal class KaFirCompilerFacility(
     }
 }
 
-private fun createPlatformActualizer(configuration: CompilerConfiguration, target: KaCompilerTarget): LLPlatformActualizer {
-    val customActualizer = configuration[MODULE_ACTUALIZER]
-
-    val (compilationTarget, platformKind) = when (target) {
-        is KaCompilerTarget.Jvm -> KaCompilationTarget.JVM to ImplementationPlatformKind.JVM
-    }
+private fun createPlatformActualizer(customActualizer: KaCompilerFacilityModuleActualizer?): LLPlatformActualizer {
+    val platformKind = ImplementationPlatformKind.JVM
 
     if (customActualizer != null) {
         return LLPlatformActualizer { module ->
-            val actualModule = customActualizer.actualize(module, compilationTarget)
+            val actualModule = customActualizer.actualize(module, KaCompilationTarget.JVM)
             if (actualModule != null) {
                 val actualPlatform = actualModule.targetPlatform
                 val actualPlatformKind = ImplementationPlatformKind.fromTargetPlatform(actualPlatform)
