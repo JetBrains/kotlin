@@ -301,8 +301,15 @@ class JavaClassifierTypeOverAst(
             return false
         }
 
-    override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
-        return resolutionContext.resolve(rawTypeName, tryResolve)
+    override val containingClassIds: List<ClassId> by lazy {
+        resolutionContext.getContainingClassIds()
+    }
+
+    override fun resolve(
+        tryResolve: (ClassId) -> Boolean,
+        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
+    ): ClassId? {
+        return resolutionContext.resolve(rawTypeName, tryResolve, getSupertypeClassIds)
     }
 
     private companion object {
@@ -333,7 +340,7 @@ class JavaClassifierTypeForEnumEntry(
 
     // Already resolved - we have direct reference to the class
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
+    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
         val fqName = enumClass.fqName ?: return null
         val classId = ClassId.topLevel(fqName)
         return if (tryResolve(classId)) classId else null
@@ -580,7 +587,7 @@ class EnumSupertypeForJavaDirect(
 
     // java.lang.Enum is always resolved (it's a well-known class)
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
+    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
         val classId = ClassId.topLevel(FqName(classifierQualifiedName))
         return if (tryResolve(classId)) classId else null
     }
@@ -599,7 +606,7 @@ class EnumSupertypeForJavaDirect(
         override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
         override val isResolved: Boolean get() = true
-        override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
+        override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
             val fqName = enumClass.fqName ?: return null
             val classId = ClassId.topLevel(fqName)
             return if (tryResolve(classId)) classId else null
@@ -624,7 +631,7 @@ class SimpleClassifierType(
 
     // Well-known classes are always resolved
     override val isResolved: Boolean get() = true
-    override fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? {
+    override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
         val classId = ClassId.topLevel(FqName(classifierQualifiedName))
         return if (tryResolve(classId)) classId else null
     }

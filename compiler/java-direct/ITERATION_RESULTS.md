@@ -160,6 +160,92 @@ Java-direct parses the AST literally and presents the wrong-arity type arguments
 
 ---
 
+## Iteration 56: Transitive Inherited Inner Class Resolution (Problems 6 & 7) - 2026-03-26
+
+### Root Cause Analysis
+**Problem 6 (`testMapMethodsImplementedInJava`)**: `Entry` in `Derived.entrySet()` return type `Set<Entry<String, String>>` resolved to wrong `ClassId("", "Entry")` instead of `ClassId("java.util", "Map.Entry")`. This made the return type subtype check in `JavaClassUseSiteMemberScope.findGetterOverride()` fail when matching `entrySet()` → `entries` property, causing spurious `ABSTRACT_MEMBER_NOT_IMPLEMENTED`.
+
+**Problem 7 (`testInheritanceWithKotlin`)**: Same root cause — inherited nested classes through multi-level K-J-K chain (Java class → Kotlin class → another Kotlin/Java class with inner classes) couldn't be resolved because `resolveInheritedInnerClassToClassId` only walked Java source supertypes.
+
+**Root cause**: `resolveInheritedInnerClassToClassId` used only text-based resolution of supertypes within the Java source index. When a supertype was a Kotlin class (e.g., `KFirst`) or a binary class (e.g., `java.util.Map`), its own supertypes couldn't be walked — the inner class lookup stopped at the first non-source class boundary.
+
+### Fix
+**Two-phase BFS in `resolveInheritedInnerClassToClassId`:**
+
+1. **`core/compiler.common.jvm/src/.../javaTypes.kt`**: Added `getSupertypeClassIds` parameter to `JavaClassifierType.resolve()` (backward-compatible default `null`). This allows FIR to provide a callback for walking non-source supertypes.
+
+2. **`compiler/java-direct/src/.../JavaResolutionContext.kt`**: Rewrote `resolveInheritedInnerClassToClassId` with two phases:
+   - **Phase 1**: BFS through `JavaClassifierType` objects (Java model). For each resolved supertype ClassId, probe `SupertypeClassId.SimpleName` via `tryResolve`. For Java source classes, queue their own supertypes. For non-source classes (Kotlin/binary), collect in `nonSourceSupertypeIds`.
+   - **Phase 2**: For non-source supertypes, use the FIR callback (`getSupertypeClassIds`) to walk their supertype ClassIds transitively and probe for inner classes.
+
+3. **`compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt`**: Updated both `resolve()` call sites to pass `getSupertypeClassIds` callback. Added `getResolvedSupertypeClassIds()` helper that reads already-resolved FIR supertypes for non-Java classes (guards against `FirJavaClass` to avoid premature lazy resolution).
+
+4. **`compiler/java-direct/src/.../JavaTypeOverAst.kt`**: Updated all `resolve()` overrides (`JavaClassifierTypeOverAst`, `EnumSupertypeForJavaDirect`, `EnumSelfTypeArgument`, `SimpleClassifierType`, `JavaClassifierTypeForEnumEntry`) to accept the new `getSupertypeClassIds` parameter.
+
+5. **`compiler/java-direct/test/.../JavaParsingTest.kt`**: Updated 3 `resolve` call sites from trailing lambda syntax `.resolve { ... }` to named argument syntax `.resolve(tryResolve = { ... })`.
+
+### Test Results
+- Box: 1168/1168, Phased: 1450/1456, Total failing: 6 (down from 8)
+
+### Tests Fixed
+- **Phased**: `testMapMethodsImplementedInJava` (Problem 6 — `Entry` inner class resolution through `Derived → Base → Map`)
+- **Phased**: `testInheritanceWithKotlin` (Problem 7 — nested class resolution through K-J-K chain)
+
+### Key Learnings
+- `resolveInheritedInnerClassToClassId` must not call `supertype.resolve(tryResolve)` recursively (caused 152-test regression from infinite recursion)
+- `FirJavaClass.superTypeRefs` is lazy with `PUBLICATION` mode — accessing it can trigger premature resolution; guard with `is FirJavaClass` check
+- Phase 1 uses only text-based resolution (`resolveSimpleNameToClassIdWithoutInheritance`) to avoid recursion; Phase 2 uses FIR callback for cross-language walking
+
+---
+
+## Iteration 57: Outer Type Arguments for Inherited Inner Classes (Problem 5) - 2026-03-26
+
+### Root Cause Analysis
+**Problem 5 (`testKJKComplexHierarchyWithNested`)**: After Iteration 56 fixed the ClassId resolution, `NestedInSuperClass` correctly resolved to `SuperClass.NestedInSuperClass`. However, the **outer class type arguments** (`T=String` from `J1 → KFirst → SuperClass<String>`) were missing. FIR treated the type as a **raw type** (star projections), making `nested(x: T)` become `nested(x: Any?)` — accepting any argument instead of only `String`.
+
+PSI handles this via `PsiSubstitutor` which maps `T→String` and includes the outer type arg in `computeTypeArguments()`. Java-direct doesn't have a substitutor mechanism, so `typeArguments` was empty for cross-file inner classes where `classifier == null`.
+
+**Two raw type checks**: The issue manifested in TWO places:
+1. **Outer check** (`toConeTypeProjection`, lines 154-168): Detected `NestedInSuperClass` as raw and wrapped the result in `ConeRawType`
+2. **Inner check** (`convertClassifierTypeWithClassId`, null branch): Also detected as raw and used star projections for type arguments
+
+### Fix
+**Three coordinated changes across 4 files:**
+
+1. **`core/compiler.common.jvm/src/.../javaTypes.kt`**: Added `containingClassIds: List<ClassId>` property to `JavaClassifierType` (defaults to empty list). Exposes the class hierarchy context (innermost class to outermost) so FIR can walk supertypes to find outer type arguments.
+
+2. **`compiler/java-direct/src/.../JavaResolutionContext.kt`**: Added `getContainingClassIds()` method that walks `containingClassProvider` and outer classes, converting each to ClassId.
+
+3. **`compiler/java-direct/src/.../JavaTypeOverAst.kt`**: Implemented `containingClassIds` in `JavaClassifierTypeOverAst` via lazy delegation to `resolutionContext.getContainingClassIds()`.
+
+4. **`compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt`**: Three helper functions + two check modifications:
+   - `findOuterTypeArgsFromHierarchy()`: Walks outer containing classes' FIR supertypes to find the outer class (e.g., `SuperClass`) with its concrete type arguments (e.g., `<String>`). **Skips index 0** (the class whose supertypes are being resolved) to avoid infinite recursion.
+   - `findTypeArgsForClassInHierarchy()`: Recursive BFS through FIR supertype chain (non-Java only) searching for target ClassId.
+   - `substituteTypeArgs()`: Handles type parameter substitution through intermediate classes (e.g., `A<X> : SuperClass<X>`, `A<String>` → `SuperClass<String>`).
+   - **Outer `isRawType` check**: Added guard — don't treat as raw if `findOuterTypeArgsFromHierarchy` can provide the outer type args.
+   - **Inner `null` branch**: Compute outer type args and use them instead of raw projections when available.
+
+### Recursion Prevention
+The key challenge was avoiding infinite recursion when accessing `FirJavaClass.superTypeRefs`:
+- `containingClassIds = [J1.NestedSubClass, J1]`
+- Index 0 (`J1.NestedSubClass`) — its `superTypeRefs` is the lazy property currently being computed → accessing it causes `StackOverflowError`
+- Index 1+ (`J1`) — outer class, supertypes already resolved (FIR processes outer before inner) → safe to access
+- Solution: always skip index 0, start walking from index 1
+
+### Test Results
+- Box: 1168/1168, Phased: 1451/1456, Total failing: 5 (down from 6)
+
+### Tests Fixed
+- **Phased**: `testKJKComplexHierarchyWithNested` (Problem 5 — outer type param propagation through K-J-K hierarchy for inherited inner classes)
+
+### Key Learnings
+- PSI's `PsiSubstitutor` provides outer type args automatically via `computeTypeArguments()`; java-direct must compute them explicitly from FIR's supertype chain
+- FIR type conversion has TWO separate raw type checks — the outer one in `toConeTypeProjection` and the inner one in `convertClassifierTypeWithClassId`; both must be updated
+- The first containing class (index 0) is always unsafe to access supertypes for during type conversion — it's the class whose supertypes are being lazily resolved
+- FIR's resolved supertype `ConeClassLikeType` already has substituted type arguments (e.g., `SuperClass<String>`), but when walking through intermediate classes with their own type params, manual substitution is still needed
+
+---
+
 ## Future Iteration Template
 
 ~~~markdown

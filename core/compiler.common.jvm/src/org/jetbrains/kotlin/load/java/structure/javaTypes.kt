@@ -61,16 +61,23 @@ interface JavaClassifierType : JavaType {
 
     /**
      * Resolves the type to a ClassId using the provided callback.
-     * 
+     *
      * This method allows precise resolution where the callback receives a ClassId
      * (with explicit package/class split) rather than a string that could be ambiguous.
      * For example, "a.b" could mean either package "a" with class "b", or root package
      * with nested class "a.b". Using ClassId avoids this ambiguity.
-     * 
+     *
      * @param tryResolve callback that checks if a ClassId exists. Returns true if found.
+     * @param getSupertypeClassIds optional callback that returns the direct supertype ClassIds
+     *        for a given ClassId. Used by java-direct to walk supertype chains transitively
+     *        when resolving inherited inner classes (e.g., Derived → Base → Map → Entry).
+     *        Only reads already-resolved supertypes to avoid deadlocks.
      * @return the resolved ClassId, or null if resolution failed
      */
-    fun resolve(tryResolve: (ClassId) -> Boolean): ClassId? = null
+    fun resolve(
+        tryResolve: (ClassId) -> Boolean,
+        getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
+    ): ClassId? = null
 
     /**
      * Hint for FIR type conversion that this classifier type should produce a trivially flexible
@@ -84,6 +91,21 @@ interface JavaClassifierType : JavaType {
      * that are known to be trivially flexible (matching PSI behavior).
      */
     val isTriviallyFlexibleHint: Boolean get() = false
+
+    /**
+     * ClassIds of classes in the containing scope chain, from innermost to outermost.
+     *
+     * When this type reference appears inside a class declaration (e.g., as a supertype),
+     * this returns the ClassId of that class plus its outer classes. This allows FIR
+     * to find outer class type arguments for inherited inner class types by walking
+     * the containing class's supertype chain.
+     *
+     * For example, for `NestedInSuperClass` in `class J1.NestedSubClass extends NestedInSuperClass`,
+     * this returns `[J1.NestedSubClass, J1]`.
+     *
+     * The default returns an empty list (PSI types resolve outer type args via PsiSubstitutor).
+     */
+    val containingClassIds: List<ClassId> get() = emptyList()
 }
 
 interface JavaPrimitiveType : JavaType {

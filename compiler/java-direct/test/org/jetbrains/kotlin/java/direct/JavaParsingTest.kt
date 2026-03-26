@@ -363,9 +363,9 @@ class JavaParsingTest {
         assert(!fieldType.isResolved) { "Expected isResolved=false for unqualified Object" }
         assert(fieldType.classifier == null) { "Expected classifier=null for external type" }
 
-        val resolved = fieldType.resolve { candidateClassId ->
+        val resolved = fieldType.resolve(tryResolve = { candidateClassId ->
             candidateClassId == ClassId.topLevel(FqName("java.lang.Object"))
-        }
+        })
 
         assert(resolved == ClassId.topLevel(FqName("java.lang.Object"))) { "Expected resolution to 'java.lang.Object', got '$resolved'" }
     }
@@ -412,9 +412,9 @@ class JavaParsingTest {
         assert(!paramType.isResolved) { "Object should not be pre-resolved" }
         assert(paramType.classifier == null) { "Object should have null classifier (external type)" }
 
-        val resolved = paramType.resolve { candidateClassId ->
+        val resolved = paramType.resolve(tryResolve = { candidateClassId ->
             candidateClassId == ClassId.topLevel(FqName("java.lang.Object"))
-        }
+        })
 
         assert(resolved == ClassId.topLevel(FqName("java.lang.Object"))) { "Expected 'java.lang.Object', got '$resolved'" }
     }
@@ -1766,13 +1766,13 @@ class JavaParsingTest {
         // and let FIR determine which one exists
         
         var resolvedClassIds = mutableListOf<ClassId>()
-        val resolved = returnType.resolve { candidateClassId ->
+        val resolved = returnType.resolve(tryResolve = { candidateClassId ->
             resolvedClassIds.add(candidateClassId)
             // Simulate: both a.b (package.class) and a.b (outer.nested) could exist
             // FIR would check which one actually exists
             false // Don't resolve, just collect candidates
-        }
-        
+        })
+
         println("  Candidates tried: $resolvedClassIds")
         
         // The resolve() should try "a.b" in some form
