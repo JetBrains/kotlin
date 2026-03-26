@@ -303,7 +303,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, arguments.enableDebugMode)
     put(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING, arguments.enhancedCoroutinesDebugging)
     put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, arguments.noNewJavaAnnotationTargets)
-    put(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS, arguments.useInlineScopesNumbers)
+    put(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS, !arguments.doNotUseInlineScopesNumbers)
 
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)

@@ -23,6 +23,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.destination = from.destination
     to.disableStandardScript = from.disableStandardScript
     to.doNotClearBindingContext = from.doNotClearBindingContext
+    to.doNotUseInlineScopesNumbers = from.doNotUseInlineScopesNumbers
     to.emitJvmTypeAnnotations = from.emitJvmTypeAnnotations
     to.enableDebugMode = from.enableDebugMode
     to.enableJvmPreview = from.enableJvmPreview
@@ -77,7 +78,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.suppressMissingBuiltinsError = from.suppressMissingBuiltinsError
     to.typeEnhancementImprovementsInStrictMode = from.typeEnhancementImprovementsInStrictMode
     to.useFastJarFileSystem = from.useFastJarFileSystem
-    to.useInlineScopesNumbers = from.useInlineScopesNumbers
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme
     to.useTypeTable = from.useTypeTable

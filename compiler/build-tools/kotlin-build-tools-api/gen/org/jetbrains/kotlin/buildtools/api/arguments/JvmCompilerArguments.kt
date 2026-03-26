@@ -226,6 +226,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_DISABLE_STANDARD_SCRIPT", KotlinReleaseVersion(1, 2, 50))
 
     /**
+     * Do not use inline scope markers for inline marker variables.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_DO_NOT_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_DO_NOT_USE_INLINE_SCOPES_NUMBERS", KotlinReleaseVersion(2, 4, 0))
+
+    /**
      * Emit JVM type annotations in bytecode.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -726,9 +736,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Use inline scopes numbers for inline marker variables.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_INLINE_SCOPES_NUMBERS", KotlinReleaseVersion(2, 0, 0))
 

@@ -6518,6 +6518,49 @@
                                 }
                             },
                             {
+                                "name": "Xdo-not-use-inline-scopes-numbers",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Do not use inline scope markers for inline marker variables.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "affectsCompilationOutcome": true,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.4.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                }
+                            },
+                            {
                                 "name": "Xemit-jvm-type-annotations",
                                 "shortName": null,
                                 "deprecatedName": null,
@@ -8496,7 +8539,7 @@
                                     "introducedVersion": "2.0.0",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.4.0"
                                 },
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",

@@ -143,6 +143,16 @@ If API Level >= 2.2 -- no-op.""",
         }
 
     @Argument(
+        value = "-Xdo-not-use-inline-scopes-numbers",
+        description = "Do not use inline scope markers for inline marker variables.",
+    )
+    var doNotUseInlineScopesNumbers: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xemit-jvm-type-annotations",
         description = "Emit JVM type annotations in bytecode.",
     )
@@ -623,16 +633,6 @@ See KT-45671 for more details.""",
         description = "Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.",
     )
     var useFastJarFileSystem: Boolean? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xuse-inline-scopes-numbers",
-        description = "Use inline scopes numbers for inline marker variables.",
-    )
-    var useInlineScopesNumbers: Boolean = false
         set(value) {
             checkFrozen()
             field = value

@@ -230,7 +230,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)}
     if (X_USE_14_INLINE_CLASSES_MANGLING_SCHEME in this) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)}
     if (X_USE_FAST_JAR_FILE_SYSTEM in this) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)}
-    try { if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_INLINE_SCOPES_NUMBERS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
+    try { if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.setUsingReflection("useInlineScopesNumbers", get(X_USE_INLINE_SCOPES_NUMBERS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_INLINE_SCOPES_NUMBERS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0 and removed in 2.4.0""").initCause(e) }
     try { if (X_USE_JAVAC in this) { arguments.setUsingReflection("useJavac", get(X_USE_JAVAC))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_JAVAC. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     try { if (X_USE_K2_KAPT in this) { arguments.setUsingReflection("useK2Kapt", get(X_USE_K2_KAPT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0 and removed in 2.3.0""").initCause(e) }
     if (X_USE_OLD_CLASS_FILES_READING in this) { arguments.useOldClassFilesReading = get(X_USE_OLD_CLASS_FILES_READING)}
@@ -315,7 +315,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = arguments.typeEnhancementImprovementsInStrictMode } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_14_INLINE_CLASSES_MANGLING_SCHEME] = arguments.useOldInlineClassesManglingScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FAST_JAR_FILE_SYSTEM] = arguments.useFastJarFileSystem } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_INLINE_SCOPES_NUMBERS] = arguments.useInlineScopesNumbers } catch (_: NoSuchMethodError) {  }
+    try { this[X_USE_INLINE_SCOPES_NUMBERS] = arguments.getUsingReflection("useInlineScopesNumbers") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_JAVAC] = arguments.getUsingReflection("useJavac") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_K2_KAPT] = arguments.getUsingReflection("useK2Kapt") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_OLD_CLASS_FILES_READING] = arguments.useOldClassFilesReading } catch (_: NoSuchMethodError) {  }

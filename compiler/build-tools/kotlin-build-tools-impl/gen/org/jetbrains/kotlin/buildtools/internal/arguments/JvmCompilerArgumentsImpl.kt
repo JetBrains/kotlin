@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DEBUG
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DEFAULT_SCRIPT_EXTENSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DISABLE_STANDARD_SCRIPT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DO_NOT_USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_EMIT_JVM_TYPE_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ENHANCED_COROUTINES_DEBUGGING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL
@@ -188,6 +189,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
     if (X_DEFAULT_SCRIPT_EXTENSION in this) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION)}
     if (X_DISABLE_STANDARD_SCRIPT in this) { arguments.disableStandardScript = get(X_DISABLE_STANDARD_SCRIPT)}
+    if (X_DO_NOT_USE_INLINE_SCOPES_NUMBERS in this) { arguments.doNotUseInlineScopesNumbers = get(X_DO_NOT_USE_INLINE_SCOPES_NUMBERS)}
     if (X_EMIT_JVM_TYPE_ANNOTATIONS in this) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)}
     if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)}
     if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)}
@@ -233,7 +235,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)}
     if (X_USE_14_INLINE_CLASSES_MANGLING_SCHEME in this) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)}
     if (X_USE_FAST_JAR_FILE_SYSTEM in this) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)}
-    if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)}
+    try { if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.setUsingReflection("useInlineScopesNumbers", get(X_USE_INLINE_SCOPES_NUMBERS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_INLINE_SCOPES_NUMBERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     try { if (X_USE_JAVAC in this) { arguments.setUsingReflection("useJavac", get(X_USE_JAVAC))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_JAVAC. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     try { if (X_USE_K2_KAPT in this) { arguments.setUsingReflection("useK2Kapt", get(X_USE_K2_KAPT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     if (X_USE_OLD_CLASS_FILES_READING in this) { arguments.useOldClassFilesReading = get(X_USE_OLD_CLASS_FILES_READING)}
@@ -274,6 +276,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_DEBUG] = arguments.enableDebugMode } catch (_: NoSuchMethodError) {  }
     try { this[X_DEFAULT_SCRIPT_EXTENSION] = arguments.defaultScriptExtension } catch (_: NoSuchMethodError) {  }
     try { this[X_DISABLE_STANDARD_SCRIPT] = arguments.disableStandardScript } catch (_: NoSuchMethodError) {  }
+    try { this[X_DO_NOT_USE_INLINE_SCOPES_NUMBERS] = arguments.doNotUseInlineScopesNumbers } catch (_: NoSuchMethodError) {  }
     try { this[X_EMIT_JVM_TYPE_ANNOTATIONS] = arguments.emitJvmTypeAnnotations } catch (_: NoSuchMethodError) {  }
     try { this[X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL] = arguments.enhanceTypeParameterTypesToDefNotNull } catch (_: NoSuchMethodError) {  }
     try { this[X_ENHANCED_COROUTINES_DEBUGGING] = arguments.enhancedCoroutinesDebugging } catch (_: NoSuchMethodError) {  }
@@ -319,7 +322,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = arguments.typeEnhancementImprovementsInStrictMode } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_14_INLINE_CLASSES_MANGLING_SCHEME] = arguments.useOldInlineClassesManglingScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FAST_JAR_FILE_SYSTEM] = arguments.useFastJarFileSystem } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_INLINE_SCOPES_NUMBERS] = arguments.useInlineScopesNumbers } catch (_: NoSuchMethodError) {  }
+    try { this[X_USE_INLINE_SCOPES_NUMBERS] = arguments.getUsingReflection("useInlineScopesNumbers") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_JAVAC] = arguments.getUsingReflection("useJavac") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_K2_KAPT] = arguments.getUsingReflection("useK2Kapt") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_OLD_CLASS_FILES_READING] = arguments.useOldClassFilesReading } catch (_: NoSuchMethodError) {  }
@@ -358,6 +361,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
     if (X_DEFAULT_SCRIPT_EXTENSION in this) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION)}
     if (X_DISABLE_STANDARD_SCRIPT in this) { arguments.disableStandardScript = get(X_DISABLE_STANDARD_SCRIPT)}
+    if (X_DO_NOT_USE_INLINE_SCOPES_NUMBERS in this) { arguments.doNotUseInlineScopesNumbers = get(X_DO_NOT_USE_INLINE_SCOPES_NUMBERS)}
     if (X_EMIT_JVM_TYPE_ANNOTATIONS in this) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)}
     if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)}
     if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)}
@@ -402,7 +406,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)}
     if (X_USE_14_INLINE_CLASSES_MANGLING_SCHEME in this) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)}
     if (X_USE_FAST_JAR_FILE_SYSTEM in this) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)}
-    if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)}
+    try { if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.setUsingReflection("useInlineScopesNumbers", get(X_USE_INLINE_SCOPES_NUMBERS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_INLINE_SCOPES_NUMBERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     try { if (X_USE_JAVAC in this) { arguments.setUsingReflection("useJavac", get(X_USE_JAVAC))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_JAVAC. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     try { if (X_USE_K2_KAPT in this) { arguments.setUsingReflection("useK2Kapt", get(X_USE_K2_KAPT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     if (X_USE_OLD_CLASS_FILES_READING in this) { arguments.useOldClassFilesReading = get(X_USE_OLD_CLASS_FILES_READING)}
@@ -491,6 +495,9 @@ internal class JvmCompilerArgumentsImpl(
 
     public val X_DISABLE_STANDARD_SCRIPT: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_DISABLE_STANDARD_SCRIPT")
+
+    public val X_DO_NOT_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_DO_NOT_USE_INLINE_SCOPES_NUMBERS")
 
     public val X_EMIT_JVM_TYPE_ANNOTATIONS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_EMIT_JVM_TYPE_ANNOTATIONS")
