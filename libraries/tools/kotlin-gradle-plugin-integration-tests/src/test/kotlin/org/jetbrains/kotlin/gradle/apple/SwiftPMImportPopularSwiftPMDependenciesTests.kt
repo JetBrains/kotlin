@@ -1261,9 +1261,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
             return super.provideArguments(context).flatMap { arguments ->
                 val gradleVersion = arguments.get().first()
-                Stream.of(true
-//                          , false
-                ).map { isStatic ->
+                Stream.of(true, false).map { isStatic ->
                     Arguments.of(gradleVersion, isStatic)
                 }
             }
@@ -1272,7 +1270,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
 }
 
 private fun TestProject.testKotlinLinkage() {
-//    build(":linkReleaseFrameworkIosArm64")
+    build(":linkReleaseFrameworkIosArm64")
     build(":linkDebugFrameworkIosSimulatorArm64")
 }
 
