@@ -8,7 +8,7 @@ package kotlin.jvm.internal
 import java.lang.reflect.GenericDeclaration
 import kotlin.reflect.*
 
-public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDeclarationContainer, KotlinGenericDeclaration {
+public class ClassReference(override val jClass: Class<*>) : EquatableKClass<Any>, KotlinGenericDeclaration {
     override val simpleName: String?
         get() = getClassSimpleName(jClass)
 
@@ -92,8 +92,7 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
 
     override fun equals(other: Any?): Boolean = when {
         this === other -> true
-        other !is KClass<*> -> false
-        other !is ClassBasedDeclarationContainer -> false
+        other !is EquatableKClass<*> -> false
         else -> javaObjectType == other.javaObjectType
     }
 

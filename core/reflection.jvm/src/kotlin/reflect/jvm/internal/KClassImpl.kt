@@ -49,7 +49,7 @@ import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
-import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.jvm.internal.EquatableKClass
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.metadata.*
@@ -69,7 +69,7 @@ import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
 internal class KClassImpl<T : Any>(
     override val jClass: Class<T>,
-) : KDeclarationContainerImpl(), KClass<T>, KTypeParameterOwnerImpl, TypeConstructorMarker, KotlinGenericDeclaration {
+) : KDeclarationContainerImpl(), EquatableKClass<T>, KTypeParameterOwnerImpl, TypeConstructorMarker, KotlinGenericDeclaration {
     inner class Data : KDeclarationContainerImpl.Data() {
         val kmClass: KmClass? by lazy(PUBLICATION) {
             if (loadMetadataDirectly) {
@@ -624,8 +624,7 @@ internal class KClassImpl<T : Any>(
 
     override fun equals(other: Any?): Boolean = when {
         this === other -> true
-        other !is KClass<*> -> false
-        other !is ClassBasedDeclarationContainer -> false
+        other !is EquatableKClass<*> -> false
         else -> javaObjectType == other.javaObjectType
     }
 
