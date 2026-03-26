@@ -45,7 +45,7 @@ import kotlin.io.path.writeText
     supportedOn = [OS.MAC],
     enabledOnCI = [OS.MAC],
 )
-@GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
 @SwiftPMImportGradlePluginTests
 class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
 
