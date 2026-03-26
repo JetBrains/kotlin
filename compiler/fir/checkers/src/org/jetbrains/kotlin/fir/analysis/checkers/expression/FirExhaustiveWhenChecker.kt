@@ -79,13 +79,10 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
             }
         } else {
             if (subjectClassSymbol == null) return
-            val kind = when {
-                subjectClassSymbol.modality == Modality.SEALED -> AlgebraicTypeKind.Sealed
-                subjectClassSymbol.classKind == ClassKind.ENUM_CLASS -> AlgebraicTypeKind.Enum
-                subjectType.isBooleanOrNullableBoolean -> AlgebraicTypeKind.Boolean
-                else -> return
-            }
-
+            if (subjectClassSymbol.modality != Modality.SEALED &&
+                subjectClassSymbol.classKind != ClassKind.ENUM_CLASS &&
+                !subjectType.isBooleanOrNullableBoolean
+            ) return
             reportNoElseInWhen(source, whenExpression, subjectClassSymbol)
         }
     }
@@ -126,12 +123,6 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
 
     private val FirWhenExpression.missingCases: List<WhenMissingCase>
         get() = (exhaustivenessStatus as ExhaustivenessStatus.NotExhaustive).reasons
-
-    private enum class AlgebraicTypeKind(val displayName: String) {
-        Sealed("sealed class/interface"),
-        Enum("enum"),
-        Boolean("Boolean")
-    }
 
     context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun reportElseMisplaced(
