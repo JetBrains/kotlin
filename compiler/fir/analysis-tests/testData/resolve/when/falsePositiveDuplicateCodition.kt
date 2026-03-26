@@ -3,7 +3,7 @@
 
 fun isInt(a: Number, b: Number) = when (a) {
     is Int -> true
-    else if b is <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>Int<!> -> true
+    else if b is Int -> true
     else -> false
 }
 
