@@ -614,8 +614,10 @@ class ComposeIT : KGPBaseTest() {
 
     @DisplayName("Minified app contains Compose mapping file")
     @AndroidGradlePluginTests
+    @AndroidTestVersions(
+        additionalVersions = [TestVersions.AGP.AGP_91]
+    )
     @GradleAndroidTest
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_9_0)
     @DisabledOnOs(
         OS.WINDOWS, disabledReason = "AGP contains a bug that prevents test output files from being cleaned up on Windows. " +
                 "See: https://issuetracker.google.com/issues/445967244"
