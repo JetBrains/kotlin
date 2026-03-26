@@ -127,8 +127,8 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     fun or(another: CustomBitSet) {
-        if (another.lazy != null) {
-            another.forEachBit { set(it) }
+        another.lazy?.let { alazy ->
+            alazy.forEach { set(it) }
             return
         }
         buildFromLazy()
@@ -141,9 +141,9 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     fun orWithFilterHasChanged(another: CustomBitSet): Boolean {
-        if (another.lazy != null) {
+        another.lazy?.let { alazy ->
             var changed = false
-            another.forEachBit {
+            alazy.forEach {
                 changed = changed or !get(it)
                 set(it)
             }
@@ -165,9 +165,9 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
 
 
     fun orWithFilterHasChanged(another: CustomBitSet, filter: CustomBitSet): Boolean {
-        if (lazy != null || another.lazy != null) {
+        another.lazy?.let { alazy ->
             var changed = false
-            another.forEachBit {
+            alazy.forEach {
                 if (filter[it]) {
                     changed = changed or !get(it)
                     set(it)
@@ -175,9 +175,10 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             }
             return changed
         }
-        filter.lazy?.let { lazy ->
+        buildFromLazy()
+        filter.lazy?.let { flazy ->
             var changed = false
-            lazy.forEach { bit ->
+            flazy.forEach { bit ->
                 if (!this[bit] && another[bit]) {
                     changed = true
                     set(bit)
@@ -208,10 +209,16 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             lazy.retainAll { another[it] }
             return
         }
-        if (another.lazy != null) {
-            forEachBit {
-                if (!another[it]) clear(it)
+        another.lazy?.let { alazy ->
+            val newLazy = IntArraySet(LAZY_CONVERSION_THRESHOLD)
+            alazy.forEach { bit ->
+                if (this[bit]) {
+                    newLazy.add(bit)
+                }
             }
+            lazy = newLazy
+            data = EMPTY
+            return
         }
         val adata = another.data
         val asize = another.size
@@ -229,10 +236,9 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             lazy.retainAll { !another[it] }
             return
         }
-        if (another.lazy != null) {
-            forEachBit {
-                if (!another[it]) clear(it)
-            }
+        another.lazy?.let { alazy ->
+            alazy.forEach { clear(it) }
+            return
         }
         val adata = another.data
         val asize = another.size
@@ -246,8 +252,8 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
         lazy?.let { lazy ->
             return lazy.any { another[it] }
         }
-        another.lazy?.let { lazy ->
-            return lazy.any { this[it] }
+        another.lazy?.let { alazy ->
+            return alazy.any { this[it] }
         }
         val adata = another.data
         val minSize = kotlin.math.min(size, another.size)
@@ -265,8 +271,8 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             }
             return true
         }
-        another.lazy?.let { lazy ->
-            return lazy.all { this[it] }
+        another.lazy?.let { alazy ->
+            return alazy.all { this[it] }
         }
         // Check if [another] is a subset of [this]
         val adata = another.data
