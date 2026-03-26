@@ -11,8 +11,15 @@ FILE: samConversion.kt
         public abstract fun compute(t: R|T|): R|T|
 
     }
+    public abstract fun interface SuspendSam : R|kotlin/Any| {
+        public abstract suspend fun run(): R|kotlin/Unit|
+
+    }
     context(func: R|Runnable|)
     public final fun simple(): R|kotlin/Unit| {
+    }
+    context(func: R|SuspendSam|)
+    public final fun simpleSuspend(): R|kotlin/Unit| {
     }
     context(func: R|StringConsumer|)
     public final fun oneParameter(): R|kotlin/Unit| {
@@ -63,6 +70,43 @@ FILE: samConversion.kt
         }
         ))
         context(SAM(::<Inapplicable(INAPPLICABLE): /stringIdentity>#)) R|/simple<Inapplicable(INAPPLICABLE): /simple>#|(SAM(::<Inapplicable(INAPPLICABLE): /stringIdentity>#))
+        lval x: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+
+        context(SAM(simpleSuspend@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simpleSuspend Unit
+        }
+        )) R|/simpleSuspend|()
+        context(R|/SuspendSam|(<L> = SuspendSam@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@SuspendSam Unit
+        }
+        )) R|/simpleSuspend|()
+        context(SAM(::R|/doNothing|)) R|/simpleSuspend|()
+        context(R|/SuspendSam|(::R|/doNothing|)) R|/simpleSuspend|()
+        context(R|<local>/x|) R|/simpleSuspend|()
+        context(SAM(simpleSuspend@fun <anonymous>(it: <ERROR TYPE REF: Cannot infer type for parameter it>): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simpleSuspend Unit
+        }
+        )) R|/simpleSuspend<Inapplicable(INAPPLICABLE): /simpleSuspend>#|(SAM(simpleSuspend@fun <anonymous>(it: <ERROR TYPE REF: Cannot infer type for parameter it>): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simpleSuspend Unit
+        }
+        ))
+        context(SAM(simpleSuspend@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simpleSuspend Unit
+        }
+        )) R|/simpleSuspend<Inapplicable(INAPPLICABLE): /simpleSuspend>#|(SAM(simpleSuspend@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simpleSuspend Unit
+        }
+        ))
+        context(SAM(simpleSuspend@fun <anonymous>(s: R|kotlin/String|, i: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simpleSuspend Unit
+        }
+        )) R|/simpleSuspend<Inapplicable(INAPPLICABLE): /simpleSuspend>#|(SAM(simpleSuspend@fun <anonymous>(s: R|kotlin/String|, i: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simpleSuspend Unit
+        }
+        ))
+        context(SAM(::<Inapplicable(INAPPLICABLE): /stringIdentity>#)) R|/simpleSuspend<Inapplicable(INAPPLICABLE): /simpleSuspend>#|(SAM(::<Inapplicable(INAPPLICABLE): /stringIdentity>#))
         context(SAM(oneParameter@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=Unknown>  {
             R|<local>/it|.R|kotlin/String.length|
         }
