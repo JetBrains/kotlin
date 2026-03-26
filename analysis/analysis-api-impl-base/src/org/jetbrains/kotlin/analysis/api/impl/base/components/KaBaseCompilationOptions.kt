@@ -16,54 +16,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaJvmTarget
 import org.jetbrains.kotlin.config.*
 
-/** Simple class name for the code fragment facade class. */
-@KaImplementationDetail
-val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> = CompilerConfigurationKey("code fragment class name")
-
-/** Entry point method name for the code fragment. */
-@KaImplementationDetail
-val CODE_FRAGMENT_METHOD_NAME: CompilerConfigurationKey<String> = CompilerConfigurationKey("code fragment method name")
-
-/** A custom actualizer for the source module. */
-@KaImplementationDetail
-val MODULE_ACTUALIZER: CompilerConfigurationKey<KaCompilerFacilityModuleActualizer> =
-    CompilerConfigurationKey("custom module actualizer")
-
-/**
- * Whether unbound IR symbols should be stubbed instead of linked.
- *
- * This should be enabled if the compiled file could refer to symbols defined in another file of the same module.
- * Such symbols are not compiled (only the file is passed to the backend) and so they cannot be linked from a dependency.
- */
-@KaImplementationDetail
-val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey("stub unbound IR symbols")
-
-/**
- * Internal representation of the compilation target with JVM-specific options.
- *
- * Used by [KaCompilerFacility] implementations to bridge between the public [KaCompilationOptions] and internal compiler APIs.
- */
-@KaImplementationDetail
-sealed class KaCompilerTarget {
-    @KaImplementationDetail
-    class Jvm(
-        val isTestMode: Boolean,
-        val compiledClassHandler: KaCompiledClassHandler?,
-        val debuggerExtension: KaDebuggerExtension?,
-    ) : KaCompilerTarget()
-}
-
-/**
- * Provides an extension point for the compiler to retrieve additional information from the debugger API.
- *
- * Used for debugger code fragment compilation.
- *
- * @property stack A sequence of PSI elements of the expressions (function calls or property accesses) in the current execution stack,
- * listed from the top to the bottom.
- */
-@KaImplementationDetail
-class KaDebuggerExtension(val stack: Sequence<PsiElement?>)
-
 @KaImplementationDetail
 class KaBaseCompilationOptions(
     override val token: KaLifetimeToken,
@@ -73,6 +25,10 @@ class KaBaseCompilationOptions(
     val compiledClassHandler: KaCompiledClassHandler?,
     val jvmExecutionStack: Sequence<PsiElement?>?,
     val jvmOutputAsmListing: Boolean,
+    val codeFragmentClassName: String?,
+    val codeFragmentMethodName: String?,
+    val moduleActualizer: KaCompilerFacilityModuleActualizer?,
+    val stubUnboundIrSymbols: Boolean,
 ) : KaCompilationOptions {
     fun modify(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
         return KaBaseCompilationOptionsBuilder(token, configuration.copy()).apply {
@@ -91,6 +47,20 @@ class KaBaseCompilationOptions(
             }
 
             jvmOutputAsmListing(jvmOutputAsmListing)
+
+            if (codeFragmentClassName != null) {
+                codeFragmentClassName(codeFragmentClassName)
+            }
+
+            if (codeFragmentMethodName != null) {
+                codeFragmentMethodName(codeFragmentMethodName)
+            }
+
+            if (moduleActualizer != null) {
+                moduleActualizer(moduleActualizer)
+            }
+
+            stubUnboundIrSymbols(stubUnboundIrSymbols)
 
             init()
         }.build()
@@ -111,6 +81,10 @@ class KaBaseCompilationOptionsBuilder(
     private var compiledClassHandlerValue: KaCompiledClassHandler? = null
     private var jvmExecutionStackValue: Sequence<PsiElement?>? = null
     private var jvmOutputAsmListingValue: Boolean = false
+    private var codeFragmentClassNameValue: String? = null
+    private var codeFragmentMethodNameValue: String? = null
+    private var moduleActualizerValue: KaCompilerFacilityModuleActualizer? = null
+    private var stubUnboundIrSymbolsValue: Boolean = false
 
     fun build(): KaBaseCompilationOptions = withValidityAssertion {
         return KaBaseCompilationOptions(
@@ -121,6 +95,10 @@ class KaBaseCompilationOptionsBuilder(
             compiledClassHandler = compiledClassHandlerValue,
             jvmExecutionStack = jvmExecutionStackValue,
             jvmOutputAsmListing = jvmOutputAsmListingValue,
+            codeFragmentClassName = codeFragmentClassNameValue,
+            codeFragmentMethodName = codeFragmentMethodNameValue,
+            moduleActualizer = moduleActualizerValue,
+            stubUnboundIrSymbols = stubUnboundIrSymbolsValue,
         )
     }
 
@@ -133,7 +111,7 @@ class KaBaseCompilationOptionsBuilder(
     }
 
     override fun moduleActualizer(value: KaCompilerFacilityModuleActualizer) = withValidityAssertion {
-        configuration.put(MODULE_ACTUALIZER, value)
+        moduleActualizerValue = value
     }
 
     override fun languageVersionSettings(value: LanguageVersionSettings) = withValidityAssertion {
@@ -145,11 +123,11 @@ class KaBaseCompilationOptionsBuilder(
     }
 
     override fun codeFragmentClassName(value: String) = withValidityAssertion {
-        configuration.put(CODE_FRAGMENT_CLASS_NAME, value)
+        codeFragmentClassNameValue = value
     }
 
     override fun codeFragmentMethodName(value: String) = withValidityAssertion {
-        configuration.put(CODE_FRAGMENT_METHOD_NAME, value)
+        codeFragmentMethodNameValue = value
     }
 
     override fun jvmTarget(value: KaJvmTarget) = withValidityAssertion {
@@ -169,7 +147,7 @@ class KaBaseCompilationOptionsBuilder(
 
     @KaIdeApi
     override fun stubUnboundIrSymbols(value: Boolean) = withValidityAssertion {
-        configuration.put(STUB_UNBOUND_IR_SYMBOLS, value)
+        stubUnboundIrSymbolsValue = value
     }
 
     @KaIdeApi
