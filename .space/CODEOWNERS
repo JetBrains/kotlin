@@ -293,6 +293,7 @@
 /core/language.targets.jvm/ "Kotlin Frontend"
 /core/language.version-settings/ "Kotlin Frontend"
 /core/language.version-settings/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
+/core/names/api/names.api "Kotlin Analysis API"
 /core/names/api/names-api.foreign "Kotlin Analysis API"
 /core/language.model/api/psi-utils-api.foreign "Kotlin Analysis API"
 /core/language.targets/api/language-targets-api.foreign "Kotlin Analysis API"
