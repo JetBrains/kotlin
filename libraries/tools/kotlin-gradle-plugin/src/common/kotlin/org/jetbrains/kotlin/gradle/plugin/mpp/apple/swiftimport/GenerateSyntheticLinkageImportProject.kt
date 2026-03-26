@@ -123,7 +123,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                     )
                     transitiveSyntheticPackages.add(SwiftPMDependencyIdentifier(promoteKmpDependenciesToBeDynamicLibraries))
                 }
-                SyntheticProductType.INFERRED -> Unit
+                SyntheticProductType.INFERRED, null -> Unit
             }
             generatePackageManifest(
                 identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
