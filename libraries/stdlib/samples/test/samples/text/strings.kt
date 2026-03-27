@@ -551,11 +551,19 @@ class Strings {
     fun containsChar() {
         val text = "kotlin"
 
+        // The string contains lowercase 'k'
         assertTrue('k' in text)
-        assertTrue(text.contains('K', ignoreCase = true))
-        assertTrue('z' !in text)
-    }
 
+        // The string does not contain uppercase 'K' (case-sensitive check)
+        assertFalse('K' in text)
+
+        // However, it will be located if the case is ignored
+        assertTrue(text.contains('K', ignoreCase = true))
+
+        // The string does not contain 'z'
+        assertFalse('z' in text)
+    }
+    
     @Sample
     fun last() {
         val string = "Kotlin 1.4.0"
