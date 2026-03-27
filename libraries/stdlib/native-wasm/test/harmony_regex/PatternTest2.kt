@@ -957,7 +957,9 @@ class PatternTest2 {
         assertTrue(regex.matches("abc;bar0-def[99]-]0x[;123"))
 
         // Test #<comment text>
-        // TODO
+        regex = Regex("(?x)ab# comment\ncd")
+        assertTrue(regex.matches("abcd"))
+        assertFalse(regex.matches("ab# commentcd"))
     }
 
     @Test fun testCompile1() {
