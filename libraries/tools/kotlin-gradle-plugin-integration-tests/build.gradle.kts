@@ -430,7 +430,7 @@ tasks.withType<Test>().configureEach {
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
-    systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
+    systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.runtime.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
 
     val classpathVariables = configurationToBeConsumedInTests
