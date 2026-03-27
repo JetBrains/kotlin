@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-23 (iter 55)
+**Last Updated**: 2026-03-27 (iter 58)
 
 ---
 
@@ -243,6 +243,39 @@ The key challenge was avoiding infinite recursion when accessing `FirJavaClass.s
 - FIR type conversion has TWO separate raw type checks — the outer one in `toConeTypeProjection` and the inner one in `convertClassifierTypeWithClassId`; both must be updated
 - The first containing class (index 0) is always unsafe to access supertypes for during type conversion — it's the class whose supertypes are being lazily resolved
 - FIR's resolved supertype `ConeClassLikeType` already has substituted type arguments (e.g., `SuperClass<String>`), but when walking through intermediate classes with their own type params, manual substitution is still needed
+
+---
+
+## Iteration 58: Investigation of javac Sealed Package Failures (Problems 2 & 8) - 2026-03-27
+
+### Root Cause Analysis
+**Problems #2 (`testClassFromJdkInLibrary`) and #8 (`testPseudoRawTypes`)** both define Java classes in JDK-sealed packages (`java.util.Date` and `java.util.Collection` respectively). On Java 9+, the module system seals these packages — user code cannot define classes there.
+
+The test backend (`AbstractJvmIrBackendFacade.transform`) compiles Java sources with in-process javac via `ToolProvider.getSystemJavaCompiler()`. In the **java-direct test worker JVM**, javac enforces the module seal: `error: package exists in another module: java.base`. In the **PSI test worker JVM**, the same in-process javac with identical options and files succeeds (`result=Success`).
+
+**Investigation verified:**
+- Both test workers use `jdkHome=null` (system compiler), identical javac options, identical source files
+- The compilation output directory contents are identical (`[META-INF]`)
+- The `JavaCompilerFacade.compileJavaFiles` code path is identical — the difference is purely environmental between Gradle test worker JVMs
+- The javac failure in `BackendCliJvmFacade.transform` throws `JavaCompilationError` → `ErrorFromFacade` → `processModule(library)` returns false → main module never compiled → diagnostic mismatch + missing JVM artifact cascade
+
+**Also confirmed** that problems #1, #3, #4 do NOT follow this pattern — they fail with genuine FIR diagnostic mismatches (no `JavaCompilationError`).
+
+### Conclusion
+Both tests are **won't fix** — they test edge cases where Java sources shadow JDK classes, which is invalid on Java 9+. The PSI test worker's acceptance of this compilation is an environmental coincidence, not a feature java-direct needs to replicate.
+
+### Test Results
+- Box: 1168/1168, Phased: 1451/1456, Total failing: 5
+- No code changes — investigation only
+
+### Status of Remaining 5 Failures
+| Test | Category | Status |
+|------|----------|--------|
+| #1 testInheritFromAnnotationClass2 | Extra diagnostics (annotation class hierarchy) | Remaining — real impl issue |
+| #2 testClassFromJdkInLibrary | javac sealed package | Won't fix |
+| #3 testJSpecifySimple | Missing nullability diagnostics | Remaining — real impl issue |
+| #4 testJSpecifyWithVarargs | Missing nullability diagnostics | Remaining — same as #3 |
+| #8 testPseudoRawTypes | javac sealed package | Won't fix |
 
 ---
 

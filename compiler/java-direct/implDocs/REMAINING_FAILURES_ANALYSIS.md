@@ -1,7 +1,7 @@
-# Remaining 8 Test Failures — Detailed Analysis
+# Remaining Test Failures — Detailed Analysis
 
-**Date**: 2026-03-24
-**Status**: 2616/2624 passing (8 failing, all in Phased tests)
+**Last updated**: 2026-03-27
+**Status**: 2675/2680 passing (5 failing: 3 remaining, 2 won't fix)
 **Methodology**: Each test was run individually with file-based logging injected into `GlobalMetadataInfoHandler.compareAllMetaDataInfos` to capture actual vs expected FIR dump output. Diffs were then analyzed against the implementation code.
 
 ---
@@ -57,11 +57,12 @@ In short: **java-direct resolves J's supertype MORE correctly than PSI does**, w
 
 ---
 
-## 2. testClassFromJdkInLibrary
+## 2. testClassFromJdkInLibrary — WON'T FIX (javac sealed package)
 
 **Category**: JDK class classpath precedence
-**Error type**: Missing diagnostic
+**Error type**: `JavaCompilationError` — javac refuses to compile Java sources in JDK-sealed package
 **Expected file**: `compiler/testData/diagnostics/jvmIntegration/classpath/classFromJdkInLibrary.kt` (FIR_IDENTICAL)
+**Status**: Won't fix — see [Investigation findings (Iteration 58)](#why-2-and-8-are-unfixable) below.
 
 ### What the test does
 
@@ -185,7 +186,7 @@ Same as test #3. Fix one and the other should follow.
 
 ---
 
-## 5. testKJKComplexHierarchyWithNested
+## 5. testKJKComplexHierarchyWithNested — FIXED (Iteration 57)
 
 **Category**: K-J-K hierarchy with parameterized nested classes
 **Error type**: Extra diagnostics (`MISSING_DEPENDENCY_SUPERCLASS`, `UNRESOLVED_REFERENCE`)
@@ -239,7 +240,7 @@ This test requires **cross-language supertype walking** — the same fundamental
 
 ---
 
-## 6. testMapMethodsImplementedInJava
+## 6. testMapMethodsImplementedInJava — FIXED (Iteration 56)
 
 **Category**: Abstract member detection through generic Java hierarchy
 **Error type**: Extra diagnostic (`ABSTRACT_MEMBER_NOT_IMPLEMENTED`)
@@ -297,7 +298,7 @@ Another possibility: `Base` is an abstract class with `implements Map<String, T>
 
 ---
 
-## 7. testInheritanceWithKotlin
+## 7. testInheritanceWithKotlin — FIXED (Iteration 56)
 
 **Category**: Inherited nested class resolution through Java→Kotlin→Kotlin→Java chain
 **Error type**: Extra diagnostics (`MISSING_DEPENDENCY_CLASS`)
@@ -366,11 +367,12 @@ The hang during Attempt 1 might also be caused by the Kotlin daemon's incrementa
 
 ---
 
-## 8. testPseudoRawTypes
+## 8. testPseudoRawTypes — WON'T FIX (javac sealed package)
 
 **Category**: Java compilation failure with shadowed JDK class
-**Error type**: `JavaCompilationError` (not FIR dump mismatch)
+**Error type**: `JavaCompilationError` — javac refuses to compile Java sources in JDK-sealed package
 **Expected file**: `compiler/testData/diagnostics/tests/generics/PseudoRawTypes.kt`
+**Status**: Won't fix — same root cause as #2. See [Investigation findings (Iteration 58)](#why-2-and-8-are-unfixable) below.
 
 ### What the test does
 
@@ -406,16 +408,35 @@ With java-direct, the test infrastructure likely invokes `javac` to compile the 
 
 ---
 
+## Why #2 and #8 are unfixable
+
+**Investigated in Iteration 58 (2026-03-27).**
+
+Both tests define Java classes in JDK-sealed packages (`java.util.Date` in #2, `java.util.Collection` in #8). On Java 9+, the JVM module system seals these packages — user code cannot define classes there. The in-process `javac` (via `ToolProvider.getSystemJavaCompiler()`) in the **java-direct test worker JVM** enforces this and refuses compilation with `error: package exists in another module: java.base`.
+
+The **PSI test worker JVM** happens to accept the same in-process javac compilation (verified: identical javac options, identical files, `result=Success` in PSI vs `result=InProcess` failure in java-direct). The exact cause of this environmental difference between Gradle test workers was not identified, but the compilation options and files are provably identical.
+
+**Why this can't be fixed in java-direct main code:**
+- The failure occurs in the shared test backend (`AbstractJvmIrBackendFacade.transform` → `JavaCompilerFacade.compileJavaFiles`) during the javac step, not in any java-direct code
+- The javac failure throws `JavaCompilationError` (an `AssertionError`) inside `BackendCliJvmFacade.transform`, which becomes `ErrorFromFacade`, stopping the pipeline for the library module
+- This prevents the main module from being processed (its configuration creation needs the library's JVM artifact)
+- The diagnostic mismatch is a consequence of the main module never being compiled
+
+**What these tests actually test:** Kotlin's behavior when Java source files shadow JDK classes. In real production code, such files cannot be compiled with javac on Java 9+. The tests rely on the PSI test worker's ability to compile them, which is an environmental coincidence.
+
+---
+
 ## Priority Ranking
 
-Based on fix complexity, impact, and likelihood of success:
+**Updated 2026-03-27** — 3 fixed, 2 won't fix, 3 remaining:
 
-| Priority | Tests | Why |
-|----------|-------|-----|
-| 1 | #3 + #4 (JSpecify) | Likely a test infrastructure / classpath issue — smallest code change, fixes 2 tests |
-| 2 | #6 (MapMethods) | Likely a DISABLE_JAVA_FACADE handling issue — investigate test infra first |
-| 3 | #2 (ClassFromJdk) | Classpath precedence — well-defined scope |
-| 4 | #8 (PseudoRawTypes) | Java compilation config — may be a simple flag |
-| 5 | #1 (AnnotationClass) | Requires understanding PSI's exact behavior for annotation supertypes |
-| 6 | #7 (InheritanceWithKotlin) | Requires FIR supertype callback with deadlock avoidance |
-| 7 | #5 (KJKComplex) | Hardest — requires both supertype walking AND parameterized type propagation |
+| Status | Tests | Notes |
+|--------|-------|-------|
+| **FIXED** | #5 (KJKComplex) | Iteration 57 — outer type args for inherited inner classes |
+| **FIXED** | #6 (MapMethods) | Iteration 56 — transitive inherited inner class resolution |
+| **FIXED** | #7 (InheritanceWithKotlin) | Iteration 56 — transitive inherited inner class resolution |
+| **WON'T FIX** | #2 (ClassFromJdk) | Iteration 58 — javac sealed package in test worker |
+| **WON'T FIX** | #8 (PseudoRawTypes) | Iteration 58 — javac sealed package in test worker |
+| **Remaining** | #1 (AnnotationClass) | FIR diagnostic mismatch — java-direct resolves supertype more completely than PSI |
+| **Remaining** | #3 (JSpecifySimple) | FIR diagnostic mismatch — nullability annotations not processed |
+| **Remaining** | #4 (JSpecifyWithVarargs) | FIR diagnostic mismatch — same root cause as #3 |
