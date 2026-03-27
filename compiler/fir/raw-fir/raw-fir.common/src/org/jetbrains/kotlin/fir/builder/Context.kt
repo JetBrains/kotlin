@@ -83,7 +83,7 @@ class Context<T> {
 
             if (index < capturedTypeParameters.lastIndex || !ignoreLastLevel) {
                 for (capturedTypeParameter in element.list) {
-                    typeParameters += buildOuterClassTypeParameterRef { symbol = capturedTypeParameter }
+                    typeParameters += buildOuterClassTypeParameterRef(symbol = capturedTypeParameter)
                 }
             }
 

@@ -107,14 +107,14 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
                             )
                         )
                     } else {
-                        buildPropertyAccessExpression {
-                            source = initializerFakeSource
-                            explicitReceiver = generateResolvedAccessExpression(entryFakeSource, container)
-                            calleeReference = buildSimpleNamedReference {
-                                this.source = initializerFakeSource
-                                name = entry.initializerName ?: entry.name
-                            }
-                        }
+                        buildPropertyAccessExpression(
+                            source = initializerFakeSource,
+                            explicitReceiver = generateResolvedAccessExpression(entryFakeSource, container),
+                            calleeReference = buildSimpleNamedReference(
+                                source = initializerFakeSource,
+                                name = entry.initializerName ?: entry.name,
+                            ),
+                        )
                     }
                 } else {
                     container.toComponentCall(entry.source, index)
