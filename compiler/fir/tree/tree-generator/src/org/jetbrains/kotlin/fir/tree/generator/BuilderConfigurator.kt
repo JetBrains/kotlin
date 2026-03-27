@@ -493,7 +493,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         configureFieldInAllLeafBuilders(
             field = "resolveState",
             fieldPredicate = { it.invisibleField },
-            builderPredicate = { it.wantsCopy },
+            builderPredicate = { it.copyFunctionType != null },
         ) {
             additionalImports(resolvePhaseExtensionImport)
         }

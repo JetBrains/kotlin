@@ -98,15 +98,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
                 print("fun build(): ", buildType)
                 if (builder is LeafBuilder<*, *, *>) {
                     printBlock {
-                        println("return ${builder.implementation.render()}(")
-                        withIndent {
-                            for (field in builder.allFields) {
-                                if (field.invisibleField) continue
-                                printFieldReferenceInImplementationConstructorCall(field)
-                                println(",")
-                            }
-                        }
-                        println(")")
+                        printConstructorCall(builder)
                     }
                     if (hasBackingFields) {
                         println()
@@ -128,13 +120,27 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
                 }
             }
             if (builder is LeafBuilder<*, *, *>) {
-                println()
                 @Suppress("UNCHECKED_CAST")
-                printDslBuildFunction(builder as LeafBuilder<ElementField, Element, Implementation>, hasRequiredFields)
+                val leafBuilder = builder as LeafBuilder<ElementField, Element, Implementation>
 
-                if (builder.wantsCopy) {
+                if (leafBuilder.buildFunctionType.generateBuilderFunction()) {
                     println()
-                    printDslBuildCopyFunction(builder, hasRequiredFields)
+                    printDslBuildFunction(leafBuilder, hasRequiredFields)
+                }
+
+                if (leafBuilder.buildFunctionType.generateDirectFunction()) {
+                    println()
+                    printDirectBuildFunction(leafBuilder)
+                }
+
+                if (leafBuilder.copyFunctionType?.generateBuilderFunction() == true) {
+                    println()
+                    printDslBuildCopyFunction(leafBuilder, hasRequiredFields)
+                }
+
+                if (leafBuilder.copyFunctionType?.generateDirectFunction() == true) {
+                    println()
+                    printDirectBuildCopyFunction(leafBuilder)
                 }
             }
         }
@@ -339,5 +345,103 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
             }
             println("return ", copyBuilderVariableName, ".apply(", initParameter.name, ").build()")
         }
+    }
+
+    private fun ImportCollectingPrinter.printDirectBuildCopyFunction(
+        builder: LeafBuilder<ElementField, Element, Implementation>,
+    ) {
+        // Original element should be passed explicitly
+        val originalParameter = FunctionParameter(name = "original", type = builder.implementation.element)
+
+        val parameters = buildList {
+            add(originalParameter)
+
+            for (field in builder.allFields) {
+                if (field.invisibleField) continue
+
+                val paramType = actualTypeOfField(field)
+
+                val paramDefaultValue = if (field.skippedInCopy) {
+                    // Don't use default parameters for fields like `symbol` (they should be passed explicitly)
+                    null
+                } else {
+                    // Copy lists and attributes to prevent unintended mutations
+                    "${originalParameter.name}.${field.name}" + when {
+                        field is ListField -> ".toMutableList()"
+                        field.name == "attributes" -> ".copy()"
+                        else -> ""
+                    }
+                }
+
+                add(FunctionParameter(field.name, paramType, paramDefaultValue))
+            }
+        }
+
+        val optIns = builder.allFields
+            .filter { !it.invisibleField }
+            .mapNotNullTo(mutableSetOf(implementationDetailAnnotation)) { it.optInAnnotation }
+        println("@OptIn(", optIns.joinToString { "${it.render()}::class" }, ")")
+        printFunctionWithBlockBody(
+            name = builderFunctionName(builder) + "Copy",
+            parameters = parameters,
+            returnType = builder.implementation.element,
+            typeParameters = builder.implementation.element.params,
+            allParametersOnSeparateLines = true,
+        ) {
+            printConstructorCall(builder)
+        }
+    }
+
+    private fun ImportCollectingPrinter.printDirectBuildFunction(
+        builder: LeafBuilder<ElementField, Element, Implementation>,
+    ) {
+        // Preserve the exact order and defaults of fields initialization in the corresponding Builder
+        val parameters = buildList {
+            for (field in builder.allFields) {
+                if (field.implementationDefaultStrategy?.withGetter == true || field.invisibleField) {
+                    continue
+                }
+
+                val paramType = actualTypeOfField(field)
+                val paramDefaultValue = when {
+                    field.needBackingField(fieldIsUseless = false) -> {
+                        // fields with backing fields should be passed explicitly (for instance, `lateinit` fields)
+                        null
+                    }
+                    field is ListField -> {
+                        "mutableListOf()"
+                    }
+                    else -> {
+                        field.defaultValueInBuilder ?: "null"
+                    }
+                }
+
+                add(FunctionParameter(field.name, paramType, paramDefaultValue))
+            }
+        }
+
+        println("@OptIn(", implementationDetailAnnotation.render(), "::class)")
+        printFunctionWithBlockBody(
+            name = builderFunctionName(builder),
+            parameters = parameters,
+            returnType = builder.implementation.element,
+            typeParameters = builder.implementation.element.params,
+            allParametersOnSeparateLines = true,
+        ) {
+            printConstructorCall(builder)
+        }
+    }
+
+    private fun ImportCollectingPrinter.printConstructorCall(builder: LeafBuilder<*, *, *>) {
+        println("return ${builder.implementation.render()}(")
+        withIndent {
+            for (field in builder.allFields) {
+                if (field.invisibleField) continue
+                @Suppress("UNCHECKED_CAST")
+                printFieldReferenceInImplementationConstructorCall(field as ElementField)
+                println(',')
+            }
+        }
+        println(')')
     }
 }

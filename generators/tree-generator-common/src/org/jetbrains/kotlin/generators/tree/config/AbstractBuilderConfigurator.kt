@@ -357,12 +357,19 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, ElementField
         }
 
         /**
+         * Allows configuring the types of the build functions.
+         */
+        fun withBuildType(constructFunctionType: LeafBuilder.ConstructFunctionType) {
+            builder.buildFunctionType = constructFunctionType
+        }
+
+        /**
          * In addition to the regular `build*()` function, generate `build*Copy()` function that accepts
          * an instance of the corresponding tree element and copies values from that instance to the builder, allowing to change them
          * in the process.
          */
-        fun withCopy() {
-            builder.wantsCopy = true
+        fun withCopy(constructFunctionType: LeafBuilder.ConstructFunctionType = LeafBuilder.ConstructFunctionType.BuilderFunction) {
+            builder.copyFunctionType = constructFunctionType
         }
     }
 }

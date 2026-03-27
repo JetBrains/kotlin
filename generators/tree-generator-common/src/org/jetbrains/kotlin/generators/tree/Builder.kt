@@ -60,7 +60,19 @@ class LeafBuilder<Field, Element, Implementation>(
 
     override val packageName: String = implementation.packageName.replace(".impl", ".builder")
     var isOpen: Boolean = false
-    var wantsCopy: Boolean = false
+
+    enum class ConstructFunctionType {
+        BuilderFunction,
+        DirectFunction,
+        DirectAndBuilderFunction;
+
+        fun generateBuilderFunction(): Boolean = this == BuilderFunction || this == DirectAndBuilderFunction
+        fun generateDirectFunction(): Boolean = this == DirectFunction || this == DirectAndBuilderFunction
+    }
+
+    var buildFunctionType: ConstructFunctionType = ConstructFunctionType.BuilderFunction
+
+    var copyFunctionType: ConstructFunctionType? = null
 }
 
 class IntermediateBuilder<Field, Element>(
