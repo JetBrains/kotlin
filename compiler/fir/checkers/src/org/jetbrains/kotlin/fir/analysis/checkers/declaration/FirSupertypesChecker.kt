@@ -133,6 +133,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
         superTypeRef: FirTypeRef,
     ) {
         for (annotation in superTypeRef.annotations) {
+            // Without a use-site target it can be a valid type annotation
             if (annotation.useSiteTarget != null) {
                 reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS_ERROR)
             }
