@@ -112,7 +112,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
     }
 
     companion object {
-        const val TEST_SUITE_PATH = "native/native.tests/testData/infrastructure"
+        const val TEST_SUITE_PATH = "testData/infrastructure"
         const val TEST_CASE_NAME = "testListing"
         const val TEST_CASE_PATH = "$TEST_SUITE_PATH/$TEST_CASE_NAME"
     }

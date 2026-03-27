@@ -32,7 +32,7 @@ abstract class EchoServerBaseTest : AbstractNativeSimpleTest() {
     fun test() {
         Assumptions.assumeFalse(targets.testTarget.family == Family.MINGW)
         Assumptions.assumeFalse(targets.areDifferentTargets(), "The test uses localhost networking")
-        val rootDir = File("native/native.tests/testData/echoServer")
+        val rootDir = File("testData/echoServer")
 
         val cinteropModule = TestModule.Exclusive("sockets", emptySet(), emptySet(), emptySet()).apply {
             files += TestFile.createCommitted(rootDir.resolve("sockets.def"), this)

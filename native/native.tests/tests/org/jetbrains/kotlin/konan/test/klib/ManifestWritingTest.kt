@@ -35,7 +35,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.util.*
 
-private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-compilation/manifest-writing"
+private const val TEST_DATA_ROOT = "testData/klib/cross-compilation/manifest-writing"
 
 /**
  * Testdata:

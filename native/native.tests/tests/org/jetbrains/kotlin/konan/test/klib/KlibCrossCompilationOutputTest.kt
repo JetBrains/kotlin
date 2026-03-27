@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 import java.io.File
 
-private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-compilation"
+private const val TEST_DATA_ROOT = "testData/klib/cross-compilation"
 
 /**
  * This test asserts that K/N compiler "agrees" to try to compile klib for any target

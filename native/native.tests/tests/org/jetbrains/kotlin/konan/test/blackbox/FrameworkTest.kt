@@ -28,7 +28,7 @@ import kotlin.time.Duration
 
 @TestDataPath("\$PROJECT_ROOT")
 class FrameworkTest : AbstractNativeSimpleTest() {
-    private val testSuiteDir = File("native/native.tests/testData/framework")
+    private val testSuiteDir = File("testData/framework")
     private val extras = TestCase.NoTestRunnerExtras("There's no entrypoint in Swift program")
     private val testCompilationFactory = TestCompilationFactory()
 

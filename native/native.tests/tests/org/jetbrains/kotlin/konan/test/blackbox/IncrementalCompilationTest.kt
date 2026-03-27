@@ -543,6 +543,6 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         "${if (fqName == "") "ROOT" else fqName}.${filePath.hashCode().toString(Character.MAX_RADIX)}"
 
     companion object {
-        const val TEST_SUITE_PATH = "native/native.tests/testData/caches/ic"
+        const val TEST_SUITE_PATH = "testData/caches/ic"
     }
 }

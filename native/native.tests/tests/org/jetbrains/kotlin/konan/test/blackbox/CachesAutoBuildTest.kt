@@ -129,6 +129,6 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         )
 
     companion object {
-        const val TEST_SUITE_PATH = "native/native.tests/testData/caches/testAutoBuild"
+        const val TEST_SUITE_PATH = "testData/caches/testAutoBuild"
     }
 }

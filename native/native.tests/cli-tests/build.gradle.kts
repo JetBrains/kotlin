@@ -35,9 +35,6 @@ projectTests {
             JdkMajorVersion.JDK_21_0
         )
     ) {
-        // nativeTest sets workingDir to rootDir so here we need to override it
-        workingDir = projectDir
-
         // Kotlin test infra and IntelliJ platform Disposer debug mode use reflection to access JDK internals.
         // With JDK 11, some JVM args are required to silence the warnings caused by that:
         jvmArgs(

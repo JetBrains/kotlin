@@ -42,7 +42,7 @@ abstract class KT43502TestBase : AbstractNativeSimpleTest() {
     @Test
     fun test() {
         testRunSettings.assumeLibraryKindSupported()
-        val rootDir = File("native/native.tests/testData/kt43502")
+        val rootDir = File("testData/kt43502")
 
         val libFile = buildDir.resolve("kt43502.a")
         compileWithClangToStaticLibrary(sourceFiles = listOf(rootDir.resolve("kt43502.c")), outputFile = libFile).assertSuccess()

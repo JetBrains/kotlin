@@ -104,6 +104,6 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
     }
 
     companion object {
-        private val sourceDir = File("native/native.tests/testData/programName")
+        private val sourceDir = File("testData/programName")
     }
 }

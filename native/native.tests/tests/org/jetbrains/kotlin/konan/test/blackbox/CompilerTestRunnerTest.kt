@@ -23,7 +23,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertNotNull
 
 abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
-    private val testRoot = File("native/native.tests/testData/testRunner")
+    private val testRoot = File("testData/testRunner")
 
     private fun runTest(
         name: String,

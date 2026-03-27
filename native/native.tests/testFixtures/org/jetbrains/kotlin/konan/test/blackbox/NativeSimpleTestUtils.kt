@@ -374,7 +374,7 @@ internal fun TestCompilationResult<*>.toOutput(): String {
 
 context(test: AbstractNativeSimpleTest)
 private fun normalizeOutput(output: String, exitCode: ExitCode): String {
-    val dir = "native/native.tests/testData/compilerOutput/"
+    val dir = "testData/compilerOutput/"
     return AbstractCliTest.getNormalizedCompilerOutput(
         output.replace(test.buildDir.path, $$"$BUILD_DIR$"),
         exitCode,

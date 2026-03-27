@@ -115,7 +115,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
     }
 
     companion object {
-        private const val TEST_DATA_DIR = "native/native.tests/testData/CInterop/KT-59030"
+        private const val TEST_DATA_DIR = "testData/CInterop/KT-59030"
         const val DEF_FILE_PATH = "${TEST_DATA_DIR}/cvectors.def"
         const val MAIN_FILE_PATH = "${TEST_DATA_DIR}/vectors.kt"
 

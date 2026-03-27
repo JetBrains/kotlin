@@ -48,10 +48,6 @@ projectTests {
         // Kotlin test infra uses reflection to access JDK internals.
         // With JDK 11, some JVM args are required to silence the warnings caused by that:
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
-
-        // nativeTest sets workingDir to rootDir so here we need to override it
-        workingDir = projectDir
-        systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt", generateTestsInBuildDirectory = true) {

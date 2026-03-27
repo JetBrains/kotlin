@@ -36,7 +36,7 @@ import kotlin.test.assertTrue
 class ComplexCInteropTest : ComplexCInteropTestBase()
 
 abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
-    private val interopDir = File("native/native.tests/testData/interop")
+    private val interopDir = File("testData/interop")
     private val interopObjCDir = interopDir.resolve("objc")
     private val testCompilationFactory = TestCompilationFactory()
 
