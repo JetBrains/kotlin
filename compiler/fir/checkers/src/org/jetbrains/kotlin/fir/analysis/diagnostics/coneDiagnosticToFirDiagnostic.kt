@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.lang.LighterASTTokenNode
 import com.intellij.psi.TokenType
+import org.jetbrains.kotlin.builtins.StandardClassIds
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -772,6 +773,14 @@ private fun argumentTypeMismatch(
     val symbol = candidate.symbol as FirCallableSymbol
     val receiverType = (candidate.chosenExtensionReceiver ?: candidate.dispatchReceiver)?.expression?.resolvedType
 
+    fun isDeprecatedStringByteArrayConstructorFallback(): Boolean {
+        val constructorSymbol = symbol as? FirConstructorSymbol ?: return false
+        if (constructorSymbol.callableId.classId != StandardClassIds.String) return false
+        if (candidate.callInfo.argumentList.arguments.size != 3) return false
+        return expectedType.classId?.asSingleFqName()?.asString() == "kotlin.CharArray" &&
+                actualType.classId?.asSingleFqName()?.asString() == "kotlin.ByteArray"
+    }
+
     fun ConeCapturedType.isBasedOnStarOrOut(): Boolean =
         constructor.projection.kind.let { it == ProjectionKind.OUT || it == ProjectionKind.STAR }
 
@@ -787,6 +796,13 @@ private fun argumentTypeMismatch(
                 expectedType.projectionKindAsString(),
                 symbol.originalOrSelf(),
                 session,
+            )
+        isDeprecatedStringByteArrayConstructorFallback() ->
+            FirErrors.UNSUPPORTED.createOn(
+                source,
+                "Argument type mismatch: actual type is 'ByteArray', but 'CharArray' was expected. " +
+                        "Use ByteArray.decodeToString(startIndex = offset, endIndex = offset + length) instead of String(bytes, offset, length).",
+                session
             )
         else -> FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
             source,
