@@ -188,6 +188,7 @@ class RunInAlienClassLoader {
         for (fqn in fqNames) {
             val jClass = loader.loadClass(fqn)
             val metadata = jClass.annotations.firstIsInstanceOrNull<Metadata>()
+            if (shouldSkipClass(jClass, metadata)) continue
             when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
                 null, 1 -> out.dumpKClass(jClass.kotlin) // Kotlin and Java classes
                 2 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
@@ -199,6 +200,10 @@ class RunInAlienClassLoader {
         }
         return out.toString()
     }
+
+    private fun shouldSkipClass(klass: Class<*>, metadata: Metadata?): Boolean =
+        // Do not render anonymous classes for enum entries because they're currently incorrectly generated as top-level (KT-85319).
+        metadata?.kind == 1 && klass.superclass?.isEnum == true
 
     private fun IndentedStringBuilder.dumpKClass(kClass: KClass<*>) {
         // Listing some class statuses and superclasses makes it easier to read dumps
