@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
@@ -39,6 +40,8 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
      */
     @KaExperimentalApi
+    @Deprecated("Use 'functionTypeFamily' instead", level = DeprecationLevel.HIDDEN)
+    @KaNoContextParameterBridgeRequired
     public val KaType.functionTypeKind: FunctionTypeKind?
 
     /**
@@ -504,6 +507,21 @@ public object DefaultTypeClassIds {
 }
 
 /**
+ * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
+ */
+@Deprecated("Use 'functionTypeFamily' instead", level = DeprecationLevel.HIDDEN)
+@KaExperimentalApi
+@KaContextParameterApi
+@KaCustomContextParameterBridge
+context(session: KaSession)
+public val KaType.functionTypeKind: FunctionTypeKind?
+    get() {
+        @OptIn(KaSessionComponentImplementationDetail::class)
+        return KaTypeInformationProvider::class.java.getDeclaredMethod("getFunctionTypeKind", KaType::class.java)
+            .invoke(session, this) as FunctionTypeKind?
+    }
+
+/**
  * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
  * Kotlin code, as opposed to being only constructible via compiler type operations (such as type inference).
  */
@@ -522,16 +540,6 @@ public val KaType.isDenotable: Boolean
 context(session: KaSession)
 public val KaType.isFunctionalInterface: Boolean
     get() = with(session) { isFunctionalInterface }
-
-/**
- * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
- */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public val KaType.functionTypeKind: FunctionTypeKind?
-    get() = with(session) { functionTypeKind }
 
 /**
  * The [function type family][KaFunctionTypeFamily] of the given [KaType], or `null` if the type is not a function type.

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
@@ -123,6 +124,38 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
             assertEquals(expectedResult, memberResult)
 
             val contextParameterBridgeResult = contextParameterBridgeMethod.invoke(null, this@analyze, kotlinType, TypeMappingMode.DEFAULT)
+            assertEquals(expectedResult, contextParameterBridgeResult)
+        }
+    }
+
+    @Test
+    fun deprecatedFunctionTypeKind(mainFile: KtFile) {
+        val testFunction = mainFile.declarations.firstIsInstance<KtFunction>()
+        assertEquals("test", testFunction.name)
+
+        analyze(testFunction) {
+            val valueParameter = testFunction.valueParameters.single()
+
+            val kotlinType = valueParameter.symbol.returnType
+
+            val memberMethod = this@analyze::class.java
+                .getMethod("getFunctionTypeKind", KaType::class.java)
+
+            // For some reason, getters of HIDDEN-deprecated interface properties aren't synthetic
+            assert(!memberMethod.isSynthetic)
+
+            val contextParameterBridgeMethod = Class
+                .forName("org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProviderKt")
+                .getMethod("getFunctionTypeKind", KaSession::class.java, KaType::class.java)
+
+            assert(contextParameterBridgeMethod.isSynthetic)
+
+            val expectedResult = FunctionTypeKind.Function
+
+            val memberResult = memberMethod.invoke(this@analyze, kotlinType)
+            assertEquals(expectedResult, memberResult)
+
+            val contextParameterBridgeResult = contextParameterBridgeMethod.invoke(null, this@analyze, kotlinType)
             assertEquals(expectedResult, contextParameterBridgeResult)
         }
     }
