@@ -49,21 +49,3 @@ inline fun buildProtocol(init: SirProtocolBuilder.() -> Unit): SirProtocol {
     }
     return SirProtocolBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildProtocolCopy(original: SirProtocol, init: SirProtocolBuilder.() -> Unit): SirProtocol {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirProtocolBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.name = original.name
-    copyBuilder.declarations.addAll(original.declarations)
-    copyBuilder.superClass = original.superClass
-    copyBuilder.protocols.addAll(original.protocols)
-    copyBuilder.bridges.addAll(original.bridges)
-    return copyBuilder.apply(init).build()
-}
