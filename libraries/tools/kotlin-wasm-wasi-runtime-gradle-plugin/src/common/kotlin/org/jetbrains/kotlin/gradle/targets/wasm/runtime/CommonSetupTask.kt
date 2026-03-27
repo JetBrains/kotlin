@@ -1,15 +1,16 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.gradle.targets.wasm.runtime
 
 import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
-import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.getFile
 import java.io.File
 import java.nio.file.Path
 import javax.inject.Inject
@@ -43,6 +44,14 @@ internal abstract class CommonSetupTask @Inject constructor(
 
     @get:Internal
     abstract val archiveOperation: Property<ArchiveOperationsProvider>
+
+    // fs is internal in KGP
+    @get:Inject
+    internal abstract val fs: FileSystemOperations
+
+    // archiveOperations is internal in KGP
+    @get:Inject
+    internal abstract val archiveOperations: ArchiveOperations
 
     override fun extract(archive: File) {
         val archiveOperationValue: ArchiveOperationsProvider = archiveOperation.getOrElse { ao: ArchiveOperations, path: Path ->

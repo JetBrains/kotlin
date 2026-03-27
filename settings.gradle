@@ -334,6 +334,7 @@ include ":kotlin-script-runtime",
         ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
         ":kotlin-gradle-plugin-dsl-codegen",
         ":kotlin-gradle-plugin-npm-versions-codegen",
+        ":kotlin-wasm-wasi-runtime-gradle-plugin",
         ":kotlin-gradle-statistics",
         ":kotlin-gradle-build-metrics",
         ":kotlin-gradle-plugin",
@@ -951,6 +952,7 @@ project(':kotlin-gradle-plugin-idea-proto').projectDir = "$rootDir/libraries/too
 project(':kotlin-gradle-plugin-idea-for-compatibility-tests').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests" as File
 project(':kotlin-gradle-plugin-dsl-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen" as File
 project(':kotlin-gradle-plugin-npm-versions-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen" as File
+project(':kotlin-wasm-wasi-runtime-gradle-plugin').projectDir = "$rootDir/libraries/tools/kotlin-wasm-wasi-runtime-gradle-plugin" as File
 project(':kotlin-gradle-statistics').projectDir = "$rootDir/libraries/tools/kotlin-gradle-statistics" as File
 project(':kotlin-gradle-build-metrics').projectDir = "$rootDir/libraries/tools/kotlin-gradle-build-metrics" as File
 project(':kotlin-gradle-plugin').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin" as File

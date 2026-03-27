@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.gradle.targets.wasm.runtime
@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.wasm.runtime
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
-import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.getFile
 import java.nio.file.Path
 
 internal abstract class CommonEnvSpec(
     val name: String,
 ) : EnvSpec<CommonEnv>() {
+    // env is internal in KGP
     final override val env: Provider<CommonEnv> = produceEnv()
 
     override val executable: Provider<String> = env.map { it.executable }

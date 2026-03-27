@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
-import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.getFile
 
 @ExperimentalWasmDsl
 internal class CommonEnvironmentConfigurator(
@@ -20,6 +20,7 @@ internal class CommonEnvironmentConfigurator(
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun configureBinaryRun(binary: JsIrBinary): TaskProvider<Exec> {
+        // disambiguateCamelCased is internal in KGP
         val binaryRunName = subTarget.disambiguateCamelCased(
             binary.mode.name.lowercase(),
             RUN_TASK_NAME

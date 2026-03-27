@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.gradle.targets.wasm.runtime
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.capitalizeDefaultLocale
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import javax.inject.Inject
 
@@ -41,11 +42,12 @@ constructor(
     }
 
     val setupTask: TaskProvider<CommonSetupTask> = project.tasks.register(
-        "kotlin${name.capitalizeAsciiOnly()}Setup",
+        "kotlin${name.capitalizeDefaultLocale()}Setup",
         CommonSetupTask::class.java,
         envSpec
     ).also {
         it.configure {
+            // configuration and ivyDependencyProvider are internal in KGP
             it.configuration = it.ivyDependencyProvider.map { ivyDependency ->
                 project.configurations.detachedConfiguration(project.dependencies.create(ivyDependency))
                     .also { conf -> conf.isTransitive = false }

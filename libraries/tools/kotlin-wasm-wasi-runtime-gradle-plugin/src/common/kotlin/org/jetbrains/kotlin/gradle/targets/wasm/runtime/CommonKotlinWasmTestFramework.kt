@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.gradle.targets.wasm.runtime
@@ -17,11 +17,10 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.createTestExecutionSpecDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.capitalizeDefaultLocale
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 internal class CommonKotlinWasmTestFramework(
     kotlinJsTest: KotlinJsTest,
@@ -29,7 +28,7 @@ internal class CommonKotlinWasmTestFramework(
     private val objects: ObjectFactory,
     private val providers: ProviderFactory,
 ) : KotlinJsTestFramework {
-    override val settingsState: String = "KotlinWasm${name.capitalizeAsciiOnly()}"
+    override val settingsState: String = "KotlinWasm${name.capitalizeDefaultLocale()}"
 
     private val testPath = kotlinJsTest.path
 
@@ -48,9 +47,8 @@ internal class CommonKotlinWasmTestFramework(
     val argsProperty: Property<ArgsProvider> = kotlinJsTest.project.objects.property(ArgsProvider::class.java)
 
     @Deprecated(
-        CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
-        ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs, debug)"),
-        DeprecationLevel.ERROR
+        "Replaced with a new method that uses ProcessLaunchOptions instead of Gradle's ProcessForkOptions. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
     )
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -58,6 +56,7 @@ internal class CommonKotlinWasmTestFramework(
         nodeJsArgs: MutableList<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec =
+        // createTestExecutionSpecDeprecated is internal in KGP
         createTestExecutionSpecDeprecated(
             task = task,
             forkOptions = forkOptions,
@@ -77,6 +76,7 @@ internal class CommonKotlinWasmTestFramework(
             task.name,
             testNameSuffix = task.targetName,
             prependSuiteName = true,
+            // parseNodeJsStackTraceAsJvm is internal in KGP
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
         )

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.targets.wasm.runtime.dsl
 
 import org.gradle.api.file.ArchiveOperations
@@ -40,7 +45,9 @@ fun KotlinWasmWasiTargetDsl.runtime(
         name,
         version,
     ).also { subTarget: KotlinCommonSubTarget ->
+        // configure is internal in KGP
         subTarget.configure()
+        // subTargetConfigurators is internal in KGP
         subTarget.subTargetConfigurators.add(CommonEnvironmentConfigurator(subTarget))
         val runtime = WasmWasiRuntimeImpl(subTarget)
         runtime.configure()
