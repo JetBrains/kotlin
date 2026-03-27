@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.parcelize.fir.diagnostics
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.isEnumClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -222,9 +221,7 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
 
     private fun List<FirAnnotation>.hasIgnoredOnParcel(session: FirSession): Boolean {
         return this.any {
-            if (it.fqName(session) !in IGNORED_ON_PARCEL_FQ_NAMES) return@any false
-            val target = it.useSiteTarget
-            target == null || target == AnnotationUseSiteTarget.PROPERTY || target == AnnotationUseSiteTarget.PROPERTY_GETTER
+            it.fqName(session) in IGNORED_ON_PARCEL_FQ_NAMES
         }
     }
 
