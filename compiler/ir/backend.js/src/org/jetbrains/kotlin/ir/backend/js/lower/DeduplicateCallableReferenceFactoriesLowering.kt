@@ -68,11 +68,7 @@ class DeduplicateCallableReferenceFactoriesLowering(private val context: JsIrBac
                 val callable = function.richFunctionReference ?: return expression
                 val key = createKey(callable) ?: return expression
                 val canonicalFactory = canonicalCallableFactories[key] ?: return expression
-                if (function != canonicalFactory) {
-                    return expression.apply {
-                        symbol = canonicalFactory.symbol
-                    }
-                }
+                expression.symbol = canonicalFactory.symbol
 
                 return expression
             }

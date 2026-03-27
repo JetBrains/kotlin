@@ -25,49 +25,49 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
  * Before:
  * ```
  * // lib.kt
- *   function a() { println("Hello") }
+ * fun a() { println("Hello") }
  *
  * // consumer1.kt
- *   fun main() {
- *     val callableRef = a$ref1()
- *   }
+ * fun main() {
+ *   val callableRef = a$ref1()
+ * }
  *
- *   fun a$ref1(): KFunctionImpl {
- *     // <callable ref implementation>
- *   }
+ * fun a$ref1(): KFunctionImpl {
+ *   // <callable ref implementation>
+ * }
  *
  * // consumer2.kt
- *   fun main() {
- *     val callableRef = a$ref2()
- *   }
+ * fun main() {
+ *   val callableRef = a$ref2()
+ * }
  *
- *   fun a$ref2(): KFunctionImpl {
- *     // <callable ref implementation>
- *   }
+ * fun a$ref2(): KFunctionImpl {
+ *   // <callable ref implementation>
+ * }
  * ```
  *
  * After:
  * ```
  * // lib.kt
- *   function a() { println("Hello") }
+ * fun a() { println("Hello") }
  *
- *   fun a$ref1(): KFunctionImpl {
- *     // <callable ref implementation>
- *   }
+ * fun a$ref1(): KFunctionImpl {
+ *   // <callable ref implementation>
+ * }
  *
- *   fun a$ref2(): KFunctionImpl {
- *     // <callable ref implementation>
- *   }
+ * fun a$ref2(): KFunctionImpl {
+ *   // <callable ref implementation>
+ * }
  *
  * // consumer1.kt
- *   fun main() {
- *     val callableRef = a$ref1()
- *   }
+ * fun main() {
+ *   val callableRef = a$ref1()
+ * }
  *
  * // consumer2.kt
- *   fun main() {
- *     val callableRef = a$ref2()
- *   }
+ * fun main() {
+ *   val callableRef = a$ref2()
+ * }
  * ```
  *
  * All callable reference implementations supposed to be relocated are always moved to a file level as top-level declarations.
