@@ -12,13 +12,23 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.JvmCompilerArgument
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
+internal interface ArgumentDescriptor<T> {
+    val argumentName: String
+    val argumentValues: List<T>
+    val isEnum: Boolean
+    val isNullable: Boolean
+    val valueString: (T?) -> String?
+    val expectedArgumentStringsFor: (String) -> List<String>
+}
+
 internal abstract class BaseArgumentConfiguration<T>(
     val kotlinToolchain: KotlinToolchains,
-    private val argumentDescription: JvmArgumentDescriptor<T>,
+    private val argumentDescription: ArgumentDescriptor<T>,
 ) {
     private val argumentName: String = argumentDescription.argumentName
 
@@ -87,5 +97,13 @@ internal class JvmArgumentConfiguration<T>(
     argumentDescription: JvmArgumentDescriptor<T>,
 ) : BaseArgumentConfiguration<T>(kotlinToolchain, argumentDescription) {
     val argumentKey: JvmCompilerArgument<T> = argumentDescription.argumentKey
+    val argumentValues: List<T> = argumentDescription.argumentValues
+}
+
+internal class CommonArgumentConfiguration<T>(
+    kotlinToolchain: KotlinToolchains,
+    argumentDescription: CommonArgumentDescriptor<T>,
+) : BaseArgumentConfiguration<T>(kotlinToolchain, argumentDescription) {
+    val argumentKey: CommonCompilerArgument<T> = argumentDescription.argumentKey
     val argumentValues: List<T> = argumentDescription.argumentValues
 }
