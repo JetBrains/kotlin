@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/parcelize/parcelize-compiler/testData/box")
 @TestDataPath("$PROJECT_ROOT")
-public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirLightTreeBoxTest {
+public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
   private void run(String fileName) {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/" + fileName);
   }

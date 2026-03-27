@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 
-abstract class AbstractFirParcelizeDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
+abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         baseFirDiagnosticTestConfiguration()
         enableLazyResolvePhaseChecking()
@@ -27,10 +27,11 @@ abstract class AbstractFirParcelizeDiagnosticTestBase(val parser: FirParser) : A
         defaultDirectives {
             +ENABLE_PARCELIZE
             +ENABLE_PLUGIN_PHASES
-            FIR_PARSER with parser
             // Robolectric 4.16 (onward) with Android SDK 36 requires JDK 21
             JDK_KIND with TestJdkKind.FULL_JDK_21
         }
+
+        configureFirParser(FirParser.LightTree)
 
         useConfigurators(::ParcelizeEnvironmentConfigurator)
 
@@ -39,5 +40,3 @@ abstract class AbstractFirParcelizeDiagnosticTestBase(val parser: FirParser) : A
         useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
     }
 }
-
-abstract class AbstractFirPsiParcelizeDiagnosticTest : AbstractFirParcelizeDiagnosticTestBase(FirParser.Psi)

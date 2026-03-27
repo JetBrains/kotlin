@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.FIR_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeAsmLikeInstructionListingTest
 
-
-open class AbstractFirParcelizeBytecodeListingTest : AbstractFirPsiAsmLikeInstructionListingTest() {
+open class AbstractParcelizeBytecodeListingTest : AbstractFirLightTreeAsmLikeInstructionListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureParcelizeSpecific()

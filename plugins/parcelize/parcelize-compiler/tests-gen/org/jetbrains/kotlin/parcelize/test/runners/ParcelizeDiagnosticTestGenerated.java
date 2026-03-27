@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/parcelize/parcelize-compiler/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
-public class FirPsiParcelizeDiagnosticTestGenerated extends AbstractFirPsiParcelizeDiagnosticTest {
+public class ParcelizeDiagnosticTestGenerated extends AbstractParcelizeDiagnosticTest {
   private void run(String fileName) {
     runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/" + fileName);
   }

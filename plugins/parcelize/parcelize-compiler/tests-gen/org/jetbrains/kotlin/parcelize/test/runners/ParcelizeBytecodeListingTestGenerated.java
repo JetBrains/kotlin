@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/parcelize/parcelize-compiler/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
-public class FirParcelizeBytecodeListingTestGenerated extends AbstractFirParcelizeBytecodeListingTest {
+public class ParcelizeBytecodeListingTestGenerated extends AbstractParcelizeBytecodeListingTest {
   private void run(String fileName) {
     runTest("plugins/parcelize/parcelize-compiler/testData/codegen/" + fileName);
   }

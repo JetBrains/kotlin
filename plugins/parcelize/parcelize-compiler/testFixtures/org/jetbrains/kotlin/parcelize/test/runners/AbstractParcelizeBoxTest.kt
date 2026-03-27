@@ -35,19 +35,14 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
 import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.services.jvm.JvmBoxMainClassProvider
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 
-abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput<R>>(
-    val targetFrontend: FrontendKind<R>,
-) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
-    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-
+abstract class AbstractParcelizeBoxTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             +ENABLE_PARCELIZE
@@ -55,13 +50,16 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
             // Robolectric 4.16 (onward) with Android SDK 36 requires JDK 21
             JDK_KIND with TestJdkKind.FULL_JDK_21
+            +ENABLE_PLUGIN_PHASES
         }
 
+        configureFirParser(FirParser.LightTree)
+
         commonConfigurationForJvmTest(
-            targetFrontend,
-            frontendFacade,
-            frontendToBackendConverter,
-            backendFacade,
+            FrontendKinds.FIR,
+            ::FirCliJvmFacade,
+            ::Fir2IrCliJvmFacade,
+            ::BackendCliJvmFacade,
             additionalSourceProvider = ::MainFunctionForBlackBoxTestsSourceProvider
         )
 
@@ -91,32 +89,8 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
 
         useAdditionalServices(service<JvmBoxMainClassProvider>(::ParcelizeMainClassProvider))
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor, ::FirMetaInfoDiffSuppressor)
 
         enableMetaInfoHandler()
     }
 }
-
-abstract class AbstractParcelizeFirBoxTestBase(val parser: FirParser) : AbstractParcelizeBoxTestBase<FirOutputArtifact>(FrontendKinds.FIR) {
-    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirCliJvmFacade
-
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliJvmFacade
-
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-        get() = ::BackendCliJvmFacade
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +ENABLE_PLUGIN_PHASES
-                FirDiagnosticsDirectives.FIR_PARSER with parser
-            }
-            useAfterAnalysisCheckers(::FirMetaInfoDiffSuppressor)
-        }
-    }
-}
-
-open class AbstractParcelizeFirLightTreeBoxTest : AbstractParcelizeFirBoxTestBase(FirParser.LightTree)
