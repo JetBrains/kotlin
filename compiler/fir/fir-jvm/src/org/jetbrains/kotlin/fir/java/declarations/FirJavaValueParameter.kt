@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.java.declarations
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import kotlin.properties.Delegates
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaValueParameter @FirImplementationDetail constructor(
@@ -214,41 +212,6 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
         error("Status cannot be replaced for FirJavaValueParameter")
     }
-}
-
-@FirBuilderDsl
-class FirJavaValueParameterBuilder {
-    var source: KtSourceElement? = null
-    lateinit var moduleData: FirModuleData
-    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    lateinit var returnTypeRef: FirTypeRef
-    lateinit var name: Name
-    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
-    var defaultValue: Lazy<FirExpression>? = null
-    lateinit var containingDeclarationSymbol: FirFunctionSymbol<*>
-    var isVararg: Boolean by Delegates.notNull()
-    var isFromSource: Boolean by Delegates.notNull()
-
-    @OptIn(FirImplementationDetail::class)
-    fun build(): FirJavaValueParameter {
-        return FirJavaValueParameter(
-            source,
-            moduleData,
-            origin = javaOrigin(isFromSource),
-            attributes,
-            returnTypeRef,
-            name,
-            symbol = FirValueParameterSymbol(),
-            annotationList,
-            defaultValue,
-            containingDeclarationSymbol,
-            isVararg,
-        )
-    }
-}
-
-inline fun buildJavaValueParameter(init: FirJavaValueParameterBuilder.() -> Unit): FirJavaValueParameter {
-    return FirJavaValueParameterBuilder().apply(init).build()
 }
 
 @OptIn(FirImplementationDetail::class)

@@ -27,10 +27,6 @@ open class FirUserTypeRefBuilder : FirAnnotationContainerBuilder {
     }
 }
 
-inline fun buildUserTypeRef(init: FirUserTypeRefBuilder.() -> Unit): FirUserTypeRef {
-    return FirUserTypeRefBuilder().apply(init).build()
-}
-
 fun buildUserTypeRef(
     source: KtSourceElement,
     annotations: MutableList<FirAnnotation> = mutableListOf(),

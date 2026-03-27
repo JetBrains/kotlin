@@ -265,10 +265,6 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     }
 }
 
-inline fun buildJavaMethod(init: FirJavaMethodBuilder.() -> Unit): FirJavaMethod {
-    return FirJavaMethodBuilder().apply(init).build()
-}
-
 @OptIn(FirImplementationDetail::class)
 fun buildJavaMethod(
     source: KtSourceElement? = null,

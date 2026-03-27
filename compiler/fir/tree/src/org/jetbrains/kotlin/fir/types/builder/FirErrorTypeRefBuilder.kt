@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 @FirBuilderDsl
 class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
@@ -37,14 +35,6 @@ class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
             partiallyResolvedTypeRef = partiallyResolvedTypeRef,
         )
     }
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildErrorTypeRef(init: FirErrorTypeRefBuilder.() -> Unit): FirErrorTypeRef {
-    contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
-    }
-    return FirErrorTypeRefBuilder().apply(init).build()
 }
 
 fun buildErrorTypeRef(

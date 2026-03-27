@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
@@ -35,9 +34,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 @OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
 class FirJavaTypeParameter(
@@ -270,43 +266,6 @@ class FirJavaTypeParameter(
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         shouldNotBeCalled(::replaceAnnotations, ::annotations)
     }
-}
-
-@FirBuilderDsl
-class FirJavaTypeParameterBuilder {
-    var source: KtSourceElement? = null
-    lateinit var moduleData: FirModuleData
-    lateinit var origin: FirDeclarationOrigin
-    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    lateinit var name: Name
-    lateinit var symbol: FirTypeParameterSymbol
-    lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
-    lateinit var annotationBuilder: () -> List<FirAnnotation>
-    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
-    lateinit var javaTypeParameter: JavaTypeParameter
-
-    fun build(): FirTypeParameter {
-        return FirJavaTypeParameter(
-            javaTypeParameter,
-            source,
-            moduleData,
-            origin,
-            attributes,
-            name,
-            symbol,
-            containingDeclarationSymbol,
-            annotationList,
-        )
-    }
-
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildJavaTypeParameter(init: FirJavaTypeParameterBuilder.() -> Unit): FirTypeParameter {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    return FirJavaTypeParameterBuilder().apply(init).build()
 }
 
 fun buildJavaTypeParameter(

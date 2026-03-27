@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types.jvm
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -45,21 +44,6 @@ class FirJavaTypeRef(
     override fun toString(): String {
         return type.render()
     }
-}
-
-@FirBuilderDsl
-class FirJavaTypeRefBuilder {
-    lateinit var annotationBuilder: () -> List<FirAnnotation>
-    lateinit var type: JavaType
-    var source: KtSourceElement? = null
-
-    fun build(): FirJavaTypeRef {
-        return FirJavaTypeRef(type, source, annotationBuilder)
-    }
-}
-
-inline fun buildJavaTypeRef(init: FirJavaTypeRefBuilder.() -> Unit): FirJavaTypeRef {
-    return FirJavaTypeRefBuilder().apply(init).build()
 }
 
 fun buildJavaTypeRef(

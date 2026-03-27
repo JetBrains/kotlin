@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.fir.java.declarations
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -26,10 +24,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
-import kotlin.properties.Delegates
 
 class FirJavaField @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
@@ -196,50 +190,6 @@ class FirJavaField @FirImplementationDetail constructor(
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
         shouldNotBeCalled(::replaceStatus, ::status)
     }
-}
-
-@FirBuilderDsl
-internal class FirJavaFieldBuilder : FirFieldBuilder() {
-    var isFromSource: Boolean by Delegates.notNull()
-    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
-    var lazyInitializer: Lazy<FirExpression?>? = null
-    lateinit var lazyHasConstantInitializer: Lazy<Boolean>
-    lateinit var containingClassSymbol: FirClassSymbol<*>
-
-    @OptIn(FirImplementationDetail::class)
-    override fun build(): FirJavaField {
-        return FirJavaField(
-            source,
-            moduleData,
-            origin = javaOrigin(isFromSource),
-            symbol,
-            name,
-            returnTypeRef,
-            status as FirResolvedDeclarationStatusImpl,
-            isVar,
-            annotationList,
-            lazyInitializer ?: lazyOf(initializer),
-            lazyHasConstantInitializer,
-            dispatchReceiverType,
-            attributes,
-            containingClassSymbol,
-        )
-    }
-
-    @Deprecated("Modification of 'origin' has no impact for FirJavaFieldBuilder", level = DeprecationLevel.HIDDEN)
-    override var origin: FirDeclarationOrigin
-        get() = throw IllegalStateException()
-        set(@Suppress("UNUSED_PARAMETER") value) {
-            throw IllegalStateException()
-        }
-}
-
-@OptIn(ExperimentalContracts::class)
-internal inline fun buildJavaField(init: FirJavaFieldBuilder.() -> Unit): FirJavaField {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    return FirJavaFieldBuilder().apply(init).build()
 }
 
 @OptIn(FirImplementationDetail::class)

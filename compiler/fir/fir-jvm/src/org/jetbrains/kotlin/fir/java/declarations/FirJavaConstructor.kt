@@ -254,10 +254,6 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
         }
 }
 
-inline fun buildJavaConstructor(init: FirJavaConstructorBuilder.() -> Unit): FirJavaConstructor {
-    return FirJavaConstructorBuilder().apply(init).build()
-}
-
 @OptIn(FirImplementationDetail::class)
 fun buildJavaConstructor(
     source: KtSourceElement? = null,

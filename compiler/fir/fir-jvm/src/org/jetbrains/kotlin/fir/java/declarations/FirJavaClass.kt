@@ -8,15 +8,10 @@ package org.jetbrains.kotlin.fir.java.declarations
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
@@ -36,10 +31,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-import kotlin.properties.Delegates
 
 class FirJavaClass @FirImplementationDetail internal constructor(
     private val javaClass: JavaClass?,
@@ -246,68 +239,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
         shouldNotBeCalled(::replaceDeclarations, ::declarations)
     }
-}
-
-@FirBuilderDsl
-class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuilder {
-    lateinit var visibility: Visibility
-    var modality: Modality? = null
-    var isFromSource: Boolean by Delegates.notNull()
-    var isTopLevel: Boolean by Delegates.notNull()
-    var isStatic: Boolean by Delegates.notNull()
-    var javaPackage: JavaPackage? = null
-    lateinit var javaTypeParameterStack: MutableJavaTypeParameterStack
-    val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
-
-    override var source: KtSourceElement? = null
-    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
-    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
-    override val declarations: MutableList<FirDeclaration> get() = shouldNotBeCalled()
-
-    /** Has to be omitted in the case of [javaClass] presence */
-    override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
-    var containingClassSymbol: FirClassSymbol<*>? = null
-    var declarationList: FirJavaDeclarationList = FirEmptyJavaDeclarationList
-
-    /**
-     * Allows computing some information (like [superTypeRefs]) lazily on demand
-     * instead of providing it right away
-     */
-    var javaClass: JavaClass? = null
-
-    @OptIn(FirImplementationDetail::class)
-    override fun build(): FirJavaClass {
-        return FirJavaClass(
-            javaClass,
-            source,
-            moduleData,
-            name,
-            origin = javaOrigin(isFromSource),
-            annotationList,
-            status as FirResolvedDeclarationStatusImpl,
-            classKind,
-            declarationList,
-            scopeProvider,
-            symbol,
-            superTypeRefs,
-            typeParameters,
-            javaPackage,
-            javaTypeParameterStack.copy(),
-            existingNestedClassifierNames,
-            containingClassSymbol,
-        )
-    }
-
-    @Deprecated("Modification of 'origin' has no impact for FirJavaClassBuilder", level = DeprecationLevel.HIDDEN)
-    override var origin: FirDeclarationOrigin
-        get() = throw IllegalStateException()
-        set(@Suppress("UNUSED_PARAMETER") value) {
-            throw IllegalStateException()
-        }
-}
-
-inline fun buildJavaClass(init: FirJavaClassBuilder.() -> Unit): FirJavaClass {
-    return FirJavaClassBuilder().apply(init).build()
 }
 
 @OptIn(FirImplementationDetail::class)

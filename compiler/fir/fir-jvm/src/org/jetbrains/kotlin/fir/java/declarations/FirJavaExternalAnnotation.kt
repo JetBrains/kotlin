@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.java.declarations
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
@@ -18,9 +17,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 class FirJavaExternalAnnotation @FirImplementationDetail constructor(
     override var annotationTypeRef: FirTypeRef,
@@ -78,27 +74,6 @@ class FirJavaExternalAnnotation @FirImplementationDetail constructor(
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {}
-}
-
-@FirBuilderDsl
-class FirJavaExternalAnnotationBuilder {
-    lateinit var annotationTypeRef: FirTypeRef
-    lateinit var argumentMapping: FirAnnotationArgumentMapping
-
-    @OptIn(FirImplementationDetail::class)
-    fun build(): FirJavaExternalAnnotation = FirJavaExternalAnnotation(
-        annotationTypeRef,
-        argumentMapping,
-    )
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildJavaExternalAnnotation(init: FirJavaExternalAnnotationBuilder.() -> Unit): FirJavaExternalAnnotation {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-
-    return FirJavaExternalAnnotationBuilder().apply(init).build()
 }
 
 @OptIn(FirImplementationDetail::class)
