@@ -58,14 +58,14 @@ internal class NullableJvmCompilerArgumentsWithBtaVersionsArgumentProvider : Arg
 }
 
 internal class JvmArgumentDescriptor<T>(
-    val argumentName: String,
+    override val argumentName: String,
     val argumentKey: JvmCompilerArgument<T>,
-    val argumentValues: List<T>,
-    val isEnum: Boolean,
-    val isNullable: Boolean,
-    val valueString: (T?) -> String?,
-    val expectedArgumentStringsFor: (String) -> List<String>,
-)
+    override val argumentValues: List<T>,
+    override val isEnum: Boolean,
+    override val isNullable: Boolean,
+    override val valueString: (T?) -> String?,
+    override val expectedArgumentStringsFor: (String) -> List<String>,
+) : ArgumentDescriptor<T>
 
 private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentDescriptor<*>) -> Boolean = { true }): List<Named<JvmArgumentConfiguration<*>>> {
     val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
