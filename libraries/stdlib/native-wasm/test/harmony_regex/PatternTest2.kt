@@ -29,6 +29,15 @@ class PatternTest2 {
     fun assertTrue(msg: String, value: Boolean) = assertTrue(value, msg)
     fun assertFalse(msg: String, value: Boolean) = assertFalse(value, msg)
 
+    private fun assertFindAll(regex: Regex, input: String, expected: List<String>) {
+        assertEquals(expected, regex.findAll(input).map(MatchResult::value).toList(), "Unexpected matches for `$regex` in `$input`")
+    }
+
+    private fun assertFailsToCompile(pattern: String): IllegalArgumentException =
+        assertFailsWith<IllegalArgumentException>("IllegalArgumentException expected for pattern `$pattern`") {
+            Regex(pattern)
+        }
+
     /**
      * Tests simple pattern compilation and matching methods
      */
@@ -823,22 +832,53 @@ class PatternTest2 {
 
     @Test fun testRepeats() {
         // Test ?
-        // TODO
+        var regex = Regex("colou?r")
+        assertTrue(regex.matches("color"))
+        assertTrue(regex.matches("colour"))
+        assertFalse(regex.matches("colr"))
+        assertFalse(regex.matches("colouur"))
+        assertFalse(regex.matches("xcolor"))
 
         // Test *
-        // TODO
+        regex = Regex("ab*c")
+        assertTrue(regex.matches("ac"))
+        assertTrue(regex.matches("abbbc"))
+        assertFalse(regex.matches("ab"))
+        assertFalse(regex.matches("abdc"))
+        assertFalse(regex.matches("cabbbc"))
 
         // Test +
-        // TODO
+        regex = Regex("ab+c")
+        assertFalse(regex.matches("ac"))
+        assertTrue(regex.matches("abc"))
+        assertTrue(regex.matches("abbbbbc"))
+        assertFalse(regex.matches("abb"))
+        assertFalse(regex.matches("xabc"))
 
         // Test {<num>}, including 0, 1 and more
-        // TODO
+        assertTrue(Regex("a{0}b").matches("b"))
+        assertTrue(Regex("a{1}b").matches("ab"))
+        assertTrue(Regex("a{3}b").matches("aaab"))
+        assertFalse(Regex("a{1}b").matches("b"))
+        assertFalse(Regex("a{3}b").matches("aaaab"))
+        assertFalse(Regex("a{3}b").matches("aab"))
 
         // Test {<num>,}, including 0, 1 and more
-        // TODO
+        assertTrue(Regex("a{0,}b").matches("b"))
+        assertTrue(Regex("a{1,}b").matches("ab"))
+        assertTrue(Regex("a{3,}b").matches("aaaaab"))
+        assertFalse(Regex("a{1,}b").matches("b"))
+        assertFalse(Regex("a{3,}b").matches("aab"))
+        assertFalse(Regex("a{3,}b").matches("aaaaac"))
 
         // Test {<n1>,<n2>}, with n1 < n2, n1 = n2 and n1 > n2 (illegal?)
-        // TODO
+        assertTrue(Regex("a{2,4}b").matches("aaab"))
+        assertFalse(Regex("a{2,4}b").matches("ab"))
+        assertFalse(Regex("a{2,4}b").matches("aaaaab"))
+        assertTrue(Regex("a{3,3}b").matches("aaab"))
+        assertFalse(Regex("a{3,3}b").matches("aab"))
+        assertFalse(Regex("a{3,3}b").matches("aaaab"))
+        assertFailsToCompile("a{4,2}b")
     }
 
     @Test fun testAnchors() {
