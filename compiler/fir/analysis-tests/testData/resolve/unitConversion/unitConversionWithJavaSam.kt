@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // ISSUE: KT-84393
 // DIAGNOSTICS: -UNUSED_PARAMETER
@@ -13,7 +13,7 @@ fun useJavaSam(r: J) {}
 val intLambda: () -> Int = { 42 }
 
 fun test() {
-    useJavaSam(<!ARGUMENT_TYPE_MISMATCH!>intLambda<!>)
+    useJavaSam(intLambda)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, javaType, lambdaLiteral, propertyDeclaration,

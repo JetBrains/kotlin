@@ -15,7 +15,7 @@ FILE: chainedFunSuspendUnitConversion.kt
 
     }
     public final fun test(f: R|() -> kotlin/String|, s: R|SubInt|): R|kotlin/Unit| {
-        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(SAM(FConversion(R|<local>/f|)))
-        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(SAM(FConversion(R|<local>/s|)))
+        R|/foo|(SAM(FConversion(R|<local>/f|)))
+        R|/foo|(SAM(FConversion(R|<local>/s|)))
         R|/foo|(SAM(::R|/bar|))
     }

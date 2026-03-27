@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions +SuspendConversion
 // ISSUE: KT-84393
 // DIAGNOSTICS: -UNUSED_PARAMETER
@@ -11,7 +11,7 @@ val stringLambda: () -> String = { "" }
 
 fun test() {
     suspendUnitConversion(::returnString)
-    suspendUnitConversion(<!ARGUMENT_TYPE_MISMATCH!>stringLambda<!>)
+    suspendUnitConversion(stringLambda)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration,

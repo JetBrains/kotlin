@@ -520,6 +520,7 @@ enum class LanguageFeature(
     ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
     WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
     EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107"), // Do not hesitate to move it to KOTLIN_2_6 once it's introduced
+    UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_5, "KT-84393"),
 
     // End of 2.* language features --------------------------------------------------
 
@@ -590,9 +591,6 @@ enum class LanguageFeature(
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009"),
     JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802"),
-
-    // K1 support only; we keep it because we might want to eventually support it in K2 as well
-    UnitConversionsOnArbitraryExpressions(sinceVersion = null, "KT-84393"),
 
     JsAllowImplementingFunctionInterface(sinceVersion = null, NO_ISSUE_SPECIFIED),
     CustomEqualsInValueClasses(sinceVersion = null, "KT-24874"),

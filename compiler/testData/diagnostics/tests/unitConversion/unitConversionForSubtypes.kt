@@ -8,18 +8,18 @@ abstract class SubInt : (Int, String) -> Int
 abstract class SubIntWrong : (String, String) -> Int
 
 fun test1(s: SubInt, sWrong: SubIntWrong) {
-    foo(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
+    foo(s)
     foo(<!ARGUMENT_TYPE_MISMATCH!>sWrong<!>)
 
     val a = "foo"
     foo(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 
     a <!CAST_NEVER_SUCCEEDS!>as<!> (Int, String) -> String
-    foo(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    foo(a)
 }
 
 fun <T> test2(x: T) where T : (Int, String) -> Int, T : (Double) -> Int {
-    foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    foo(x)
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, intersectionType,

@@ -294,7 +294,7 @@ fun createFunctionType(
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
     contextParameters: List<ConeKotlinType> = emptyList(),
-): ConeLookupTagBasedType {
+): ConeClassLikeType {
     val receiverAndParameterTypes =
         buildList {
             addAll(contextParameters)

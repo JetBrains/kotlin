@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
@@ -10,8 +11,8 @@ abstract class SubInt : () -> Int
 
 fun test(g: () -> Double, s: SubInt) {
     foo(::bar)
-    foo(<!ARGUMENT_TYPE_MISMATCH!>g<!>)
-    foo(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
+    foo(g)
+    foo(s)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, stringLiteral, suspend */

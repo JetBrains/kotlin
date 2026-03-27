@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
+import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor.argumentTypeWithCustomConversion
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaParameterType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
@@ -35,10 +36,14 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompat
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.fastCorrespondingSupertypes
+import org.jetbrains.kotlin.types.model.isUnit
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -218,19 +223,41 @@ internal object ArgumentCheckingProcessor {
         }
 
         // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
+        // Similarly, if the expected return type is Unit and the argument's return type is not, we need to do "unit conversion."
 
         if (expectedType != null && shouldRunConversion()) {
-            context.typeContext.argumentTypeWithCustomConversion(
-                session = session,
+            var isFromSimpleToCustom = false
+            var isForUnitCoercion = false
+            var originalFunctionType: ConeClassLikeType? = null
+
+            argumentTypeWithCustomConversion(
                 expectedType = expectedType,
                 argumentType = argumentTypeForApplicabilityCheck,
-            )?.let {
-                argumentTypeForApplicabilityCheck = it
+            )?.let { (typeAfterConversion, originalArgumentAsFunctionType) ->
+                argumentTypeForApplicabilityCheck = typeAfterConversion
+                originalFunctionType = originalArgumentAsFunctionType
+                isFromSimpleToCustom = true
+            }
+
+            argumentTypeWithUnitConversion(
+                expectedType = expectedType,
+                argumentType = argumentTypeForApplicabilityCheck,
+            )?.let { (typeAfterConversion, originalArgumentAsFunctionType) ->
+                argumentTypeForApplicabilityCheck = typeAfterConversion
+                if (originalFunctionType == null) {
+                    originalFunctionType = originalArgumentAsFunctionType
+                }
+                isForUnitCoercion = true
+            }
+
+            if (isFromSimpleToCustom || isForUnitCoercion) {
                 candidate.addFunctionKindConversionOfArgument(
                     expression,
                     Candidate.FunctionConversionDescription(
-                        isFromSimpleToCustom = true,
+                        isFromSimpleToCustom,
+                        isForUnitCoercion,
                         expectedType,
+                        originalFunctionType!!,
                     ),
                 )
             }
@@ -589,36 +616,92 @@ internal object ArgumentCheckingProcessor {
         )
     }
 
-    private fun ConeInferenceContext.argumentTypeWithCustomConversion(
-        session: FirSession,
+    private data class ConversionData(
+        val typeAfterConversion: ConeClassLikeType,
+        val originalTypeAsFunctionType: ConeClassLikeType,
+    )
+
+    context(c: ArgumentContext)
+    private fun argumentTypeWithCustomConversion(
         expectedType: ConeKotlinType,
         argumentType: ConeKotlinType,
-    ): ConeKotlinType? {
+    ): ConversionData? {
         // Expect the expected type to be a not regular functional type (e.g. suspend or custom)
-        val expectedTypeKind = expectedType.functionTypeKind(session) ?: return null
+        val expectedTypeKind = expectedType.functionTypeKind(c.session) ?: return null
         if (expectedTypeKind.isBasicFunctionOrKFunction) return null
 
         // We want to check the argument type against non-suspend functional type.
         val expectedFunctionType =
             if (expectedTypeKind.supportsConversionFromSimpleFunctionType) {
-                expectedType.customFunctionTypeToSimpleFunctionType(session)
+                expectedType.customFunctionTypeToSimpleFunctionType(c.session)
             } else {
                 return null
             }
 
-        val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionType) ?: return null
-        val functionType = argumentTypeWithInvoke.unwrapLowerBound()
-            .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
-            ?.firstOrNull() as? ConeKotlinType ?: return null
+        val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(c.session, expectedFunctionType) ?: return null
+        val functionType = context(c.session.typeContext) {
+            argumentTypeWithInvoke.unwrapLowerBound()
+                .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
+                ?.firstOrNull() as? ConeClassLikeType ?: return null
+        }
 
         val typeArguments =
-            functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.coneType }
+            functionType.typeArguments.map { it.type ?: c.session.builtinTypes.nullableAnyType.coneType }
                 .ifEmpty { return null }
-        return createFunctionType(
-            kind = expectedTypeKind,
-            parameters = typeArguments.subList(0, typeArguments.lastIndex),
-            receiverType = null,
-            rawReturnType = typeArguments.last(),
+        return ConversionData(
+            typeAfterConversion = createFunctionType(
+                kind = expectedTypeKind,
+                parameters = typeArguments.subList(0, typeArguments.lastIndex),
+                receiverType = null,
+                rawReturnType = typeArguments.last(),
+            ),
+            functionType,
+        )
+    }
+
+    /**
+     * If the expected type is a functional type with Unit return, and the argument type is a functional type (or subtype)
+     * with a non-Unit return, returns a converted argument type with the return type changed to Unit.
+     *
+     * This works in combination with [argumentTypeWithCustomConversion]: the kind conversion (e.g., suspend) is applied first,
+     * then unit conversion may further adapt the return type. The [argumentType] may already be kind-converted
+     * (e.g., to a suspend function type).
+     */
+    context(c: ArgumentContext)
+    private fun argumentTypeWithUnitConversion(
+        expectedType: ConeKotlinType,
+        argumentType: ConeKotlinType,
+    ): ConversionData? = context(c.session.typeContext) {
+        if (LanguageFeature.UnitConversionsOnArbitraryExpressions.isDisabled()) return null
+
+        // The expected type must be a function type
+        val expectedTypeKind = expectedType.functionTypeKind(c.session) ?: return null
+        val expectedClassLikeType = expectedType.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
+
+        // Already compatible
+        if (c.candidate.csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType)) return null
+
+        // The expected return type must be Unit
+        val expectedReturnType = expectedClassLikeType.returnType(c.session)
+        if (!expectedReturnType.isUnitOrFlexibleUnit) return null
+
+        val argumentAsFunctionType = AbstractTypeChecker.findCorrespondingSupertypes(
+            c.session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
+            argumentType.unwrapLowerBound(), expectedClassLikeType.typeConstructor()
+        ).singleOrNull() as? ConeClassLikeType ?: return null
+
+        check(argumentAsFunctionType.functionTypeKind(c.session) == expectedTypeKind)
+
+        // It's already Unit-type
+        if (argumentAsFunctionType.returnType(c.session).isUnit()) return null
+
+        val actualTypeArguments = argumentAsFunctionType.typeArguments.toList()
+        return ConversionData(
+            typeAfterConversion =
+                argumentAsFunctionType.withArguments(
+                    (actualTypeArguments.subList(0, actualTypeArguments.lastIndex) + expectedReturnType).toTypedArray()
+                ),
+            argumentAsFunctionType,
         )
     }
 

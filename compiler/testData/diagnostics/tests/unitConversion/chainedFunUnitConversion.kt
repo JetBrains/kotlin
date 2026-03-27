@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
@@ -11,8 +12,8 @@ fun foo(r: KRunnable) {}
 abstract class SubInt : () -> Int
 
 fun test(f: () -> Int, s: SubInt) {
-    foo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
-    foo(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
+    foo(f)
+    foo(s)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, functionalType, interfaceDeclaration,

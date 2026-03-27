@@ -4,7 +4,13 @@ fun interface KRunnable {
 }
 
 fun test(fn: Function0<String>) {
-  useKRunnable(r = fn /*as Function0<Unit> */ /*-> KRunnable */)
+  useKRunnable(r = { // BLOCK
+    local fun Function0<String>.suspendConversion0() {
+      $callee.invoke()
+    }
+
+    ::suspendConversion0/*($callee = fn) */ /*-> KRunnable */
+  })
 }
 
 fun useKRunnable(r: KRunnable) {

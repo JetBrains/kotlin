@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // TARGET_BACKEND: JVM
 // ISSUE: KT-84393

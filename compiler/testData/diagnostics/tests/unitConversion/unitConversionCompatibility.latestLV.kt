@@ -9,7 +9,7 @@ object Test1 {
         fun foo(f: () -> Unit) {}
 
         fun test(f: () -> Int) {
-            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!>foo(f)<!>
+            <!DEBUG_INFO_CALL("fqName: Test1.Scope.foo; typeCall: function")!>foo(f)<!>
         }
     }
 }
@@ -25,7 +25,7 @@ object Test2 {
         fun foo(f: KRunnable) {}
 
         fun test(f: () -> Int) {
-            <!DEBUG_INFO_CALL("fqName: Test2.Scope1.foo; typeCall: function")!>foo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)<!>
+            <!DEBUG_INFO_CALL("fqName: Test2.Scope1.foo; typeCall: function")!>foo(f)<!>
         }
     }
 }

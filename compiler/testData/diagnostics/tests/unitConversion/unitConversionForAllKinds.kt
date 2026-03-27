@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
@@ -11,9 +12,9 @@ fun createCall(): () -> Int = TODO()
 fun test(g: () -> String, h: (Float) -> String) {
     foo(::bar)
     foo { "something" }
-    foo(<!ARGUMENT_TYPE_MISMATCH!>g<!>)
+    foo(g)
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>fooGeneric<!>(<!ARGUMENT_TYPE_MISMATCH!>h<!>)
+    fooGeneric(h)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, nullableType,

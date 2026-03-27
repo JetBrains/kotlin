@@ -47,12 +47,12 @@ fun ban(refRef: IndexibleRefRef?, ref: IndexibleRef?) {
     val lambda3 = {
         ref?.ind?.set(1, "X")
     }
-    foo(<!ARGUMENT_TYPE_MISMATCH!>lambda3<!>)
+    foo(lambda3)
 
     val lambda4 = {
         refRef?.ref?.ind?.set(1, "X")
     }
-    foo(<!ARGUMENT_TYPE_MISMATCH!>lambda4<!>)
+    foo(lambda4)
 }
 
 object PlusAssignable {

@@ -551,28 +551,35 @@ class AdapterGenerator(
         kind: FirFunctionConversionKind.BetweenFunctionTypes,
     ): IrExpression {
         val expectedType = argument.resolvedType
+        check(expectedType is ConeClassLikeType && expectedType.functionTypeKind(session) != null)
 
         val originalArgumentType = argument.expression.resolvedType.fullyExpandedType()
         // No conversion should happen if an argument already satisfies the expected type requirements
         check(!originalArgumentType.isSubtypeOf(expectedType, session))
 
-        // Currently, only conversion from simple to custom function types is supported
-        check(kind.isFromSimpleToCustom)
-        val expectedSimpleFunctionType = expectedType.customFunctionTypeToSimpleFunctionType(session)
+        check(kind.isFromSimpleToCustom || kind.isForUnitCoercion)
+        val isSuspendFunctionTypeExpected = expectedType.isSuspendOrKSuspendFunctionType(session)
+        val needSuspendConversion = kind.isFromSimpleToCustom && isSuspendFunctionTypeExpected
 
-        // For all other conversions beside suspend ones, we leave it to plugins to work with them
-        if (!expectedType.isSuspendOrKSuspendFunctionType(session)) return this
+        // This case is only applied when custom function types from a plugin are involved.
+        // For that case plugins themselves should handle the conversion.
+        // On the other hand, currently, there are no known plugins that do it (Compose dropped the conversion).
+        if (!needSuspendConversion && !kind.isForUnitCoercion) return this
 
-        val invokeSymbol = findInvokeSymbol(expectedSimpleFunctionType, originalArgumentType) ?: return this
+        val functionTypeBeforeConversion = kind.originalArgumentAsFunctionType
+        check(functionTypeBeforeConversion.functionTypeKind(session) != null)
+
+        val invokeSymbol = findInvokeSymbol(functionTypeBeforeConversion, originalArgumentType) ?: return this
         val expectedIrType = expectedType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(
                 startOffset,
                 endOffset,
                 expectedIrType,
-                expectedSimpleFunctionType.toIrType(),
+                adapteeParameterType = functionTypeBeforeConversion.toIrType(),
                 originalArgumentType.isMarkedNullable,
-                invokeSymbol
+                invokeSymbol,
+                isSuspendFunctionTypeExpected,
             )
             val irAdapterRef = IrFunctionReferenceImpl(
                 startOffset, endOffset, expectedIrType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
@@ -613,7 +620,8 @@ class AdapterGenerator(
         type: IrSimpleType,
         adapteeParameterType: IrType,
         argumentIsNullable: Boolean,
-        invokeSymbol: IrSimpleFunctionSymbol
+        invokeSymbol: IrSimpleFunctionSymbol,
+        isSuspend: Boolean,
     ): IrSimpleFunction {
         val returnType = type.arguments.last().typeOrFail
         val parameterTypes = type.arguments.dropLast(1).map { it.typeOrFail }
@@ -629,7 +637,7 @@ class AdapterGenerator(
             modality = Modality.FINAL,
             symbol = IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
-            isSuspend = true,
+            isSuspend = isSuspend,
             isOperator = false,
             isInfix = false,
             isExternal = false,

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // ISSUE: KT-84393
 // DIAGNOSTICS: -UNUSED_PARAMETER
@@ -18,8 +18,8 @@ fun useKSuspendRunnable(r: KSuspendRunnable) {}
 val intLambda: () -> Int = { 42 }
 
 fun test() {
-    useKRunnable(<!ARGUMENT_TYPE_MISMATCH!>intLambda<!>)
-    useKSuspendRunnable(<!ARGUMENT_TYPE_MISMATCH!>intLambda<!>)
+    useKRunnable(intLambda)
+    useKSuspendRunnable(intLambda)
 }
 
 /* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,

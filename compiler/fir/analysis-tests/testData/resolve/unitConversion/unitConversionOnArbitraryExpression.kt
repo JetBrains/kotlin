@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // ISSUE: KT-84393
 // DIAGNOSTICS: -UNUSED_PARAMETER
@@ -19,10 +19,10 @@ fun main() {
     unitConversion(::returnString)
     unitConversion(::returnNull)
 
-    unitConversion(<!ARGUMENT_TYPE_MISMATCH!>returnStringLambda<!>)
-    unitConversion(<!ARGUMENT_TYPE_MISMATCH!>returnStringRef<!>)
-    unitConversion(<!ARGUMENT_TYPE_MISMATCH!>returnNullLambda<!>)
-    unitConversion(<!ARGUMENT_TYPE_MISMATCH!>returnNullRef<!>)
+    unitConversion(returnStringLambda)
+    unitConversion(returnStringRef)
+    unitConversion(returnNullLambda)
+    unitConversion(returnNullRef)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, nullableType,

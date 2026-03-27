@@ -13,7 +13,7 @@ val x = {
 }
 
 fun test() {
-    handle(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    handle(x)
 }
 
 /* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, propertyDeclaration,
