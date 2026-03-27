@@ -47,17 +47,21 @@ inline fun buildErrorTypeRef(init: FirErrorTypeRefBuilder.() -> Unit): FirErrorT
     return FirErrorTypeRefBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildErrorTypeRefCopy(original: FirErrorTypeRef, init: FirErrorTypeRefBuilder.() -> Unit): FirErrorTypeRef {
-    contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirErrorTypeRefBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.coneType = original.coneType
-    copyBuilder.annotations = original.annotations.toMutableList()
-    copyBuilder.delegatedTypeRef = original.delegatedTypeRef
-    copyBuilder.diagnostic = original.diagnostic
-    copyBuilder.partiallyResolvedTypeRef = original.partiallyResolvedTypeRef
-    return copyBuilder.apply(init).build()
+fun buildErrorTypeRefCopy(
+    original: FirErrorTypeRef,
+    source: KtSourceElement? = original.source,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    coneType: ConeKotlinType? = original.coneType,
+    delegatedTypeRef: FirTypeRef? = original.delegatedTypeRef,
+    partiallyResolvedTypeRef: FirTypeRef? = original.partiallyResolvedTypeRef,
+    diagnostic: ConeDiagnostic = original.diagnostic,
+): FirErrorTypeRef {
+    return FirErrorTypeRefImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        coneType,
+        delegatedTypeRef,
+        diagnostic,
+        partiallyResolvedTypeRef = partiallyResolvedTypeRef,
+    )
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.buildFirList
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -1047,17 +1048,18 @@ class JavaClassUseSiteMemberScope(
             // If original is declared, it's a FirJavaMethod.
             // If it's inherited, it's a (possibly enhanced) FirSimpleMethod.
             return if (original is FirJavaMethod) {
-                buildJavaMethodCopy(original) {
-                    name = naturalName
-                    symbol = newSymbol
-                    dispatchReceiverType = klass.defaultType()
+                buildJavaMethodCopy(
+                    original,
+                    name = naturalName,
+                    symbol = newSymbol,
+                    dispatchReceiverType = klass.defaultType(),
 
                     status = if (OperatorConventions.isConventionName(naturalName)) {
                         original.status.copy(isOperator = true)
                     } else {
                         original.status
-                    }
-                }
+                    },
+                )
             } else {
                 buildNamedFunctionCopy(
                     original,
@@ -1084,23 +1086,25 @@ class JavaClassUseSiteMemberScope(
              * It explains why we should check value parameters for `Any` type
              */
             var allParametersAreAny = true
-            val method = buildJavaMethodCopy(
-                explicitlyDeclaredFunctionWithErasedValueParameters.fir as FirJavaMethod
-            ) {
-                this.name = name
-                symbol = FirNamedFunctionSymbol(explicitlyDeclaredFunctionWithErasedValueParameters.callableId)
-                this.valueParameters.clear()
+            val valueParameters = buildFirList {
                 explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters.zip(
                     relevantFunctionFromSupertypes.fir.valueParameters
-                ).mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
+                ).mapTo(this) { (overrideParameter, parameterFromSupertype) ->
                     if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
                         allParametersAreAny = false
                     }
-                    buildJavaValueParameterCopy(overrideParameter as FirJavaValueParameter) {
-                        this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
-                    }
+                    buildJavaValueParameterCopy(
+                        overrideParameter as FirJavaValueParameter,
+                        returnTypeRef = parameterFromSupertype.returnTypeRef,
+                    )
                 }
-            }.apply {
+            }
+            val method = buildJavaMethodCopy(
+                explicitlyDeclaredFunctionWithErasedValueParameters.fir as FirJavaMethod,
+                name = name,
+                symbol = FirNamedFunctionSymbol(explicitlyDeclaredFunctionWithErasedValueParameters.callableId),
+                valueParameters = valueParameters,
+            ).apply {
                 initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
             }
             return method.symbol.takeIf { !allParametersAreAny }
@@ -1155,15 +1159,15 @@ class JavaClassUseSiteMemberScope(
             status: FirDeclarationStatus? = null,
         ): FirNamedFunction {
             return if (original is FirJavaMethod) {
-                buildJavaMethodCopy(original) {
-                    this.symbol = newSymbol
-                    name = newName
-                    this.dispatchReceiverType = dispatchReceiverType ?: original.dispatchReceiverType
-                    this.valueParameters.clear()
-                    this.valueParameters += valueParameters ?: original.valueParameters
-                    this.returnTypeRef = returnTypeRef ?: original.returnTypeRef
-                    this.status = status ?: original.status
-                }
+                buildJavaMethodCopy(
+                    original,
+                    symbol = newSymbol,
+                    name = newName,
+                    dispatchReceiverType = dispatchReceiverType ?: original.dispatchReceiverType,
+                    valueParameters = (valueParameters ?: original.valueParameters).toMutableList(),
+                    returnTypeRef = returnTypeRef ?: original.returnTypeRef,
+                    status = status ?: original.status,
+                )
             } else {
                 buildNamedFunctionCopy(
                     original,

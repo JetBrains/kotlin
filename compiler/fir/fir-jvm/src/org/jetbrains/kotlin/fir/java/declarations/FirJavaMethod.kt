@@ -33,9 +33,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
 class FirJavaMethod @FirImplementationDetail constructor(
@@ -272,25 +269,36 @@ inline fun buildJavaMethod(init: FirJavaMethodBuilder.() -> Unit): FirJavaMethod
     return FirJavaMethodBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildJavaMethodCopy(original: FirJavaMethod, init: FirJavaMethodBuilder.() -> Unit): FirJavaMethod {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirJavaMethodBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.valueParameters.addAll(original.valueParameters)
-    copyBuilder.body = original.body
-    copyBuilder.status = original.status
-    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.name = original.name
-    copyBuilder.symbol = original.symbol
-    copyBuilder.isFromSource = original.origin.fromSource
-    copyBuilder.typeParameters.addAll(original.typeParameters)
-    copyBuilder.annotationList = original.annotationList
-    copyBuilder.containingClassSymbol = original.containingClassSymbol
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildJavaMethodCopy(
+    original: FirJavaMethod,
+    source: KtSourceElement? = original.source,
+    moduleData: FirModuleData = original.moduleData,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    returnTypeRef: FirTypeRef = original.returnTypeRef,
+    valueParameters: MutableList<FirValueParameter> = original.valueParameters.toMutableList(),
+    status: FirDeclarationStatus = original.status,
+    dispatchReceiverType: ConeSimpleKotlinType? = original.dispatchReceiverType,
+    name: Name = original.name,
+    symbol: FirNamedFunctionSymbol = original.symbol,
+    isFromSource: Boolean = original.origin.fromSource,
+    typeParameters: MutableList<FirTypeParameter> = original.typeParameters.toMutableList(),
+    annotationList: FirJavaAnnotationList = original.annotationList,
+    containingClassSymbol: FirClassSymbol<*> = original.containingClassSymbol,
+): FirJavaMethod {
+    return FirJavaMethod(
+        source,
+        moduleData,
+        javaOrigin(isFromSource),
+        attributes,
+        returnTypeRef,
+        typeParameters,
+        valueParameters,
+        name,
+        status as FirResolvedDeclarationStatusImpl,
+        symbol,
+        annotationList,
+        dispatchReceiverType,
+        containingClassSymbol,
+    )
 }

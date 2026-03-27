@@ -64,10 +64,11 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
             typeRef,
             source = newSource,
         )
-        is FirErrorTypeRef -> buildErrorTypeRefCopy(typeRef) {
-            source = newSource
-            partiallyResolvedTypeRef = typeRef.partiallyResolvedTypeRef?.copyWithNewSource(newSource)
-        }
+        is FirErrorTypeRef -> buildErrorTypeRefCopy(
+            typeRef,
+            source = newSource,
+            partiallyResolvedTypeRef = typeRef.partiallyResolvedTypeRef?.copyWithNewSource(newSource),
+        )
         is FirUserTypeRefImpl -> buildUserTypeRef {
             source = newSource
             isMarkedNullable = typeRef.isMarkedNullable

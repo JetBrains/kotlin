@@ -52,18 +52,15 @@ inline fun buildAnonymousFunctionExpression(init: FirAnonymousFunctionExpression
     return FirAnonymousFunctionExpressionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildAnonymousFunctionExpressionCopy(
+fun buildAnonymousFunctionExpressionCopy(
     original: FirAnonymousFunctionExpression,
-    init: FirAnonymousFunctionExpressionBuilder.() -> Unit,
+    source: KtSourceElement? = original.source,
+    anonymousFunction: FirAnonymousFunction = original.anonymousFunction,
+    isTrailingLambda: Boolean = original.isTrailingLambda,
 ): FirAnonymousFunctionExpression {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-
-    val copyBuilder = FirAnonymousFunctionExpressionBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.anonymousFunction = original.anonymousFunction
-    copyBuilder.isTrailingLambda = original.isTrailingLambda
-    return copyBuilder.apply(init).build()
+    return FirAnonymousFunctionExpressionImpl(
+        source,
+        anonymousFunction,
+        isTrailingLambda,
+    )
 }

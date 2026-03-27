@@ -264,12 +264,13 @@ private fun copyArgument(argument: FirExpression): FirExpression = when (argumen
         }
     }
     is FirAnonymousFunctionExpression -> {
-        buildAnonymousFunctionExpressionCopy(argument) {
+        buildAnonymousFunctionExpressionCopy(
+            argument,
             anonymousFunction = buildAnonymousFunctionCopy(
                 argument.anonymousFunction,
                 symbol = FirAnonymousFunctionSymbol(),
-            )
-        }
+            ),
+        )
     }
     else -> argument
 }

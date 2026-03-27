@@ -25,9 +25,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
 @OptIn(FirImplementationDetail::class)
@@ -254,21 +251,31 @@ inline fun buildJavaValueParameter(init: FirJavaValueParameterBuilder.() -> Unit
     return FirJavaValueParameterBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildJavaValueParameterCopy(original: FirJavaValueParameter, init: FirJavaValueParameterBuilder.() -> Unit): FirValueParameter {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirJavaValueParameterBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.isFromSource = original.origin.fromSource
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.name = original.name
-    copyBuilder.annotationList = original.annotationList
-    copyBuilder.defaultValue = original.lazyDefaultValue
-    copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
-    copyBuilder.isVararg = original.isVararg
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildJavaValueParameterCopy(
+    original: FirJavaValueParameter,
+    source: KtSourceElement? = original.source,
+    moduleData: FirModuleData = original.moduleData,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    isFromSource: Boolean = original.origin.fromSource,
+    returnTypeRef: FirTypeRef = original.returnTypeRef,
+    name: Name = original.name,
+    annotationList: FirJavaAnnotationList = original.annotationList,
+    defaultValue: Lazy<FirExpression>? = original.lazyDefaultValue,
+    containingDeclarationSymbol: FirFunctionSymbol<*> = original.containingDeclarationSymbol,
+    isVararg: Boolean = original.isVararg,
+): FirValueParameter {
+    return FirJavaValueParameter(
+        source,
+        moduleData,
+        javaOrigin(isFromSource),
+        attributes,
+        returnTypeRef,
+        name,
+        FirValueParameterSymbol(),
+        annotationList,
+        defaultValue,
+        containingDeclarationSymbol,
+        isVararg,
+    )
 }
