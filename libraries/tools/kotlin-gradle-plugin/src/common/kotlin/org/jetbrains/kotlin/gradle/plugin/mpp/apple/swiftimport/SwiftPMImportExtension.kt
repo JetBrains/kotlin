@@ -14,6 +14,7 @@ import kotlinx.serialization.json.encodeToStream
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Repository
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Version
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -36,7 +38,8 @@ internal fun Project.locateOrRegisterSwiftPMDependenciesExtension(): SwiftPMImpo
     }
     kotlinExtension.extensions.create(
         SwiftPMImportExtension.EXTENSION_NAME,
-        SwiftPMImportExtension::class.java
+        SwiftPMImportExtension::class.java,
+        project,
     )
     return kotlinExtension.getExtension<SwiftPMImportExtension>(
         SwiftPMImportExtension.EXTENSION_NAME
@@ -45,6 +48,7 @@ internal fun Project.locateOrRegisterSwiftPMDependenciesExtension(): SwiftPMImpo
 
 abstract class SwiftPMImportExtension @Inject constructor(
     objects: ObjectFactory,
+    private val project: Project,
 ) {
     val iosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
     val macosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
@@ -53,6 +57,36 @@ abstract class SwiftPMImportExtension @Inject constructor(
 
     val discoverClangModulesImplicitly: Property<Boolean> = objects.property(Boolean::class.java)
         .convention(true)
+
+    /**
+     * Shared lock identifier for Package.resolved synchronization across projects.
+     *
+     * Projects with the same identifier are expected to contribute into one aggregation bucket.
+     *
+     * 1. Plugin application
+     * 2. Build script evaluation
+     * 3. After evaluate ...
+     */
+    private var isProjectEvaluated = false
+
+    init {
+        project.whenEvaluated {
+            isProjectEvaluated = true
+        }
+    }
+
+    var packageResolvedSynchronization: PackageResolvedSynchronization =
+        PackageResolvedSynchronization.Identifier("default")
+        set(value) {
+            check(!isProjectEvaluated) {
+                "Too late to change swiftPMDependencies.packageResolvedSynchronization after project evaluation."
+            }
+            field = value
+        }
+
+
+    // packageResolvedSynchronization = identifier("id")
+
 
     abstract val xcodeProjectPathForKmpIJPlugin: RegularFileProperty
 
@@ -76,6 +110,7 @@ abstract class SwiftPMImportExtension @Inject constructor(
         importedClangModules,
         platforms
     )
+
     fun iOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.iOS
     fun macOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.macOS
     fun watchOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.watchOS
@@ -242,6 +277,13 @@ abstract class SwiftPMImportExtension @Inject constructor(
         )
     }
 
+
+    fun identifier(value: String): PackageResolvedSynchronization =
+        PackageResolvedSynchronization.Identifier(value)
+
+    fun noSynchronization(): PackageResolvedSynchronization =
+        PackageResolvedSynchronization.None
+
     // FIXME: KT-84695 Check and test if this is actually correct
     private fun inferPackageName(url: String) = url.split("/").last().split(".git").first()
 
@@ -283,7 +325,8 @@ sealed class SwiftPMDependency : Serializable {
         tvOS,
         watchOS;
 
-        val swiftEnumName: String get() = when (this) {
+        val swiftEnumName: String
+            get() = when (this) {
                 iOS -> "iOS"
                 macOS -> "macOS"
                 tvOS -> "tvOS"
@@ -331,6 +374,7 @@ sealed class SwiftPMDependency : Serializable {
         }
     }
 
+
     /**
      * A local SwiftPM package dependency.
      *
@@ -357,6 +401,12 @@ sealed class SwiftPMDependency : Serializable {
     }
 }
 
+
+sealed class PackageResolvedSynchronization {
+    data class Identifier(val identifier: String) : PackageResolvedSynchronization()
+    object None : PackageResolvedSynchronization()
+}
+
 // This is the structure that we serialize into
 @kotlinx.serialization.Serializable
 internal data class SwiftPMImportMetadata(
@@ -366,7 +416,7 @@ internal data class SwiftPMImportMetadata(
     val tvosDeploymentVersion: String?,
     @Suppress("unused")
     val isModulesDiscoveryEnabled: Boolean,
-    val dependencies: Set<SwiftPMDependency>
+    val dependencies: Set<SwiftPMDependency>,
 ) : Serializable
 
 private val swiftPMMetadataJson = Json {

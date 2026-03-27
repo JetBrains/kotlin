@@ -37,9 +37,11 @@ internal object SwiftImportManifestGenerator {
         block("let package = Package(", ")") {
             commaSeparatedEntries {
                 entry { line("name: \"$identifier\"") }
-                entry {
-                    block("platforms: [", "]") {
-                        emitListItems(platforms)
+                if (platforms.isNotEmpty()){
+                    entry {
+                        block("platforms: [", "]") {
+                            emitListItems(platforms)
+                        }
                     }
                 }
                 entry {

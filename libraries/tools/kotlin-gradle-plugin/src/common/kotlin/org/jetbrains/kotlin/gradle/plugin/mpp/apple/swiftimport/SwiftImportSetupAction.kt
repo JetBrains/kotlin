@@ -4,13 +4,17 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
@@ -121,14 +125,9 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticProductType.set(SyntheticProductType.DYNAMIC)
     }
 
-    val syncPackageSwiftLockFileToSyntheticSwiftPMPackage = project.locateOrRegisterTask<SyncPackageResolvedTask>(
-        SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME
-    ) { taskProvider ->
-        taskProvider.sourceFile.set(project.layout.projectDirectory.file("Package.resolved"))
-        taskProvider.onlyIf("Project directory Package.resolved exists") {
-            taskProvider.sourceFile.get().asFile.exists()
-        }
-    }
+    val syncPersistedPackageResolvedToSyntheticSwiftPMPackage = project.locateOrRegisterTask<SyncPackageResolvedTask>(
+        SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME
+    )
 
     val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
     val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
@@ -137,7 +136,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
         it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
-        it.dependsOn(syncPackageSwiftLockFileToSyntheticSwiftPMPackage)
+        it.dependsOn(syncPersistedPackageResolvedToSyntheticSwiftPMPackage)
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
         it.localPackageManifests.from(
             transitiveLocalSwiftPMDependenciesProvider.map { localPackageDependencyProvider ->
@@ -149,7 +148,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
     }
 
-    syncPackageSwiftLockFileToSyntheticSwiftPMPackage.configure { syncTaskProvider ->
+    syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { syncTaskProvider ->
+        // dest files is fixed to synthetic package
         syncTaskProvider.destinationFile.set(
             fetchSyntheticImportProjectPackages.map {
                 it.syntheticLockFile.get()
@@ -157,30 +157,180 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         )
     }
 
-
-    val syncPackageSwiftLockFileToProjectDirectory = project.locateOrRegisterTask<SyncPackageResolvedTask>(
-        SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME
-    ) { taskProvider ->
-        taskProvider.sourceFile.set(
-            fetchSyntheticImportProjectPackages.map { task ->
-                task.syntheticLockFile.get()
-            }
-        )
-        taskProvider.destinationFile.set(project.layout.projectDirectory.file("Package.resolved"))
-        taskProvider.onlyIf("Synthetic Package.resolved exists") {
-            taskProvider.sourceFile.get().asFile.exists()
-        }
-    }
-
-    fetchSyntheticImportProjectPackages.configure {
-        it.finalizedBy(syncPackageSwiftLockFileToProjectDirectory)
-    }
+    val syncSyntheticPackageResolvedToPersisted = project.locateOrRegisterTask<SyncPackageResolvedTask>(
+        SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME
+    )
 
     val syntheticImportTasks = listOf(
         syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
         syntheticImportProjectGenerationTaskForEmbedAndSignLinkage,
         syntheticImportProjectGenerationTaskForLinkageForCli,
     )
+
+
+    // stage0 - plugin application
+    // stage1 - read build script, execute and then apply afterEvaluate
+    // stageN - execute afterEvaluate from previous stage
+    // task graph construction
+    // CC serialization
+    // execution phase
+
+
+    project.afterEvaluate {
+
+        val persistedPackageResolved = providePersistedPackageResolved()
+
+        syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { taskProvider ->
+            taskProvider.sourceFile.set(persistedPackageResolved)
+        }
+
+
+        when (val packageIdentifier = identifierSynchronizationOrNull()) {
+            is PackageResolvedSynchronization.Identifier -> {
+                val packageResolvedSynchronizationIdentifier = packageIdentifier.identifier
+                val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(this)
+                val directMetaData = project.provider {
+                    SwiftPMImportMetadata(
+                        iosDeploymentVersion = swiftPMImportExtension.iosMinimumDeploymentTarget.orNull,
+                        macosDeploymentVersion = swiftPMImportExtension.macosMinimumDeploymentTarget.orNull,
+                        watchosDeploymentVersion = swiftPMImportExtension.watchosMinimumDeploymentTarget.orNull,
+                        tvosDeploymentVersion = swiftPMImportExtension.tvosMinimumDeploymentTarget.orNull,
+                        isModulesDiscoveryEnabled = swiftPMImportExtension.discoverClangModulesImplicitly.get(),
+                        dependencies = swiftPMImportExtension.swiftPMDependencies.toSet(),
+                    )
+                }
+
+                val projectPath = project.path
+                val serializeTaskPath = if (projectPath == project.rootProject.path) {
+                    null
+                } else {
+                    "$projectPath:${SerializeSwiftPMDependenciesMetadata.TASK_NAME}"
+                }
+                // build script -> any changes drop state
+                aggregationService.get().contribute(
+                    identifier = packageResolvedSynchronizationIdentifier,
+                    serializeSwiftPMDependenciesMetadataTaskName = serializeTaskPath,
+                    contribution = SwiftPMLockTaskContribution(
+                        projectPath = projectPath,
+                        directMetadata = directMetaData,
+                        transitiveDependencies = transitiveSwiftPMDependenciesProvider
+                    )
+                )
+
+                val serializeTaskProvider = project.provider {
+                    aggregationService.get().getContributorProjectsSerializeTasks(packageResolvedSynchronizationIdentifier)
+                }
+
+                val swiftPMRootPath = provideIdentifierPackageRoot(packageIdentifier.identifier)
+
+                val candidateGenerateTaskName =
+                    GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(packageIdentifier.identifier)
+                val projectCandidateGenerateTaskName = "${project.path}:${candidateGenerateTaskName}"
+
+                val isGeneratedClaimed =
+                    aggregationService.get().claimGenerateTask(packageIdentifier.identifier, projectCandidateGenerateTaskName)
+
+                val actualGeneratedClaimer = aggregationService.get().getClaimedGenerateTask(packageIdentifier.identifier)
+
+                when (isGeneratedClaimed) {
+                    true -> {
+                        project.locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(candidateGenerateTaskName) {
+                            it.useOnlyTransitiveImportedDependencies()
+                            it.syntheticProductType.set(SyntheticProductType.INFERRED)
+                            it.syntheticImportProjectRoot.set(
+                                swiftPMRootPath
+                            )
+                            // Build aggregated dependencies from build service
+                            it.dependencyIdentifierToImportedSwiftPMDependencies.set(
+                                project.provider {
+                                    aggregationService.get().buildAggregatedResultDependencies(packageResolvedSynchronizationIdentifier)
+                                }
+                            )
+                            it.dependsOn(
+                                serializeTaskProvider
+                            )
+                        }
+
+                    }
+                    false -> {}
+                }
+
+                // Umbrella generate task: builds aggregated package from all contributions
+
+                val candidateFetchTaskName =
+                    FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(packageIdentifier.identifier)
+                val projectCandidateFetchTaskName = "${project.path}:${candidateFetchTaskName}"
+
+                val isFetchClaimed =
+                    aggregationService.get().claimFetchTask(packageIdentifier.identifier, projectCandidateFetchTaskName)
+
+                val actualFetchClaimer = aggregationService.get().getClaimedFetchTask(packageIdentifier.identifier)
+
+                when (isFetchClaimed) {
+                    true -> {
+                        project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(candidateFetchTaskName) {
+                            it.syntheticImportProjectRoot.set(provideIdentifierPackageRoot(packageIdentifier.identifier))
+                            // Depend on all global generate tasks to satisfy Gradle's implicit dependency validation.
+                            // Multiple projects share the same output directory; declaring all producers avoids errors.
+                            /**
+                             * This is crucial. Imagine we have two projects: fuzz and buzz.
+                             *
+                             * For example:
+                             * During Gradle sync, :fuzz:generateUmbrellaPackageForIdentifierBasedResolution might become
+                             * the actual executor and produce the shared umbrella package directory.
+                             *
+                             * Later, if only buzz-related tasks are requested, Gradle may still see
+                             * :buzz:fetchUmbrellaPackageForIdentifierBasedResolution consuming the same shared output location.
+                             *
+                             * If this fetch task depends only on its local generate task, Gradle cannot know that the actual
+                             * producer of that directory may instead be :fuzz:generateUmbrellaPackageForIdentifierBasedResolution.
+                             * This results in validation / implicit dependency errors, because the consumer uses an output
+                             * produced by another task without an explicit dependency edge.
+                             *
+                             * By depending on all possible global umbrella generate tasks for this identifier,
+                             * we make the producer-consumer relationship explicit for Gradle.
+                             * At execution time only one generate task will actually do work, but the task graph stays valid
+                             * because every potential shared-directory producer is declared up front.
+                             */
+                            it.dependsOn(actualGeneratedClaimer)
+                        }
+                    }
+                    false -> {}
+                }
+
+
+
+                syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
+                    // Depend on all global fetch tasks to satisfy Gradle's implicit dependency validation
+                    it.dependsOn(actualFetchClaimer)
+                    // Sync task: copies Package.resolved from shared location
+                    it.onlyIf("Shared Package.resolved exists") {
+                        persistedPackageResolved.asFile.exists()
+                    }
+                }
+            }
+            // If none, after resolution in synthetic we sync back to persisted location.
+            // With identifier, it would cause the umbrella package to be overridden
+            else -> {
+                syncSyntheticPackageResolvedToPersisted.configure { taskProvider ->
+                    taskProvider.sourceFile.set(
+                        fetchSyntheticImportProjectPackages.map { task ->
+                            task.syntheticLockFile.get()
+                        }
+                    )
+                    taskProvider.destinationFile.set(persistedPackageResolved)
+                    taskProvider.onlyIf("Synthetic Package.resolved exists") {
+                        taskProvider.sourceFile.get().asFile.exists()
+                    }
+                }
+
+                fetchSyntheticImportProjectPackages.configure {
+                    it.finalizedBy(syncSyntheticPackageResolvedToPersisted)
+                }
+            }
+        }
+    }
+
     syntheticImportTasks.forEach {
         it.configure {
             it.onlyIf {
@@ -372,6 +522,12 @@ private fun Project.checkLocalSwiftDependencyIsValid(swiftPMDependency: SwiftPMD
     return true
 }
 
+internal fun Project.identifierSynchronizationOrNull(): PackageResolvedSynchronization.Identifier? {
+    val sync = locateOrRegisterSwiftPMDependenciesExtension()
+        .packageResolvedSynchronization
+    return sync as? PackageResolvedSynchronization.Identifier
+}
+
 /**
  * For test tasks that depend on dynamic frameworks we pass the DYLD_ env search path
  */
@@ -542,6 +698,35 @@ private fun Project.registerXcodeIntegrationTasks(
         it.mustRunAfter(embedAndSignIntegration)
     }
 }
+
+private fun Project.providePersistedPackageResolvedSync(): PackageResolvedSynchronization {
+    val swiftPMImportExtension = locateOrRegisterSwiftPMDependenciesExtension()
+    return swiftPMImportExtension.packageResolvedSynchronization
+}
+
+private fun Project.rootDirFile(): File = rootProject.projectDir
+
+private fun Project.providePersistedPackageResolved(): RegularFile {
+    return when (val syncStrategy = providePersistedPackageResolvedSync()) {
+        is PackageResolvedSynchronization.Identifier -> {
+            layout.file(
+                provider {
+                    rootDirFile().resolve(".swiftpm-locks/${syncStrategy.identifier}/swiftImport/Package.resolved")
+                }
+            ).get()
+        }
+        else -> {
+            layout.projectDirectory.file("Package.resolved")
+        }
+    }
+}
+
+private fun Project.provideIdentifierPackageRoot(identifier: String): Provider<Directory> =
+    layout.dir(
+        provider {
+            rootDirFile().resolve(".swiftpm-locks/$identifier/swiftImport")
+        }
+    )
 
 internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeModel> =
     project.hasDirectOrTransitiveSwiftPMDependencies().map { hasDirectOrTransitiveSwiftPMDependencies ->

@@ -20,6 +20,10 @@ import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import javax.inject.Inject
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
 
@@ -115,7 +119,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
                 "-derivedDataPath", swiftPMDependenciesCheckoutLogs.get().asFile.path,
             )
 
-            if(additionalXcodeArgs.isPresent) {
+            if (additionalXcodeArgs.isPresent) {
                 args.addAll(additionalXcodeArgs.get())
             }
 
@@ -125,6 +129,10 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
 
     companion object {
         const val TASK_NAME = "fetchSyntheticImportProjectPackages"
+        fun fetchUmbrellaPackageTaskName(identifier: String) = lowerCamelCaseName(
+            "fetchUmbrellaPackageIdentifierFor",
+            identifier
+        )
         const val XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER = "-clonedSourcePackagesDirPath"
     }
 }

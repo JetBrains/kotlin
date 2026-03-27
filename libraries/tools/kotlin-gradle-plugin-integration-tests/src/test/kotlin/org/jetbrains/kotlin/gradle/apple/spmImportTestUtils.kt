@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
@@ -31,6 +32,7 @@ import kotlin.io.path.createFile
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @Suppress("INVISIBLE_REFERENCE")
 const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME =
@@ -179,12 +181,14 @@ internal fun TestProject.initDefaultKmp(extra: KotlinMultiplatformExtension.() -
     }
 }
 
-internal data class LockFileTestFixture(
+internal class LockFileTestFixture(
     val project: TestProject,
     val cacheDirFile: File,
     val reposRoot: Path,
     val daemon: GitDaemon,
-    val projectDirectoryPackageResolved: Path = project.projectPath.resolve("Package.resolved"),
+    val packageResolvedSynchronization: PackageResolvedSynchronization,
+    val persistedPackageResolvedSyncPath: Path =
+        project.selectedPersistedPackageResolvedPath(packageResolvedSynchronization),
 )
 
 internal data class RepoRef(
@@ -193,6 +197,7 @@ internal data class RepoRef(
 ) : java.io.Serializable
 
 internal fun TestProject.withLockFileFixture(
+    packageResolvedSynchronization: PackageResolvedSynchronization = PackageResolvedSynchronization.Identifier("default"),
     block: LockFileTestFixture.() -> Unit,
 ) {
     val cacheDirFile = projectPath.resolve("customXcodePackageCache").toFile()
@@ -209,10 +214,21 @@ internal fun TestProject.withLockFileFixture(
             cacheDirFile = cacheDirFile,
             reposRoot = reposRoot,
             daemon = this,
+            packageResolvedSynchronization,
         ).block()
     }
 }
 
+internal fun TestProject.selectedPersistedPackageResolvedPath(
+    sync: PackageResolvedSynchronization,
+): Path =
+    when (sync) {
+        is PackageResolvedSynchronization.Identifier ->
+            projectPath.resolve(".swiftpm-locks/${sync.identifier}/swiftImport/Package.resolved")
+
+        PackageResolvedSynchronization.None ->
+            projectPath.resolve("Package.resolved")
+    }
 
 internal fun TestProject.initSwiftPmProject(
     cacheDirFile: File,
@@ -304,6 +320,35 @@ internal fun BuildResult.assertResolvedVersions(
     )
 
     assertEquals(expected, actual.ignoreRevisions())
+}
+
+internal fun BuildResult.assertResolvedVersionsContains(
+    persistedPackageResolved: Path,
+    checkoutRepoDir: Path,
+    expectedPins: List<Pair<RepoRef, String>>,
+) {
+    assertFileExists(persistedPackageResolved, "Persisted Package.resolved should be generated")
+
+    val actual = parsePackageResolved(persistedPackageResolved.readText()).ignoreRevisions()
+
+    expectedPins.forEach { (repoRef, version) ->
+        assertCheckoutVersion(checkoutRepoDir, repoRef, version)
+
+        val expectedPin = SwiftPmPin(
+            identity = repoRef.name.lowercase(),
+            kind = "remoteSourceControl",
+            location = repoRef.url,
+            state = SwiftPmPinState(
+                revision = "<ignored>",
+                version = version,
+            )
+        )
+
+        assertTrue(
+            actual.pins.contains(expectedPin),
+            "Expected Package.resolved to contain pin: $expectedPin, but actual pins were: ${actual.pins}"
+        )
+    }
 }
 
 private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, version: String) {
@@ -497,7 +542,6 @@ internal class GitDaemon(
 ) : Closeable {
 
     private var process: Process? = null
-    private var logDumpThread: Thread? = null
 
     fun start(): GitDaemon {
         if (port == 0) {
@@ -516,9 +560,8 @@ internal class GitDaemon(
             baseDir.toAbsolutePath().toString(),
         ).redirectErrorStream(true)
 
-        val process = pb.start()
-        this.process = process
-        waitUntilReady(process)
+        process = pb.start()
+        waitUntilReady()
 
         return this
     }
@@ -534,7 +577,10 @@ internal class GitDaemon(
         }
     }
 
-    private fun waitUntilReady(process: Process) {
+    private var logDumpThread: Thread? = null
+    fun waitUntilReady() {
+        val process = this.process
+        if (process == null) error("...")
         if (!process.isAlive) error("Git daemon process is not alive")
 
         val sema = Semaphore(0)

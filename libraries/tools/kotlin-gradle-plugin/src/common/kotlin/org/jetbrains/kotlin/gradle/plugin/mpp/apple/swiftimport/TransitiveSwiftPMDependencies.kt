@@ -11,5 +11,7 @@ import java.io.Serializable
 internal value class SwiftPMDependencyIdentifier(val identifier: String) : Serializable
 
 internal data class TransitiveSwiftPMDependencies(
+    // project.path to SwiftPMImportMetadata()
+    // shared__org_jetbrains_coroutines to SwiftPMImportMetadata()
     val metadataByDependencyIdentifier: Map<SwiftPMDependencyIdentifier, SwiftPMImportMetadata>
 ) : Serializable

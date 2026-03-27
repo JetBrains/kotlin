@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.gradle.apple
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.*
-import kotlin.test.*
 
 
 @OsCondition(
@@ -24,7 +24,7 @@ import kotlin.test.*
 @DisplayName("SwiftPM import Persistent Package.resolved integration tests")
 @NativeGradlePluginTests
 @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
-class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
+class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
 
     /**
      * Verifies that resolving remote SwiftPM git packages writes a Package.resolved file at the project project directory.
@@ -33,7 +33,9 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
     @GradleTest
     fun `fetchSyntheticImportProjectPackages writes Package_resolved at project directory when remote git packages are resolved`(version: GradleVersion) {
         project("empty", version) {
-            withLockFileFixture {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
                 val repoAName = "TestPackageA"
                 val repoBName = "TestPackageB"
 
@@ -51,25 +53,28 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                         swiftPackage(
                             url = url(repoB.url), version = from("1.0.0"), products = listOf(product(repoB.name))
                         )
+
+                        packageResolvedSynchronization = noSynchronization()
+
                     }
 
                 }
 
-                assertFileNotExists(projectDirectoryPackageResolved)
+                assertFileNotExists(persistedPackageResolvedSyncPath)
 
                 build("fetchSyntheticImportProjectPackages") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repoA to "1.0.0",
                             repoB to "1.0.0",
                         )
                     )
 
-                    //because no lock file exists at the beginning
-                    assertTasksSkipped(":${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME}")
+                    //because we now also delete the synthetic package resolved file, if there is not persisted Package.resolved
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
 
                     // after creation
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
             }
         }
@@ -84,7 +89,9 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
         version: GradleVersion,
     ) {
         project("empty", version) {
-            withLockFileFixture {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
                 val repoName = "TestPackage"
 
                 createRepo(repoName, listOf("1.0.0", "1.0.1"))
@@ -96,23 +103,27 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                         swiftPackage(
                             url = url(repo.url), version = from("1.0.0"), products = listOf(product(repo.name))
                         )
+
+                        packageResolvedSynchronization = noSynchronization()
                     }
                 }
 
-                assertFileNotExists(projectDirectoryPackageResolved)
+                assertFileNotExists(persistedPackageResolvedSyncPath)
 
                 build("fetchSyntheticImportProjectPackages") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath,
+                        projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        listOf(
                             repo to "1.0.1",
                         )
                     )
 
-                    //because no lock file exists at the beginning
-                    assertTasksSkipped(":${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME}")
+                    //because we now also delete the synthetic package resolved file, if there is not persisted Package.resolved
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
 
                     // after creation
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
             }
         }
@@ -128,7 +139,9 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
     ) {
 
         project("empty", version) {
-            withLockFileFixture {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
                 val repoName = "TestPackage"
 
                 createRepo(repoName, listOf("1.0.0"))
@@ -140,33 +153,34 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                         swiftPackage(
                             url = url(repo.url), version = from("1.0.0"), products = listOf(product(repo.name))
                         )
+
+                        packageResolvedSynchronization = noSynchronization()
                     }
                 }
                 build("fetchSyntheticImportProjectPackages") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repo to "1.0.0",
                         )
                     )
 
-                    //because no lock file exists at the beginning
-                    assertTasksSkipped(":${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
 
                     // after creation
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
 
                 releaseTag(repoName, "1.0.1")
 
                 build("fetchSyntheticImportProjectPackages") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repo to "1.0.0",
                         )
                     )
 
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
 
             }
@@ -180,12 +194,14 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
      */
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
-    fun `fetchSyntheticImportProjectPackages project directory Package_resolve transitively includes swiftPM packages of subproject depedencies`(
+    fun `fetchSyntheticImportProjectPackages project directory Package_resolve transitively includes swiftPM packages of subproject dependencies`(
         version: GradleVersion,
     ) {
 
         project("empty", version) {
-            withLockFileFixture {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
 
                 val subProjectPackageName = "TestSubPackage"
                 createRepo(subProjectPackageName, listOf("1.0.0"))
@@ -202,6 +218,8 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                                 swiftPackage(
                                     url = url(repoSub.url), version = from("1.0.0"), products = listOf(product(repoSub.name))
                                 )
+
+                                packageResolvedSynchronization = noSynchronization()
                             }
                         }
                     }
@@ -217,6 +235,9 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                         swiftPackage(
                             url = url(repoMain.url), version = from("1.0.0"), products = listOf(product(repoMain.name))
                         )
+
+                        packageResolvedSynchronization = noSynchronization()
+
                     }
                 }
 
@@ -225,14 +246,14 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
 
                 build("fetchSyntheticImportProjectPackages") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repoMain to "1.0.0",
                             repoSub to "1.0.0",
                         )
                     )
 
-                    assertTasksSkipped(":${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
             }
         }
@@ -248,7 +269,9 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
         version: GradleVersion,
     ) {
         project("empty", version) {
-            withLockFileFixture {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
                 val repoName = "TestPackage"
 
                 createRepo(repoName, listOf("1.0.0"))
@@ -260,12 +283,14 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                         swiftPackage(
                             url = url(repo.url), version = from("1.0.0"), products = listOf(product(repo.name))
                         )
+
+                        packageResolvedSynchronization = noSynchronization()
                     }
                 }
 
                 build("fetchSyntheticImportProjectPackages") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repo to "1.0.0",
                         )
                     )
@@ -276,7 +301,7 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                 /**
                  * No pinned versions anymore, so the project directory Package_resolved should be deleted to allow picking up the newer tag on the next run.
                  */
-                projectDirectoryPackageResolved.deleteIfExists()
+                persistedPackageResolvedSyncPath.deleteIfExists()
 
 
                 // FIXME: KT-85078 This clean step shouldn't be required
@@ -284,18 +309,18 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                     "clean"
                 )
 
-                assertFileNotExists(projectDirectoryPackageResolved, "Project directory Package.resolved should be deleted")
+                assertFileNotExists(persistedPackageResolvedSyncPath, "Project directory Package.resolved should be deleted")
 
 
                 build("fetchSyntheticImportProjectPackages") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repo to "1.0.1",
                         )
                     )
 
-                    assertTasksSkipped(":${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME}")
+                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
 
             }
@@ -311,7 +336,9 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
     fun `fetchSyntheticImportProjectPackages locks versions in Package_resolved when version key changes from exact to from`(version: GradleVersion) {
 
         project("empty", version) {
-            withLockFileFixture {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
 
                 val useFromVersionKey = "useFromVersionKey"
                 val useExactVersionKey = "useExactVersionKey"
@@ -328,6 +355,8 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                             swiftPackage(
                                 url = url(repo.url), version = from("1.0.0"), products = listOf(product(repoName))
                             )
+
+                            packageResolvedSynchronization = noSynchronization()
                         }
                     }
                     if (project.hasProperty(useExactVersionKey)) {
@@ -335,12 +364,14 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                             swiftPackage(
                                 url = url(repo.url), version = exact("1.0.0"), products = listOf(product(repoName))
                             )
+
+                            packageResolvedSynchronization = noSynchronization()
                         }
                     }
                 }
                 build("fetchSyntheticImportProjectPackages", "-P${useExactVersionKey}=true") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repo to "1.0.0",
                         )
                     )
@@ -348,13 +379,13 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
 
                 build("fetchSyntheticImportProjectPackages", "-P${useFromVersionKey}=true") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repo to "1.0.0",
                         )
                     )
 
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
 
             }
@@ -369,7 +400,9 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
     fun `fetchSyntheticImportProjectPackages updates versions in Package_resolved when version key changes from from to exact`(version: GradleVersion) {
 
         project("empty", version) {
-            withLockFileFixture {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
 
                 val useFromVersionKey = "useFromVersionKey"
                 val useExactVersionKey = "useExactVersionKey"
@@ -386,6 +419,7 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                             swiftPackage(
                                 url = url(repo.url), version = from("1.0.0"), products = listOf(product(repoName))
                             )
+                            packageResolvedSynchronization = noSynchronization()
                         }
                     }
                     if (project.hasProperty(useExactVersionKey)) {
@@ -393,12 +427,13 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                             swiftPackage(
                                 url = url(repo.url), version = exact("1.0.0"), products = listOf(product(repoName))
                             )
+                            packageResolvedSynchronization = noSynchronization()
                         }
                     }
                 }
                 build("fetchSyntheticImportProjectPackages", "-P${useFromVersionKey}=true") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repo to "1.0.1",
                         )
                     )
@@ -406,13 +441,13 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
 
                 build("fetchSyntheticImportProjectPackages", "-P${useExactVersionKey}=true") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repo to "1.0.0",
                         )
                     )
 
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
 
                 }
             }
@@ -429,7 +464,9 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
     ) {
 
         project("empty", version) {
-            withLockFileFixture {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
                 val repoName = "TestPackage"
 
                 createRepo(repoName, listOf("1.0.0"))
@@ -441,11 +478,12 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                         swiftPackage(
                             url = url(repo.url), version = from("1.0.0"), products = listOf(product(repoName))
                         )
+                        packageResolvedSynchronization = noSynchronization()
                     }
                 }
                 build("fetchSyntheticImportProjectPackages") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
                         listOf(
                             repo to "1.0.0",
                         )
@@ -458,16 +496,16 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                     "clean"
                 )
 
-                assertFileExists(projectDirectoryPackageResolved, "Project directory Package.resolved should still exist")
+                assertFileExists(persistedPackageResolvedSyncPath, "Project directory Package.resolved should still exist")
 
                 build("cinteropSwiftPMImportIosArm64") {
                     assertResolvedVersions(
-                        projectDirectoryPackageResolved,
+                        persistedPackageResolvedSyncPath,
                         projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
                             repo to "1.0.0",
                         )
                     )
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
                 }
             }
         }

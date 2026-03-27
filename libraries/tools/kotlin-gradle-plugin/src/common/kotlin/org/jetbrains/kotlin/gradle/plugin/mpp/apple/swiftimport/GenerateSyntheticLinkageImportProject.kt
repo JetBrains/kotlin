@@ -93,6 +93,14 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         directlyImportedDependencies.set(swiftPMImportExtension.swiftPMDependencies)
     }
 
+    /**
+     * Configures this task to generate a package that is built only from
+     * `dependencyIdentifierToImportedSwiftPMDependencies`.
+     */
+    fun useOnlyTransitiveImportedDependencies() {
+        directlyImportedDependencies.set(emptySet())
+    }
+
     @TaskAction
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
         failOnNonIdempotentChangesIfNeeded {
@@ -405,6 +413,12 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
             TASK_NAME,
             "forCinteropsAndLdDump",
         )
+
+        fun syntheticUmbrellaPackageGenerationTaskName(identifier: String): String =
+            lowerCamelCaseName(
+                "generateUmbrellaPackageIdentifierBasedResolutionFor",
+                identifier,
+            )
 
         const val IOS_DEPLOYMENT_TARGET_DEFAULT = "15.0"
         const val MACOS_DEPLOYMENT_TARGET_DEFAULT = "10.15"

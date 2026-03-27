@@ -65,7 +65,7 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : DefaultTask() {
     protected abstract val discoverModulesImplicitly: Property<Boolean>
 
     @get:OutputFile
-    protected val metadataFile: Provider<RegularFile> = project.layout.buildDirectory.file("kotlin/swiftPMDependenciesMetadata")
+    internal val metadataFile: Provider<RegularFile> = project.layout.buildDirectory.file("kotlin/swiftPMDependenciesMetadata")
 
     fun configureWithExtension(swiftPMImportExtension: SwiftPMImportExtension) {
         iosDeploymentVersion.set(swiftPMImportExtension.iosMinimumDeploymentTarget)

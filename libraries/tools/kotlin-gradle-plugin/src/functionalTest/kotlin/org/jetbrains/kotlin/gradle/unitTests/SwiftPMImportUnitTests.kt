@@ -402,10 +402,10 @@ class SwiftPMImportUnitTests {
         project.evaluate()
 
         val fetchTask = project.tasks.findByName(FetchSyntheticImportProjectPackages.TASK_NAME)
-        val syncLockFileToPSyntheticSwiftPMPackageTask = project.tasks.findByName(SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME)
+        val syncLockFileToPSyntheticSwiftPMPackageTask = project.tasks.findByName(SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME)
 
         assertNotNull(fetchTask, "${FetchSyntheticImportProjectPackages.TASK_NAME} should be registered")
-        assertNotNull(syncLockFileToPSyntheticSwiftPMPackageTask, "${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME} should be registered")
+        assertNotNull(syncLockFileToPSyntheticSwiftPMPackageTask, "${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME} should be registered")
 
         fetchTask.assertDependsOn(
             syncLockFileToPSyntheticSwiftPMPackageTask
@@ -426,12 +426,12 @@ class SwiftPMImportUnitTests {
 
         val fetchTask = project.tasks.findByName(FetchSyntheticImportProjectPackages.TASK_NAME)
         val syncLockFileToProjectDirectoryTask =
-            project.tasks.findByName(SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME)
+            project.tasks.findByName(SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME)
 
         assertNotNull(fetchTask, "${FetchSyntheticImportProjectPackages.TASK_NAME} should be registered")
         assertNotNull(
             syncLockFileToProjectDirectoryTask,
-            "${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME} should be registered"
+            "${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME} should be registered"
         )
 
         syncLockFileToProjectDirectoryTask.assertDependsOn(
