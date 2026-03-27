@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.services
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
@@ -16,7 +17,9 @@ import org.jetbrains.kotlin.test.services.isLeafModuleInMppGraph
 import java.io.File
 
 class ParcelizeUtilSourcesProvider(testServices: TestServices, baseDir: String = ".") : AdditionalSourceProvider(testServices) {
-    private val libraryPath = "$baseDir/plugins/parcelize/parcelize-compiler/testData/boxLib.kt"
+    private val libraryPath = ForTestCompileRuntime.transformTestDataPath(
+        "$baseDir/plugins/parcelize/parcelize-compiler/testData/boxLib.kt".removePrefix("./")
+    )
 
     override fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,
@@ -27,6 +30,6 @@ class ParcelizeUtilSourcesProvider(testServices: TestServices, baseDir: String =
 
         // Only provide the additional files for a JVM only module. In multiplatform tests, this ensures that the
         // additional files are only provided once and in the right module.
-        return if (module.isLeafModuleInMppGraph(testModuleStructure)) listOf(File(libraryPath).toTestFile()) else listOf()
+        return if (module.isLeafModuleInMppGraph(testModuleStructure)) listOf(libraryPath.toTestFile()) else listOf()
     }
 }

@@ -31,18 +31,13 @@ private fun getLibraryJar(classToDetect: String): File? = try {
 class ParcelizeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (ENABLE_PARCELIZE !in module.directives) return
-        val libPath = PathUtil.kotlinPathsForCompiler.libPath
-        val runtimeLibrary = File(libPath, PathUtil.PARCELIZE_RUNTIME_PLUGIN_JAR_NAME)
+        val runtimeLibraries = System.getProperty("parcelizeRuntime.classpath")
+            .split(File.pathSeparator)
+            .map { File(it) }
         val androidApiJar = KtTestUtil.findAndroidApiJar()
-        val kotlinxCollectionsImmutable = getLibraryJar(kotlinxImmutable("ImmutableList"))
-            ?: error("kotlinx-collections-immutable is not found on classpath")
 
         configuration.addJvmClasspathRoots(
-            listOf(
-                runtimeLibrary,
-                androidApiJar,
-                kotlinxCollectionsImmutable
-            )
+            runtimeLibraries + androidApiJar
         )
 
         // Hard coding a name of an additional annotation for parcelize. Test that use this, need to provide the

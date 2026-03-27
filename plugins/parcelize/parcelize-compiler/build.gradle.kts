@@ -8,6 +8,7 @@ plugins {
     id("android-sdk-provisioner")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 repositories {
@@ -125,36 +126,33 @@ val prepareRobolectricDependencies by tasks.registering(Copy::class) {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(parcelizeRuntimeForTests)
-        dependsOn(robolectricClasspath)
-        dependsOn(robolectricDependency)
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
+        inputs.files(prepareRobolectricDependencies.map { it.outputs })
+            .withNormalizer(ClasspathNormalizer::class)
+            .withPropertyName("prepareRobolectricDependenciesOutput")
 
-        dependsOn(prepareRobolectricDependencies)
-        dependsOn(":dist")
-        workingDir = rootDir
         androidSdkProvisioner {
             provideToThisTaskAsSystemProperty(ProvisioningType.PLATFORM_JAR)
         }
 
-        val parcelizeRuntimeForTestsConf: FileCollection = parcelizeRuntimeForTests
-        val robolectricClasspathConf: FileCollection = robolectricClasspath
-        val robolectricDependencyDir: Provider<Directory> = robolectricDependencyDir
-        val layoutLibConf: FileCollection = layoutLib
-        val layoutLibApiConf: FileCollection = layoutLibApi
-        doFirst {
-            systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTestsConf.asPath)
-            systemProperty("robolectric.classpath", robolectricClasspathConf.asPath)
+        addClasspathProperty(parcelizeRuntimeForTests, "parcelizeRuntime.classpath")
+        addClasspathProperty(robolectricClasspath, "robolectric.classpath")
+        addClasspathProperty(layoutLib, "layoutLib.path")
+        addClasspathProperty(layoutLibApi, "layoutLibApi.path")
 
+        val robolectricDependencyDir: Provider<Directory> = robolectricDependencyDir
+        doFirst {
             systemProperty("robolectric.offline", "true")
             systemProperty("robolectric.dependency.dir", robolectricDependencyDir.get().asFile)
-
-            systemProperty("layoutLib.path", layoutLibConf.singleFile.canonicalPath)
-            systemProperty("layoutLibApi.path", layoutLibApiConf.singleFile.canonicalPath)
         }
     }
 
     testGenerator("org.jetbrains.kotlin.parcelize.test.TestGeneratorKt")
 
+    testData(isolated, "testData")
+
     withJvmStdlibAndReflect()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withScriptRuntime()
 }

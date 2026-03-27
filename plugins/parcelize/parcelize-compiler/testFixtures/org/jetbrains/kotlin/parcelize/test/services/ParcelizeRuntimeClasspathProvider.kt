@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_P
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -108,7 +108,7 @@ class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeCla
 
     override fun runtimeClassPaths(module: TestModule): List<File> {
         if (ENABLE_PARCELIZE !in module.directives) return emptyList()
-        val kotlinRuntimeJar = PathUtil.kotlinPathsForIdeaPlugin.stdlibPath
+        val kotlinRuntimeJar = testServices.standardLibrariesPathProvider.runtimeJarForTests()
 
         val robolectricClasspath = System.getProperty("robolectric.classpath")
             ?: throw RuntimeException("Unable to get a valid classpath from 'robolectric.classpath' property, please set it accordingly")
