@@ -70,38 +70,37 @@ fun generateValuesFunction(
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirNamedFunction {
     val sourceElement = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
-    return buildNamedFunction {
-        source = sourceElement
-        this.origin = origin
-        this.moduleData = moduleData
-        val returnTypeRef = buildResolvedTypeRef {
-            source = sourceElement
-            coneType = ConeClassLikeTypeImpl(
-                StandardClassIds.Array.toLookupTag(),
-                arrayOf(
-                    ConeClassLikeTypeImpl(
-                        classSymbol.toLookupTag(),
-                        ConeTypeProjection.EMPTY_ARRAY,
-                        isMarkedNullable = false
-                    )
-                ),
-                isMarkedNullable = false
-            )
-        }
-
-        this.returnTypeRef = returnTypeRef
-        name = ENUM_VALUES
-        this.status = createStatus(classStatus).apply {
+    val returnTypeRef = buildResolvedTypeRef(
+        source = sourceElement,
+        coneType = ConeClassLikeTypeImpl(
+            StandardClassIds.Array.toLookupTag(),
+            arrayOf(
+                ConeClassLikeTypeImpl(
+                    classSymbol.toLookupTag(),
+                    ConeTypeProjection.EMPTY_ARRAY,
+                    isMarkedNullable = false
+                )
+            ),
+            isMarkedNullable = false
+        )
+    )
+    return buildNamedFunction(
+        source = sourceElement,
+        origin = origin,
+        moduleData = moduleData,
+        returnTypeRef = returnTypeRef,
+        name = ENUM_VALUES,
+        status = createStatus(classStatus).apply {
             isStatic = true
             isExpect = makeExpect
-        }
-        isLocal = classStatus.visibility == Visibilities.Local
-        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
-        resolvePhase = classResolvePhase
+        },
+        isLocal = classStatus.visibility == Visibilities.Local,
+        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES)),
+        resolvePhase = classResolvePhase,
         body = buildEmptyExpressionBlock().also {
             it.replaceConeTypeOrNull(returnTypeRef.coneType)
-        }
-    }.apply {
+        },
+    ).apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
     }
 }
@@ -138,52 +137,54 @@ fun generateValueOfFunction(
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirNamedFunction {
     val sourceElement = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
-    return buildNamedFunction {
-        source = sourceElement
-        this.origin = origin
-        this.moduleData = moduleData
-        val returnTypeRef = buildResolvedTypeRef {
-            source = sourceElement
-            coneType = ConeClassLikeTypeImpl(
-                classSymbol.toLookupTag(),
-                emptyArray(),
-                isMarkedNullable = false
-            )
-        }
-        this.returnTypeRef = returnTypeRef
-        name = ENUM_VALUE_OF
-
+    val returnTypeRef = buildResolvedTypeRef(
+        source = sourceElement,
+        coneType = ConeClassLikeTypeImpl(
+            classSymbol.toLookupTag(),
+            emptyArray(),
+            isMarkedNullable = false
+        ),
+    )
+    val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
+    return buildNamedFunction(
+        source = sourceElement,
+        origin = origin,
+        moduleData = moduleData,
+        returnTypeRef = returnTypeRef,
+        name = ENUM_VALUE_OF,
         status = createStatus(classStatus).apply {
             isStatic = true
             isExpect = makeExpect
-        }
-        isLocal = classStatus.visibility == Visibilities.Local
-        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
-        valueParameters += buildValueParameter vp@{
-            source = sourceElement
-            containingDeclarationSymbol = this@buildNamedFunction.symbol
-            this.origin = origin
-            this.moduleData = moduleData
-            this.returnTypeRef = buildResolvedTypeRef {
-                source = sourceElement
-                coneType = ConeClassLikeTypeImpl(
-                    StandardClassIds.String.toLookupTag(),
-                    emptyArray(),
-                    isMarkedNullable = false
-                )
-            }
-            name = DEFAULT_VALUE_PARAMETER
-            this@vp.symbol = FirValueParameterSymbol()
-            isCrossinline = false
-            isNoinline = false
-            isVararg = false
-            resolvePhase = classResolvePhase
-        }
-        resolvePhase = classResolvePhase
+        },
+        isLocal = classStatus.visibility == Visibilities.Local,
+        symbol = symbol,
+        valueParameters = mutableListOf(
+            buildValueParameter(
+                source = sourceElement,
+                containingDeclarationSymbol = symbol,
+                origin = origin,
+                moduleData = moduleData,
+                returnTypeRef = buildResolvedTypeRef(
+                    source = sourceElement,
+                    coneType = ConeClassLikeTypeImpl(
+                        StandardClassIds.String.toLookupTag(),
+                        emptyArray(),
+                        isMarkedNullable = false
+                    ),
+                ),
+                name = DEFAULT_VALUE_PARAMETER,
+                symbol = FirValueParameterSymbol(),
+                isCrossinline = false,
+                isNoinline = false,
+                isVararg = false,
+                resolvePhase = classResolvePhase,
+            )
+        ),
+        resolvePhase = classResolvePhase,
         body = buildEmptyExpressionBlock().also {
             it.replaceConeTypeOrNull(returnTypeRef.coneType)
-        }
-    }.apply {
+        },
+    ).apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
     }
 }
@@ -220,34 +221,36 @@ fun generateEntriesGetter(
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirProperty {
     val sourceElement = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
-    return buildProperty {
-        source = sourceElement
-        isVar = false
-        this.origin = origin
-        this.moduleData = moduleData
-        returnTypeRef = buildResolvedTypeRef {
-            source = sourceElement
-            coneType = ConeClassLikeTypeImpl(
-                StandardClassIds.EnumEntries.toLookupTag(),
-                arrayOf(
-                    ConeClassLikeTypeImpl(
-                        classSymbol.toLookupTag(),
-                        ConeTypeProjection.EMPTY_ARRAY,
-                        isMarkedNullable = false
-                    )
-                ),
-                isMarkedNullable = false
-            )
-        }
-        name = ENUM_ENTRIES
-        this.status = createStatus(classStatus).apply {
+    val returnTypeRef = buildResolvedTypeRef(
+        source = sourceElement,
+        coneType = ConeClassLikeTypeImpl(
+            StandardClassIds.EnumEntries.toLookupTag(),
+            arrayOf(
+                ConeClassLikeTypeImpl(
+                    classSymbol.toLookupTag(),
+                    ConeTypeProjection.EMPTY_ARRAY,
+                    isMarkedNullable = false
+                )
+            ),
+            isMarkedNullable = false
+        ),
+    )
+    val symbol = FirRegularPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
+    return buildProperty(
+        source = sourceElement,
+        isVar = false,
+        origin = origin,
+        moduleData = moduleData,
+        returnTypeRef = returnTypeRef,
+        name = ENUM_ENTRIES,
+        status = createStatus(classStatus).apply {
             isStatic = true
             isExpect = makeExpect
-        }
-        isLocal = classStatus.visibility == Visibilities.Local
+        },
+        isLocal = classStatus.visibility == Visibilities.Local,
 
-        symbol = FirRegularPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
-        resolvePhase = classResolvePhase
+        symbol = symbol,
+        resolvePhase = classResolvePhase,
         getter = FirDefaultPropertyGetter(
             source = sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
             moduleData = moduleData,
@@ -261,8 +264,8 @@ fun generateEntriesGetter(
             this.status = createStatus(classStatus).apply {
                 isStatic = true
             }
-        }
-    }.apply {
+        },
+    ).apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
         @OptIn(FirImplementationDetail::class)
         hasBackingFieldAttr = false

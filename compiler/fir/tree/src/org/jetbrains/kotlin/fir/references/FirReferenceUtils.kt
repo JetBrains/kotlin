@@ -87,8 +87,8 @@ fun FirReference.isError(): Boolean {
 }
 
 fun buildErrorNamedReferenceWithNoName(diagnostic: ConeDiagnostic, source: KtSourceElement? = null): FirErrorNamedReference =
-    buildErrorNamedReference {
-        this.diagnostic = diagnostic
-        this.source = source
-        this.name = Name.special("<${diagnostic.reason}>")
-    }
+    buildErrorNamedReference(
+        diagnostic = diagnostic,
+        source = source,
+        name = Name.special("<${diagnostic.reason}>"),
+    )

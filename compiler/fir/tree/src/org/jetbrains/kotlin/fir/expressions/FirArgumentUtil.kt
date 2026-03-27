@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListForErrorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListImpl
 
-fun buildUnaryArgumentList(argument: FirExpression): FirArgumentList = buildArgumentList {
-    arguments += argument
-}
+fun buildUnaryArgumentList(argument: FirExpression): FirArgumentList = buildArgumentList(
+    arguments = mutableListOf(argument)
+)
 
-fun buildBinaryArgumentList(left: FirExpression, right: FirExpression): FirArgumentList = buildArgumentList {
-    arguments += left
-    arguments += right
-}
+fun buildBinaryArgumentList(left: FirExpression, right: FirExpression): FirArgumentList = buildArgumentList(
+    arguments = mutableListOf(left, right)
+)
 
 fun buildResolvedArgumentList(
     original: FirArgumentList?,

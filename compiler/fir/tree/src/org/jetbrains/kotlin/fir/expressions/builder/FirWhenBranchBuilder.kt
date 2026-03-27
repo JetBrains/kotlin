@@ -29,16 +29,16 @@ fun buildWhenBranch(
     result: FirBlock,
 ): FirWhenBranch {
     return if (hasGuard) {
-        buildGuardedWhenBranch {
-            this.source = source
-            this.condition = condition
-            this.result = result
-        }
+        buildGuardedWhenBranch(
+            source = source,
+            condition = condition,
+            result = result,
+        )
     } else {
-        buildRegularWhenBranch {
-            this.source = source
-            this.condition = condition
-            this.result = result
-        }
+        buildRegularWhenBranch(
+            source = source,
+            condition = condition,
+            result = result,
+        )
     }
 }

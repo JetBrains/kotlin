@@ -29,15 +29,15 @@ import org.jetbrains.kotlin.name.SpecialNames
 fun FirVariable.toQualifiedAccess(
     fakeSource: KtSourceElement? = source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess),
     typeRef: FirTypeRef = returnTypeRef
-): FirQualifiedAccessExpression = buildPropertyAccessExpression {
-    source = fakeSource
-    calleeReference = buildResolvedNamedReference {
-        source = fakeSource
-        name = this@toQualifiedAccess.name
-        resolvedSymbol = this@toQualifiedAccess.symbol
-    }
-    this.coneTypeOrNull = typeRef.coneTypeOrNull
-}
+): FirQualifiedAccessExpression = buildPropertyAccessExpression(
+    source = fakeSource,
+    calleeReference = buildResolvedNamedReference(
+        source = fakeSource,
+        name = this@toQualifiedAccess.name,
+        resolvedSymbol = this@toQualifiedAccess.symbol,
+    ),
+    coneTypeOrNull = typeRef.coneTypeOrNull
+)
 
 fun generateTemporaryVariable(
     moduleData: FirModuleData,
@@ -48,23 +48,21 @@ fun generateTemporaryVariable(
     extractedAnnotations: Collection<FirAnnotation>? = null,
     origin: FirDeclarationOrigin? = null
 ): FirProperty =
-    buildProperty {
-        this.source = source
-        this.moduleData = moduleData
-        this.origin = origin ?: FirDeclarationOrigin.Source
-        returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
-        this.name = name
-        this.initializer = initializer
-        symbol = FirLocalPropertySymbol()
-        isVar = false
-        status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
-        isLocal = true
-        if (extractedAnnotations != null) {
-            // LT extracts annotations ahead.
-            // PSI extracts annotations on demand. Use a similar util in [PsiConversionUtils]
-            annotations.addAll(extractedAnnotations)
-        }
-    }
+    buildProperty(
+        source = source,
+        moduleData = moduleData,
+        origin = origin ?: FirDeclarationOrigin.Source,
+        returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource,
+        name = name,
+        initializer = initializer,
+        symbol = FirLocalPropertySymbol(),
+        isVar = false,
+        status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local),
+        isLocal = true,
+        // LT extracts annotations ahead.
+        // PSI extracts annotations on demand. Use a similar util in [PsiConversionUtils]
+        annotations = (extractedAnnotations ?: listOf()).toMutableList(),
+)
 
 fun generateExplicitReceiverTemporaryVariable(
     session: FirSession,

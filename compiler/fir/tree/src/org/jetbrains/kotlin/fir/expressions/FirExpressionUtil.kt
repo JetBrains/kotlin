@@ -46,10 +46,10 @@ fun <T> buildConstOrErrorExpression(
 ): FirExpression {
     return value?.let {
         buildLiteralExpression(source, kind, it, setType = false)
-    } ?: buildErrorExpression {
-        this.source = source
-        this.diagnostic = ConeSimpleDiagnostic("Incorrect $literalType: $literalValue", diagnosticKind)
-    }
+    } ?: buildErrorExpression(
+        source = source,
+        diagnostic = ConeSimpleDiagnostic("Incorrect $literalType: $literalValue", diagnosticKind),
+    )
 }
 
 inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
@@ -84,10 +84,10 @@ inline val FirCall.resolvedArgumentMappingIncludingContextArguments: LinkedHashM
     }
 
 fun buildErrorLoop(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErrorLoop {
-    return buildErrorLoop {
-        this.source = source
-        this.diagnostic = diagnostic
-    }.also {
+    return buildErrorLoop(
+        source = source,
+        diagnostic = diagnostic,
+    ).also {
         it.block.replaceConeTypeOrNull(ConeErrorType(diagnostic))
     }
 }
@@ -97,12 +97,12 @@ fun buildErrorExpression(
     diagnostic: ConeDiagnostic,
     element: FirElement? = null
 ): FirErrorExpression {
-    return buildErrorExpression {
-        this.source = source
-        this.diagnostic = diagnostic
-        this.expression = element as? FirExpression
-        this.nonExpressionElement = element.takeUnless { it is FirExpression }
-    }
+    return buildErrorExpression(
+        source = source,
+        diagnostic = diagnostic,
+        expression = element as? FirExpression,
+        nonExpressionElement = element.takeUnless { it is FirExpression },
+    )
 }
 
 fun <D> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, dataProducer: (Int) -> TransformData<D>): FirBlock {

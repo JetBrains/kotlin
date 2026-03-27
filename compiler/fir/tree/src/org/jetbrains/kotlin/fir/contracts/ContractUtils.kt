@@ -15,18 +15,14 @@ val FirContractDescription.effects: List<FirEffectDeclaration>?
     get() = (this as? FirResolvedContractDescription)?.effects
 
 fun ConeEffectDeclaration.toFirElement(source: KtSourceElement? = null): FirEffectDeclaration =
-    buildEffectDeclaration {
-        if (source != null) {
-            this.source = source
-        }
-        effect = this@toFirElement
-    }
+    buildEffectDeclaration(
+        source = source,
+        effect = this@toFirElement,
+    )
 
 
 fun ConeContractDescriptionElement.toFirElement(source: KtSourceElement? = null): FirContractElementDeclaration =
-    buildContractElementDeclaration {
-        if (source != null) {
-            this.source = source
-        }
-        effect = this@toFirElement
-    }
+    buildContractElementDeclaration(
+        source = source,
+        effect = this@toFirElement,
+    )

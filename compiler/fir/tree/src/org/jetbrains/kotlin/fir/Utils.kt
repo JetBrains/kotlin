@@ -79,18 +79,18 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
             typeRef,
             source = newSource,
         )
-        is FirDynamicTypeRef -> buildDynamicTypeRef {
-            source = newSource
-            isMarkedNullable = typeRef.isMarkedNullable
-            annotations += typeRef.annotations
-        }
+        is FirDynamicTypeRef -> buildDynamicTypeRef(
+            source = newSource,
+            isMarkedNullable = typeRef.isMarkedNullable,
+            annotations = typeRef.annotations.toMutableList(),
+        )
         is FirImplicitBuiltinTypeRef -> typeRef.withNewSource(newSource)
-        is FirIntersectionTypeRef -> buildIntersectionTypeRef {
-            source = newSource
-            isMarkedNullable = typeRef.isMarkedNullable
-            leftType = typeRef.leftType
-            rightType = typeRef.rightType
-        }
+        is FirIntersectionTypeRef -> buildIntersectionTypeRef(
+            source = newSource,
+            isMarkedNullable = typeRef.isMarkedNullable,
+            leftType = typeRef.leftType,
+            rightType = typeRef.rightType,
+        )
         else -> TODO("Not implemented for ${typeRef::class}")
     } as R
 }
@@ -427,21 +427,21 @@ fun FirOperation.toAugmentedAssignSourceKind(): KtFakeSourceElementKind.Desugare
 }
 
 fun buildWhenSubjectAccess(conditionSource: KtSourceElement, subjectVariable: FirVariable?): FirPropertyAccessExpression {
-    return buildWhenSubjectExpression {
-        source = conditionSource
+    return buildWhenSubjectExpression(
+        source = conditionSource,
         calleeReference = when (subjectVariable) {
-            null -> buildErrorNamedReference {
-                source = conditionSource.fakeElement(KtFakeSourceElementKind.UnresolvedWhenConditionSubject)
-                name = SpecialNames.WHEN_SUBJECT
-                diagnostic = ConeSimpleDiagnostic("No subject in when", DiagnosticKind.Other)
-            }
-            else -> buildResolvedNamedReference {
-                source = conditionSource.fakeElement(KtFakeSourceElementKind.WhenCondition)
-                resolvedSymbol = subjectVariable.symbol
-                name = subjectVariable.name
-            }
+            null -> buildErrorNamedReference(
+                source = conditionSource.fakeElement(KtFakeSourceElementKind.UnresolvedWhenConditionSubject),
+                name = SpecialNames.WHEN_SUBJECT,
+                diagnostic = ConeSimpleDiagnostic("No subject in when", DiagnosticKind.Other),
+            )
+            else -> buildResolvedNamedReference(
+                source = conditionSource.fakeElement(KtFakeSourceElementKind.WhenCondition),
+                resolvedSymbol = subjectVariable.symbol,
+                name = subjectVariable.name,
+            )
         }
-    }
+    )
 }
 
 fun ConeKotlinType.toFirResolvedTypeRef(
@@ -455,11 +455,11 @@ fun ConeKotlinType.toFirResolvedTypeRef(
             coneType = this@toFirResolvedTypeRef,
             delegatedTypeRef = delegatedTypeRef,
         )
-        else -> buildResolvedTypeRef {
-            this.source = source
-            this.coneType = this@toFirResolvedTypeRef
-            this.delegatedTypeRef = delegatedTypeRef
-        }
+        else -> buildResolvedTypeRef(
+            source = source,
+            coneType = this@toFirResolvedTypeRef,
+            delegatedTypeRef = delegatedTypeRef,
+        )
     }
 }
 
