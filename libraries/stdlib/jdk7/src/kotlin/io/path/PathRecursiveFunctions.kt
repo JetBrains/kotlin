@@ -211,8 +211,14 @@ public fun Path.copyToRecursively(
         // and iteratively resolving a file path starting from the `target`.
         val destination = if (source.fileSystem === target.fileSystem) {
             relativePath.fold(target) { acc, segment -> acc.resolve(segment) }
+        } else if (relativePath.nameCount > 0) {
+            val firstName = relativePath.getName(0).name
+            val trailingNames = Array(relativePath.nameCount - 1) {
+                relativePath.getName(it + 1).name
+            }
+            target.resolve(target.fileSystem.getPath(firstName, *trailingNames))
         } else {
-            relativePath.fold(target) { acc, segment -> acc.resolve(segment.name) }
+            target
         }
         if (!destination.normalize().startsWith(normalizedTarget)) {
             throw IllegalFileNameException(
