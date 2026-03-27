@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsIm
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl2
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.OUTPUT_DIRS
@@ -148,12 +149,27 @@ internal class JvmCompilationOperationImpl private constructor(
         dependenciesSnapshotFiles: List<Path>,
         shrunkClasspathSnapshot: Path,
     ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-        return JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
-            workingDirectory,
-            sourcesChanges,
-            dependenciesSnapshotFiles,
-            shrunkClasspathSnapshot
-        )
+        if (JvmSnapshotBasedIncrementalCompilationConfiguration::class.java.isInterface) {
+            @Suppress("DEPRECATION", "MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT", "MISSING_DEPENDENCY_SUPERCLASS_WARNING")
+            return JvmSnapshotBasedIncrementalCompilationConfigurationImpl2(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+                shrunkClasspathSnapshot,
+                org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl(
+                    Options(
+                        JvmSnapshotBasedIncrementalCompilationConfiguration::class,
+                    )
+                )
+            )
+        } else {
+            return JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+                shrunkClasspathSnapshot
+            )
+        }
     }
 
     override fun snapshotBasedIcConfigurationBuilder(

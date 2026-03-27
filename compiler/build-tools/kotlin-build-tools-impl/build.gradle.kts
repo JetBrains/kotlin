@@ -20,6 +20,7 @@ dependencies {
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(project(":kotlin-compiler-runner-unshaded"))
     implementation(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    implementation(project(":compiler:build-tools:kotlin-build-tools-future-impl")) { isTransitive = false }
     compileOnly(intellijCore())
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
