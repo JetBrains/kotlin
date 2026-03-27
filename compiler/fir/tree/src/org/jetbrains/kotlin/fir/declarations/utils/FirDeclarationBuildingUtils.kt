@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.fir.declarations.utils
 
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 fun FirTypeParameterBuilder.addDefaultBoundIfNecessary() {
+    addDefaultBoundIfNecessary(bounds, moduleData)
+}
+
+fun addDefaultBoundIfNecessary(bounds: MutableList<FirTypeRef>, moduleData: FirModuleData) {
     if (bounds.isEmpty()) {
         bounds += moduleData.session.builtinTypes.nullableAnyType
     }
