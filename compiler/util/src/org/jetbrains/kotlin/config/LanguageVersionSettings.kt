@@ -579,7 +579,7 @@ enum class LanguageFeature(
     ExplicitContextArguments(sinceVersion = null, issue = "KT-81684"),
     JvmInlineMultiFieldValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
-    ImplicitJvmExposeBoxed(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-73466"),
+    ImplicitJvmExposeBoxed(sinceVersion = KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-73466"),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308"),
     CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true),
     NameBasedDestructuring(sinceVersion = null, "KT-19627"),
