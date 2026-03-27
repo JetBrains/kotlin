@@ -21,21 +21,19 @@ object FirOptInMarkedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
-            val annotationClass = annotation.getAnnotationClassForOptInMarker(context.session) ?: continue
+            if (annotation.getAnnotationClassForOptInMarker(context.session) == null) continue
+
             val useSiteTarget = annotation.useSiteTarget
-            if ((declaration is FirPropertyAccessor && declaration.isGetter) || useSiteTarget == PROPERTY_GETTER) {
+            if (declaration is FirPropertyAccessor && declaration.isGetter) {
                 reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "getter")
             }
-            if (useSiteTarget == SETTER_PARAMETER ||
-                (useSiteTarget != PROPERTY && useSiteTarget != PROPERTY_SETTER && declaration is FirValueParameter &&
-                        KotlinTarget.VALUE_PARAMETER in annotationClass.getAllowedAnnotationTargets(context.session))
-            ) {
+            if (declaration is FirValueParameter) {
                 reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter")
             }
             if (declaration is FirProperty && declaration.symbol is FirLocalPropertySymbol) {
                 reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "variable")
             }
-            if (useSiteTarget == FIELD || useSiteTarget == PROPERTY_DELEGATE_FIELD) {
+            if (declaration is FirBackingField || useSiteTarget == PROPERTY_DELEGATE_FIELD) {
                 reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "field")
             }
         }

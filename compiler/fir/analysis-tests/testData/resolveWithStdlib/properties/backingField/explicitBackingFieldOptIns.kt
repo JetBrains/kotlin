@@ -9,7 +9,7 @@ val numbersA: List<Int>
     field = mutableListOf()
 
 val numbersB: List<Int>
-    @ExperimentalAPI
+    <!OPT_IN_MARKER_ON_WRONG_TARGET!>@ExperimentalAPI<!>
     field = mutableListOf()
 
 fun test() {
@@ -19,7 +19,7 @@ fun test() {
 
 object MyObject {
     val x: Number
-        @ExperimentalAPI
+        <!OPT_IN_MARKER_ON_WRONG_TARGET!>@ExperimentalAPI<!>
         field = 123.4
 }
 
