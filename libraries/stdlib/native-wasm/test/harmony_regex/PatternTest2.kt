@@ -797,19 +797,28 @@ class PatternTest2 {
 
     @Test fun testCapturingGroups() {
         // Test simple capturing groups
-        // TODO
+        var result = Regex("(ab)(cd)").matchEntire("abcd")
+        assertNotNull(result)
+        assertEquals(listOf("abcd", "ab", "cd"), result.groupValues)
 
         // Test grouping without capture (?:...)
-        // TODO
+        result = Regex("(?:ab)+(cd)").matchEntire("ababcd")
+        assertNotNull(result)
+        assertEquals(2, result.groups.size)
+        assertEquals("cd", result.groupValues[1])
 
         // Test combination of grouping and capture
-        // TODO
+        result = Regex("((?:ab)+)-(c(d))").matchEntire("abab-cd")
+        assertNotNull(result)
+        assertEquals(listOf("abab-cd", "abab", "cd", "d"), result.groupValues)
 
         // Test \<num> sequence with capturing and non-capturing groups
-        // TODO
+        val regex = Regex("((?:ab)+)-(?:cd)-\\1")
+        assertTrue(regex.matches("abab-cd-abab"))
+        assertFalse(regex.matches("abab-cd-ab"))
 
         // Test \<num> with <num> out of range
-        // TODO
+        assertFailsToCompile("(a)\\2")
     }
 
     @Test fun testRepeats() {
