@@ -1,4 +1,6 @@
 -Xexplicit-backing-fields
+-language-version
+2.3
 $TESTDATA_DIR$/explicitBackingFields.kt
 -d
 $TEMP_DIR$

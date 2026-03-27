@@ -499,6 +499,7 @@ enum class LanguageFeature(
     IrIntraModuleInlinerBeforeKlibSerialization(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_3, issue = "KT-79717"),
     ImprovedExhaustivenessCheckForSubjectVariable24(KOTLIN_2_4, issue = "KT-83903"),
     WrapContinuationForTailCallFunctions(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_4, "KT-74051"),
+    ExplicitBackingFields(sinceVersion = KOTLIN_2_4, issue = "KT-14663"),
 
     // 2.5
 
@@ -563,7 +564,6 @@ enum class LanguageFeature(
     MultiPlatformProjects(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ProhibitComparisonOfIncompatibleClasses(sinceVersion = null, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, enabledInProgressiveMode = false, NO_ISSUE_SPECIFIED),
-    ExplicitBackingFields(sinceVersion = null, issue = "KT-14663"),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ExplicitContextArguments(sinceVersion = null, issue = "KT-81684", testOnly = true),
