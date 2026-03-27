@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-27 (iter 58)
+**Last Updated**: 2026-03-27 (iter 59)
 
 ---
 
@@ -276,6 +276,46 @@ Both tests are **won't fix** — they test edge cases where Java sources shadow 
 | #3 testJSpecifySimple | Missing nullability diagnostics | Remaining — real impl issue |
 | #4 testJSpecifyWithVarargs | Missing nullability diagnostics | Remaining — same as #3 |
 | #8 testPseudoRawTypes | javac sealed package | Won't fix |
+
+---
+
+## Iteration 59: Fix Annotation Class Inheritance Detection (Problem 1) - 2026-03-27
+
+### Root Cause Analysis
+**Problem #1 (`testInheritFromAnnotationClass2`)**: Java interface `J extends Target` (where `Target` is `kotlin.annotation.Target`, a Kotlin annotation class) was fully resolved by java-direct, allowing FIR's `FirAnnotationClassInheritanceChecker` to walk the entire supertype chain and produce `EXTENDING_AN_ANNOTATION_CLASS_ERROR` on `I`, `C`, `Ann3`, `Ann4`. PSI couldn't resolve `Target` (no PsiClass for Kotlin builtins without stdlib on classpath), so the supertype became a `ConeErrorType` and the checker stopped at `J`.
+
+**Investigation confirmed via debug logging:**
+- PSI: `classifierQualifiedName = "Target"` (raw reference text, not FQN — PSI's `canonicalText` falls back to raw text when the class can't be resolved)
+- java-direct: `classifierQualifiedName = "kotlin.annotation.Target"` (resolved via import)
+- Both have `classifier = null`
+
+The difference cascades: java-direct's `resolve()` callback finds `kotlin.annotation.Target` in FIR's symbol provider (builtins), creating a valid type → checker walks through → extra errors. PSI's default `resolve()` returns null → fallback `ClassId.topLevel("Target")` → ClassId("", "Target") → not found → error type → checker stops.
+
+### Fix (3 files)
+1. **`JavaTypeOverAst.kt`** — `classifierQualifiedName` skips import resolution for `kotlin.*` imports (via `isImportTargetAvailableAsJavaClass`), returning the raw name instead. Matches PSI's `canonicalText` behavior for unresolvable classes.
+
+2. **`JavaResolutionContext.kt`** — Added `isImportTargetAvailableAsJavaClass()` that returns false for `kotlin.*` package imports, true for everything else (JDK, library, user-defined Java classes).
+
+3. **`JavaTypeConversion.kt`** (FIR shared code) — Modified `tryResolve` callbacks in `toConeKotlinTypeForFlexibleBound` and `resolveTypeName` to reject classes with `FirDeclarationOrigin.BuiltIns`. Builtins exist only in FIR's symbol provider (no .class files), so PSI can't resolve them. When stdlib IS on the classpath, the same classes have `FirDeclarationOrigin.Library`, so they're still resolved correctly.
+
+Both changes are needed together: `classifierQualifiedName` prevents the FQN from appearing in the fallback `ClassId.topLevel()`, and `tryResolve` prevents the `resolve()` callback from finding builtins.
+
+### Test Results
+- Box: 1168/1168, Phased: 1452/1456, Total failing: 4 (down from 5)
+- PSI test suite: no regressions (PSI's `resolve()` returns null by default, so the callback change has no effect)
+
+### Status of Remaining 4 Failures
+| Test | Category | Status |
+|------|----------|--------|
+| #2 testClassFromJdkInLibrary | javac sealed package | Won't fix |
+| #3 testJSpecifySimple | Missing nullability diagnostics | Remaining |
+| #4 testJSpecifyWithVarargs | Missing nullability diagnostics | Remaining — same as #3 |
+| #8 testPseudoRawTypes | javac sealed package | Won't fix |
+
+### Key Learnings
+- PSI's `canonicalText` returns the raw reference text (not FQN) when IntelliJ can't resolve the class — this is the primary signal that determines whether FIR creates a valid type or error type
+- FIR builtins (`FirDeclarationOrigin.BuiltIns`) are available in the symbol provider even without stdlib on classpath, but PSI can't see them — this origin distinction is key for matching PSI behavior
+- The `resolve()` callback from FIR and the `classifierQualifiedName` fallback are TWO independent resolution paths in the `null` classifier branch — both must be gated to prevent unwanted resolution
 
 ---
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -328,7 +329,13 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 // correct ClassId candidates without triggering LL-FIR lazy resolution cycles.
                 resolve(
                     tryResolve = { candidateClassId ->
-                        session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
+                        val symbol = session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId)
+                        // Reject builtins-only classes to match PSI behavior.
+                        // PSI resolves classes through compiled .class files and light classes.
+                        // Kotlin builtins (origin=BuiltIns) exist only in FIR's symbol provider,
+                        // not as .class files, so PSI can't resolve them. When stdlib is on the
+                        // classpath, these classes have origin=Library instead of BuiltIns.
+                        symbol != null && symbol.origin != FirDeclarationOrigin.BuiltIns
                     },
                     getSupertypeClassIds = { classId -> getResolvedSupertypeClassIds(classId, session) },
                 ) ?: ClassId.topLevel(FqName(qualifiedName))
@@ -408,7 +415,8 @@ private fun resolveTypeName(
     // The callback checks if a ClassId exists in the symbol provider.
     val resolvedClassId = javaType.resolve(
         tryResolve = { candidateClassId ->
-            session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
+            val symbol = session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId)
+            symbol != null && symbol.origin != FirDeclarationOrigin.BuiltIns
         },
         getSupertypeClassIds = { classId -> getResolvedSupertypeClassIds(classId, session) },
     )

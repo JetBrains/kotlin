@@ -1,12 +1,12 @@
 # Remaining Test Failures — Detailed Analysis
 
 **Last updated**: 2026-03-27
-**Status**: 2675/2680 passing (5 failing: 3 remaining, 2 won't fix)
+**Status**: 2676/2680 passing (4 failing: 2 remaining, 2 won't fix)
 **Methodology**: Each test was run individually with file-based logging injected into `GlobalMetadataInfoHandler.compareAllMetaDataInfos` to capture actual vs expected FIR dump output. Diffs were then analyzed against the implementation code.
 
 ---
 
-## 1. testInheritFromAnnotationClass2
+## 1. testInheritFromAnnotationClass2 — FIXED (Iteration 59)
 
 **Category**: Annotation class detection through Java interface hierarchy
 **Error type**: Extra diagnostics
@@ -428,15 +428,15 @@ The **PSI test worker JVM** happens to accept the same in-process javac compilat
 
 ## Priority Ranking
 
-**Updated 2026-03-27** — 3 fixed, 2 won't fix, 3 remaining:
+**Updated 2026-03-27** — 4 fixed, 2 won't fix, 2 remaining:
 
 | Status | Tests | Notes |
 |--------|-------|-------|
+| **FIXED** | #1 (AnnotationClass) | Iteration 59 — skip kotlin.* import resolution + reject FIR builtins |
 | **FIXED** | #5 (KJKComplex) | Iteration 57 — outer type args for inherited inner classes |
 | **FIXED** | #6 (MapMethods) | Iteration 56 — transitive inherited inner class resolution |
 | **FIXED** | #7 (InheritanceWithKotlin) | Iteration 56 — transitive inherited inner class resolution |
 | **WON'T FIX** | #2 (ClassFromJdk) | Iteration 58 — javac sealed package in test worker |
 | **WON'T FIX** | #8 (PseudoRawTypes) | Iteration 58 — javac sealed package in test worker |
-| **Remaining** | #1 (AnnotationClass) | FIR diagnostic mismatch — java-direct resolves supertype more completely than PSI |
 | **Remaining** | #3 (JSpecifySimple) | FIR diagnostic mismatch — nullability annotations not processed |
 | **Remaining** | #4 (JSpecifyWithVarargs) | FIR diagnostic mismatch — same root cause as #3 |

@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 57 (2026-03-26) |
+| **Last Iteration** | 59 (2026-03-27) |
 | **Box Tests** | 1168/1168 passing (100%) |
-| **Phased Tests** | 1451/1456 passing (99.7%) |
-| **Combined** | ~2675/2680 passing, **5 failing** |
+| **Phased Tests** | 1452/1456 passing (99.7%) |
+| **Combined** | ~2676/2680 passing, **4 failing** (2 remaining, 2 won't fix) |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -46,6 +46,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | **Annotation Default Binary Expressions** | Done (iter 53) | 2 |
 | **External Class Flexible Type Rendering** | Done (iter 54) | 1 |
 | **Wrong-Arity Type Argument Handling** | Done (iter 55) | 2 |
+| **Annotation Class Inheritance Detection** | Done (iter 59) | 1 |
 
 ---
 
@@ -107,6 +108,10 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | 53 | Annotation default binary expressions: evaluateConstantExpression handles BINARY_EXPRESSION (int addition, string concat) | +1 box, +1 phased |
 | 54 | External class flexible type rendering: isTriviallyFlexibleHint checks import-resolved FQN against read-only collection set | +1 phased |
 | 55 | Wrong-arity type argument handling: isRaw for fewer-args, truncation for more-args, ConeRawScopeSubstitutor AIOOBE fix | +2 phased |
+| 56 | Transitive inherited inner class resolution; abstract member detection through generic Java hierarchy | +2 phased |
+| 57 | Outer type args for inherited inner classes in K-J-K hierarchy | +1 phased |
+| 58 | Investigation of javac sealed package failures (Problems 2 & 8) — won't fix | +0 |
+| 59 | Annotation class inheritance detection: skip kotlin.* import resolution + reject FIR builtins in tryResolve | +1 phased |
 
 ---
 

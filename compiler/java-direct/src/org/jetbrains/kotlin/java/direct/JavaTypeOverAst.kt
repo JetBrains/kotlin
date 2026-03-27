@@ -181,8 +181,12 @@ class JavaClassifierTypeOverAst(
             }
 
             // 3. Check explicit single-type imports
+            // Only use import resolution if the target is a known Java class (source or binary).
+            // This matches PSI behavior where classifierQualifiedName uses canonicalText, which
+            // only returns the FQN when PSI can resolve the class through its indexes.
+            // For non-Java classes (e.g., Kotlin builtins), PSI returns just the raw reference text.
             val qualified = resolutionContext.getSimpleImport(parts[0])
-            if (qualified != null) {
+            if (qualified != null && resolutionContext.isImportTargetAvailableAsJavaClass(parts[0])) {
                 var result = qualified.asString()
                 for (i in 1 until parts.size) {
                     result += "." + parts[i]
