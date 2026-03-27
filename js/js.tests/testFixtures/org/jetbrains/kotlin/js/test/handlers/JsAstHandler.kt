@@ -23,7 +23,9 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
-        val ktFiles = module.files.filter { it.isKtFile }.associate { it.originalFile to it.originalContent }
+        val ktFiles = module.files
+            .filter { it.isKtFile }
+            .associate { it.originalFile.parentFile.resolve(it.relativePath) to it.originalContent }
         val jsProgram = (info.unwrap() as? BinaryArtifacts.Js.JsIrArtifact)
             ?.compilerResult
             ?.outputs[TranslationMode.FULL_DEV]
