@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.DestructuringContext
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.addDestructuringVariables
+import org.jetbrains.kotlin.fir.builder.buildFirList
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -47,19 +48,21 @@ data class DestructuringDeclaration(
             extractedAnnotations = annotations
         )
 
-        return buildBlock {
-            source = this@DestructuringDeclaration.source.fakeElement(KtFakeSourceElementKind.DestructuringBlock)
-            with(builder) {
-                addDestructuringStatements(
-                    statements,
-                    moduleData,
-                    this@DestructuringDeclaration,
-                    baseVariable,
-                    tmpVariable,
-                    forceLocal = false
-                )
+        return buildBlock(
+            source = this@DestructuringDeclaration.source.fakeElement(KtFakeSourceElementKind.DestructuringBlock),
+            statements = buildFirList {
+                with(builder) {
+                    addDestructuringStatements(
+                        this@buildFirList,
+                        moduleData,
+                        this@DestructuringDeclaration,
+                        baseVariable,
+                        tmpVariable,
+                        forceLocal = false
+                    )
+                }
             }
-        }
+        )
     }
 }
 

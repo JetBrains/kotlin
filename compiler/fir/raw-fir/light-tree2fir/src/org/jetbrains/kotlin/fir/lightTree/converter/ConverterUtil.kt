@@ -29,9 +29,9 @@ fun LighterASTNode.getAsStringWithoutBacktick(): String {
 }
 
 fun <T : FirCallBuilder> T.extractArgumentsFrom(container: List<FirExpression>): T {
-    argumentList = buildArgumentList {
-        arguments += container
-    }
+    argumentList = buildArgumentList(
+        arguments = container.toMutableList(),
+    )
     return this
 }
 
