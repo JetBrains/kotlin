@@ -548,6 +548,15 @@ class Strings {
     }
 
     @Sample
+    fun containsChar() {
+        val text = "kotlin"
+
+        assertTrue(text.contains('k'))
+        assertTrue(text.contains('K', ignoreCase = true))
+        assertFalse(text.contains('z'))
+    }
+
+    @Sample
     fun last() {
         val string = "Kotlin 1.4.0"
         assertPrints(string.last(), "0")

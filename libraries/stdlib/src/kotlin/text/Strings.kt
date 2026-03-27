@@ -1199,6 +1199,7 @@ public operator fun CharSequence.contains(other: CharSequence, ignoreCase: Boole
  * Returns `true` if this char sequence contains the specified character [char].
  *
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
+ * @sample samples.text.Strings.containsChar
  */
 @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 public operator fun CharSequence.contains(char: Char, ignoreCase: Boolean = false): Boolean =
