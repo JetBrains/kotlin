@@ -13,22 +13,6 @@ import org.junit.jupiter.api.Test
 
 @TestMetadata("plugins/parcelize/parcelize-compiler/testData/box")
 @TestDataPath("\$PROJECT_ROOT")
-class ParcelizeIrBoxTestWithSerializableLikeExtension : AbstractParcelizeIrBoxTest() {
-    @Test
-    @TestMetadata("simple.kt")
-    fun testSimple() {
-        runTest("plugins/parcelize/parcelize-compiler/testData/box/simple.kt")
-    }
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useConfigurators(::SerializableLikeExtensionProvider)
-    }
-}
-
-
-@TestMetadata("plugins/parcelize/parcelize-compiler/testData/box")
-@TestDataPath("\$PROJECT_ROOT")
 class ParcelizeFirBoxTestWithSerializableLikeExtension : AbstractParcelizeFirLightTreeBoxTest() {
     @Test
     @TestMetadata("simple.kt")

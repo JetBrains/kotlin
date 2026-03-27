@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
@@ -28,12 +27,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EX
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
@@ -101,17 +95,6 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
 
         enableMetaInfoHandler()
     }
-}
-
-open class AbstractParcelizeIrBoxTest : AbstractParcelizeBoxTestBase<ClassicFrontendOutputArtifact>(FrontendKinds.ClassicFrontend) {
-    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
-
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
-        get() = ::ClassicFrontend2IrConverter
-
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-        get() = ::JvmIrBackendFacade
 }
 
 abstract class AbstractParcelizeFirBoxTestBase(val parser: FirParser) : AbstractParcelizeBoxTestBase<FirOutputArtifact>(FrontendKinds.FIR) {
