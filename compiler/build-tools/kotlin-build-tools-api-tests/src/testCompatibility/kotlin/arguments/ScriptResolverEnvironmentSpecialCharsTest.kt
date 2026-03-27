@@ -16,7 +16,7 @@ import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
-internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List<String>>("Xscript-resolver-environment") {
+internal class ScriptResolverEnvironmentSpecialCharsTest {
 
     @DisplayName("ScriptResolverEnvironment entry with comma in value is converted to '-Xscript-resolver-environment' argument")
     @BtaVersionsOnlyCompilationTest
@@ -29,7 +29,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         }.build()
 
         assertEquals(
-            expectedArgumentStringsFor(getValueString(entries), toolchain.getCompilerVersion()),
+            expectedArgumentStringsFor(getValueString(entries)),
             jvmOperation.compilerArguments.toArgumentStrings(),
         )
     }
@@ -41,7 +41,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
-            expectedArgumentStringsFor("key=val1,val2", toolchain.getCompilerVersion())
+            expectedArgumentStringsFor("key=val1,val2")
         )
 
         assertEquals(
@@ -61,7 +61,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         }.build()
 
         assertEquals(
-            expectedArgumentStringsFor(getValueString(entries), toolchain.getCompilerVersion()),
+            expectedArgumentStringsFor(getValueString(entries)),
             jvmOperation.compilerArguments.toArgumentStrings(),
         )
     }
@@ -73,7 +73,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
-            expectedArgumentStringsFor("key=\"quoted\"", toolchain.getCompilerVersion())
+            expectedArgumentStringsFor("key=\"quoted\"")
         )
 
         assertEquals(
@@ -93,7 +93,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         }.build()
 
         assertEquals(
-            expectedArgumentStringsFor(getValueString(entries), toolchain.getCompilerVersion()),
+            expectedArgumentStringsFor(getValueString(entries)),
             jvmOperation.compilerArguments.toArgumentStrings(),
         )
     }
@@ -105,7 +105,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
-            expectedArgumentStringsFor("key=path\\to\\file", toolchain.getCompilerVersion())
+            expectedArgumentStringsFor("key=path\\to\\file")
         )
 
         assertEquals(
@@ -125,7 +125,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         }.build()
 
         assertEquals(
-            expectedArgumentStringsFor(getValueString(entries), toolchain.getCompilerVersion()),
+            expectedArgumentStringsFor(getValueString(entries)),
             jvmOperation.compilerArguments.toArgumentStrings(),
         )
     }
@@ -137,7 +137,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
-            expectedArgumentStringsFor("key=\"value1,key2\"", toolchain.getCompilerVersion())
+            expectedArgumentStringsFor("key=\"value1,key2\"")
         )
 
         assertEquals(
@@ -157,7 +157,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         }.build()
 
         assertEquals(
-            expectedArgumentStringsFor(getValueString(entries), toolchain.getCompilerVersion()),
+            expectedArgumentStringsFor(getValueString(entries)),
             jvmOperation.compilerArguments.toArgumentStrings(),
         )
     }
@@ -169,7 +169,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
-            expectedArgumentStringsFor("key=value1\\,key2", toolchain.getCompilerVersion())
+            expectedArgumentStringsFor("key=value1\\,key2")
         )
 
         assertEquals(
@@ -178,12 +178,12 @@ internal class ScriptResolverEnvironmentSpecialCharsTest : BaseArgumentTest<List
         )
     }
 
-    override fun expectedArgumentStringsFor(value: String): List<String> {
-        return listOf("-$argumentName=$value")
+    private fun expectedArgumentStringsFor(value: String): List<String> {
+        return listOf("-Xscript-resolver-environment=$value")
     }
 
-    override fun getValueString(argument: List<String>?): String? =
-        argument?.joinToString(",")
+    private fun getValueString(argument: List<String>): String =
+        argument.joinToString(",")
 
     private fun assumeArgumentSupported(compilerVersion: String) {
         assumeTrue(
