@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
+import org.jetbrains.kotlin.fir.builder.buildFirList
 import org.jetbrains.kotlin.fir.builder.buildLabel
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -109,9 +110,9 @@ class FirReplSnippetConfiguratorExtensionImpl(
         val wrapperLambdaSymbol = FirAnonymousFunctionSymbol()
         val wrapperLabelName = wrapperFqName.shortName().asString()
         val target = FirFunctionTarget(labelName = wrapperLabelName, isLambda = true)
-        val wrapperLambda = buildAnonymousFunctionExpression {
-            source = fakeSource
-            isTrailingLambda = true
+        val wrapperLambda = buildAnonymousFunctionExpression(
+            source = fakeSource,
+            isTrailingLambda = true,
             anonymousFunction = buildAnonymousFunction {
                 source = fakeSource
                 moduleData = session.moduleData
@@ -134,8 +135,8 @@ class FirReplSnippetConfiguratorExtensionImpl(
                 context.firFunctionTargets += target
                 hasExplicitParameterList = false
                 body = wrapperBody
-            }.also { target.bind(it) }
-        }
+            }.also { target.bind(it) },
+        )
 
         // Add a call to the wrapper as the single statement of the eval body.
         evalBody.statements += buildFunctionCall {
@@ -243,15 +244,15 @@ class FirReplSnippetConfiguratorExtensionImpl(
                 coneType = classFromDeps.constructType(isMarkedNullable = kotlinType.isNullable)
             }
         } else {
-            buildUserTypeRef {
-                source = sourceElement
-                isMarkedNullable = kotlinType.isNullable
-                qualifier.addAll(
-                    fqName.pathSegments().map {
+            buildUserTypeRef(
+                source = sourceElement,
+                isMarkedNullable = kotlinType.isNullable,
+                qualifier = buildFirList {
+                    fqName.pathSegments().mapTo(this) {
                         FirQualifierPartImpl(null, it, FirTypeArgumentListImpl(null))
                     }
-                )
-            }
+                }
+            )
         }
     }
 

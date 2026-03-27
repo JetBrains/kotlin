@@ -340,10 +340,10 @@ open class FirTypeResolveTransformer(
         for (typeParameter in typeParametersOwner.typeParameters) {
             if (typeParameter !is FirTypeParameter) continue
             if (hasSupertypePathToParameter(typeParameter, typeParameter, mutableSetOf())) {
-                val errorType = buildErrorTypeRef {
-                    diagnostic = ConeCyclicTypeBound(typeParameter.symbol, typeParameter.bounds.toImmutableList())
-                    source = typeParameter.bounds.first().source
-                }
+                val errorType = buildErrorTypeRef(
+                    diagnostic = ConeCyclicTypeBound(typeParameter.symbol, typeParameter.bounds.toImmutableList()),
+                    source = typeParameter.bounds.first().source,
+                )
                 typeParameter.replaceBounds(
                     listOf(errorType)
                 )
@@ -426,16 +426,16 @@ open class FirTypeResolveTransformer(
                         val coneTypeFromCompilerRequiredPhase = originalTypeRef.coneType
                         val coneTypeFromTypesPhase = alternativeResolvedTypeRef.coneType
                         if (coneTypeFromTypesPhase != coneTypeFromCompilerRequiredPhase) {
-                            val errorTypeRef = buildErrorTypeRef {
-                                source = originalTypeRef.source
-                                coneType = coneTypeFromCompilerRequiredPhase
-                                annotations += originalTypeRef.annotations
-                                delegatedTypeRef = originalTypeRef.delegatedTypeRef
+                            val errorTypeRef = buildErrorTypeRef(
+                                source = originalTypeRef.source,
+                                coneType = coneTypeFromCompilerRequiredPhase,
+                                annotations = originalTypeRef.annotations.toMutableList(),
+                                delegatedTypeRef = originalTypeRef.delegatedTypeRef,
                                 diagnostic = ConeAmbiguouslyResolvedAnnotationFromPlugin(
                                     coneTypeFromCompilerRequiredPhase,
                                     coneTypeFromTypesPhase
-                                )
-                            }
+                                ),
+                            )
                             annotationCall.replaceAnnotationTypeRef(errorTypeRef)
                         }
                     }

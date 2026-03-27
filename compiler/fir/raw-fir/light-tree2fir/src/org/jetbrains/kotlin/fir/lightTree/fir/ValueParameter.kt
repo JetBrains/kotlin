@@ -123,7 +123,7 @@ class ValueParameter(
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
         if (type is FirImplicitTypeRef) {
-            type = buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
+            type = buildErrorTypeRef(diagnostic = ConeSyntaxDiagnostic("Incomplete code"))
         }
 
         return buildProperty {

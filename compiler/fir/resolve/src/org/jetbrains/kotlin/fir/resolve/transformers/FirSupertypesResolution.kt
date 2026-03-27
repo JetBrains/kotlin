@@ -443,10 +443,10 @@ open class FirSupertypeResolverVisitor(
                 }
                 when {
                     typeParameterType != null ->
-                        buildErrorTypeRef {
-                            source = superTypeRef.source
-                            diagnostic = ConeTypeParameterSupertype(typeParameterType.lookupTag.typeParameterSymbol)
-                        }
+                        buildErrorTypeRef(
+                            source = superTypeRef.source,
+                            diagnostic = ConeTypeParameterSupertype(typeParameterType.lookupTag.typeParameterSymbol),
+                        )
                     superTypeRef !is FirResolvedTypeRef ->
                         createErrorTypeRef(
                             superTypeRef.source,
@@ -585,10 +585,10 @@ open class FirSupertypeResolverVisitor(
     }
 }
 
-private fun createErrorTypeRef(sourceElement: KtSourceElement?, message: String, kind: DiagnosticKind) = buildErrorTypeRef {
-    source = sourceElement
-    diagnostic = ConeSimpleDiagnostic(message, kind)
-}
+private fun createErrorTypeRef(sourceElement: KtSourceElement?, message: String, kind: DiagnosticKind) = buildErrorTypeRef(
+    source = sourceElement,
+    diagnostic = ConeSimpleDiagnostic(message, kind),
+)
 
 open class SupertypeComputationSession {
     private val fileScopesMap = hashMapOf<FirFile, ScopePersistentList>()

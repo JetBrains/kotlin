@@ -100,3 +100,15 @@ inline fun buildJavaExternalAnnotation(init: FirJavaExternalAnnotationBuilder.()
 
     return FirJavaExternalAnnotationBuilder().apply(init).build()
 }
+
+@OptIn(FirImplementationDetail::class)
+fun buildJavaExternalAnnotation(
+    annotationTypeRef: FirTypeRef,
+    argumentMapping: FirAnnotationArgumentMapping,
+): FirJavaExternalAnnotation {
+    return FirJavaExternalAnnotation(
+        annotationTypeRef,
+        argumentMapping,
+    )
+}
+

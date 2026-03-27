@@ -47,6 +47,24 @@ inline fun buildErrorTypeRef(init: FirErrorTypeRefBuilder.() -> Unit): FirErrorT
     return FirErrorTypeRefBuilder().apply(init).build()
 }
 
+fun buildErrorTypeRef(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    coneType: ConeKotlinType? = null,
+    delegatedTypeRef: FirTypeRef? = null,
+    partiallyResolvedTypeRef: FirTypeRef? = null,
+    diagnostic: ConeDiagnostic,
+): FirErrorTypeRef {
+    return FirErrorTypeRefImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        coneType,
+        delegatedTypeRef,
+        diagnostic,
+        partiallyResolvedTypeRef = partiallyResolvedTypeRef,
+    )
+}
+
 fun buildErrorTypeRefCopy(
     original: FirErrorTypeRef,
     source: KtSourceElement? = original.source,

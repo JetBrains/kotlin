@@ -318,13 +318,13 @@ open class PsiRawFirBuilder(
             this?.toFirType() ?: implicitUnitType
 
         protected fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
-            this?.toFirType() ?: buildErrorTypeRef {
-                source = this@toFirOrErrorType?.toFirSourceElement()
+            this?.toFirType() ?: buildErrorTypeRef(
+                source = this@toFirOrErrorType?.toFirSourceElement(),
                 diagnostic = ConeSyntaxDiagnostic(
                     if (this@toFirOrErrorType == null) "Incomplete code" else "Conversion failed"
-                )
-                this@toFirOrErrorType?.extractAnnotationsTo(this)
-            }
+                ),
+                annotations = buildFirList { this@toFirOrErrorType?.extractAnnotationsTo(this) },
+            )
 
         private fun KtElement?.toFirExpression(
             errorReason: String,
@@ -913,8 +913,12 @@ open class PsiRawFirBuilder(
         }
 
         private fun KtAnnotated.extractAnnotationsTo(container: FirAnnotationContainerBuilder) {
+            extractAnnotationsTo(container.annotations)
+        }
+
+        private fun KtAnnotated.extractAnnotationsTo(annotations: MutableList<FirAnnotation>) {
             for (annotationEntry in annotationEntries) {
-                container.annotations += annotationEntry.convert<FirAnnotation>()
+                annotations += annotationEntry.convert<FirAnnotation>()
             }
         }
 
@@ -1763,7 +1767,7 @@ open class PsiRawFirBuilder(
             return buildBlock {
                 val functionSymbol = FirAnonymousFunctionSymbol()
 
-                statements += buildAnonymousFunctionExpression {
+                statements += buildAnonymousFunctionExpression(
                     anonymousFunction = buildAnonymousFunction {
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
@@ -1794,7 +1798,7 @@ open class PsiRawFirBuilder(
 
                         body = buildBlock()
                     }
-                }
+                )
             }
         }
 
@@ -1842,10 +1846,10 @@ open class PsiRawFirBuilder(
                     extractAnnotationsTo(this)
                     initializer = buildOrLazyExpression(toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)) {
                         withChildClassName(nameAsSafeName, isExpect = false) {
-                            buildAnonymousObjectExpression {
-                                val enumEntrySource = toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)
-                                source = enumEntrySource
-                                val companionBlockCollector = CompanionBlockCollector()
+                            val enumEntrySource = toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)
+                            val companionBlockCollector = CompanionBlockCollector()
+                            buildAnonymousObjectExpression(
+                                source = enumEntrySource,
                                 anonymousObject = buildAnonymousObject {
                                     source = enumEntrySource
                                     moduleData = baseModuleData
@@ -1901,8 +1905,8 @@ open class PsiRawFirBuilder(
                                     }
                                 }.apply {
                                     companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
-                                }
-                            }
+                                },
+                            )
                         }
                     }
                 }.apply {
@@ -2139,9 +2143,9 @@ open class PsiRawFirBuilder(
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression, data: FirElement?): FirElement {
             return withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
                 var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
-                buildAnonymousObjectExpression {
-                    source = expression.toFirSourceElement()
-                    val companionBlockCollector = CompanionBlockCollector()
+                val companionBlockCollector = CompanionBlockCollector()
+                buildAnonymousObjectExpression(
+                    source = expression.toFirSourceElement(),
                     anonymousObject = buildAnonymousObject {
                         val objectDeclaration = expression.objectDeclaration
                         source = objectDeclaration.toFirSourceElement()
@@ -2181,8 +2185,8 @@ open class PsiRawFirBuilder(
                     }.apply {
                         this.delegateFieldsMap = delegatedFieldsMap
                         companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
-                    }
-                }
+                    },
+                )
             }
         }
 
@@ -2357,10 +2361,10 @@ open class PsiRawFirBuilder(
                 }
 
                 return if (firFunction is FirAnonymousFunction) {
-                    buildAnonymousFunctionExpression {
-                        source = functionSource
-                        anonymousFunction = firFunction
-                    }
+                    buildAnonymousFunctionExpression(
+                        source = functionSource,
+                        anonymousFunction = firFunction,
+                    )
                 } else {
                     firFunction
                 }
@@ -2480,10 +2484,10 @@ open class PsiRawFirBuilder(
             }.also {
                 bindFunctionTarget(target, it)
             }
-            return buildAnonymousFunctionExpression {
-                source = expression.toKtPsiSourceElement()
-                this.anonymousFunction = anonymousFunction
-            }
+            return buildAnonymousFunctionExpression(
+                source = expression.toKtPsiSourceElement(),
+                anonymousFunction = anonymousFunction,
+            )
         }
 
         protected fun KtSecondaryConstructor.toFirConstructor(

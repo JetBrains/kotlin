@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.buildFirList
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
@@ -715,12 +716,12 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         }
     }
 
-    private fun createDeepCopyOfTypeRef(original: FirUserTypeRef): FirUserTypeRef = buildUserTypeRef {
-        source = original.source
-        isMarkedNullable = original.isMarkedNullable
-        annotations.addAll(original.annotations)
-        original.qualifier.mapTo(qualifier) { it.createDeepCopy() }
-    }
+    private fun createDeepCopyOfTypeRef(original: FirUserTypeRef): FirUserTypeRef = buildUserTypeRef(
+        source = original.source,
+        isMarkedNullable = original.isMarkedNullable,
+        annotations = original.annotations.toMutableList(),
+        qualifier = buildFirList { original.qualifier.mapTo(this) { it.createDeepCopy() } },
+    )
 
     private fun FirQualifierPart.createDeepCopy(): FirQualifierPart {
         val newArgumentList = FirTypeArgumentListImpl(typeArgumentList.source).apply {

@@ -453,12 +453,12 @@ class FirCallCompleter(
                     // May happen in erroneous code, see KT-60450
                     // In test forEachOnZip.kt we have two declared parameters, but in fact forEach expects only one
                     parameter.replaceReturnTypeRef(
-                        buildErrorTypeRef {
+                        buildErrorTypeRef(
                             diagnostic = ConeCannotInferValueParameterType(
                                 parameter.symbol, "Lambda or anonymous function has more parameters than expected"
-                            )
-                            source = parameter.source
-                        }
+                            ),
+                            source = parameter.source,
+                        )
                     )
                     return@forEachIndexed
                 }

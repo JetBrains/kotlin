@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -127,10 +128,12 @@ internal class StubBasedFirTypeDeserializer(
                         coneType = StandardNames.FqNames.parameterNameClassId.toLookupTag()
                             .constructClassType()
                     }
-                    this.argumentMapping = buildAnnotationArgumentMapping {
-                        mapping[StandardNames.NAME] =
-                            buildLiteralExpression(null, ConstantValueKind.String, paramName, setType = true)
-                    }
+                    this.argumentMapping = buildAnnotationArgumentMapping(
+                        mapping = buildFirMap {
+                            this[StandardNames.NAME] =
+                                buildLiteralExpression(null, ConstantValueKind.String, paramName, setType = true)
+                        }
+                    )
                 }
             }
         }

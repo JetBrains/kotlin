@@ -62,6 +62,14 @@ inline fun buildJavaTypeRef(init: FirJavaTypeRefBuilder.() -> Unit): FirJavaType
     return FirJavaTypeRefBuilder().apply(init).build()
 }
 
+fun buildJavaTypeRef(
+    annotationBuilder: () -> List<FirAnnotation>,
+    type: JavaType,
+    source: KtSourceElement? = null,
+): FirJavaTypeRef {
+    return FirJavaTypeRef(type, source, annotationBuilder)
+}
+
 private fun JavaType?.render(): String {
     return when (this) {
         is JavaArrayType -> "${componentType.render()}[]"

@@ -60,10 +60,10 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
         val psiType = ClsTypeElementImpl(ktCodeFragment, typeInfo.text(), '\u0000').type
         val javaType = JavaTypeImpl.create(psiType, javaElementSourceFactory.createTypeSource(psiType))
 
-        val javaTypeRef = buildJavaTypeRef {
-            annotationBuilder = { emptyList() }
-            type = javaType
-        }
+        val javaTypeRef = buildJavaTypeRef(
+            annotationBuilder = { emptyList() },
+            type = javaType,
+        )
 
         javaTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, source = null)
     }

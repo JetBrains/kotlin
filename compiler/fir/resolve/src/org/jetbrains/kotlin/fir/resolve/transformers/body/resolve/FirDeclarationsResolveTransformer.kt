@@ -1059,10 +1059,10 @@ open class FirDeclarationsResolveTransformer(
                             isInlineFunction = namedFunction?.isInline == true
                         )
                 }
-                ?: buildErrorTypeRef {
-                    source = newSource
+                ?: buildErrorTypeRef(
+                    source = newSource,
                     diagnostic = ConeSimpleDiagnostic("empty body", DiagnosticKind.Other)
-                }
+                )
             result.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(returnTypeRef))
         }
         if (
@@ -1585,13 +1585,13 @@ open class FirDeclarationsResolveTransformer(
             ?: return backingField.transformReturnTypeRef(
                 transformer,
                 ResolutionMode.UpdateImplicitTypeRef(
-                    buildErrorTypeRef {
+                    buildErrorTypeRef(
                         diagnostic = ConeSimpleDiagnostic(
                             "Cannot infer variable type without an initializer",
                             DiagnosticKind.InferenceError,
-                        )
-                        source = backingField.source
-                    },
+                        ),
+                        source = backingField.source,
+                    ),
                 )
             )
         val expectedType = resultType.toExpectedTypeRef(fallbackSource = backingField.source)
@@ -1624,10 +1624,10 @@ open class FirDeclarationsResolveTransformer(
                     isLocal = variable.isLocalVariableOrParameter,
                     approximateLocalTypes = variable.isReplSnippetDeclaration == true
                 )
-            } ?: buildErrorTypeRef {
-                diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
-                source = variable.source
-            }
+            } ?: buildErrorTypeRef(
+                diagnostic = ConeLocalVariableNoTypeOrInitializer(variable),
+                source = variable.source,
+            )
             variable.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(newTypeRef))
             if (variable.getter?.returnTypeRef is FirImplicitTypeRef) {
                 variable.getter?.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(newTypeRef))
@@ -1646,17 +1646,17 @@ open class FirDeclarationsResolveTransformer(
         val typeRefSource = (this@toExpectedTypeRef.source ?: fallbackSource)?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
         return when (this) {
             is FirImplicitTypeRef -> {
-                buildErrorTypeRef {
-                    diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
-                    source = typeRefSource
-                    annotations.addAll(this@toExpectedTypeRef.annotations)
-                }
+                buildErrorTypeRef(
+                    source = typeRefSource,
+                    diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError),
+                    annotations = this@toExpectedTypeRef.annotations.toMutableList(),
+                )
             }
-            is FirErrorTypeRef -> buildErrorTypeRef {
-                diagnostic = this@toExpectedTypeRef.diagnostic
-                source = typeRefSource
-                annotations.addAll(this@toExpectedTypeRef.annotations)
-            }
+            is FirErrorTypeRef -> buildErrorTypeRef(
+                diagnostic = this@toExpectedTypeRef.diagnostic,
+                source = typeRefSource,
+                annotations = this@toExpectedTypeRef.annotations.toMutableList(),
+            )
             else -> {
                 buildResolvedTypeRef {
                     coneType = this@toExpectedTypeRef.coneType

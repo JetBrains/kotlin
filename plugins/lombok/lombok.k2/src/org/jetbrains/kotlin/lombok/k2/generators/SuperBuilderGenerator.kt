@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -88,9 +88,11 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         }
     }
 
-    override fun FirJavaClassBuilder.completeBuilder(
+    override fun completeBuilderTypeParametersAndSuperTypes(
         classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
+        typeParameters: MutableList<FirTypeParameterRef>,
+        superTypeRefs: MutableList<FirTypeRef>,
     ) {
         val classTypeParameterSymbol = FirTypeParameterSymbol()
         val builderTypeParameterSymbol = FirTypeParameterSymbol()

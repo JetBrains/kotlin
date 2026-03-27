@@ -179,10 +179,11 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
 
         refinedType.callShapeData = CallShapeData.RefinedType(listOf(scopeSymbol))
 
-        val argument = buildAnonymousFunctionExpression {
-            val fSymbol = FirAnonymousFunctionSymbol()
-            val target = FirFunctionTarget(null, isLambda = true)
-            isTrailingLambda = true
+        val fSymbol = FirAnonymousFunctionSymbol()
+        val target = FirFunctionTarget(null, isLambda = true)
+
+        val argument = buildAnonymousFunctionExpression(
+            isTrailingLambda = true,
             anonymousFunction = buildAnonymousFunction {
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
@@ -251,8 +252,8 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                 }
                 invocationKind = EventOccurrencesRange.EXACTLY_ONCE
                 inlineStatus = InlineStatus.Inline
-            }.also { target.bind(it) }
-        }
+            }.also { target.bind(it) },
+        )
 
         for (generatedClass in listOf(schemaClass, scopeClass, refinedType)) {
             generatedClass.anchor = call.source

@@ -309,3 +309,55 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
 inline fun buildJavaClass(init: FirJavaClassBuilder.() -> Unit): FirJavaClass {
     return FirJavaClassBuilder().apply(init).build()
 }
+
+@OptIn(FirImplementationDetail::class)
+fun buildJavaClass(
+    name: Name,
+    moduleData: FirModuleData,
+    status: FirDeclarationStatus,
+    classKind: ClassKind,
+    scopeProvider: FirScopeProvider,
+    symbol: FirRegularClassSymbol,
+
+    isFromSource: Boolean,
+    javaPackage: JavaPackage? = null,
+    javaTypeParameterStack: MutableJavaTypeParameterStack,
+    existingNestedClassifierNames: MutableList<Name> = mutableListOf(),
+
+    source: KtSourceElement? = null,
+    annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList,
+    typeParameters: MutableList<FirTypeParameterRef> = mutableListOf(),
+
+    /** Has to be omitted in the case of [javaClass] presence */
+    superTypeRefs: MutableList<FirTypeRef> = mutableListOf(),
+    containingClassSymbol: FirClassSymbol<*>? = null,
+    declarationList: FirJavaDeclarationList = FirEmptyJavaDeclarationList,
+
+    /**
+     * Allows computing some information (like [superTypeRefs]) lazily on demand
+     * instead of providing it right away
+     */
+    javaClass: JavaClass? = null,
+): FirJavaClass {
+    return FirJavaClass(
+        javaClass,
+        source,
+        moduleData,
+        name,
+        origin = javaOrigin(isFromSource),
+        annotationList,
+        status as FirResolvedDeclarationStatusImpl,
+        classKind,
+        declarationList,
+        scopeProvider,
+        symbol,
+        superTypeRefs,
+        typeParameters,
+        javaPackage,
+        javaTypeParameterStack.copy(),
+        existingNestedClassifierNames,
+        containingClassSymbol,
+    )
+}
+
+

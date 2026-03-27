@@ -95,15 +95,14 @@ class FirSpecificTypeResolverTransformer(
                 delegatedTypeRef = functionTypeRef
             }
         } else {
-            buildErrorTypeRef {
-                source = functionTypeRef.source
-                if (resolvedType != null) {
-                    coneType = resolvedType
-                }
-                annotations += functionTypeRef.annotations
-                this.diagnostic = diagnostic ?: (resolvedType as? ConeErrorType)?.diagnostic
-                        ?: ConeSimpleDiagnostic("Unresolved function type: ${functionTypeRef.render()}")
-            }
+            buildErrorTypeRef(
+                source = functionTypeRef.source,
+                coneType = resolvedType,
+                annotations = functionTypeRef.annotations.toMutableList(),
+                diagnostic = diagnostic
+                    ?: (resolvedType as? ConeErrorType)?.diagnostic
+                    ?: ConeSimpleDiagnostic("Unresolved function type: ${functionTypeRef.render()}"),
+            )
         }
     }
 
@@ -156,10 +155,10 @@ class FirSpecificTypeResolverTransformer(
         diagnostic: ConeDiagnostic,
         configuration: TypeResolutionConfiguration,
     ): FirErrorTypeRef {
-        return buildErrorTypeRef {
-            val typeRefSourceKind = typeRef.source?.kind
-            val diagnosticSource = (diagnostic as? ConeUnexpectedTypeArgumentsError)?.source
-
+        val typeRefSourceKind = typeRef.source?.kind
+        val diagnosticSource = (diagnostic as? ConeUnexpectedTypeArgumentsError)?.source
+        val partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, configuration)
+        return buildErrorTypeRef(
             source = if (diagnosticSource != null) {
                 if (typeRefSourceKind is KtFakeSourceElementKind) {
                     diagnosticSource.fakeElement(typeRefSourceKind)
@@ -168,25 +167,24 @@ class FirSpecificTypeResolverTransformer(
                 }
             } else {
                 typeRef.source
-            }?.fakeIfAbbreviated(resolvedType)
+            }?.fakeIfAbbreviated(resolvedType),
 
-            delegatedTypeRef = typeRef
-            coneType = resolvedType
-            annotations += typeRef.annotations
+            delegatedTypeRef = typeRef,
+            coneType = resolvedType,
+            annotations = typeRef.annotations.toMutableList(),
 
-            val partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, configuration)
-            this.partiallyResolvedTypeRef = partiallyResolvedTypeRef
+            partiallyResolvedTypeRef = partiallyResolvedTypeRef,
 
-            this.diagnostic = when {
-                diagnostic is ConeUnresolvedTypeQualifierError -> {
+            diagnostic = when (diagnostic) {
+                is ConeUnresolvedTypeQualifierError -> {
                     ConeUnresolvedTypeQualifierError(smallestUnresolvablePrefix(diagnostic.qualifiers, partiallyResolvedTypeRef))
                 }
-                diagnostic is ConeVisibilityError && typeRef is FirUserTypeRef -> {
+                is ConeVisibilityError if typeRef is FirUserTypeRef -> {
                     ConeTypeVisibilityError(diagnostic.symbol, smallestUnresolvablePrefix(typeRef.qualifier, partiallyResolvedTypeRef))
                 }
                 else -> diagnostic
-            }
-        }
+            },
+        )
     }
 
     /**
@@ -251,17 +249,19 @@ class FirSpecificTypeResolverTransformer(
         val qualifiersToTry = qualifiers.toMutableList()
         while (qualifiersToTry.size > 1) {
             qualifiersToTry.removeLast()
-            val typeRefToTry = buildUserTypeRef {
-                qualifier += qualifiersToTry
-                isMarkedNullable = false
-                source = typeRef.source
-            }
+            val resolvedTypeRefSource = qualifiersToTry.last().source
+
+            val typeRefToTry = buildUserTypeRef(
+                qualifier = qualifiersToTry.toMutableList(),
+                isMarkedNullable = false,
+                source = typeRef.source,
+            )
 
             val (resolvedType, diagnostic) = withBareTypes { resolveType(typeRefToTry, data) }
             if (resolvedType is ConeErrorType || diagnostic != null) continue
 
             return buildResolvedTypeRef {
-                source = qualifiersToTry.last().source
+                source = resolvedTypeRefSource
                 coneType = resolvedType
                 delegatedTypeRef = typeRefToTry
             }

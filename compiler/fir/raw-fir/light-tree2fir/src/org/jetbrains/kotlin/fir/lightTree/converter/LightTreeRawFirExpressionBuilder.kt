@@ -283,10 +283,10 @@ class LightTreeRawFirExpressionBuilder(
         }.also {
             target.bind(it)
         }
-        return buildAnonymousFunctionExpression {
-            source = expressionSource
-            this.anonymousFunction = anonymousFunction
-        }
+        return buildAnonymousFunctionExpression(
+            source = expressionSource,
+            anonymousFunction = anonymousFunction,
+        )
     }
 
     /**
@@ -1116,10 +1116,10 @@ class LightTreeRawFirExpressionBuilder(
         val result = buildTypeOperatorCall {
             source = whenCondition.toFirSourceElement()
             operation = firOperation
-            conversionTypeRef = firType ?: buildErrorTypeRef {
-                diagnostic = ConeSyntaxDiagnostic("Incomplete code")
-                source = whenCondition.toFirSourceElement()
-            }
+            conversionTypeRef = firType ?: buildErrorTypeRef(
+                diagnostic = ConeSyntaxDiagnostic("Incomplete code"),
+                source = whenCondition.toFirSourceElement(),
+            )
             argumentList = buildUnaryArgumentList(subjectExpression)
         }
 

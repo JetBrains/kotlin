@@ -366,10 +366,11 @@ class FunctionCallTransformer(
         }
         saveGeneratedClasses(allLocalClasses.associate { it.name to it.symbol })
 
-        val argument = buildAnonymousFunctionExpression {
-            isTrailingLambda = true
-            val fSymbol = FirAnonymousFunctionSymbol()
-            val target = FirFunctionTarget(null, isLambda = true)
+        val fSymbol = FirAnonymousFunctionSymbol()
+        val target = FirFunctionTarget(null, isLambda = true)
+
+        val argument = buildAnonymousFunctionExpression(
+            isTrailingLambda = true,
             anonymousFunction = buildAnonymousFunction {
                 source = call.arguments.firstNotNullOfOrNull { it as? FirAnonymousFunctionExpression }?.anonymousFunction?.source
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
@@ -441,8 +442,8 @@ class FunctionCallTransformer(
                 inlineStatus = InlineStatus.Inline
             }.also {
                 target.bind(it)
-            }
-        }
+            },
+        )
 
         val newCall1 = buildFunctionCall {
             // source = call.source makes IDE navigate to `let` declaration

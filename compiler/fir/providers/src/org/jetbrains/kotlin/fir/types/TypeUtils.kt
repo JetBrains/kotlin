@@ -479,23 +479,23 @@ fun FirResolvedTypeRef.withReplacedSourceAndType(newSource: KtSourceElement?, ne
 
     return when {
         newType is ConeErrorType -> {
-            buildErrorTypeRef {
-                source = newSource
-                coneType = newType
-                annotations += this@withReplacedSourceAndType.annotations
-                diagnostic = newType.diagnostic
-                partiallyResolvedTypeRef = originalPartiallyResolvedTypeRef
-            }
+            buildErrorTypeRef(
+                source = newSource,
+                coneType = newType,
+                annotations = this@withReplacedSourceAndType.annotations.toMutableList(),
+                diagnostic = newType.diagnostic,
+                partiallyResolvedTypeRef = originalPartiallyResolvedTypeRef,
+            )
         }
         this is FirErrorTypeRef -> {
-            buildErrorTypeRef {
-                source = newSource
-                coneType = newType
-                annotations += this@withReplacedSourceAndType.annotations
-                diagnostic = this@withReplacedSourceAndType.diagnostic
-                delegatedTypeRef = this@withReplacedSourceAndType.delegatedTypeRef
-                partiallyResolvedTypeRef = originalPartiallyResolvedTypeRef
-            }
+            buildErrorTypeRef(
+                source = newSource,
+                coneType = newType,
+                annotations = this@withReplacedSourceAndType.annotations.toMutableList(),
+                diagnostic = this@withReplacedSourceAndType.diagnostic,
+                delegatedTypeRef = this@withReplacedSourceAndType.delegatedTypeRef,
+                partiallyResolvedTypeRef = originalPartiallyResolvedTypeRef,
+            )
         }
         else -> {
             buildResolvedTypeRef {

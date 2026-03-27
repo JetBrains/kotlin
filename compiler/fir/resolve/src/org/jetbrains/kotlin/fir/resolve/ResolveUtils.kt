@@ -282,11 +282,11 @@ fun FirAnonymousFunction.constructFunctionTypeRef(session: FirSession, kind: Fun
             this.coneType = type
         }
     } else {
-        buildErrorTypeRef {
-            this.source = source
-            this.coneType = type
-            this.diagnostic = diagnostic
-        }
+        buildErrorTypeRef(
+            source = source,
+            coneType = type,
+            diagnostic = diagnostic,
+        )
     }
 }
 

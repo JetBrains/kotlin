@@ -52,6 +52,6 @@ class ReturnTypeCalculatorForFullBodyResolve private constructor(
             return callableCopyTypeCalculator.computeReturnType(declaration)
         }
 
-        return buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("$reason: ${declaration.render()}", diagnosticKind) }
+        return buildErrorTypeRef(diagnostic = ConeSimpleDiagnostic("$reason: ${declaration.render()}", diagnosticKind))
     }
 }

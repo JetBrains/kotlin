@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.replSnippetDelegatedPropertyCopies
@@ -510,30 +511,30 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                  *   DiagnosticsTestGenerated$Tests$ThisAndSuper.testGenericQualifiedSuperOverridden
                  *   DiagnosticsTestGenerated$Tests$ThisAndSuper.testQualifiedSuperOverridden
                  */
-                val actualSuperTypeRef = actualSuperType?.toFirResolvedTypeRef(superTypeRef.source, superTypeRef) ?: buildErrorTypeRef {
-                    source = superTypeRef.source
-                    diagnostic = ConeSimpleDiagnostic("Not a super type", DiagnosticKind.NotASupertype)
-                    annotations = superTypeRef.annotations.toMutableList()
-                }
+                val actualSuperTypeRef = actualSuperType?.toFirResolvedTypeRef(superTypeRef.source, superTypeRef) ?: buildErrorTypeRef(
+                    source = superTypeRef.source,
+                    diagnostic = ConeSimpleDiagnostic("Not a super type", DiagnosticKind.NotASupertype),
+                    annotations = superTypeRef.annotations.toMutableList(),
+                )
                 superReferenceContainer.resultType = actualSuperTypeRef.coneType
                 superReference.replaceSuperTypeRef(actualSuperTypeRef)
             }
             else -> {
                 val types = components.findTypesForSuperCandidates(superTypeRefs, containingCall)
                 val resultType = when (types.size) {
-                    0 -> buildErrorTypeRef {
-                        source = superReferenceContainer.source
+                    0 -> buildErrorTypeRef(
+                        source = superReferenceContainer.source,
                         // Errors on the callee will be reported, no reason to also report on the error type ref.
                         diagnostic =
-                            ConeUnreportedDuplicateDiagnostic(ConeSimpleDiagnostic("Unresolved super method", DiagnosticKind.Other))
-                    }
+                            ConeUnreportedDuplicateDiagnostic(ConeSimpleDiagnostic("Unresolved super method", DiagnosticKind.Other)),
+                    )
                     1 -> types.single().toFirResolvedTypeRef(
                         superReferenceContainer.source?.fakeElement(KtFakeSourceElementKind.SuperCallImplicitType)
                     )
-                    else -> buildErrorTypeRef {
-                        source = superReferenceContainer.source
-                        diagnostic = ConeAmbiguousSuper(types)
-                    }
+                    else -> buildErrorTypeRef(
+                        source = superReferenceContainer.source,
+                        diagnostic = ConeAmbiguousSuper(types),
+                    )
                 }
                 superReferenceContainer.resultType = resultType.coneType
                 superReference.replaceSuperTypeRef(resultType)
@@ -547,9 +548,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         superReferenceContainer: FirSuperReceiverExpression,
         superReference: FirSuperReference
     ): FirQualifiedAccessExpression {
-        val resultType = buildErrorTypeRef {
-            diagnostic = superNotAvailableDiagnostic
-        }
+        val resultType = buildErrorTypeRef(
+            diagnostic = superNotAvailableDiagnostic,
+        )
         superReferenceContainer.resultType = resultType.coneType
         superReference.replaceSuperTypeRef(resultType)
         superReferenceContainer.replaceCalleeReference(
@@ -1231,10 +1232,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 (operation == NOT_IS || operation == IS || operation == AS || operation == SAFE_AS)
             ) {
                 firClass.defaultType()
-            } else return buildErrorTypeRef {
-                source = this@withTypeArgumentsForBareType.source
-                diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
-            }
+            } else return buildErrorTypeRef(
+                source = this@withTypeArgumentsForBareType.source,
+                diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol),
+            )
         return if (newType.typeArguments.isEmpty()) this else withReplacedConeType(newType)
     }
 
@@ -1673,13 +1674,15 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun evaluateAndReplaceArgumentMapping(annotationCall: FirAnnotationCall) {
         val evaluationResult = FirExpressionEvaluator.evaluateAnnotationArguments(annotationCall, session, file)
         annotationCall.replaceArgumentMapping(
-            buildAnnotationArgumentMapping {
-                source = annotationCall.argumentMapping.source
-                mapping.putAll(annotationCall.argumentMapping.mapping)
-                for ((name, result) in evaluationResult) {
-                    mapping[name] = result.unwrapOr<FirExpression> { } ?: continue
-                }
-            }
+            buildAnnotationArgumentMapping(
+                source = annotationCall.argumentMapping.source,
+                mapping = buildFirMap {
+                    putAll(annotationCall.argumentMapping.mapping)
+                    for ((name, result) in evaluationResult) {
+                        this[name] = result.unwrapOr<FirExpression> { } ?: continue
+                    }
+                },
+            )
         )
     }
 

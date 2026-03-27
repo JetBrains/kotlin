@@ -263,10 +263,10 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 }
             }
 
-            val lambdaArgument = buildAnonymousFunctionExpression {
-                anonymousFunction = effectsBlock
-                isTrailingLambda = true
-            }
+            val lambdaArgument = buildAnonymousFunctionExpression(
+                anonymousFunction = effectsBlock,
+                isTrailingLambda = true,
+            )
 
             val contractCall = buildFunctionCall {
                 calleeReference = buildSimpleNamedReference {

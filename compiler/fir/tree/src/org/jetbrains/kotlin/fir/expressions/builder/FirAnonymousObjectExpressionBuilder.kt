@@ -43,3 +43,15 @@ inline fun buildAnonymousObjectExpression(init: FirAnonymousObjectExpressionBuil
     }
     return FirAnonymousObjectExpressionBuilder().apply(init).build()
 }
+
+fun buildAnonymousObjectExpression(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    anonymousObject: FirAnonymousObject,
+): FirAnonymousObjectExpression {
+    return FirAnonymousObjectExpressionImpl(
+        source,
+        coneTypeOrNull,
+        anonymousObject,
+    )
+}

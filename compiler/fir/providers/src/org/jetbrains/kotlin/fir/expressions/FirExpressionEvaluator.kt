@@ -488,9 +488,9 @@ object FirExpressionEvaluator {
             }
             return buildAnnotationCopy(
                 annotation,
-                argumentMapping = buildAnnotationArgumentMapping {
-                    this.mapping.putAll(evaluatedMapping)
-                }
+                argumentMapping = buildAnnotationArgumentMapping(
+                    mapping = evaluatedMapping
+                )
             ).wrap()
         }
     }

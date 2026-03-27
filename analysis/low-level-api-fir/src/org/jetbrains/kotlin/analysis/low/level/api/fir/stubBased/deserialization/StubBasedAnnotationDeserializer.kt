@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -112,11 +113,13 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
             annotationTypeRef = buildResolvedTypeRef {
                 coneType = classId.toLookupTag().constructClassType()
             }
-            this.argumentMapping = buildAnnotationArgumentMapping {
-                valueArguments?.forEach { (name, constantValue) ->
-                    mapping[name] = resolveValue(ktAnnotation, constantValue)
+            this.argumentMapping = buildAnnotationArgumentMapping(
+                mapping = buildFirMap {
+                    valueArguments?.forEach { (name, constantValue) ->
+                        this[name] = resolveValue(ktAnnotation, constantValue)
+                    }
                 }
-            }
+            )
             useSiteTarget?.let {
                 this.useSiteTarget = it
             }

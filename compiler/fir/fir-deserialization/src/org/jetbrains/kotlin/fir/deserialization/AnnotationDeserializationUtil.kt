@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -101,14 +102,16 @@ private fun deserializeAnnotation(
 private fun createArgumentMapping(
     session: FirSession, proto: ProtoBuf.Annotation, nameResolver: NameResolver,
 ): FirAnnotationArgumentMapping {
-    return buildAnnotationArgumentMapping build@{
-        if (proto.argumentCount == 0) return@build
-        proto.argumentList.mapNotNull {
-            val name = nameResolver.getName(it.nameId)
-            val value = it.value.toFirExpression(session, nameResolver)
-            name to value
-        }.toMap(mapping)
-    }
+    return buildAnnotationArgumentMapping(
+        mapping = buildFirMap {
+            if (proto.argumentCount == 0) return@buildFirMap
+            proto.argumentList.mapNotNull {
+                val name = nameResolver.getName(it.nameId)
+                val value = it.value.toFirExpression(session, nameResolver)
+                this[name] = value
+            }
+        },
+    )
 }
 
 internal fun ProtoBuf.Annotation.Argument.Value.toFirExpression(session: FirSession, nameResolver: NameResolver): FirExpression {

@@ -270,6 +270,39 @@ inline fun buildJavaMethod(init: FirJavaMethodBuilder.() -> Unit): FirJavaMethod
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildJavaMethod(
+    source: KtSourceElement? = null,
+    moduleData: FirModuleData,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    returnTypeRef: FirTypeRef,
+    valueParameters: MutableList<FirValueParameter> = mutableListOf(),
+    status: FirDeclarationStatus,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    name: Name,
+    symbol: FirNamedFunctionSymbol,
+    typeParameters: MutableList<FirTypeParameter> = mutableListOf(),
+    isFromSource: Boolean,
+    annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList,
+    containingClassSymbol: FirClassSymbol<*>
+): FirJavaMethod {
+    return FirJavaMethod(
+        source,
+        moduleData,
+        origin = javaOrigin(isFromSource),
+        attributes,
+        returnTypeRef,
+        typeParameters,
+        valueParameters,
+        name,
+        status as FirResolvedDeclarationStatusImpl,
+        symbol,
+        annotationList,
+        dispatchReceiverType,
+        containingClassSymbol,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildJavaMethodCopy(
     original: FirJavaMethod,
     source: KtSourceElement? = original.source,

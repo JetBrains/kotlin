@@ -241,3 +241,40 @@ internal inline fun buildJavaField(init: FirJavaFieldBuilder.() -> Unit): FirJav
     }
     return FirJavaFieldBuilder().apply(init).build()
 }
+
+@OptIn(FirImplementationDetail::class)
+internal fun buildJavaField(
+    source: KtSourceElement? = null,
+    moduleData: FirModuleData,
+    symbol: FirFieldSymbol,
+    name: Name,
+    returnTypeRef: FirTypeRef,
+    status: FirDeclarationStatus,
+    isVar: Boolean,
+    initializer: FirExpression? = null,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+
+    isFromSource: Boolean,
+    annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList,
+    lazyInitializer: Lazy<FirExpression?>? = null,
+    lazyHasConstantInitializer: Lazy<Boolean>,
+    containingClassSymbol: FirClassSymbol<*>,
+): FirJavaField {
+    return FirJavaField(
+        source,
+        moduleData,
+        origin = javaOrigin(isFromSource),
+        symbol,
+        name,
+        returnTypeRef,
+        status as FirResolvedDeclarationStatusImpl,
+        isVar,
+        annotationList,
+        lazyInitializer ?: lazyOf(initializer),
+        lazyHasConstantInitializer,
+        dispatchReceiverType,
+        attributes,
+        containingClassSymbol,
+    )
+}

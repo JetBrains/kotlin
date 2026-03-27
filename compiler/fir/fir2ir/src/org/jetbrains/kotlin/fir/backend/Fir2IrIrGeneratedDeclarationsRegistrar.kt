@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrGeneratedDeclarationsRegistrar
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -438,13 +439,15 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 .toLookupTag()
                 .constructClassType()
                 .toFirResolvedTypeRef()
-            argumentMapping = buildAnnotationArgumentMapping {
-                for ((i, argument) in this@toFirAnnotation.arguments.withIndex()) {
-                    if (argument == null) continue
-                    val argName = this@toFirAnnotation.symbol.owner.parameters[i].name
-                    this.mapping[argName] = argument.toFirExpression()
+            argumentMapping = buildAnnotationArgumentMapping(
+                mapping = buildFirMap {
+                    for ((i, argument) in this@toFirAnnotation.arguments.withIndex()) {
+                        if (argument == null) continue
+                        val argName = this@toFirAnnotation.symbol.owner.parameters[i].name
+                        this[argName] = argument.toFirExpression()
+                    }
                 }
-            }
+            )
         }
     }
 

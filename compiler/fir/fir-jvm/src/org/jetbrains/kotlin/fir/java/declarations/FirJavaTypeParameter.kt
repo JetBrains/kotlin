@@ -308,3 +308,27 @@ inline fun buildJavaTypeParameter(init: FirJavaTypeParameterBuilder.() -> Unit):
     }
     return FirJavaTypeParameterBuilder().apply(init).build()
 }
+
+fun buildJavaTypeParameter(
+    source: KtSourceElement? = null,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    name: Name,
+    symbol: FirTypeParameterSymbol,
+    containingDeclarationSymbol: FirBasedSymbol<*>,
+    annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList,
+    javaTypeParameter: JavaTypeParameter
+): FirTypeParameter {
+    return FirJavaTypeParameter(
+        javaTypeParameter,
+        source,
+        moduleData,
+        origin,
+        attributes,
+        name,
+        symbol,
+        containingDeclarationSymbol,
+        annotationList,
+    )
+}

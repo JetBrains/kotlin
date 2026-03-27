@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.buildFirList
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
@@ -24,6 +25,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParamete
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -139,58 +142,58 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     ): FirJavaClass {
         val moduleData = getModuleDataForClass(javaClass)
         val session = moduleData.session
-        return buildJavaClass {
-            this.javaClass = javaClass
-            containingClassSymbol = parentClassSymbol
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            annotationList = FirLazyJavaAnnotationList(javaClass, moduleData)
-            source = javaClass.toSourceElement()
-            this.moduleData = moduleData
-            symbol = classSymbol
-            name = javaClass.name
-            isFromSource = javaClass.isFromSource
-            val visibility = javaClass.visibility
-            this@buildJavaClass.visibility = visibility
-            classKind = javaClass.classKind
-            modality = javaClass.modality
-            this.isTopLevel = !classId.isNestedClass
-            isStatic = javaClass.isStatic
-            javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
-            this.javaTypeParameterStack = classJavaTypeParameterStack
-            existingNestedClassifierNames += javaClass.innerClassNames
-            scopeProvider = JavaScopeProvider
+        val visibility = javaClass.visibility
+        val selfEffectiveVisibility = visibility.toEffectiveVisibility(parentClassSymbol?.toLookupTag(), forClass = true)
+        val parentEffectiveVisibility = parentClassSymbol?.let {
+            // `originalStatus` can be used here as in the current implementation, status compiler plugins
+            // cannot change effective visibility.
+            (it.fir as FirJavaClass).originalStatus.effectiveVisibility
+        } ?: EffectiveVisibility.Public
+        val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
+        val isTopLevel = !classId.isNestedClass
+        val isStatic = javaClass.isStatic
+        val javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
+        val classKind = javaClass.classKind
 
-            val selfEffectiveVisibility = visibility.toEffectiveVisibility(parentClassSymbol?.toLookupTag(), forClass = true)
-            val parentEffectiveVisibility = parentClassSymbol?.let {
-                // `originalStatus` can be used here as in the current implementation, status compiler plugins
-                // cannot change effective visibility.
-                (it.fir as FirJavaClass).originalStatus.effectiveVisibility
-            } ?: EffectiveVisibility.Public
+        return buildJavaClass(
+            javaClass = javaClass,
+            containingClassSymbol = parentClassSymbol,
+            annotationList = FirLazyJavaAnnotationList(javaClass, moduleData),
+            source = javaClass.toSourceElement(),
+            moduleData = moduleData,
+            symbol = classSymbol,
+            name = javaClass.name,
+            isFromSource = javaClass.isFromSource,
+            classKind = classKind,
+            javaPackage = javaPackage,
+            javaTypeParameterStack = classJavaTypeParameterStack,
+            existingNestedClassifierNames = javaClass.innerClassNames.toMutableList(),
+            scopeProvider = JavaScopeProvider,
 
-            val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
-            javaClass.typeParameters.mapTo(typeParameters) { javaTypeParameter ->
-                javaTypeParameter.toFirTypeParameter(classSymbol, moduleData).also { firTypeParameter ->
-                    classJavaTypeParameterStack.addParameter(javaTypeParameter, firTypeParameter.symbol)
+            typeParameters = buildFirList {
+                javaClass.typeParameters.mapTo(this) { javaTypeParameter ->
+                    javaTypeParameter.toFirTypeParameter(classSymbol, moduleData).also { firTypeParameter ->
+                        classJavaTypeParameterStack.addParameter(javaTypeParameter, firTypeParameter.symbol)
+                    }
                 }
-            }
-
-            if (!isStatic && parentClassSymbol != null) {
-                typeParameters += (parentClassSymbol.fir as FirJavaClass).nonEnhancedTypeParameters.map {
-                    buildOuterClassTypeParameterRef { symbol = it.symbol }
+                if (!isStatic && parentClassSymbol != null) {
+                    this += (parentClassSymbol.fir as FirJavaClass).nonEnhancedTypeParameters.map {
+                        buildOuterClassTypeParameterRef { symbol = it.symbol }
+                    }
                 }
-            }
+            },
 
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
-                modality!!,
+                javaClass.modality,
                 effectiveVisibility
             ).apply {
-                this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
+                this.isInner = !isTopLevel && !isStatic
                 isFun = classKind == ClassKind.INTERFACE
-            }
+            },
 
-            declarationList = FirLazyJavaDeclarationList(javaClass, classSymbol, javaPackage)
-        }.apply {
+            declarationList = FirLazyJavaDeclarationList(javaClass, classSymbol, javaPackage),
+        ).apply {
             if (originalStatus.modality == Modality.SEALED) {
                 setSealedClassInheritors {
                     javaClass.permittedTypes.mapNotNullTo(mutableListOf()) { classifierType ->
@@ -401,16 +404,16 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
 private fun JavaTypeParameter.toFirTypeParameter(
     containingDeclarationSymbol: FirBasedSymbol<*>,
     moduleData: FirModuleData,
-): FirTypeParameter = buildJavaTypeParameter {
-    javaTypeParameter = this@toFirTypeParameter
-    this.moduleData = moduleData
-    origin = javaOrigin(isFromSource)
-    name = this@toFirTypeParameter.name
-    symbol = FirTypeParameterSymbol()
-    this.source = this@toFirTypeParameter.toSourceElement()
-    this.containingDeclarationSymbol = containingDeclarationSymbol
-    annotationList = FirLazyJavaAnnotationList(this@toFirTypeParameter, moduleData)
-}
+): FirTypeParameter = buildJavaTypeParameter(
+    javaTypeParameter = this@toFirTypeParameter,
+    moduleData = moduleData,
+    origin = javaOrigin(isFromSource),
+    name = this@toFirTypeParameter.name,
+    symbol = FirTypeParameterSymbol(),
+    source = this@toFirTypeParameter.toSourceElement(),
+    containingDeclarationSymbol = containingDeclarationSymbol,
+    annotationList = FirLazyJavaAnnotationList(this@toFirTypeParameter, moduleData),
+)
 
 private fun createDeclarationsForJavaRecord(
     javaClass: JavaClass,
@@ -429,21 +432,22 @@ private fun createDeclarationsForJavaRecord(
         if (functionsByName[name].orEmpty().any { it.valueParameters.isEmpty() }) continue
 
         val componentId = CallableId(classId, name)
-        destination += buildJavaMethod {
-            this.containingClassSymbol = containingClassSymbol
-            this.moduleData = moduleData
-            source = recordComponent.toSourceElement(KtFakeSourceElementKind.JavaRecordComponentFunction)
-            symbol = FirNamedFunctionSymbol(componentId)
-            this.name = name
-            isFromSource = recordComponent.isFromSource
-            returnTypeRef = recordComponent.type.toFirJavaTypeRef(session, source)
+        val source = recordComponent.toSourceElement(KtFakeSourceElementKind.JavaRecordComponentFunction)
+        destination += buildJavaMethod(
+            containingClassSymbol = containingClassSymbol,
+            moduleData = moduleData,
+            source = source,
+            symbol = FirNamedFunctionSymbol(componentId),
+            name = name,
+            isFromSource = recordComponent.isFromSource,
+            returnTypeRef = recordComponent.type.toFirJavaTypeRef(session, source),
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
                 EffectiveVisibility.Public
-            )
-            dispatchReceiverType = classType
-        }.apply {
+            ),
+            dispatchReceiverType = classType,
+        ).apply {
             isJavaRecordComponent = true
         }
     }
@@ -455,37 +459,39 @@ private fun createDeclarationsForJavaRecord(
      * (e.g., in IntelliJ plugin Java class can have additional declarations)
      */
     if (destination.none { it is FirJavaConstructor && it.isPrimary }) {
-        destination += buildJavaConstructor {
-            this.containingClassSymbol = containingClassSymbol
-            source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitJavaRecordConstructor)
-            this.moduleData = moduleData
-            isFromSource = javaClass.isFromSource
-
-            val constructorId = CallableId(classId, classId.shortClassName)
-            symbol = FirConstructorSymbol(constructorId)
+        val constructorId = CallableId(classId, classId.shortClassName)
+        val symbol = FirConstructorSymbol(constructorId)
+        destination += buildJavaConstructor(
+            containingClassSymbol = containingClassSymbol,
+            source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitJavaRecordConstructor),
+            moduleData = moduleData,
+            isFromSource = javaClass.isFromSource,
+            symbol = symbol,
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
                 EffectiveVisibility.Public
-            )
-            isPrimary = true
-            returnTypeRef = classType.toFirResolvedTypeRef()
-            dispatchReceiverType = null
-            typeParameters += classTypeParameters.toRefs()
-
-            javaClass.recordComponents.mapTo(valueParameters) { component ->
-                buildJavaValueParameter {
-                    containingDeclarationSymbol = this@buildJavaConstructor.symbol
-                    source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
-                    this.moduleData = moduleData
-                    isFromSource = component.isFromSource
-                    returnTypeRef = component.type.toFirJavaTypeRef(session, source)
-                    name = component.name
-                    isVararg = component.isVararg
-                    annotationList = FirLazyJavaAnnotationList(component, moduleData)
+            ),
+            isPrimary = true,
+            returnTypeRef = classType.toFirResolvedTypeRef(),
+            dispatchReceiverType = null,
+            typeParameters = classTypeParameters.toRefs().toMutableList(),
+            valueParameters = buildFirList {
+                javaClass.recordComponents.mapTo(this) { component ->
+                    val source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
+                    buildJavaValueParameter(
+                        containingDeclarationSymbol = symbol,
+                        source = source,
+                        moduleData = moduleData,
+                        isFromSource = component.isFromSource,
+                        returnTypeRef = component.type.toFirJavaTypeRef(session, source),
+                        name = component.name,
+                        isVararg = component.isVararg,
+                        annotationList = FirLazyJavaAnnotationList(component, moduleData),
+                    )
                 }
             }
-        }.apply {
+        ).apply {
             containingClassForStaticMemberAttr = classType.lookupTag
         }
     }
@@ -528,37 +534,35 @@ private fun convertJavaFieldToFir(
             setAnnotationsFromJava(session, fakeSource, javaField)
             replaceDeprecationsProvider(annotations.getDeprecationsProviderFromAnnotations(session, fromJava = true))
         }
-        else -> buildJavaField {
-            this.containingClassSymbol = containingClassSymbol
-            source = javaField.toSourceElement()
-            this.moduleData = moduleData
-            symbol = FirFieldSymbol(fieldId)
-            name = fieldName
-            isFromSource = javaField.isFromSource
+        else -> buildJavaField(
+            containingClassSymbol = containingClassSymbol,
+            source = javaField.toSourceElement(),
+            moduleData = moduleData,
+            symbol = FirFieldSymbol(fieldId),
+            name = fieldName,
+            isFromSource = javaField.isFromSource,
             status = FirResolvedDeclarationStatusImpl(
                 javaField.visibility,
                 javaField.modality,
                 javaField.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
             ).apply {
                 isStatic = javaField.isStatic
-            }
-            returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
-            isVar = !javaField.isFinal
-            annotationList = FirLazyJavaAnnotationList(javaField, moduleData)
+            },
+            returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource),
+            isVar = !javaField.isFinal,
+            annotationList = FirLazyJavaAnnotationList(javaField, moduleData),
 
             lazyInitializer = lazy {
                 // NB: null should be converted to null
                 javaField.initializerValue?.createConstantIfAny(session)
-            }
+            },
 
             lazyHasConstantInitializer = lazy {
                 javaField.hasConstantNotNullInitializer
-            }
+            },
 
-            if (!javaField.isStatic) {
-                dispatchReceiverType = dispatchReceiver
-            }
-        }.apply {
+            dispatchReceiverType = if (!javaField.isStatic) dispatchReceiver else null,
+        ).apply {
             if (javaField.isStatic) {
                 containingClassForStaticMemberAttr = classId.toLookupTag()
             }
@@ -590,28 +594,28 @@ private fun convertJavaMethodToFir(
         isExternal = javaMethod.isNative
     }
 
-    return buildJavaMethod {
-        this.containingClassSymbol = containingClassSymbol
-        this.moduleData = moduleData
-        source = javaMethod.toSourceElement()
-        symbol = methodSymbol
-        name = methodName
-        isFromSource = javaMethod.isFromSource
-        val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
-        returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
-        javaMethod.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(methodSymbol, moduleData) }
-        for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
-            valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index)
-        }
-
-        annotationList = FirLazyJavaAnnotationList(javaMethod, moduleData)
-
-        status = methodStatus
-
-        if (!javaMethod.isStatic) {
-            dispatchReceiverType = dispatchReceiver
-        }
-    }.apply {
+    val source = javaMethod.toSourceElement()
+    val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+    return buildJavaMethod(
+        containingClassSymbol = containingClassSymbol,
+        moduleData = moduleData,
+        source = source,
+        symbol = methodSymbol,
+        name = methodName,
+        isFromSource = javaMethod.isFromSource,
+        returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource),
+        typeParameters = buildFirList {
+            javaMethod.typeParameters.mapTo(this) { it.toFirTypeParameter(methodSymbol, moduleData) }
+        },
+        valueParameters = buildFirList {
+            for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
+                add(valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index))
+            }
+        },
+        annotationList = FirLazyJavaAnnotationList(javaMethod, moduleData),
+        status = methodStatus,
+        dispatchReceiverType = if (!javaMethod.isStatic) dispatchReceiver else null
+    ).apply {
         if (javaMethod.isStatic) {
             containingClassForStaticMemberAttr = classId.toLookupTag()
         }
@@ -633,15 +637,15 @@ private fun convertJavaAnnotationMethodToValueParameter(
     firJavaMethod: FirJavaMethod,
     moduleData: FirModuleData,
 ): FirJavaValueParameter =
-    buildJavaValueParameter {
-        source = javaMethod.toSourceElement(KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
-        this.moduleData = moduleData
-        isFromSource = javaMethod.isFromSource
-        returnTypeRef = firJavaMethod.returnTypeRef
-        containingDeclarationSymbol = firJavaMethod.symbol
-        name = javaMethod.name
-        isVararg = javaMethod.returnType is JavaArrayType && javaMethod.name == FirJavaFacade.VALUE_METHOD_NAME
-    }
+    buildJavaValueParameter(
+        source = javaMethod.toSourceElement(KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor),
+        moduleData = moduleData,
+        isFromSource = javaMethod.isFromSource,
+        returnTypeRef = firJavaMethod.returnTypeRef,
+        containingDeclarationSymbol = firJavaMethod.symbol,
+        name = javaMethod.name,
+        isVararg = javaMethod.returnType is JavaArrayType && javaMethod.name == FirJavaFacade.VALUE_METHOD_NAME,
+    )
 
 private fun convertJavaConstructorToFir(
     javaConstructor: JavaConstructor?,
@@ -667,19 +671,32 @@ private fun convertJavaConstructorToFir(
         hasStableParameterNames = false
     }
 
-    return buildJavaConstructor {
-        containingClassSymbol = classSymbol
-        source = javaConstructor?.toSourceElement() ?: javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
-        this.moduleData = moduleData
-        isFromSource = javaClass.isFromSource
-        symbol = constructorSymbol
-        isInner = classIsInner
-        status = methodStatus
+    val source = javaConstructor?.toSourceElement() ?: javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
+    val typeParameters = classTypeParameters.toRefs().toMutableList()
+    val valueParameters = mutableListOf<FirValueParameter>()
+    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
+
+    if (javaConstructor != null) {
+        javaConstructor.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(constructorSymbol, moduleData) }
+
+        annotationList = FirLazyJavaAnnotationList(javaConstructor, moduleData)
+        for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
+            valueParameters += valueParameter.toFirValueParameter(session, constructorSymbol, moduleData, index)
+        }
+    }
+
+    return buildJavaConstructor(
+        containingClassSymbol = classSymbol,
+        source = source,
+        moduleData = moduleData,
+        isFromSource = javaClass.isFromSource,
+        symbol = constructorSymbol,
+        status = methodStatus,
         // TODO get rid of dependency on PSI KT-63046
-        isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
+        isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) },
         returnTypeRef = buildResolvedTypeRef {
             coneType = classSymbol.defaultType()
-        }
+        },
         dispatchReceiverType = if (classIsInner)
             outerClassSymbol?.fir?.let { outerFirJavaClass ->
                 outerFirJavaClass as FirJavaClass
@@ -688,19 +705,11 @@ private fun convertJavaConstructorToFir(
                 outerClassSymbol.classId.defaultType(outerFirJavaClass.nonEnhancedTypeParameters.map { it.symbol })
             }
         else
-            null
-
-        typeParameters += classTypeParameters.toRefs()
-
-        if (javaConstructor != null) {
-            javaConstructor.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(constructorSymbol, moduleData) }
-
-            annotationList = FirLazyJavaAnnotationList(javaConstructor, moduleData)
-            for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
-                valueParameters += valueParameter.toFirValueParameter(session, constructorSymbol, moduleData, index)
-            }
-        }
-    }.apply {
+            null,
+        typeParameters = typeParameters,
+        annotationList = annotationList,
+        valueParameters = valueParameters,
+    ).apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
         // Can be called only after .build() because we need to access fir.resolvedAnnotationsWithClassIds
         methodStatus.returnValueStatus = session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForJavaCallable(
@@ -719,20 +728,21 @@ private fun buildConstructorForAnnotationClass(
     valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor,
     moduleData: FirModuleData,
 ): FirJavaConstructor {
-    return buildJavaConstructor {
-        containingClassSymbol = classSymbol
-        source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
-        this.moduleData = moduleData
-        isFromSource = javaClass.isFromSource
-        symbol = FirConstructorSymbol(constructorId)
-        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+    return buildJavaConstructor(
+        containingClassSymbol = classSymbol,
+        source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor),
+        moduleData = moduleData,
+        isFromSource = javaClass.isFromSource,
+        symbol = FirConstructorSymbol(constructorId),
+        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public),
         returnTypeRef = buildResolvedTypeRef {
             coneType = classSymbol.defaultType()
-        }
-        valueParametersForAnnotationConstructor.forEach { _, firValueParameter -> valueParameters += firValueParameter }
-        isInner = false
-        isPrimary = true
-    }.apply {
+        },
+        valueParameters = buildFirList {
+            valueParametersForAnnotationConstructor.forEach { _, firValueParameter -> add(firValueParameter) }
+        },
+        isPrimary = true,
+    ).apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
     }
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -89,22 +90,24 @@ private fun List<FirAnnotation>.mergeTargetAnnotations(
     return filter { it !== annotationWithJavaTarget && it !== annotationWithKotlinTarget } +
             buildAnnotationCopy(
                 annotationWithKotlinTarget,
-                argumentMapping = buildAnnotationArgumentMapping {
-                    this.source = annotationWithKotlinTarget.argumentMapping.source
-                    mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets] = buildVarargArgumentsExpressionWithTargets {
-                        arguments += if (annotationWithJavaTarget == null) {
-                            JAVA_DEFAULT_TARGET_SET.map {
-                                buildEnumEntryDeserializedAccessExpression {
-                                    enumClassId = StandardClassIds.AnnotationTarget
-                                    enumEntryName = Name.identifier(it.name)
+                argumentMapping = buildAnnotationArgumentMapping(
+                    source = annotationWithKotlinTarget.argumentMapping.source,
+                    mapping = buildFirMap {
+                        this[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets] = buildVarargArgumentsExpressionWithTargets {
+                            arguments += if (annotationWithJavaTarget == null) {
+                                JAVA_DEFAULT_TARGET_SET.map {
+                                    buildEnumEntryDeserializedAccessExpression {
+                                        enumClassId = StandardClassIds.AnnotationTarget
+                                        enumEntryName = Name.identifier(it.name)
+                                    }
                                 }
+                            } else {
+                                annotationWithJavaTarget.targetArgumentExpressions()
                             }
-                        } else {
-                            annotationWithJavaTarget.targetArgumentExpressions()
+                            arguments += annotationWithKotlinTarget.targetArgumentExpressions()
                         }
-                        arguments += annotationWithKotlinTarget.targetArgumentExpressions()
                     }
-                }
+                )
             )
 }
 
@@ -155,15 +158,18 @@ internal fun JavaValueParameter.toFirValueParameter(
     functionSymbol: FirFunctionSymbol<*>,
     moduleData: FirModuleData,
     index: Int,
-): FirValueParameter = buildJavaValueParameter {
-    source = toSourceElement()
-    isFromSource = this@toFirValueParameter.isFromSource
-    this.moduleData = moduleData
-    containingDeclarationSymbol = functionSymbol
-    name = this@toFirValueParameter.nameOrGeneratedName ?: Name.identifier("p$index")
-    returnTypeRef = type.toFirJavaTypeRef(session, source)
-    isVararg = this@toFirValueParameter.isVararg
-    annotationList = FirLazyJavaAnnotationList(this@toFirValueParameter, moduleData)
+): FirValueParameter {
+    val source = toSourceElement()
+    return buildJavaValueParameter(
+        source = source,
+        isFromSource = this@toFirValueParameter.isFromSource,
+        moduleData = moduleData,
+        containingDeclarationSymbol = functionSymbol,
+        name = this@toFirValueParameter.nameOrGeneratedName ?: Name.identifier("p$index"),
+        returnTypeRef = type.toFirJavaTypeRef(session, source),
+        isVararg = this@toFirValueParameter.isVararg,
+        annotationList = FirLazyJavaAnnotationList(this@toFirValueParameter, moduleData),
+    )
 }
 
 internal fun JavaAnnotationArgument.toFirExpression(
@@ -338,10 +344,10 @@ internal fun JavaAnnotation.isJavaDeprecatedAnnotation(): Boolean {
 private fun JavaAnnotation.toFirAnnotation(session: FirSession, source: KtSourceElement?): FirAnnotation {
     val annotationData = buildFirAnnotation(this, session, source)
     return if (isIdeExternalAnnotation) {
-        buildJavaExternalAnnotation {
-            annotationTypeRef = annotationData.annotationTypeRef
-            argumentMapping = annotationData.argumentsMapping
-        }
+        buildJavaExternalAnnotation(
+            annotationTypeRef = annotationData.annotationTypeRef,
+            argumentMapping = annotationData.argumentsMapping,
+        )
     } else {
         buildAnnotation {
             annotationTypeRef = annotationData.annotationTypeRef
@@ -373,10 +379,10 @@ private fun buildFirAnnotation(
         }
     } else {
         val unresolvedName = classId?.shortClassName ?: SpecialNames.NO_NAME_PROVIDED
-        buildErrorTypeRef {
-            diagnostic = ConeUnresolvedReferenceError(unresolvedName)
-            this.source = source
-        }
+        buildErrorTypeRef(
+            diagnostic = ConeUnresolvedReferenceError(unresolvedName),
+            source = source,
+        )
     }
 
     /**

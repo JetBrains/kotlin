@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.lombok.k2.generators
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.builder.buildFirList
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -105,30 +106,35 @@ fun FirClassSymbol<*>.createJavaMethod(
     methodSymbol: FirNamedFunctionSymbol? = null,
     methodTypeParameters: Collection<FirTypeParameter> = emptyList(),
 ): FirJavaMethod {
-    return buildJavaMethod {
-        containingClassSymbol = this@createJavaMethod
-        moduleData = this@createJavaMethod.moduleData
-        this.returnTypeRef = returnTypeRef
-        this.dispatchReceiverType = dispatchReceiverType
-        this.name = name
-        symbol = methodSymbol ?: FirNamedFunctionSymbol(CallableId(classId, name))
+    val symbol = methodSymbol ?: FirNamedFunctionSymbol(CallableId(classId, name))
+    return buildJavaMethod(
+        containingClassSymbol = this@createJavaMethod,
+        moduleData = this@createJavaMethod.moduleData,
+        returnTypeRef = returnTypeRef,
+        dispatchReceiverType = dispatchReceiverType,
+        name = name,
+        symbol = symbol,
         status = FirResolvedDeclarationStatusImpl(visibility, modality, visibility.toEffectiveVisibility(this@createJavaMethod)).apply {
             this.isStatic = isStatic
-        }
-        isFromSource = true
-        typeParameters += methodTypeParameters
+        },
+        isFromSource = true,
+        typeParameters = methodTypeParameters.toMutableList(),
 
-        for (valueParameter in valueParameters) {
-            this.valueParameters += buildJavaValueParameter {
-                moduleData = this@createJavaMethod.moduleData
-                this.returnTypeRef = valueParameter.typeRef
-                containingDeclarationSymbol = this@buildJavaMethod.symbol
-                this.name = valueParameter.name
-                isVararg = false
-                isFromSource = true
+        valueParameters = buildFirList {
+            for (valueParameter in valueParameters) {
+                add(
+                    buildJavaValueParameter(
+                        moduleData = this@createJavaMethod.moduleData,
+                        returnTypeRef = valueParameter.typeRef,
+                        containingDeclarationSymbol = symbol,
+                        name = valueParameter.name,
+                        isVararg = false,
+                        isFromSource = true,
+                    )
+                )
             }
-        }
-    }.apply {
+        },
+    ).apply {
         if (isStatic) {
             containingClassForStaticMemberAttr = this@createJavaMethod.toLookupTag()
         }

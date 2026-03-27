@@ -252,6 +252,34 @@ inline fun buildJavaValueParameter(init: FirJavaValueParameterBuilder.() -> Unit
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildJavaValueParameter(
+    source: KtSourceElement? = null,
+    moduleData: FirModuleData,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    returnTypeRef: FirTypeRef,
+    name: Name,
+    annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList,
+    defaultValue: Lazy<FirExpression>? = null,
+    containingDeclarationSymbol: FirFunctionSymbol<*>,
+    isVararg: Boolean ,
+    isFromSource: Boolean,
+): FirJavaValueParameter {
+    return FirJavaValueParameter(
+        source,
+        moduleData,
+        origin = javaOrigin(isFromSource),
+        attributes,
+        returnTypeRef,
+        name,
+        symbol = FirValueParameterSymbol(),
+        annotationList,
+        defaultValue,
+        containingDeclarationSymbol,
+        isVararg,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildJavaValueParameterCopy(
     original: FirJavaValueParameter,
     source: KtSourceElement? = original.source,

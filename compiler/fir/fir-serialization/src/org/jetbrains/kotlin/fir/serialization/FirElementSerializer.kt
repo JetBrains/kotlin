@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.constant.EnumValue
 import org.jetbrains.kotlin.constant.IntValue
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
@@ -1085,12 +1086,14 @@ class FirElementSerializer private constructor(
                     typeAnnotations.addIfNotNull(
                         createAnnotationFromAttribute(
                             correspondingTypeRef?.annotations, CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID,
-                            argumentMapping = buildAnnotationArgumentMapping {
-                                this.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] =
-                                    buildLiteralExpression(
-                                        source = null, ConstantValueKind.Int, type.contextParameterNumberForFunctionType, setType = true
-                                    )
-                            }
+                            argumentMapping = buildAnnotationArgumentMapping(
+                                mapping = buildFirMap {
+                                    this[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] =
+                                        buildLiteralExpression(
+                                            source = null, ConstantValueKind.Int, type.contextParameterNumberForFunctionType, setType = true
+                                        )
+                                }
+                            )
                         )
                     )
                 }

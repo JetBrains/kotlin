@@ -126,21 +126,21 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
             val fields = getFieldsForParameters(classSymbol)
             fields.mapTo(valueParameters) { field ->
-                buildJavaValueParameter {
-                    moduleData = field.moduleData
+                buildJavaValueParameter(
+                    moduleData = field.moduleData,
                     returnTypeRef = when (val typeRef = field.returnTypeRef) {
-                        is FirJavaTypeRef -> buildJavaTypeRef {
-                            type = substitutor.substituteOrSelf(typeRef.type)
-                            annotationBuilder = { emptyList() }
-                            source = classSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
-                        }
+                        is FirJavaTypeRef -> buildJavaTypeRef(
+                            type = substitutor.substituteOrSelf(typeRef.type),
+                            annotationBuilder = { emptyList() },
+                            source = classSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement),
+                        )
                         else -> typeRef
-                    }
-                    containingDeclarationSymbol = constructorSymbol
-                    name = field.name
-                    isVararg = false
-                    isFromSource = true
-                }
+                    },
+                    containingDeclarationSymbol = constructorSymbol,
+                    name = field.name,
+                    isVararg = false,
+                    isFromSource = true,
+                )
             }
         }
 

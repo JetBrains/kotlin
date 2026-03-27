@@ -720,37 +720,37 @@ class LightTreeRawFirDeclarationBuilder(
     fun convertObjectLiteral(objectLiteral: LighterASTNode): FirAnonymousObjectExpression {
         return withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
             var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
-            buildAnonymousObjectExpression {
-                source = objectLiteral.toFirSourceElement()
-
-                val objectDeclaration = objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()
-                var modifiers: ModifierList? = null
-                var primaryConstructor: LighterASTNode? = null
-                val superTypeRefs = mutableListOf<FirTypeRef>()
-                var delegatedSuperTypeRef: FirTypeRef? = null
-                var classBody: LighterASTNode? = null
-                var delegatedConstructorSource: KtLightSourceElement? = null
-                var delegatedSuperCalls: List<DelegatedConstructorWrapper>? = null
-                var delegateFields: List<FirField>? = null
-
-                objectDeclaration.forEachChildren { child ->
-                    when (child.tokenType) {
-                        MODIFIER_LIST -> {
-                            modifiers = convertModifierList(child)
-                        }
-                        PRIMARY_CONSTRUCTOR -> primaryConstructor = child
-                        SUPER_TYPE_LIST -> convertDelegationSpecifiers(child).let { specifiers ->
-                            delegatedSuperTypeRef = specifiers.superTypeCalls.lastOrNull()?.delegatedSuperTypeRef
-                            superTypeRefs += specifiers.superTypesRef
-                            delegatedConstructorSource = specifiers.superTypeCalls.lastOrNull()?.source
-                            delegateFields = specifiers.delegateFieldsMap.values.map { it.fir }
-                            delegatedFieldsMap = specifiers.delegateFieldsMap.takeIf { it.isNotEmpty() }
-                            delegatedSuperCalls = specifiers.superTypeCalls
-                        }
-                        CLASS_BODY -> classBody = child
+            val objectDeclaration = objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()
+            var modifiers: ModifierList? = null
+            var primaryConstructor: LighterASTNode? = null
+            val superTypeRefs = mutableListOf<FirTypeRef>()
+            var delegatedSuperTypeRef: FirTypeRef? = null
+            var classBody: LighterASTNode? = null
+            var delegatedConstructorSource: KtLightSourceElement? = null
+            var delegatedSuperCalls: List<DelegatedConstructorWrapper>? = null
+            var delegateFields: List<FirField>? = null
+            objectDeclaration.forEachChildren { child ->
+                when (child.tokenType) {
+                    MODIFIER_LIST -> {
+                        modifiers = convertModifierList(child)
                     }
+                    PRIMARY_CONSTRUCTOR -> primaryConstructor = child
+                    SUPER_TYPE_LIST -> convertDelegationSpecifiers(child).let { specifiers ->
+                        delegatedSuperTypeRef = specifiers.superTypeCalls.lastOrNull()?.delegatedSuperTypeRef
+                        superTypeRefs += specifiers.superTypesRef
+                        delegatedConstructorSource = specifiers.superTypeCalls.lastOrNull()?.source
+                        delegateFields = specifiers.delegateFieldsMap.values.map { it.fir }
+                        delegatedFieldsMap = specifiers.delegateFieldsMap.takeIf { it.isNotEmpty() }
+                        delegatedSuperCalls = specifiers.superTypeCalls
+                    }
+                    CLASS_BODY -> classBody = child
                 }
-                val companionBlockCollector = CompanionBlockCollector()
+            }
+            val companionBlockCollector = CompanionBlockCollector()
+
+            buildAnonymousObjectExpression(
+                source = objectLiteral.toFirSourceElement(),
+
                 anonymousObject = buildAnonymousObject {
                     source = objectDeclaration.toFirSourceElement()
                     origin = FirDeclarationOrigin.Source
@@ -800,8 +800,8 @@ class LightTreeRawFirDeclarationBuilder(
                 }.apply {
                     this.delegateFieldsMap = delegatedFieldsMap
                     companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
-                }
-            }
+                },
+            )
         }
     }
 
@@ -854,11 +854,12 @@ class LightTreeRawFirDeclarationBuilder(
                     return@buildEnumEntry
                 }
                 modifiers?.convertAnnotationsTo(annotations)
+                val entrySource = enumEntry.toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)
+                val companionBlockCollector = CompanionBlockCollector()
+
                 initializer = withChildClassName(enumEntryName, isExpect = false) {
-                    buildAnonymousObjectExpression {
-                        val entrySource = enumEntry.toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)
-                        source = entrySource
-                        val companionBlockCollector = CompanionBlockCollector()
+                    buildAnonymousObjectExpression(
+                        source = entrySource,
                         anonymousObject = buildAnonymousObject {
                             source = entrySource
                             moduleData = baseModuleData
@@ -908,8 +909,8 @@ class LightTreeRawFirDeclarationBuilder(
                             }
                         }.apply {
                             companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
-                        }
-                    }
+                        },
+                    )
                 }
             }
         }.also {
@@ -2145,10 +2146,10 @@ class LightTreeRawFirDeclarationBuilder(
             }
 
             return if (function is FirAnonymousFunction) {
-                buildAnonymousFunctionExpression {
-                    source = functionSource
-                    anonymousFunction = function
-                }
+                buildAnonymousFunctionExpression(
+                    source = functionSource,
+                    anonymousFunction = function,
+                )
             } else {
                 function
             }
@@ -2385,7 +2386,8 @@ class LightTreeRawFirDeclarationBuilder(
         return TypeConstraint(
             annotations,
             identifier,
-            firType ?: buildErrorTypeRef { },
+            // TODO: diagnostic must always be initialized, probably a bug and a more refined error message is needed
+            firType ?: buildErrorTypeRef(diagnostic = ConeSyntaxDiagnostic("Type is null")),
             (referenceExpression ?: typeConstraint).toFirSourceElement()
         )
     }
@@ -2466,17 +2468,17 @@ class LightTreeRawFirDeclarationBuilder(
                 }
                 INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, false)
                 CONTEXT_PARAMETER_LIST, TokenType.ERROR_ELEMENT -> firType =
-                    buildErrorTypeRef {
-                        source = typeRefSource
+                    buildErrorTypeRef(
+                        source = typeRefSource,
                         diagnostic = ConeSyntaxDiagnostic("Unwrapped type is null")
-                    }
+                    )
             }
         }
 
-        val calculatedFirType = firType ?: buildErrorTypeRef {
-            source = typeRefSource
+        val calculatedFirType = firType ?: buildErrorTypeRef(
+            source = typeRefSource,
             diagnostic = ConeSyntaxDiagnostic("Incomplete code")
-        }
+        )
 
         for (modifierList in allTypeModifiers) {
             calculatedFirType.replaceAnnotations(calculatedFirType.annotations.smartPlus(modifierList.convertAnnotations()))
@@ -2493,10 +2495,10 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         if (children.size != 2) {
-            return buildErrorTypeRef {
-                source = typeRefSource
-                diagnostic = ConeSyntaxDiagnostic("Wrong code")
-            }
+            return buildErrorTypeRef(
+                source = typeRefSource,
+                diagnostic = ConeSyntaxDiagnostic("Wrong code"),
+            )
         }
 
         return buildIntersectionTypeRef {
@@ -2576,19 +2578,19 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         if (identifier == null) {
-            return buildErrorTypeRef {
-                source = typeRefSource
-                diagnostic = ConeSyntaxDiagnostic("Incomplete user type")
-                simpleFirUserType?.let { qualifierPart ->
-                    if (qualifierPart.qualifier.isNotEmpty()) {
-                        partiallyResolvedTypeRef = buildUserTypeRef {
-                            source = qualifierPart.qualifier.last().source!!
-                            isMarkedNullable = false
-                            this.qualifier.addAll(qualifierPart.qualifier)
-                        }
-                    }
-                }
-            }
+            return buildErrorTypeRef(
+                source = typeRefSource,
+                diagnostic = ConeSyntaxDiagnostic("Incomplete user type"),
+                partiallyResolvedTypeRef = if (simpleFirUserType != null && simpleFirUserType.qualifier.isNotEmpty()) {
+                    buildUserTypeRef(
+                        source = simpleFirUserType.qualifier.last().source!!,
+                        isMarkedNullable = false,
+                        qualifier = simpleFirUserType.qualifier.toMutableList(),
+                    )
+                } else {
+                    null
+                },
+            )
         }
 
         val qualifierPart = FirQualifierPartImpl(
@@ -2599,12 +2601,14 @@ class LightTreeRawFirDeclarationBuilder(
             }
         )
 
-        return buildUserTypeRef {
-            source = typeRefSource
-            isMarkedNullable = isNullable
-            qualifier.add(qualifierPart)
-            simpleFirUserType?.qualifier?.let { this.qualifier.addAll(0, it) }
-        }
+        return buildUserTypeRef(
+            source = typeRefSource,
+            isMarkedNullable = isNullable,
+            qualifier = buildFirList {
+                simpleFirUserType?.qualifier?.let { addAll(it) }
+                add(qualifierPart)
+            },
+        )
     }
 
     /**
@@ -2690,7 +2694,7 @@ class LightTreeRawFirDeclarationBuilder(
                         val typeReference = it.getChildNodeByType(TYPE_REFERENCE)
 
                         contextParameterTypeRefs += typeReference?.let(this@LightTreeRawFirDeclarationBuilder::convertType)
-                            ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
+                            ?: buildErrorTypeRef(diagnostic = ConeSimpleDiagnostic("Type missing"))
                     }
                 }
             }
@@ -2868,7 +2872,7 @@ class LightTreeRawFirDeclarationBuilder(
                     this.symbol = FirValueParameterSymbol()
                     withContainerSymbol(this.symbol) {
                         this.returnTypeRef = typeReference?.let { convertType(it) }
-                            ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
+                            ?: buildErrorTypeRef(diagnostic = ConeSimpleDiagnostic("Type missing"))
                     }
                     this.containingDeclarationSymbol = containingDeclarationSymbol
                     this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver

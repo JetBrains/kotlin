@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -127,9 +128,11 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
                     annotationTypeRef = buildResolvedTypeRef {
                         coneType = Names.ORDER_ANNOTATION.defaultType(emptyList())
                     }
-                    argumentMapping = buildAnnotationArgumentMapping {
-                        mapping[Names.ORDER_ARGUMENT] = buildLiteralExpression(null, ConstantValueKind.Int, order, setType = true)
-                    }
+                    argumentMapping = buildAnnotationArgumentMapping(
+                        mapping = buildFirMap {
+                            this[Names.ORDER_ARGUMENT] = buildLiteralExpression(null, ConstantValueKind.Int, order, setType = true)
+                        }
+                    )
                 }
             }
             if (isScopeProperty) {

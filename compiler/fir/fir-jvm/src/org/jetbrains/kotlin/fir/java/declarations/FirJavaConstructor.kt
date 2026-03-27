@@ -258,3 +258,35 @@ inline fun buildJavaConstructor(init: FirJavaConstructorBuilder.() -> Unit): Fir
     return FirJavaConstructorBuilder().apply(init).build()
 }
 
+@OptIn(FirImplementationDetail::class)
+fun buildJavaConstructor(
+    source: KtSourceElement? = null,
+    moduleData: FirModuleData,
+    symbol: FirConstructorSymbol,
+    returnTypeRef: FirTypeRef,
+    valueParameters: MutableList<FirValueParameter> = mutableListOf(),
+    typeParameters: MutableList<FirTypeParameterRef> = mutableListOf(),
+    status: FirDeclarationStatus,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+
+    isPrimary: Boolean,
+    isFromSource: Boolean,
+    annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList,
+    containingClassSymbol: FirClassSymbol<*>,
+): FirJavaConstructor {
+    return FirJavaConstructor(
+        source,
+        moduleData,
+        symbol,
+        origin = javaOrigin(isFromSource),
+        isPrimary,
+        returnTypeRef,
+        valueParameters,
+        typeParameters,
+        annotationList,
+        status as FirResolvedDeclarationStatusImpl,
+        dispatchReceiverType,
+        containingClassSymbol,
+    )
+}
+

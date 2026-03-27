@@ -1023,10 +1023,10 @@ class FirCallCompletionResultsWriterTransformer(
                 if (it !is FirPlaceholderProjection) it
                 else buildTypeProjectionWithVariance {
                     source = it.source
-                    typeRef = buildErrorTypeRef {
-                        source = it.source
-                        diagnostic = ConeSimpleDiagnostic("Unmapped placeholder type argument")
-                    }
+                    typeRef = buildErrorTypeRef(
+                        source = it.source,
+                        diagnostic = ConeSimpleDiagnostic("Unmapped placeholder type argument"),
+                    )
                     variance = Variance.INVARIANT
                 }
             }

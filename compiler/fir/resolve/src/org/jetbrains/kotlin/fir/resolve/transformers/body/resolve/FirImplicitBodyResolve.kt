@@ -211,9 +211,9 @@ open class ReturnTypeCalculatorWithJump(
 
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
             declaration.replaceReturnTypeRef(
-                buildErrorTypeRef {
-                    diagnostic = ConeSimpleDiagnostic("Unsupported: implicit VP type")
-                }
+                buildErrorTypeRef(
+                    diagnostic = ConeSimpleDiagnostic("Unsupported: implicit VP type"),
+                )
             )
         }
 
@@ -271,9 +271,9 @@ open class ReturnTypeCalculatorWithJump(
     }
 
 
-    protected fun recursionInImplicitTypeRef(declaration: FirCallableDeclaration): FirErrorTypeRef = buildErrorTypeRef {
+    protected fun recursionInImplicitTypeRef(declaration: FirCallableDeclaration): FirErrorTypeRef = buildErrorTypeRef(
         diagnostic = ConeSimpleDiagnostic("Recursive implicit type", DiagnosticKind.RecursionInImplicitTypes)
-    }.also {
+    ).also {
         // It also might be useful to use an extended cone diagnostic that will store info about loops
         // that are encountered during implicit body resolving.
         implicitBodyResolveComputationSession.calculateAndStoreNonTrivialLoop(declaration.symbol)
@@ -336,12 +336,12 @@ open class ReturnTypeCalculatorWithJump(
             }.mapTo(mutableListOf()) { it.toSymbol(session)?.fir }
 
             if (file == null || outerClasses.any { it == null }) {
-                return buildErrorTypeRef {
+                return buildErrorTypeRef(
                     diagnostic = ConeSimpleDiagnostic(
                         "Cannot calculate return type (local class/object?)",
                         DiagnosticKind.InferenceError
-                    )
-                }
+                    ),
+                )
             }
             (listOfNotNull(file, script) + outerClasses.filterNotNull().asReversed()) to null
         }

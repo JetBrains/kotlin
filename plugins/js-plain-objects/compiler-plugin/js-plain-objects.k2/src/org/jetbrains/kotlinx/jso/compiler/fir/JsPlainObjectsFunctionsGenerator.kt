@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
@@ -352,9 +353,9 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             }
             argumentMapping = when (fillArguments) {
                 null -> FirEmptyAnnotationArgumentMapping
-                else -> buildAnnotationArgumentMapping {
-                    mapping.fillArguments()
-                }
+                else -> buildAnnotationArgumentMapping(
+                    mapping = buildFirMap { this.fillArguments() }
+                )
             }
 
         }

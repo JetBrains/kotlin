@@ -107,8 +107,8 @@ class DummyJavaClassType(
         get() = classifierQualifiedName
 }
 
-fun JavaType.toRef(source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
-    type = this@toRef
-    annotationBuilder = { emptyList() }
-    this.source = source
-}
+fun JavaType.toRef(source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef(
+    type = this@toRef,
+    annotationBuilder = { emptyList() },
+    source = source,
+)

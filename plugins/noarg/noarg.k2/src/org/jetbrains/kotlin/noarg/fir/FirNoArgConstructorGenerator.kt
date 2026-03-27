@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.noarg.fir
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAnnotations
@@ -91,19 +92,21 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
                     .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
             }
 
-            argumentMapping = buildAnnotationArgumentMapping {
-                mapping[StandardClassIds.Annotations.ParameterNames.deprecatedMessage] = buildLiteralExpression(
-                    source = null,
-                    kind = ConstantValueKind.String,
-                    value = NO_ARG_CONSTRUCTOR_HIDDEN_DEPRECATED_MESSAGE,
-                    setType = true
-                )
+            argumentMapping = buildAnnotationArgumentMapping(
+                mapping = buildFirMap {
+                    this[StandardClassIds.Annotations.ParameterNames.deprecatedMessage] = buildLiteralExpression(
+                        source = null,
+                        kind = ConstantValueKind.String,
+                        value = NO_ARG_CONSTRUCTOR_HIDDEN_DEPRECATED_MESSAGE,
+                        setType = true
+                    )
 
-                mapping[StandardClassIds.Annotations.ParameterNames.deprecatedLevel] = buildEnumEntryDeserializedAccessExpression {
-                    enumClassId = StandardClassIds.DeprecationLevel
-                    enumEntryName = Name.identifier(DeprecationLevel.HIDDEN.name)
+                    this[StandardClassIds.Annotations.ParameterNames.deprecatedLevel] = buildEnumEntryDeserializedAccessExpression {
+                        enumClassId = StandardClassIds.DeprecationLevel
+                        enumEntryName = Name.identifier(DeprecationLevel.HIDDEN.name)
+                    }
                 }
-            }
+            )
         }
 
         val isJavaDeprecationAvailable =

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
@@ -171,27 +172,36 @@ class FirSignatureEnhancement(
                 }
 
                 val symbol = FirFieldSymbol(original.callableId!!)
-                buildJavaField {
-                    this.containingClassSymbol = owner.symbol
-                    source = firElement.source
-                    moduleData = this@FirSignatureEnhancement.moduleData
-                    this.symbol = symbol
-                    this.name = name
-                    returnTypeRef = newReturnTypeRef
-                    isFromSource = original.origin.fromSource
-                    isVar = firElement.isVar
-                    annotationList = FirDelegatedJavaAnnotationList(firElement)
-                    status = firElement.status
-                    if (firElement is FirJavaField) {
-                        lazyInitializer = firElement.lazyInitializer
-                        lazyHasConstantInitializer = firElement.lazyHasConstantInitializer
-                    } else {
-                        initializer = firElement.initializer
-                    }
+                var initializer: FirExpression? = null
+                var lazyInitializer: Lazy<FirExpression?>? = null
+                val lazyHasConstantInitializer: Lazy<Boolean>
 
-                    dispatchReceiverType = firElement.dispatchReceiverType
-                    attributes = firElement.attributes.copy()
+                if (firElement is FirJavaField) {
+                    lazyInitializer = firElement.lazyInitializer
+                    lazyHasConstantInitializer = firElement.lazyHasConstantInitializer
+                } else {
+                    initializer = firElement.initializer
+                    // TODO: originally it's uninitialized in builder but should be. It's probably a bug.
+                    lazyHasConstantInitializer = lazyOf(false)
                 }
+                buildJavaField(
+                    containingClassSymbol = owner.symbol,
+                    source = firElement.source,
+                    moduleData = this@FirSignatureEnhancement.moduleData,
+                    symbol = symbol,
+                    name = name,
+                    returnTypeRef = newReturnTypeRef,
+                    isFromSource = original.origin.fromSource,
+                    isVar = firElement.isVar,
+                    annotationList = FirDelegatedJavaAnnotationList(firElement),
+                    status = firElement.status,
+                    lazyInitializer = lazyInitializer,
+                    initializer = initializer,
+                    lazyHasConstantInitializer = lazyHasConstantInitializer,
+
+                    dispatchReceiverType = firElement.dispatchReceiverType,
+                    attributes = firElement.attributes.copy(),
+                )
                 return symbol
             }
             is FirSyntheticProperty -> {
@@ -938,9 +948,9 @@ class FirSignatureEnhancement(
                 return if (member.isJava) {
                     member.returnTypeRef
                 } else {
-                    calc.computeReturnType(member) ?: buildErrorTypeRef {
-                        diagnostic = ConeSimpleDiagnostic("Could not resolve returnType for $member")
-                    }
+                    calc.computeReturnType(member) ?: buildErrorTypeRef(
+                        diagnostic = ConeSimpleDiagnostic("Could not resolve returnType for $member"),
+                    )
                 }
             }
         }

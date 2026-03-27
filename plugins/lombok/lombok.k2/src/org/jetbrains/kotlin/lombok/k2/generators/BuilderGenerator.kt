@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.lombok.k2.generators
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.FirErrorTypeRefBuilder
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
@@ -83,8 +84,11 @@ class BuilderGenerator(
         }
     }
 
-    override fun FirJavaClassBuilder.completeBuilder(
-        classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>,
+    override fun completeBuilderTypeParametersAndSuperTypes(
+        classSymbol: FirClassSymbol<*>,
+        builderSymbol: FirClassSymbol<*>,
+        typeParameters: MutableList<FirTypeParameterRef>,
+        superTypeRefs: MutableList<FirTypeRef>,
     ) {
         superTypeRefs += listOf(session.builtinTypes.anyType)
     }

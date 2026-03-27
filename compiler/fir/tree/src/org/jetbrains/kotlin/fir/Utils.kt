@@ -69,12 +69,12 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
             source = newSource,
             partiallyResolvedTypeRef = typeRef.partiallyResolvedTypeRef?.copyWithNewSource(newSource),
         )
-        is FirUserTypeRefImpl -> buildUserTypeRef {
-            source = newSource
-            isMarkedNullable = typeRef.isMarkedNullable
-            qualifier += typeRef.qualifier
-            annotations += typeRef.annotations
-        }
+        is FirUserTypeRefImpl -> buildUserTypeRef(
+            source = newSource,
+            isMarkedNullable = typeRef.isMarkedNullable,
+            qualifier = typeRef.qualifier.toMutableList(),
+            annotations = typeRef.annotations.toMutableList(),
+        )
         is FirFunctionTypeRefImpl -> buildFunctionTypeRefCopy(
             typeRef,
             source = newSource,
@@ -449,12 +449,12 @@ fun ConeKotlinType.toFirResolvedTypeRef(
     delegatedTypeRef: FirTypeRef? = null
 ): FirResolvedTypeRef {
     return when (val lowerBoundIfFlexible = lowerBoundIfFlexible()) {
-        is ConeErrorType -> buildErrorTypeRef {
-            this.source = source
-            this.diagnostic = lowerBoundIfFlexible.diagnostic
-            this.coneType = this@toFirResolvedTypeRef
-            this.delegatedTypeRef = delegatedTypeRef
-        }
+        is ConeErrorType -> buildErrorTypeRef(
+            source = source,
+            diagnostic = lowerBoundIfFlexible.diagnostic,
+            coneType = this@toFirResolvedTypeRef,
+            delegatedTypeRef = delegatedTypeRef,
+        )
         else -> buildResolvedTypeRef {
             this.source = source
             this.coneType = this@toFirResolvedTypeRef
@@ -465,3 +465,4 @@ fun ConeKotlinType.toFirResolvedTypeRef(
 
 val FirResolvedQualifier.ownTypeArguments: List<FirTypeProjection>
     get() = typeArguments.subList(0, typeArguments.size - (explicitParent?.typeArguments?.size ?: 0))
+

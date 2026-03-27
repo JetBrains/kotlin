@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions.impl
 
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
@@ -34,14 +35,16 @@ data class PropertyName(val identifier: Name, val columnNameAnnotation: FirAnnot
                 annotationTypeRef = buildResolvedTypeRef {
                     coneType = Names.COLUMN_NAME_ANNOTATION.defaultType(emptyList())
                 }
-                argumentMapping = buildAnnotationArgumentMapping {
-                    mapping[Names.COLUMN_NAME_ARGUMENT] = buildLiteralExpression(
-                        source = null,
-                        kind = ConstantValueKind.String,
-                        value = name,
-                        setType = true
-                    )
-                }
+                argumentMapping = buildAnnotationArgumentMapping(
+                    mapping = buildFirMap {
+                        this[Names.COLUMN_NAME_ARGUMENT] = buildLiteralExpression(
+                            source = null,
+                            kind = ConstantValueKind.String,
+                            value = name,
+                            setType = true
+                        )
+                    }
+                )
             }
         }
     }

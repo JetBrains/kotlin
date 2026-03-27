@@ -34,3 +34,11 @@ inline fun buildAnnotationArgumentMapping(init: FirAnnotationArgumentMappingBuil
     }
     return FirAnnotationArgumentMappingBuilder().apply(init).build()
 }
+
+fun buildAnnotationArgumentMapping(
+    source: KtSourceElement? = null,
+    mapping: MutableMap<Name, FirExpression> = mutableMapOf(),
+): FirAnnotationArgumentMapping {
+    if (source == null && mapping.isEmpty()) return FirEmptyAnnotationArgumentMapping
+    return FirAnnotationArgumentMappingImpl(source, mapping)
+}

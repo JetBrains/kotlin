@@ -158,9 +158,9 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
                 result += buildAnnotation {
                     annotationTypeRef = lookupTag.toDefaultResolvedTypeRef()
-                    argumentMapping = buildAnnotationArgumentMapping {
-                        mapping.putAll(argumentMap)
-                    }
+                    argumentMapping = buildAnnotationArgumentMapping(
+                        mapping = argumentMap.toMutableMap()
+                    )
                 }
             }
         }

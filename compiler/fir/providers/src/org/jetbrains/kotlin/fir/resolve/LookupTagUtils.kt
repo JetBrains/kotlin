@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -68,10 +69,12 @@ fun ConeKotlinType.withParameterNameAnnotation(name: Name, element: KtSourceElem
                     isMarkedNullable = false
                 )
             }
-        argumentMapping = buildAnnotationArgumentMapping {
-            mapping[StandardClassIds.Annotations.ParameterNames.parameterNameName] =
-                buildLiteralExpression(fakeSource, ConstantValueKind.String, name.asString(), setType = true)
-        }
+        argumentMapping = buildAnnotationArgumentMapping(
+            mapping = buildFirMap {
+                this[StandardClassIds.Annotations.ParameterNames.parameterNameName] =
+                    buildLiteralExpression(fakeSource, ConstantValueKind.String, name.asString(), setType = true)
+            }
+        )
     }
     return withAttributes(attributes.add(ParameterNameTypeAttribute(name, listOf(parameterNameAnnotationCall))))
 }

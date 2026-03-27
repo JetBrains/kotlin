@@ -52,6 +52,18 @@ inline fun buildAnonymousFunctionExpression(init: FirAnonymousFunctionExpression
     return FirAnonymousFunctionExpressionBuilder().apply(init).build()
 }
 
+fun buildAnonymousFunctionExpression(
+    source: KtSourceElement? = null,
+    anonymousFunction: FirAnonymousFunction,
+    isTrailingLambda: Boolean = false,
+): FirAnonymousFunctionExpression {
+    return FirAnonymousFunctionExpressionImpl(
+        source,
+        anonymousFunction,
+        isTrailingLambda,
+    )
+}
+
 fun buildAnonymousFunctionExpressionCopy(
     original: FirAnonymousFunctionExpression,
     source: KtSourceElement? = original.source,

@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.buildFirMap
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
@@ -320,20 +321,22 @@ fun createDeprecatedHiddenAnnotation(session: FirSession): FirAnnotation = build
 
     annotationTypeRef = deprecatedAnno.defaultType().toFirResolvedTypeRef()
 
-    argumentMapping = buildAnnotationArgumentMapping {
-        mapping[Name.identifier("message")] = buildLiteralExpression(
-            null,
-            ConstantValueKind.String,
-            "This synthesized declaration should not be used directly",
-            setType = true
-        )
+    argumentMapping = buildAnnotationArgumentMapping(
+        mapping = buildFirMap {
+            this[Name.identifier("message")] = buildLiteralExpression(
+                null,
+                ConstantValueKind.String,
+                "This synthesized declaration should not be used directly",
+                setType = true
+            )
 
-        // It has nothing to do with enums deserialization, but it is simply easier to build it this way.
-        mapping[Name.identifier("level")] = buildEnumEntryDeserializedAccessExpression {
-            enumClassId = StandardClassIds.DeprecationLevel
-            enumEntryName = Name.identifier("HIDDEN")
-        }.toQualifiedPropertyAccessExpression(session)
-    }
+            // It has nothing to do with enums deserialization, but it is simply easier to build it this way.
+            this[Name.identifier("level")] = buildEnumEntryDeserializedAccessExpression {
+                enumClassId = StandardClassIds.DeprecationLevel
+                enumEntryName = Name.identifier("HIDDEN")
+            }.toQualifiedPropertyAccessExpression(session)
+        }
+    )
 }
 
 fun FirClassLikeDeclaration.markAsDeprecatedHidden(session: FirSession) {

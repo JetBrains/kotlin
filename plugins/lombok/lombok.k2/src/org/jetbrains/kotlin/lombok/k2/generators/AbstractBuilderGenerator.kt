@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
+import org.jetbrains.kotlin.fir.builder.buildFirList
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
@@ -111,7 +113,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         existingFunctionNames: Set<Name>,
     )
 
-    protected abstract fun FirJavaClassBuilder.completeBuilder(classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>)
+    protected abstract fun completeBuilderTypeParametersAndSuperTypes(
+        classSymbol: FirClassSymbol<*>,
+        builderSymbol: FirClassSymbol<*>,
+        typeParameters: MutableList<FirTypeParameterRef>,
+        superTypeRefs: MutableList<FirTypeRef>,
+    )
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
@@ -514,34 +521,42 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val containingClass = this.fir as? FirJavaClass ?: return null
         val classId = containingClass.classId.createNestedClassId(name)
         val builderSymbol = FirRegularClassSymbol(classId)
-        return buildJavaClass {
-            containingClassSymbol = containingClass.symbol
-            moduleData = containingClass.moduleData
-            symbol = builderSymbol
-            this.name = name
-            isFromSource = true
-            this.visibility = visibility
-            this.modality = builderModality
-            this.isStatic = builderDeclaration.isStaticDeclaration
-            classKind = ClassKind.CLASS
+        val typeParameters = mutableListOf<FirTypeParameterRef>()
 
-            val typeParametersMapping = builderDeclaration.initializeTypeParametersMapping(builderSymbol)
-            typeParametersMapping.mapTo(typeParameters) { it.value }
-            // Remap Java type parameters from the containing declaration to the newly created type parameters to make the Java resolve work.
-            // Don't care about outer type parameters because builder classes are always static (nested).
-            javaTypeParameterStack = MutableJavaTypeParameterStack().apply {
-                for ((key, value) in typeParametersMapping) {
-                    addParameter(key, value.symbol)
-                }
+        val typeParametersMapping = builderDeclaration.initializeTypeParametersMapping(builderSymbol)
+        typeParametersMapping.mapTo(typeParameters) { it.value }
+        // Remap Java type parameters from the containing declaration to the newly created type parameters to make the Java resolve work.
+        // Don't care about outer type parameters because builder classes are always static (nested).
+        val javaTypeParameterStack = MutableJavaTypeParameterStack().apply {
+            for ((key, value) in typeParametersMapping) {
+                addParameter(key, value.symbol)
             }
+        }
+        val effectiveVisibility = containingClass.effectiveVisibility.lowerBound(
+            visibility.toEffectiveVisibility(this@createEmptyBuilderClass, forClass = true),
+            session.typeContext
+        )
 
-            scopeProvider = JavaScopeProvider
-            this.superTypeRefs += superTypeRefs
-            val effectiveVisibility = containingClass.effectiveVisibility.lowerBound(
-                visibility.toEffectiveVisibility(this@createEmptyBuilderClass, forClass = true),
-                session.typeContext
-            )
-            isTopLevel = false
+        val superTypeRefs = mutableListOf<FirTypeRef>()
+
+        completeBuilderTypeParametersAndSuperTypes(
+            this,
+            builderSymbol,
+            typeParameters,
+            superTypeRefs,
+        )
+
+        return buildJavaClass(
+            containingClassSymbol = containingClass.symbol,
+            moduleData = containingClass.moduleData,
+            symbol = builderSymbol,
+            name = name,
+            isFromSource = true,
+            classKind = ClassKind.CLASS,
+            typeParameters = typeParameters,
+            javaTypeParameterStack = javaTypeParameterStack,
+            scopeProvider = JavaScopeProvider,
+            superTypeRefs = superTypeRefs,
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
                 builderModality,
@@ -552,12 +567,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 isData = false
                 isInline = false
                 isFun = classKind == ClassKind.INTERFACE
-            }
+            },
 
-            completeBuilder(this@createEmptyBuilderClass, builderSymbol)
-
-            declarationList = declarationListProvider(symbol)
-        }
+            declarationList = declarationListProvider(builderSymbol),
+        )
     }
 
     /**
@@ -728,12 +741,12 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
     visibility: Visibility,
 ): FirJavaConstructor {
     val outerClassSymbol = this
-    return buildJavaConstructor {
-        containingClassSymbol = outerClassSymbol
-        moduleData = outerClassSymbol.moduleData
-        isFromSource = true
-        symbol = FirConstructorSymbol(classId)
-        isInner = outerClassSymbol.rawStatus.isInner
+    val isInner = outerClassSymbol.rawStatus.isInner
+    return buildJavaConstructor(
+        containingClassSymbol = outerClassSymbol,
+        moduleData = outerClassSymbol.moduleData,
+        isFromSource = true,
+        symbol = FirConstructorSymbol(classId),
         status = FirResolvedDeclarationStatusImpl(
             visibility,
             Modality.FINAL,
@@ -742,13 +755,17 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
             isExpect = false
             isActual = false
             isOverride = false
-            isInner = this@buildJavaConstructor.isInner
-        }
-        isPrimary = false
+            this@apply.isInner = isInner
+        },
+        isPrimary = false,
         returnTypeRef = buildResolvedTypeRef {
             coneType = outerClassSymbol.defaultType()
-        }
-        dispatchReceiverType = if (isInner) outerClassSymbol.defaultType() else null
-        typeParameters += outerClassSymbol.typeParameterSymbols.map { buildConstructedClassTypeParameterRef { symbol = it } }
-    }
+        },
+        dispatchReceiverType = if (isInner) outerClassSymbol.defaultType() else null,
+        typeParameters = buildFirList {
+            outerClassSymbol.typeParameterSymbols.mapTo(this) {
+                buildConstructedClassTypeParameterRef { symbol = it }
+            }
+        },
+    )
 }

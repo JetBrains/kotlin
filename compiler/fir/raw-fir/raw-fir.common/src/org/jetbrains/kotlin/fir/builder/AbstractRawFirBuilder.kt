@@ -1319,10 +1319,10 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     }
 
     protected fun createNoTypeForParameterTypeRef(parameterSource: KtSourceElement): FirErrorTypeRef {
-        return buildErrorTypeRef {
-            source = parameterSource
-            diagnostic = ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.ValueParameterWithNoTypeAnnotation)
-        }
+        return buildErrorTypeRef(
+            source = parameterSource,
+            diagnostic = ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.ValueParameterWithNoTypeAnnotation),
+        )
     }
 
     protected fun isImplicitlyActual(status: FirDeclarationStatus, classKind: ClassKind): Boolean {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
+import org.jetbrains.kotlin.fir.builder.buildFirList
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -239,15 +240,15 @@ class FirScriptConfiguratorExtensionImpl(
                 coneType = classFromDeps.constructType(isMarkedNullable = kotlinType.isNullable)
             }
         } else {
-            buildUserTypeRef {
-                source = sourceElement
-                isMarkedNullable = kotlinType.isNullable
-                qualifier.addAll(
-                    fqName.pathSegments().map {
+            buildUserTypeRef(
+                source = sourceElement,
+                isMarkedNullable = kotlinType.isNullable,
+                qualifier = buildFirList {
+                    fqName.pathSegments().mapTo(this) {
                         FirQualifierPartImpl(null, it, FirTypeArgumentListImpl(null))
                     }
-                )
-            }
+                }
+            )
         }
     }
 

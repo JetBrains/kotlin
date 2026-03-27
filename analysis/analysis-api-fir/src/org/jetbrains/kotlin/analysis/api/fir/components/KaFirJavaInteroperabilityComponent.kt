@@ -229,11 +229,11 @@ internal class KaFirJavaInteroperabilityComponent(
         val javaElementSourceFactory = JavaElementSourceFactory.getInstance(project)
         val javaType = JavaTypeImpl.create(this, javaElementSourceFactory.createTypeSource(this))
 
-        val javaTypeRef = buildJavaTypeRef {
+        val javaTypeRef = buildJavaTypeRef(
             // Annotations are unused during `resolveIfJavaType`, so there is no need to provide something
-            annotationBuilder = { emptyList() }
-            type = javaType
-        }
+            annotationBuilder = { emptyList() },
+            type = javaType,
+        )
 
         val javaTypeParameterStack = MutableJavaTypeParameterStack()
 
