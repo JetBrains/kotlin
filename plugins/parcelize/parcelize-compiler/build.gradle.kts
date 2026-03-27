@@ -107,10 +107,7 @@ optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -147,7 +144,7 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.parcelize.test.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.parcelize.test.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     testData(isolated, "testData")
 

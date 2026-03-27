@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeDiagnosticTe
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
+        testGroup(args[0], "plugins/parcelize/parcelize-compiler/testData") {
             testClass<AbstractParcelizeBoxTest> {
                 model("box")
             }
