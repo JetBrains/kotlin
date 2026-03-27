@@ -1968,8 +1968,60 @@ class JavaParsingTest {
             classId?.shortClassName?.asString() == "Target" || 
             classId?.asSingleFqName()?.asString() == "java.lang.annotation.Target"
         }
-        assert(targetAnnotation != null) { 
-            "NotNull should have @Target annotation, found: ${allAnnotations.map { it.classId }}" 
+        assert(targetAnnotation != null) {
+            "NotNull should have @Target annotation, found: ${allAnnotations.map { it.classId }}"
+        }
+    }
+
+    @Test
+    fun testVarargsParameterType() {
+        val source = """
+            import org.jspecify.annotations.NonNull;
+            public class JavaClass {
+                static JavaClass ofJspecify(@NonNull String... args) {
+                    return new JavaClass();
+                }
+                static JavaClass ofRegular(@NonNull String arg) {
+                    return new JavaClass();
+                }
+            }
+        """.trimIndent()
+
+        val javaClass = parseFirstClass(source)
+
+        // Regular parameter: type should be JavaClassifierType (String) with annotation
+        val regular = javaClass.methods.first { it.name.asString() == "ofRegular" }
+        val regularParam = regular.valueParameters.first()
+        assert(!regularParam.isVararg) { "Regular param should not be vararg" }
+        val regularType = regularParam.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val regularTypeAnnotations = regularType.annotations
+        assert(regularTypeAnnotations.isNotEmpty()) {
+            "Regular param type should have annotations (from modifier list), got empty. " +
+            "Param annotations: ${regularParam.annotations.map { it.classId }}"
+        }
+
+        // Varargs parameter: type should be JavaArrayType (String[]) with annotation on component type
+        val vararg = javaClass.methods.first { it.name.asString() == "ofJspecify" }
+        val varargParam = vararg.valueParameters.first()
+        assert(varargParam.isVararg) { "Vararg param should be vararg" }
+        assert(varargParam.type is org.jetbrains.kotlin.load.java.structure.JavaArrayType) {
+            "Vararg param type should be JavaArrayType, got ${varargParam.type::class.simpleName}"
+        }
+        val arrayType = varargParam.type as org.jetbrains.kotlin.load.java.structure.JavaArrayType
+        val componentType = arrayType.componentType
+        assert(componentType is org.jetbrains.kotlin.load.java.structure.JavaClassifierType) {
+            "Vararg component type should be JavaClassifierType, got ${componentType::class.simpleName}"
+        }
+
+        // Annotations should be on the component type (String), not the array type (String[])
+        val componentAnnotations = (componentType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType).annotations.toList()
+        assert(componentAnnotations.any { it.classId?.asString()?.contains("NonNull") == true }) {
+            "Expected @NonNull on component type (String), got: ${componentAnnotations.map { it.classId }}"
+        }
+        // Array type should NOT have member annotations for varargs
+        val arrayAnnotations = arrayType.annotations.toList()
+        assert(arrayAnnotations.none { it.classId?.asString()?.contains("NonNull") == true }) {
+            "Array type should not have @NonNull for varargs, got: ${arrayAnnotations.map { it.classId }}"
         }
     }
 }

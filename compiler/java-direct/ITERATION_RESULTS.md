@@ -326,26 +326,28 @@ The `testJSpecifySimple` test (and `testJSpecifyWithVarargs`) failed because the
 
 This exception was caught by the test infrastructure and reported alongside the data mismatch error. Because the foreign annotations couldn't be compiled to a JAR, the JSpecify annotation classes (`@NonNull`, `@Nullable`, `@NullMarked`) were not on the classpath, so FIR's enhancement pipeline couldn't recognize them — resulting in no nullability diagnostics.
 
-### Fix (2 files)
-1. **`build.gradle.kts`** — Added `withThirdPartyJava8Annotations()` to the `projectTests` block, which sets the `KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH` system property to the absolute path `${project.rootDir}/third-party/java8-annotations`.
+### Fix (3 files)
+1. **`build.gradle.kts`** — Added `withThirdPartyJava8Annotations()` to the `projectTests` block, which sets the `KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH` system property to the absolute path `${project.rootDir}/third-party/java8-annotations`. This fixed `testJSpecifySimple`.
 
 2. **`components.kt`** (test fixtures) — Added `registerCompilerExtensions` override to `JavaDirectConfigurator` as defense-in-depth. For CLI-based facades, extensions can be registered via this method in addition to the `COMPILER_PLUGIN_REGISTRARS` mechanism.
 
-### Test Results
-- Box: 1168/1168, Phased: 1453/1456, Total failing: 3 (down from 4)
-- `testJSpecifySimple` (#3): **FIXED**
-- `testJSpecifyWithVarargs` (#4): Still failing — nullability annotations not applied to varargs parameters
+3. **`JavaTypeOverAst.kt`** — For varargs parameters (`@NonNull String... args`), member annotations from the parameter's MODIFIER_LIST are now placed on the **component type** (String) instead of the array wrapper (String[]). This matches PSI/javac-wrapper behavior where TYPE_USE annotations like `@NonNull` enhance the component type's nullability. Fixed `testJSpecifyWithVarargs`.
 
-### Status of Remaining 3 Failures
+### Test Results
+- Box: 1168/1168, Phased: 1454/1456, Total failing: 2 (down from 4)
+- `testJSpecifySimple` (#3): **FIXED**
+- `testJSpecifyWithVarargs` (#4): **FIXED**
+
+### Status of Remaining 2 Failures
 | Test | Category | Status |
 |------|----------|--------|
 | #2 testClassFromJdkInLibrary | javac sealed package | Won't fix |
-| #4 testJSpecifyWithVarargs | Varargs nullability enhancement | Remaining |
 | #8 testPseudoRawTypes | javac sealed package | Won't fix |
 
 ### Key Learnings
 - Test infrastructure configuration (`build.gradle.kts` `projectTests` block) must declare ALL third-party annotation dependencies used by tests with `ENABLE_FOREIGN_ANNOTATIONS`
 - The `NoSuchFileException` from `JvmForeignAnnotationsConfigurator` was masked by the test runner's multi-failure reporting — always check ALL failure causes, not just the first
+- For varargs, TYPE_USE annotations (`@NonNull`, `@NotNull`) must be on the component type, not the array wrapper — FIR's nullability enhancement reads annotations from the component type
 
 ---
 

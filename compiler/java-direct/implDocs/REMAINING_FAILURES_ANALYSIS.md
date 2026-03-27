@@ -1,7 +1,7 @@
 # Remaining Test Failures — Detailed Analysis
 
 **Last updated**: 2026-03-27
-**Status**: 2621/2624 passing (3 failing: 1 remaining, 2 won't fix)
+**Status**: 2679/2681 passing (2 failing: 0 remaining, 2 won't fix)
 **Methodology**: Each test was run individually with file-based logging injected into `GlobalMetadataInfoHandler.compareAllMetaDataInfos` to capture actual vs expected FIR dump output. Diffs were then analyzed against the implementation code.
 
 ---
@@ -154,7 +154,7 @@ Another possibility: java-direct correctly parses the annotations but doesn't re
 
 ---
 
-## 4. testJSpecifyWithVarargs
+## 4. testJSpecifyWithVarargs — FIXED (Iteration 60)
 
 **Category**: JSpecify foreign annotation processing on varargs parameters
 **Error type**: Missing diagnostics
@@ -432,15 +432,15 @@ The **PSI test worker JVM** happens to accept the same in-process javac compilat
 
 ## Priority Ranking
 
-**Updated 2026-03-27** — 5 fixed, 2 won't fix, 1 remaining:
+**Updated 2026-03-27** — 6 fixed, 2 won't fix, 0 remaining:
 
 | Status | Tests | Notes |
 |--------|-------|-------|
 | **FIXED** | #1 (AnnotationClass) | Iteration 59 — skip kotlin.* import resolution + reject FIR builtins |
 | **FIXED** | #3 (JSpecifySimple) | Iteration 60 — missing `withThirdPartyJava8Annotations()` in build.gradle.kts |
+| **FIXED** | #4 (JSpecifyWithVarargs) | Iteration 60 — varargs member annotations placed on component type |
 | **FIXED** | #5 (KJKComplex) | Iteration 57 — outer type args for inherited inner classes |
 | **FIXED** | #6 (MapMethods) | Iteration 56 — transitive inherited inner class resolution |
 | **FIXED** | #7 (InheritanceWithKotlin) | Iteration 56 — transitive inherited inner class resolution |
 | **WON'T FIX** | #2 (ClassFromJdk) | Iteration 58 — javac sealed package in test worker |
 | **WON'T FIX** | #8 (PseudoRawTypes) | Iteration 58 — javac sealed package in test worker |
-| **Remaining** | #4 (JSpecifyWithVarargs) | Varargs nullability enhancement — annotations not applied to varargs params |

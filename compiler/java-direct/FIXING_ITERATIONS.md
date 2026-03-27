@@ -6,8 +6,8 @@
 |--------|-------|
 | **Last Iteration** | 60 (2026-03-27) |
 | **Box Tests** | 1168/1168 passing (100%) |
-| **Phased Tests** | 1453/1456 passing (99.8%) |
-| **Combined** | ~2621/2624 passing, **3 failing** (1 remaining, 2 won't fix) |
+| **Phased Tests** | 1454/1456 passing (99.9%) |
+| **Combined** | 2679/2681 passing, **2 failing** (0 remaining, 2 won't fix) |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -47,7 +47,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | **External Class Flexible Type Rendering** | Done (iter 54) | 1 |
 | **Wrong-Arity Type Argument Handling** | Done (iter 55) | 2 |
 | **Annotation Class Inheritance Detection** | Done (iter 59) | 1 |
-| **JSpecify Foreign Annotations Infrastructure** | Done (iter 60) | 1 |
+| **JSpecify Foreign Annotations** | Done (iter 60) | 2 |
 
 ---
 
@@ -113,7 +113,7 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 | 57 | Outer type args for inherited inner classes in K-J-K hierarchy | +1 phased |
 | 58 | Investigation of javac sealed package failures (Problems 2 & 8) — won't fix | +0 |
 | 59 | Annotation class inheritance detection: skip kotlin.* import resolution + reject FIR builtins in tryResolve | +1 phased |
-| 60 | JSpecify foreign annotations: missing `withThirdPartyJava8Annotations()` in build.gradle.kts | +1 phased |
+| 60 | JSpecify foreign annotations: missing `withThirdPartyJava8Annotations()` in build.gradle.kts; varargs annotation placement on component type | +2 phased |
 
 ---
 

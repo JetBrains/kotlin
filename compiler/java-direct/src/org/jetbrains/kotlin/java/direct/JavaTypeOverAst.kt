@@ -427,13 +427,20 @@ fun createJavaType(
                 // The KMP parser places all [] pairs as siblings under the same TYPE node
                 // (e.g., List<Double>[][] → TYPE[TYPE[List<Double>], [], []]).
                 // We need to wrap the inner type in N array dimensions, innermost first.
+                //
+                // For varargs (@NonNull String... args), member annotations (from the parameter's
+                // MODIFIER_LIST) apply to the component type, not the array wrapper. This matches
+                // PSI/javac-wrapper behavior where TYPE_USE annotations like @NonNull enhance the
+                // component type's nullability, not the array's.
                 val dims = if (hasVarargEllipsis) 1 else arrayDimensions
-                var result: JavaType = createJavaType(componentTypeNode, resolutionContext)
+                val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
+                val arrayMemberAnnotations = if (hasVarargEllipsis) emptyList() else memberAnnotations
+                var result: JavaType = createJavaType(componentTypeNode, resolutionContext, memberAnnotations = componentMemberAnnotations)
                 repeat(dims) { i ->
                     result = JavaArrayTypeOverAst(
                         node, resolutionContext, result,
                         if (i == dims - 1) extraAnnotations else emptyList(),
-                        if (i == dims - 1) memberAnnotations else emptyList(),
+                        if (i == dims - 1) arrayMemberAnnotations else emptyList(),
                     )
                 }
                 return result
