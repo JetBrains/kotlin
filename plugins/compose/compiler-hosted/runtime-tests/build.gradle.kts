@@ -18,8 +18,8 @@ repositories {
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
-    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
     composeGoogleMaven(libs.versions.compose.stable.get())
+    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
 }
 
 kotlin {

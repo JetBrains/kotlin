@@ -14,7 +14,7 @@ private val Project.composeSnapshotVersionCatalog: VersionCatalog
 private val Project.libsVersionCatalog: VersionCatalog
     get() = project.extensions.getByType(VersionCatalogsExtension::class.java).find("libs").get()
 private fun Project.composeStableVersion() = libsVersionCatalog.findVersion("compose.stable").get().requiredVersion
-private fun Project.composeSnapshotVersion() = composeSnapshotVersionCatalog.findVersion("snapshot.version").get().requiredVersion
+private fun Project.composeRuntimeVersion() = composeSnapshotVersionCatalog.findVersion("runtime.version").get().requiredVersion
 
 val Project.androidXMavenLocalPath: String?
     get() = kotlinBuildProperties.stringProperty("compose.aosp.root").orNull
@@ -41,6 +41,8 @@ fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String) {
     google {
         content {
             includeGroup("androidx.collection")
+            includeGroup("androidx.compose.runtime")
+            includeGroup("androidx.annotation")
             includeVersion("androidx.compose.foundation", "foundation-layout", composeStableVersion)
             includeVersion("androidx.compose.foundation", "foundation-layout-desktop", composeStableVersion)
             includeVersion("androidx.compose.foundation", "foundation", composeStableVersion)
@@ -59,8 +61,8 @@ fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String) {
     }
 }
 
-fun Project.composeRuntime() = compose("runtime", "runtime", composeSnapshotVersion())
-fun Project.composeRuntimeAnnotations() = compose("runtime", "runtime-annotation", composeSnapshotVersion())
-fun Project.composeRuntimeTestUtils() = compose("runtime", "runtime-test-utils", composeSnapshotVersion())
+fun Project.composeRuntime() = compose("runtime", "runtime", composeRuntimeVersion())
+fun Project.composeRuntimeAnnotations() = compose("runtime", "runtime-annotation", composeRuntimeVersion())
+fun Project.composeRuntimeTestUtils() = compose("runtime", "runtime-test-utils", composeRuntimeVersion())
 fun Project.compose(group: String, module: String, version: String = composeStableVersion()) =
     "androidx.compose.$group:$module:$version"
