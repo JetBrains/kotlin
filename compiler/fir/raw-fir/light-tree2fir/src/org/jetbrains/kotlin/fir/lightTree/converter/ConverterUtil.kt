@@ -28,13 +28,6 @@ fun LighterASTNode.getAsStringWithoutBacktick(): String {
     return this.toString().replace("`", "")
 }
 
-fun <T : FirCallBuilder> T.extractArgumentsFrom(container: List<FirExpression>): T {
-    argumentList = buildArgumentList(
-        arguments = container.toMutableList(),
-    )
-    return this
-}
-
 inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() -> LighterASTNode?): Boolean {
     if (classNode.getParent()?.getParent()?.tokenType == SCRIPT) return false
     var currentNode: LighterASTNode? = classNode
