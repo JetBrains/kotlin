@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model
+package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.OPT_IN
@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_SUPPRESS_WARNING
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_VERBOSE_PHASES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_VERIFY_IR
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.common.CommonArgumentDescriptor
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
@@ -51,16 +51,6 @@ internal class NullableCommonCompilerArgumentsWithBtaVersionsArgumentProvider : 
         return namedArgumentConfiguration { it.isNullable }.map { Arguments.of(it) }.stream()
     }
 }
-
-internal class CommonArgumentDescriptor<T>(
-    override val argumentName: String,
-    val argumentKey: CommonCompilerArgument<T>,
-    override val argumentValues: List<T>,
-    override val isEnum: Boolean,
-    override val isNullable: Boolean,
-    override val valueString: (T?) -> String?,
-    override val expectedArgumentStringsFor: (String) -> List<String>,
-) : ArgumentDescriptor<T>
 
 private fun namedArgumentConfiguration(argumentPredicate: (CommonArgumentDescriptor<*>) -> Boolean = { true }): List<Named<CommonArgumentConfiguration<*>>> {
     val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()

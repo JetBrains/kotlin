@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.arguments.model
+package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_WHEN_EXPRESSIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.JvmCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentDescriptor
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
@@ -56,16 +57,6 @@ internal class NullableJvmCompilerArgumentsWithBtaVersionsArgumentProvider : Arg
         return namedArgumentConfiguration { it.isNullable }.map { Arguments.of(it) }.stream()
     }
 }
-
-internal class JvmArgumentDescriptor<T>(
-    override val argumentName: String,
-    val argumentKey: JvmCompilerArgument<T>,
-    override val argumentValues: List<T>,
-    override val isEnum: Boolean,
-    override val isNullable: Boolean,
-    override val valueString: (T?) -> String?,
-    override val expectedArgumentStringsFor: (String) -> List<String>,
-) : ArgumentDescriptor<T>
 
 private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentDescriptor<*>) -> Boolean = { true }): List<Named<JvmArgumentConfiguration<*>>> {
     val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
