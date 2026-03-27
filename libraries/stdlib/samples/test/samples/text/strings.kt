@@ -551,9 +551,9 @@ class Strings {
     fun containsChar() {
         val text = "kotlin"
 
-        assertTrue(text.contains('k'))
+        assertTrue('k' in text)
         assertTrue(text.contains('K', ignoreCase = true))
-        assertFalse(text.contains('z'))
+        assertTrue('z' !in text)
     }
 
     @Sample
