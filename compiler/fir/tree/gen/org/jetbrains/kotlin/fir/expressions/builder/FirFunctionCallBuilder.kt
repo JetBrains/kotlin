@@ -66,23 +66,34 @@ inline fun buildFunctionCall(init: FirFunctionCallBuilder.() -> Unit): FirFuncti
     return FirFunctionCallBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
-inline fun buildFunctionCallCopy(original: FirFunctionCall, init: FirFunctionCallBuilder.() -> Unit): FirFunctionCall {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirFunctionCallBuilder()
-    copyBuilder.coneTypeOrNull = original.coneTypeOrNull
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.contextArguments.addAll(original.contextArguments)
-    copyBuilder.typeArguments.addAll(original.typeArguments)
-    copyBuilder.explicitReceiver = original.explicitReceiver
-    copyBuilder.dispatchReceiver = original.dispatchReceiver
-    copyBuilder.extensionReceiver = original.extensionReceiver
-    copyBuilder.source = original.source
-    copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
-    copyBuilder.argumentList = original.argumentList
-    copyBuilder.calleeReference = original.calleeReference
-    copyBuilder.origin = original.origin
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class)
+fun buildFunctionCallCopy(
+    original: FirFunctionCall,
+    coneTypeOrNull: ConeKotlinType? = original.coneTypeOrNull,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    contextArguments: MutableList<FirExpression> = original.contextArguments.toMutableList(),
+    typeArguments: MutableList<FirTypeProjection> = original.typeArguments.toMutableList(),
+    explicitReceiver: FirExpression? = original.explicitReceiver,
+    dispatchReceiver: FirExpression? = original.dispatchReceiver,
+    extensionReceiver: FirExpression? = original.extensionReceiver,
+    source: KtSourceElement? = original.source,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = original.nonFatalDiagnostics.toMutableList(),
+    argumentList: FirArgumentList = original.argumentList,
+    calleeReference: FirNamedReference = original.calleeReference,
+    origin: FirFunctionCallOrigin = original.origin,
+): FirFunctionCall {
+    return FirFunctionCallImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        contextArguments.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        explicitReceiver,
+        dispatchReceiver,
+        extensionReceiver,
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        argumentList,
+        calleeReference,
+        origin,
+    )
 }

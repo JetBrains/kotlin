@@ -257,11 +257,12 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
 
             if (jsPlainObjectInterface.typeParameterSymbols.isNotEmpty()) {
                 jsPlainObjectInterface.typeParameterSymbols.mapTo(typeParameters) {
-                    val typeParameter = buildTypeParameterCopy(it.fir) {
-                        origin = JsPlainObjectsPluginKey.origin
-                        symbol = FirTypeParameterSymbol()
-                        containingDeclarationSymbol = functionalSymbol
-                    }
+                    val typeParameter = buildTypeParameterCopy(
+                        it.fir,
+                        origin = JsPlainObjectsPluginKey.origin,
+                        symbol = FirTypeParameterSymbol(),
+                        containingDeclarationSymbol = functionalSymbol,
+                    )
                     typeParameterSubstitutionMap[it] = ConeTypeParameterTypeImpl(
                         typeParameter.symbol.toLookupTag(), isMarkedNullable = false
                     )

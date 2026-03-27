@@ -84,9 +84,10 @@ class DestructuringEntry(
 
         override fun DestructuringEntry.extractAnnotationsTo(target: FirAnnotationContainerBuilder, containerSymbol: FirBasedSymbol<*>) {
             target.annotations += annotations.map {
-                buildAnnotationCallCopy(it) {
+                buildAnnotationCallCopy(
+                    it,
                     containingDeclarationSymbol = containerSymbol
-                }
+                )
             }
         }
     }

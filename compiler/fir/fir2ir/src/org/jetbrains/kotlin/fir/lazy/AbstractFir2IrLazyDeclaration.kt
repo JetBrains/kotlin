@@ -47,7 +47,8 @@ interface AbstractFir2IrLazyDeclaration<F> :
     private fun evaluateAnnotationArguments(annotation: FirAnnotation): FirAnnotation {
         val evaluationResult = FirExpressionEvaluator.evaluateAnnotationArguments(annotation, session)
 
-        return buildAnnotationCopy(annotation) {
+        return buildAnnotationCopy(
+            annotation,
             argumentMapping = buildAnnotationArgumentMapping {
                 source = annotation.argumentMapping.source
 
@@ -56,7 +57,7 @@ interface AbstractFir2IrLazyDeclaration<F> :
                     mapping[name] = evaluatedExpression ?: expression
                 }
             }
-        }
+        )
     }
 }
 

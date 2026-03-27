@@ -96,26 +96,42 @@ inline fun buildPropertyAccessor(init: FirPropertyAccessorBuilder.() -> Unit): F
     return FirPropertyAccessorBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPropertyAccessorBuilder.() -> Unit): FirPropertyAccessor {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirPropertyAccessorBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.status = original.status
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.valueParameters.addAll(original.valueParameters)
-    copyBuilder.body = original.body
-    copyBuilder.contractDescription = original.contractDescription
-    copyBuilder.propertySymbol = original.propertySymbol
-    copyBuilder.isGetter = original.isGetter
-    copyBuilder.annotations.addAll(original.annotations)
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildPropertyAccessorCopy(
+    original: FirPropertyAccessor,
+    source: KtSourceElement? = original.source,
+    resolvePhase: FirResolvePhase = original.resolvePhase,
+    moduleData: FirModuleData = original.moduleData,
+    origin: FirDeclarationOrigin = original.origin,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    status: FirDeclarationStatus = original.status,
+    returnTypeRef: FirTypeRef = original.returnTypeRef,
+    deprecationsProvider: DeprecationsProvider = original.deprecationsProvider,
+    dispatchReceiverType: ConeSimpleKotlinType? = original.dispatchReceiverType,
+    valueParameters: MutableList<FirValueParameter> = original.valueParameters.toMutableList(),
+    body: FirBlock? = original.body,
+    contractDescription: FirContractDescription? = original.contractDescription,
+    symbol: FirPropertyAccessorSymbol,
+    propertySymbol: FirPropertySymbol = original.propertySymbol,
+    isGetter: Boolean = original.isGetter,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+): FirPropertyAccessor {
+    return FirPropertyAccessorImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        status,
+        returnTypeRef,
+        deprecationsProvider,
+        dispatchReceiverType,
+        valueParameters,
+        body,
+        contractDescription,
+        symbol,
+        propertySymbol,
+        isGetter,
+        annotations.toMutableOrEmpty(),
+    )
 }

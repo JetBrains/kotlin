@@ -557,11 +557,16 @@ class FirSignatureEnhancement(
     ): ConeSubstitutor? {
         val typeParameterSubstitutionMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
         this += firMethod.typeParameters.map { typeParameter ->
-            val newTypeParameter = if (typeParameter is FirTypeParameter) buildTypeParameterCopy(typeParameter) {
-                origin = declarationOrigin
-                this.symbol = FirTypeParameterSymbol()
-                containingDeclarationSymbol = functionSymbol
-            } else typeParameter
+            val newTypeParameter = if (typeParameter is FirTypeParameter) {
+                buildTypeParameterCopy(
+                    typeParameter,
+                    origin = declarationOrigin,
+                    symbol = FirTypeParameterSymbol(),
+                    containingDeclarationSymbol = functionSymbol,
+                )
+            } else {
+                typeParameter
+            }
             if (typeParameter is FirTypeParameter) {
                 typeParameterSubstitutionMap[typeParameter.symbol] = ConeTypeParameterTypeImpl(
                     newTypeParameter.symbol.toLookupTag(), isMarkedNullable = false

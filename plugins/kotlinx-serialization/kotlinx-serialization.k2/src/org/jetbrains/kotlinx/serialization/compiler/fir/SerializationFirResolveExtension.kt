@@ -220,9 +220,13 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         //                 to `FirResolvePhase.EXPECT_ACTUAL_MATCHING` (as described in KT-72844), we set the generated function
         //                 resolution phase here as `FirResolvePhase.BODY_RESOLVE`. To avoid the contract violation, we have to
         //                 correctly provide the FIR resolution information in `FirResolvePhase.BODY_RESOLVE` level here.
-        val copy = copyFirFunctionWithResolvePhase(original, callableId, SerializationPluginKey, FirResolvePhase.BODY_RESOLVE) {
+        val copy = copyFirFunctionWithResolvePhase(
+            original,
+            callableId,
+            SerializationPluginKey,
+            FirResolvePhase.BODY_RESOLVE,
             status = original.status.copy(modality = Modality.FINAL)
-        }
+        )
 
         copy.excludeFromJsExport(session)
         return listOf(copy.symbol)

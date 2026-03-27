@@ -675,13 +675,15 @@ open class FirTypeResolveTransformer(
 
                 fun FirCallableDeclaration.addAnnotationWithoutUseSiteTarget(annotation: FirAnnotation) {
                     val copy = if (annotation is FirAnnotationCall) {
-                        buildAnnotationCallCopy(annotation) {
+                        buildAnnotationCallCopy(
+                            annotation,
                             useSiteTarget = null
-                        }
+                        )
                     } else {
-                        buildAnnotationCopy(annotation) {
+                        buildAnnotationCopy(
+                            annotation,
                             useSiteTarget = null
-                        }
+                        )
                     }
                     replaceAnnotations(annotations + copy)
                     addedSomewhere = true

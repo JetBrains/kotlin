@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -56,16 +57,20 @@ inline fun buildSpreadArgumentExpression(init: FirSpreadArgumentExpressionBuilde
     return FirSpreadArgumentExpressionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildSpreadArgumentExpressionCopy(original: FirSpreadArgumentExpression, init: FirSpreadArgumentExpressionBuilder.() -> Unit): FirSpreadArgumentExpression {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirSpreadArgumentExpressionBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.expression = original.expression
-    copyBuilder.isNamed = original.isNamed
-    copyBuilder.isFakeSpread = original.isFakeSpread
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildSpreadArgumentExpressionCopy(
+    original: FirSpreadArgumentExpression,
+    source: KtSourceElement? = original.source,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    expression: FirExpression = original.expression,
+    isNamed: Boolean = original.isNamed,
+    isFakeSpread: Boolean = original.isFakeSpread,
+): FirSpreadArgumentExpression {
+    return FirSpreadArgumentExpressionImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        expression,
+        isNamed,
+        isFakeSpread,
+    )
 }

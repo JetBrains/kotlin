@@ -208,11 +208,12 @@ class CandidateFactory private constructor(
             extension: FirFunctionCallRefinementExtension
         ): FirNamedFunctionSymbol {
             val newSymbol = FirNamedFunctionSymbol(callableId)
-            val function = buildNamedFunctionCopy(fir) {
-                body = null
-                this.symbol = newSymbol
+            val function = buildNamedFunctionCopy(
+                fir,
+                body = null,
+                symbol = newSymbol,
                 returnTypeRef = result.typeRef
-            }
+            )
             function.originalCallDataForPluginRefinedCall = OriginalCallData(this, extension)
             result.callback?.invoke(newSymbol)
             return newSymbol

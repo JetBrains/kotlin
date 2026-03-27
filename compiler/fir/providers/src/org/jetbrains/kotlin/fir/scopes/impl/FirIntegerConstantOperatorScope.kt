@@ -75,13 +75,14 @@ class FirIntegerConstantOperatorScope(
 
     private fun wrapIntOperator(originalSymbol: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
         val originalFunction = originalSymbol.fir
-        val wrappedFunction = buildNamedFunctionCopy(originalFunction) {
-            symbol = FirNamedFunctionSymbol(originalSymbol.callableId)
-            origin = FirDeclarationOrigin.WrappedIntegerOperator
+        val wrappedFunction = buildNamedFunctionCopy(
+            originalFunction,
+            symbol = FirNamedFunctionSymbol(originalSymbol.callableId),
+            origin = FirDeclarationOrigin.WrappedIntegerOperator,
             returnTypeRef = buildResolvedTypeRef {
                 coneType = ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable = false)
             }
-        }.also {
+        ).also {
             it.originalForWrappedIntegerOperator = originalSymbol
             it.isUnsignedWrappedIntegerOperator = isUnsigned
         }

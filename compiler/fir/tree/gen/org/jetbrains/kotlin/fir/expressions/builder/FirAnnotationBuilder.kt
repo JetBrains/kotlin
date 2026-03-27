@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -61,16 +62,20 @@ inline fun buildAnnotation(init: FirAnnotationBuilder.() -> Unit): FirAnnotation
     return FirAnnotationBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildAnnotationCopy(original: FirAnnotation, init: FirAnnotationBuilder.() -> Unit): FirAnnotation {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirAnnotationBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.useSiteTarget = original.useSiteTarget
-    copyBuilder.annotationTypeRef = original.annotationTypeRef
-    copyBuilder.argumentMapping = original.argumentMapping
-    copyBuilder.typeArguments.addAll(original.typeArguments)
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildAnnotationCopy(
+    original: FirAnnotation,
+    source: KtSourceElement? = original.source,
+    useSiteTarget: AnnotationUseSiteTarget? = original.useSiteTarget,
+    annotationTypeRef: FirTypeRef = original.annotationTypeRef,
+    argumentMapping: FirAnnotationArgumentMapping = original.argumentMapping,
+    typeArguments: MutableList<FirTypeProjection> = original.typeArguments.toMutableList(),
+): FirAnnotation {
+    return FirAnnotationImpl(
+        source,
+        useSiteTarget,
+        annotationTypeRef,
+        argumentMapping,
+        typeArguments.toMutableOrEmpty(),
+    )
 }

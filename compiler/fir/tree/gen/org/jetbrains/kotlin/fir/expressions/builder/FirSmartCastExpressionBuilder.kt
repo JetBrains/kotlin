@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.DfaType
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -66,19 +67,26 @@ inline fun buildSmartCastExpression(init: FirSmartCastExpressionBuilder.() -> Un
     return FirSmartCastExpressionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
-inline fun buildSmartCastExpressionCopy(original: FirSmartCastExpression, init: FirSmartCastExpressionBuilder.() -> Unit): FirSmartCastExpression {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirSmartCastExpressionBuilder()
-    copyBuilder.coneTypeOrNull = original.coneTypeOrNull
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.originalExpression = original.originalExpression
-    copyBuilder.upperTypesFromSmartCast = original.upperTypesFromSmartCast
-    copyBuilder.lowerTypesFromSmartCast = original.lowerTypesFromSmartCast
-    copyBuilder.smartcastType = original.smartcastType
-    copyBuilder.smartcastTypeWithoutNullableNothing = original.smartcastTypeWithoutNullableNothing
-    copyBuilder.smartcastStability = original.smartcastStability
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class)
+fun buildSmartCastExpressionCopy(
+    original: FirSmartCastExpression,
+    coneTypeOrNull: ConeKotlinType? = original.coneTypeOrNull,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    originalExpression: FirExpression = original.originalExpression,
+    upperTypesFromSmartCast: Collection<ConeKotlinType> = original.upperTypesFromSmartCast,
+    lowerTypesFromSmartCast: Collection<DfaType> = original.lowerTypesFromSmartCast,
+    smartcastType: FirTypeRef = original.smartcastType,
+    smartcastTypeWithoutNullableNothing: FirTypeRef? = original.smartcastTypeWithoutNullableNothing,
+    smartcastStability: SmartcastStability = original.smartcastStability,
+): FirSmartCastExpression {
+    return FirSmartCastExpressionImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        originalExpression,
+        upperTypesFromSmartCast,
+        lowerTypesFromSmartCast,
+        smartcastType,
+        smartcastTypeWithoutNullableNothing,
+        smartcastStability,
+    )
 }

@@ -48,19 +48,26 @@ inline fun buildGetter(init: SirGetterBuilder.() -> Unit = {}): SirGetter {
     return SirGetterBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildGetterCopy(original: SirGetter, init: SirGetterBuilder.() -> Unit = {}): SirGetter {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirGetterBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.bridges.addAll(original.bridges)
-    copyBuilder.body = original.body
-    copyBuilder.errorType = original.errorType
-    copyBuilder.isAsync = original.isAsync
-    return copyBuilder.apply(init).build()
+@OptIn(SirImplementationDetail::class)
+fun buildGetterCopy(
+    original: SirGetter,
+    origin: SirOrigin = original.origin,
+    visibility: SirVisibility = original.visibility,
+    documentation: String? = original.documentation,
+    attributes: MutableList<SirAttribute> = original.attributes.toMutableList(),
+    bridges: MutableList<SirBridge> = original.bridges.toMutableList(),
+    body: SirFunctionBody? = original.body,
+    errorType: SirType = original.errorType,
+    isAsync: Boolean = original.isAsync,
+): SirGetter {
+    return SirGetterImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        bridges,
+        body,
+        errorType,
+        isAsync,
+    )
 }

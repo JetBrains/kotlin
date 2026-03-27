@@ -58,24 +58,36 @@ inline fun buildInit(init: SirInitBuilder.() -> Unit): SirInit {
     return SirInitBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildInitCopy(original: SirInit, init: SirInitBuilder.() -> Unit): SirInit {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirInitBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.bridges.addAll(original.bridges)
-    copyBuilder.body = original.body
-    copyBuilder.errorType = original.errorType
-    copyBuilder.isAsync = original.isAsync
-    copyBuilder.isFailable = original.isFailable
-    copyBuilder.parameters.addAll(original.parameters)
-    copyBuilder.isConvenience = original.isConvenience
-    copyBuilder.isRequired = original.isRequired
-    copyBuilder.isOverride = original.isOverride
-    return copyBuilder.apply(init).build()
+@OptIn(SirImplementationDetail::class)
+fun buildInitCopy(
+    original: SirInit,
+    origin: SirOrigin = original.origin,
+    visibility: SirVisibility = original.visibility,
+    documentation: String? = original.documentation,
+    attributes: MutableList<SirAttribute> = original.attributes.toMutableList(),
+    bridges: MutableList<SirBridge> = original.bridges.toMutableList(),
+    body: SirFunctionBody? = original.body,
+    errorType: SirType = original.errorType,
+    isAsync: Boolean = original.isAsync,
+    isFailable: Boolean = original.isFailable,
+    parameters: MutableList<SirParameter> = original.parameters.toMutableList(),
+    isConvenience: Boolean = original.isConvenience,
+    isRequired: Boolean = original.isRequired,
+    isOverride: Boolean = original.isOverride,
+): SirInit {
+    return SirInitImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        bridges,
+        body,
+        errorType,
+        isAsync,
+        isFailable,
+        parameters,
+        isConvenience,
+        isRequired,
+        isOverride,
+    )
 }

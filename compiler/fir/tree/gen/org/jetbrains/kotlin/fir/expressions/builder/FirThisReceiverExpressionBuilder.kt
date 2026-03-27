@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -81,18 +82,24 @@ inline fun buildThisReceiverExpression(init: FirThisReceiverExpressionBuilder.()
     return FirThisReceiverExpressionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
-inline fun buildThisReceiverExpressionCopy(original: FirThisReceiverExpression, init: FirThisReceiverExpressionBuilder.() -> Unit): FirThisReceiverExpression {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirThisReceiverExpressionBuilder()
-    copyBuilder.coneTypeOrNull = original.coneTypeOrNull
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.typeArguments.addAll(original.typeArguments)
-    copyBuilder.source = original.source
-    copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
-    copyBuilder.calleeReference = original.calleeReference
-    copyBuilder.isImplicit = original.isImplicit
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class)
+fun buildThisReceiverExpressionCopy(
+    original: FirThisReceiverExpression,
+    coneTypeOrNull: ConeKotlinType? = original.coneTypeOrNull,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    typeArguments: MutableList<FirTypeProjection> = original.typeArguments.toMutableList(),
+    source: KtSourceElement? = original.source,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = original.nonFatalDiagnostics.toMutableList(),
+    calleeReference: FirThisReference = original.calleeReference,
+    isImplicit: Boolean = original.isImplicit,
+): FirThisReceiverExpression {
+    return FirThisReceiverExpressionImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        calleeReference,
+        isImplicit,
+    )
 }

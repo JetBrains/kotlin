@@ -368,7 +368,7 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, ElementField
          * an instance of the corresponding tree element and copies values from that instance to the builder, allowing to change them
          * in the process.
          */
-        fun withCopy(constructFunctionType: LeafBuilder.ConstructFunctionType = LeafBuilder.ConstructFunctionType.BuilderFunction) {
+        fun withCopy(constructFunctionType: LeafBuilder.ConstructFunctionType = LeafBuilder.ConstructFunctionType.DirectFunction) {
             builder.copyFunctionType = constructFunctionType
         }
     }

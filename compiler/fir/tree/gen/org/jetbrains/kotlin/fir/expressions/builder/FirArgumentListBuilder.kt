@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -39,13 +40,14 @@ inline fun buildArgumentList(init: FirArgumentListBuilder.() -> Unit = {}): FirA
     return FirArgumentListBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildArgumentListCopy(original: FirArgumentList, init: FirArgumentListBuilder.() -> Unit = {}): FirArgumentList {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirArgumentListBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.arguments.addAll(original.arguments)
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildArgumentListCopy(
+    original: FirArgumentList,
+    source: KtSourceElement? = original.source,
+    arguments: MutableList<FirExpression> = original.arguments.toMutableList(),
+): FirArgumentList {
+    return FirArgumentListImpl(
+        source,
+        arguments,
+    )
 }

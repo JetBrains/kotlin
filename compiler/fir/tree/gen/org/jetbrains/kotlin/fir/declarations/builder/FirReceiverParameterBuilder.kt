@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -59,19 +60,28 @@ inline fun buildReceiverParameter(init: FirReceiverParameterBuilder.() -> Unit):
     return FirReceiverParameterBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildReceiverParameterCopy(original: FirReceiverParameter, init: FirReceiverParameterBuilder.() -> Unit): FirReceiverParameter {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirReceiverParameterBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.typeRef = original.typeRef
-    copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
-    copyBuilder.annotations.addAll(original.annotations)
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildReceiverParameterCopy(
+    original: FirReceiverParameter,
+    source: KtSourceElement? = original.source,
+    resolvePhase: FirResolvePhase = original.resolvePhase,
+    moduleData: FirModuleData = original.moduleData,
+    origin: FirDeclarationOrigin = original.origin,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    symbol: FirReceiverParameterSymbol,
+    typeRef: FirTypeRef = original.typeRef,
+    containingDeclarationSymbol: FirBasedSymbol<*> = original.containingDeclarationSymbol,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+): FirReceiverParameter {
+    return FirReceiverParameterImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        symbol,
+        typeRef,
+        containingDeclarationSymbol,
+        annotations.toMutableOrEmpty(),
+    )
 }

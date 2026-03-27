@@ -115,10 +115,10 @@ sealed class ImplicitValue<S : FirBasedSymbol<*>>(
 
 fun FirExpression.copyImplicitValueExpression(): FirExpression {
     return when (this) {
-        is FirPropertyAccessExpression -> buildPropertyAccessExpressionCopy(this) {}
-        is FirThisReceiverExpression -> buildThisReceiverExpressionCopy(this) {}
-        is FirInaccessibleReceiverExpression -> buildInaccessibleReceiverExpressionCopy(this) {}
-        is FirSmartCastExpression -> buildSmartCastExpressionCopy(this) {}
+        is FirPropertyAccessExpression -> buildPropertyAccessExpressionCopy(this)
+        is FirThisReceiverExpression -> buildThisReceiverExpressionCopy(this)
+        is FirInaccessibleReceiverExpression -> buildInaccessibleReceiverExpressionCopy(this)
+        is FirSmartCastExpression -> buildSmartCastExpressionCopy(this)
         else -> error("Unexpected expression type '${this.javaClass.simpleName}'")
     }
 }

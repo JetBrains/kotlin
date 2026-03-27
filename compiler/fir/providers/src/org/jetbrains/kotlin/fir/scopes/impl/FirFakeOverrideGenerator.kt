@@ -171,10 +171,11 @@ object FirFakeOverrideGenerator {
         moduleData = session.nullableModuleData ?: baseConstructor.moduleData
         this.origin = origin
         receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
-            buildReceiverParameterCopy(receiverParameter) {
-                typeRef = receiverParameter.typeRef.withReplacedConeType(null)
-                symbol = FirReceiverParameterSymbol()
-            }
+            buildReceiverParameterCopy(
+                receiverParameter,
+                typeRef = receiverParameter.typeRef.withReplacedConeType(null),
+                symbol = FirReceiverParameterSymbol(),
+            )
         }
 
         status = baseConstructor.status.copy(isExpect = isExpect)
@@ -310,10 +311,11 @@ object FirFakeOverrideGenerator {
 
         if (this is FirNamedFunctionBuilder) {
             receiverParameter = baseFunction.receiverParameter?.let { receiverParameter ->
-                buildReceiverParameterCopy(receiverParameter) {
-                    typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType)
-                    symbol = FirReceiverParameterSymbol()
-                }
+                buildReceiverParameterCopy(
+                    receiverParameter,
+                    typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType),
+                    symbol = FirReceiverParameterSymbol(),
+                )
             }
         }
 
@@ -333,10 +335,11 @@ object FirFakeOverrideGenerator {
         contextParameters += baseFunction.contextParameters.zip(
             newContextParameterTypes ?: List(baseFunction.contextParameters.size) { null }
         ) { contextParameter, newType ->
-            buildValueParameterCopy(contextParameter) {
-                symbol = FirValueParameterSymbol()
-                returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType)
-            }
+            buildValueParameterCopy(
+                contextParameter,
+                symbol = FirValueParameterSymbol(),
+                returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType),
+            )
         }
     }
 
@@ -347,22 +350,22 @@ object FirFakeOverrideGenerator {
         containingDeclarationSymbol: FirFunctionSymbol<*>,
         source: KtSourceElement?,
         copyDefaultValues: Boolean = true,
-    ): FirValueParameter = buildValueParameterCopy(original) {
-        this.origin = origin
-        this.source = source
-        this.returnTypeRef = returnTypeRef
-        symbol = FirValueParameterSymbol()
-        this.containingDeclarationSymbol = containingDeclarationSymbol
-        defaultValue = defaultValue
+    ): FirValueParameter = buildValueParameterCopy(
+        original,
+        origin = origin,
+        source = source,
+        returnTypeRef = returnTypeRef,
+        symbol = FirValueParameterSymbol(),
+        containingDeclarationSymbol = containingDeclarationSymbol,
+        defaultValue = original.defaultValue
             ?.takeIf { copyDefaultValues }
             ?.let {
                 buildExpressionStub {
                     coneTypeOrNull = returnTypeRef.coneTypeOrNull
                 }
-            }
-
-        resolvePhase = origin.resolvePhaseForCopy
-    }
+            },
+        resolvePhase = origin.resolvePhaseForCopy,
+    )
 
     fun createSubstitutionOverrideProperty(
         session: FirSession,
@@ -573,18 +576,18 @@ object FirFakeOverrideGenerator {
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
-        else -> buildPropertyAccessorCopy(this) {
-            this.source = newSource
-            this.symbol = FirPropertyAccessorSymbol()
-            this.moduleData = moduleData
-            this.origin = origin
-            this.propertySymbol = propertySymbol
-            this.dispatchReceiverType = dispatchReceiverType
-            this.body = null
-            resolvePhase = origin.resolvePhaseForCopy
-            this.status = status.copy(visibility = newVisibility)
-            this.attributes = this@buildCopy.attributes.copy()
-        }.also {
+        else -> buildPropertyAccessorCopy(
+            this,
+            source = newSource,
+            symbol = FirPropertyAccessorSymbol(),
+            moduleData = moduleData,
+            origin = origin,
+            propertySymbol = propertySymbol,
+            dispatchReceiverType = dispatchReceiverType,
+            body = null,
+            resolvePhase = origin.resolvePhaseForCopy,
+            status = status.copy(visibility = newVisibility),
+        ).also {
             if (it.isSetter) {
                 val originalParameter = it.valueParameters.first()
                 val newParameter = buildCopyForValueParameter(
@@ -741,20 +744,22 @@ object FirFakeOverrideGenerator {
 
         if (updateReceiver) {
             receiverParameter = baseVariable.receiverParameter?.let { receiverParameter ->
-                buildReceiverParameterCopy(receiverParameter) {
-                    typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType)
-                    symbol = FirReceiverParameterSymbol()
-                }
+                buildReceiverParameterCopy(
+                    receiverParameter,
+                    typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType),
+                    symbol = FirReceiverParameterSymbol(),
+                )
             }
         }
 
         contextParameters += baseVariable.contextParameters.zip(
             newContextParameterTypes ?: List(baseVariable.contextParameters.size) { null }
         ) { contextParameter, newType ->
-            buildValueParameterCopy(contextParameter) {
-                symbol = FirValueParameterSymbol()
-                returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType)
-            }
+            buildValueParameterCopy(
+                contextParameter,
+                symbol = FirValueParameterSymbol(),
+                returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType),
+            )
         }
     }
 

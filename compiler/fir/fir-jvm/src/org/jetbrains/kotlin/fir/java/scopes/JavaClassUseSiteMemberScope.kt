@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -418,14 +416,15 @@ class JavaClassUseSiteMemberScope(
         val fir = fir
         val returnType = continuationParameterType.typeArguments[0].type ?: return this
         val symbol = FirNamedFunctionSymbol(callableId)
-        return buildMaybeJavaFunctionCopy(fir, symbol) {
-            valueParameters.clear()
-            valueParameters.addAll(fir.valueParameters.dropLast(1))
+        return buildMaybeJavaFunctionCopy(
+            fir,
+            symbol,
+            valueParameters = fir.valueParameters.dropLast(1),
             returnTypeRef = buildResolvedTypeRef {
                 coneType = returnType
-            }
-            (status as FirDeclarationStatusImpl).isSuspend = true
-        }.symbol
+            },
+            status = fir.status.copy(isSuspend = true),
+        ).symbol
     }
 
     // ---------------------------------------------------------------------------------------------------------
@@ -1060,12 +1059,13 @@ class JavaClassUseSiteMemberScope(
                     }
                 }
             } else {
-                buildNamedFunctionCopy(original) {
-                    name = naturalName
-                    symbol = newSymbol
-                    dispatchReceiverType = klass.defaultType()
-                    origin?.let { this.origin = it }
-                }
+                buildNamedFunctionCopy(
+                    original,
+                    name = naturalName,
+                    symbol = newSymbol,
+                    dispatchReceiverType = klass.defaultType(),
+                    origin = origin ?: original.origin,
+                )
             }.apply {
                 initialSignatureAttr = original.symbol
                 if (isHidden) {
@@ -1114,9 +1114,12 @@ class JavaClassUseSiteMemberScope(
         ): FirNamedFunctionSymbol {
             val newSymbol = FirNamedFunctionSymbol(accidentalOverrideWithDeclaredFunction.callableId)
             val original = accidentalOverrideWithDeclaredFunction.fir
-            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildMaybeJavaFunctionCopy(original, newSymbol, name) {
-                dispatchReceiverType = klass.defaultType()
-            }.apply {
+            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildMaybeJavaFunctionCopy(
+                original,
+                newSymbol,
+                name,
+                dispatchReceiverType = klass.defaultType(),
+            ).apply {
                 initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
                 isHiddenToOvercomeSignatureClash = true
             }
@@ -1130,9 +1133,12 @@ class JavaClassUseSiteMemberScope(
         ): FirNamedFunctionSymbol {
             val newSymbol = FirNamedFunctionSymbol(relevantFunctionFromSupertypes.callableId)
             val accidentalOverrideWithDeclaredFunctionHiddenCopy =
-                buildMaybeJavaFunctionCopy(relevantFunctionFromSupertypes.fir, newSymbol, name) {
-                    dispatchReceiverType = klass.defaultType()
-                }.apply {
+                buildMaybeJavaFunctionCopy(
+                    relevantFunctionFromSupertypes.fir,
+                    newSymbol,
+                    name,
+                    dispatchReceiverType = klass.defaultType(),
+                ).apply {
                     isHiddenToOvercomeSignatureClash = true
                 }
             // Collect synthetic function which is a hidden copy of inherited one with unerased parameters
@@ -1143,20 +1149,31 @@ class JavaClassUseSiteMemberScope(
             original: FirNamedFunction,
             newSymbol: FirNamedFunctionSymbol,
             newName: Name = original.name,
-            builder: FirFunctionBuilder.() -> Unit,
+            dispatchReceiverType: ConeClassLikeType? = null,
+            valueParameters: List<FirValueParameter>? = null,
+            returnTypeRef: FirResolvedTypeRef? = null,
+            status: FirDeclarationStatus? = null,
         ): FirNamedFunction {
             return if (original is FirJavaMethod) {
                 buildJavaMethodCopy(original) {
                     this.symbol = newSymbol
                     name = newName
-                    builder()
+                    this.dispatchReceiverType = dispatchReceiverType ?: original.dispatchReceiverType
+                    this.valueParameters.clear()
+                    this.valueParameters += valueParameters ?: original.valueParameters
+                    this.returnTypeRef = returnTypeRef ?: original.returnTypeRef
+                    this.status = status ?: original.status
                 }
             } else {
-                buildNamedFunctionCopy(original) {
-                    this.symbol = newSymbol
-                    name = newName
-                    builder()
-                }
+                buildNamedFunctionCopy(
+                    original,
+                    symbol = newSymbol,
+                    name = newName,
+                    dispatchReceiverType = dispatchReceiverType ?: original.dispatchReceiverType,
+                    valueParameters = (valueParameters ?: original.valueParameters).toMutableList(),
+                    returnTypeRef = returnTypeRef ?: original.returnTypeRef,
+                    status = status ?: original.status,
+                )
             }
         }
     }

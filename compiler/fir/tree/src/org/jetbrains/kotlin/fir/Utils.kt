@@ -60,9 +60,10 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
 
     @Suppress("UNCHECKED_CAST")
     return when (val typeRef = this) {
-        is FirResolvedTypeRefImpl -> buildResolvedTypeRefCopy(typeRef) {
-            source = newSource
-        }
+        is FirResolvedTypeRefImpl -> buildResolvedTypeRefCopy(
+            typeRef,
+            source = newSource,
+        )
         is FirErrorTypeRef -> buildErrorTypeRefCopy(typeRef) {
             source = newSource
             partiallyResolvedTypeRef = typeRef.partiallyResolvedTypeRef?.copyWithNewSource(newSource)
@@ -73,9 +74,10 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
             qualifier += typeRef.qualifier
             annotations += typeRef.annotations
         }
-        is FirFunctionTypeRefImpl -> buildFunctionTypeRefCopy(typeRef) {
-            source = newSource
-        }
+        is FirFunctionTypeRefImpl -> buildFunctionTypeRefCopy(
+            typeRef,
+            source = newSource,
+        )
         is FirDynamicTypeRef -> buildDynamicTypeRef {
             source = newSource
             isMarkedNullable = typeRef.isMarkedNullable

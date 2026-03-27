@@ -65,10 +65,11 @@ public class ConstructorBuildingContext(
             this@ConstructorBuildingContext.valueParameters.mapTo(valueParameters) { generateValueParameter(it, symbol, typeParameters) }
             if (owner is FirRegularClassSymbol) {
                 owner.resolvedContextParameters.mapTo(contextParameters) {
-                    buildValueParameterCopy(it) {
-                        symbol = FirValueParameterSymbol()
-                        containingDeclarationSymbol = owner
-                    }
+                    buildValueParameterCopy(
+                        it,
+                        symbol = FirValueParameterSymbol(),
+                        containingDeclarationSymbol = owner,
+                    )
                 }
             }
         }

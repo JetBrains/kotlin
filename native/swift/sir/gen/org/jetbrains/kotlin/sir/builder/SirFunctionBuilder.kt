@@ -66,28 +66,44 @@ inline fun buildFunction(init: SirFunctionBuilder.() -> Unit): SirFunction {
     return SirFunctionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildFunctionCopy(original: SirFunction, init: SirFunctionBuilder.() -> Unit): SirFunction {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirFunctionBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.bridges.addAll(original.bridges)
-    copyBuilder.body = original.body
-    copyBuilder.errorType = original.errorType
-    copyBuilder.isAsync = original.isAsync
-    copyBuilder.isOverride = original.isOverride
-    copyBuilder.isInstance = original.isInstance
-    copyBuilder.modality = original.modality
-    copyBuilder.name = original.name
-    copyBuilder.contextParameter = original.contextParameter
-    copyBuilder.extensionReceiverParameter = original.extensionReceiverParameter
-    copyBuilder.parameters.addAll(original.parameters)
-    copyBuilder.returnType = original.returnType
-    copyBuilder.fixity = original.fixity
-    return copyBuilder.apply(init).build()
+@OptIn(SirImplementationDetail::class)
+fun buildFunctionCopy(
+    original: SirFunction,
+    origin: SirOrigin = original.origin,
+    visibility: SirVisibility = original.visibility,
+    documentation: String? = original.documentation,
+    attributes: MutableList<SirAttribute> = original.attributes.toMutableList(),
+    bridges: MutableList<SirBridge> = original.bridges.toMutableList(),
+    body: SirFunctionBody? = original.body,
+    errorType: SirType = original.errorType,
+    isAsync: Boolean = original.isAsync,
+    isOverride: Boolean = original.isOverride,
+    isInstance: Boolean = original.isInstance,
+    modality: SirModality = original.modality,
+    name: String = original.name,
+    contextParameter: SirParameter? = original.contextParameter,
+    extensionReceiverParameter: SirParameter? = original.extensionReceiverParameter,
+    parameters: MutableList<SirParameter> = original.parameters.toMutableList(),
+    returnType: SirType = original.returnType,
+    fixity: SirFixity? = original.fixity,
+): SirFunction {
+    return SirFunctionImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        bridges,
+        body,
+        errorType,
+        isAsync,
+        isOverride,
+        isInstance,
+        modality,
+        name,
+        contextParameter,
+        extensionReceiverParameter,
+        parameters,
+        returnType,
+        fixity,
+    )
 }

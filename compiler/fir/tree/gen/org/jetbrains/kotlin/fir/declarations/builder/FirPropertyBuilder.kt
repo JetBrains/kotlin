@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -95,35 +96,60 @@ inline fun buildProperty(init: FirPropertyBuilder.() -> Unit): FirProperty {
     return FirPropertyBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() -> Unit): FirProperty {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirPropertyBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.status = original.status
-    copyBuilder.isLocal = original.isLocal
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.receiverParameter = original.receiverParameter
-    copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.containerSource = original.containerSource
-    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.contextParameters.addAll(original.contextParameters)
-    copyBuilder.name = original.name
-    copyBuilder.initializer = original.initializer
-    copyBuilder.delegate = original.delegate
-    copyBuilder.isVar = original.isVar
-    copyBuilder.getter = original.getter
-    copyBuilder.setter = original.setter
-    copyBuilder.backingField = original.backingField
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.delegateFieldSymbol = original.delegateFieldSymbol
-    copyBuilder.bodyResolveState = original.bodyResolveState
-    copyBuilder.typeParameters.addAll(original.typeParameters)
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildPropertyCopy(
+    original: FirProperty,
+    source: KtSourceElement? = original.source,
+    resolvePhase: FirResolvePhase = original.resolvePhase,
+    moduleData: FirModuleData = original.moduleData,
+    origin: FirDeclarationOrigin = original.origin,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    status: FirDeclarationStatus = original.status,
+    isLocal: Boolean = original.isLocal,
+    returnTypeRef: FirTypeRef = original.returnTypeRef,
+    receiverParameter: FirReceiverParameter? = original.receiverParameter,
+    deprecationsProvider: DeprecationsProvider = original.deprecationsProvider,
+    containerSource: DeserializedContainerSource? = original.containerSource,
+    dispatchReceiverType: ConeSimpleKotlinType? = original.dispatchReceiverType,
+    contextParameters: MutableList<FirValueParameter> = original.contextParameters.toMutableList(),
+    name: Name = original.name,
+    initializer: FirExpression? = original.initializer,
+    delegate: FirExpression? = original.delegate,
+    isVar: Boolean = original.isVar,
+    getter: FirPropertyAccessor? = original.getter,
+    setter: FirPropertyAccessor? = original.setter,
+    backingField: FirBackingField? = original.backingField,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    symbol: FirPropertySymbol,
+    delegateFieldSymbol: FirDelegateFieldSymbol? = original.delegateFieldSymbol,
+    bodyResolveState: FirPropertyBodyResolveState = original.bodyResolveState,
+    typeParameters: MutableList<FirTypeParameter> = original.typeParameters.toMutableList(),
+): FirProperty {
+    return FirPropertyImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        status,
+        isLocal,
+        returnTypeRef,
+        receiverParameter,
+        deprecationsProvider,
+        containerSource,
+        dispatchReceiverType,
+        contextParameters.toMutableOrEmpty(),
+        name,
+        initializer,
+        delegate,
+        isVar,
+        getter,
+        setter,
+        backingField,
+        annotations.toMutableOrEmpty(),
+        symbol,
+        delegateFieldSymbol,
+        bodyResolveState,
+        typeParameters,
+    )
 }

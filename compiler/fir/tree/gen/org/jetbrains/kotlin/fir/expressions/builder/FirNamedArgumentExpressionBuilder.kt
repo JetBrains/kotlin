@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -57,16 +58,20 @@ inline fun buildNamedArgumentExpression(init: FirNamedArgumentExpressionBuilder.
     return FirNamedArgumentExpressionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildNamedArgumentExpressionCopy(original: FirNamedArgumentExpression, init: FirNamedArgumentExpressionBuilder.() -> Unit): FirNamedArgumentExpression {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirNamedArgumentExpressionBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.expression = original.expression
-    copyBuilder.isSpread = original.isSpread
-    copyBuilder.name = original.name
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildNamedArgumentExpressionCopy(
+    original: FirNamedArgumentExpression,
+    source: KtSourceElement? = original.source,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    expression: FirExpression = original.expression,
+    isSpread: Boolean = original.isSpread,
+    name: Name = original.name,
+): FirNamedArgumentExpression {
+    return FirNamedArgumentExpressionImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        expression,
+        isSpread,
+        name,
+    )
 }

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -111,4 +112,52 @@ inline fun buildNamedFunctionCopy(original: FirNamedFunction, init: FirNamedFunc
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.typeParameters.addAll(original.typeParameters)
     return copyBuilder.apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildNamedFunctionCopy(
+    original: FirNamedFunction,
+    source: KtSourceElement? = original.source,
+    resolvePhase: FirResolvePhase = original.resolvePhase,
+    moduleData: FirModuleData = original.moduleData,
+    origin: FirDeclarationOrigin = original.origin,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    status: FirDeclarationStatus = original.status,
+    isLocal: Boolean = original.isLocal,
+    returnTypeRef: FirTypeRef = original.returnTypeRef,
+    receiverParameter: FirReceiverParameter? = original.receiverParameter,
+    deprecationsProvider: DeprecationsProvider = original.deprecationsProvider,
+    containerSource: DeserializedContainerSource? = original.containerSource,
+    dispatchReceiverType: ConeSimpleKotlinType? = original.dispatchReceiverType,
+    contextParameters: MutableList<FirValueParameter> = original.contextParameters.toMutableList(),
+    valueParameters: MutableList<FirValueParameter> = original.valueParameters.toMutableList(),
+    body: FirBlock? = original.body,
+    contractDescription: FirContractDescription? = original.contractDescription,
+    name: Name = original.name,
+    symbol: FirNamedFunctionSymbol,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    typeParameters: MutableList<FirTypeParameter> = original.typeParameters.toMutableList(),
+): FirNamedFunction {
+    return FirNamedFunctionImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        status,
+        isLocal,
+        returnTypeRef,
+        receiverParameter,
+        deprecationsProvider,
+        containerSource,
+        dispatchReceiverType,
+        contextParameters.toMutableOrEmpty(),
+        valueParameters,
+        body,
+        contractDescription,
+        name,
+        symbol,
+        annotations.toMutableOrEmpty(),
+        typeParameters,
+    )
 }

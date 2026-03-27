@@ -486,11 +486,12 @@ object FirExpressionEvaluator {
                     else -> return evaluatedExpression
                 }
             }
-            return buildAnnotationCopy(annotation) {
+            return buildAnnotationCopy(
+                annotation,
                 argumentMapping = buildAnnotationArgumentMapping {
                     this.mapping.putAll(evaluatedMapping)
                 }
-            }.wrap()
+            ).wrap()
         }
     }
 }

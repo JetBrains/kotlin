@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -51,16 +52,20 @@ inline fun buildInaccessibleReceiverExpression(init: FirInaccessibleReceiverExpr
     return FirInaccessibleReceiverExpressionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
-inline fun buildInaccessibleReceiverExpressionCopy(original: FirInaccessibleReceiverExpression, init: FirInaccessibleReceiverExpressionBuilder.() -> Unit): FirInaccessibleReceiverExpression {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirInaccessibleReceiverExpressionBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.coneTypeOrNull = original.coneTypeOrNull
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.calleeReference = original.calleeReference
-    copyBuilder.kind = original.kind
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class)
+fun buildInaccessibleReceiverExpressionCopy(
+    original: FirInaccessibleReceiverExpression,
+    source: KtSourceElement? = original.source,
+    coneTypeOrNull: ConeKotlinType? = original.coneTypeOrNull,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    calleeReference: FirThisReference = original.calleeReference,
+    kind: InaccessibleReceiverKind = original.kind,
+): FirInaccessibleReceiverExpression {
+    return FirInaccessibleReceiverExpressionImpl(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        calleeReference,
+        kind,
+    )
 }

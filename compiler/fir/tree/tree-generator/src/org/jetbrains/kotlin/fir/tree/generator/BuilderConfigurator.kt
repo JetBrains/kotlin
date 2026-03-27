@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirBuilderConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.generators.tree.LeafBuilder
 
 class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<AbstractFirTreeBuilder>(model) {
     override fun configureBuilders() = with(FirTree) {
@@ -370,7 +371,8 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             parents += typeParametersOwnerBuilder
             defaultNull("body", "contractDescription")
             openBuilder()
-            withCopy()
+            // Generate both direct and builder functions for benchmarks
+            withCopy(constructFunctionType = LeafBuilder.ConstructFunctionType.DirectAndBuilderFunction)
         }
 
         builder(smartCastExpression) {

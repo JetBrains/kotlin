@@ -68,22 +68,32 @@ inline fun buildPropertyAccessExpression(init: FirPropertyAccessExpressionBuilde
     return FirPropertyAccessExpressionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class, FirIdeOnly::class)
-inline fun buildPropertyAccessExpressionCopy(original: FirPropertyAccessExpression, init: FirPropertyAccessExpressionBuilder.() -> Unit): FirPropertyAccessExpression {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirPropertyAccessExpressionBuilder()
-    copyBuilder.coneTypeOrNull = original.coneTypeOrNull
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.contextArguments.addAll(original.contextArguments)
-    copyBuilder.typeArguments.addAll(original.typeArguments)
-    copyBuilder.explicitReceiver = original.explicitReceiver
-    copyBuilder.dispatchReceiver = original.dispatchReceiver
-    copyBuilder.extensionReceiver = original.extensionReceiver
-    copyBuilder.source = original.source
-    copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
-    copyBuilder.contextSensitiveAlternative = original.contextSensitiveAlternative
-    copyBuilder.calleeReference = original.calleeReference
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class, FirIdeOnly::class)
+fun buildPropertyAccessExpressionCopy(
+    original: FirPropertyAccessExpression,
+    coneTypeOrNull: ConeKotlinType? = original.coneTypeOrNull,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    contextArguments: MutableList<FirExpression> = original.contextArguments.toMutableList(),
+    typeArguments: MutableList<FirTypeProjection> = original.typeArguments.toMutableList(),
+    explicitReceiver: FirExpression? = original.explicitReceiver,
+    dispatchReceiver: FirExpression? = original.dispatchReceiver,
+    extensionReceiver: FirExpression? = original.extensionReceiver,
+    source: KtSourceElement? = original.source,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = original.nonFatalDiagnostics.toMutableList(),
+    contextSensitiveAlternative: FirPropertyAccessExpression? = original.contextSensitiveAlternative,
+    calleeReference: FirNamedReference = original.calleeReference,
+): FirPropertyAccessExpression {
+    return FirPropertyAccessExpressionImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        contextArguments.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        explicitReceiver,
+        dispatchReceiver,
+        extensionReceiver,
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        contextSensitiveAlternative,
+        calleeReference,
+    )
 }

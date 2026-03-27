@@ -52,16 +52,20 @@ inline fun buildResolvedTypeRef(init: FirResolvedTypeRefBuilder.() -> Unit): Fir
     return FirResolvedTypeRefBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildResolvedTypeRefCopy(original: FirResolvedTypeRef, init: FirResolvedTypeRefBuilder.() -> Unit): FirResolvedTypeRef {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirResolvedTypeRefBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.coneType = original.coneType
-    copyBuilder.delegatedTypeRef = original.delegatedTypeRef
-    copyBuilder.resolvedSymbolOrigin = original.resolvedSymbolOrigin
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildResolvedTypeRefCopy(
+    original: FirResolvedTypeRef,
+    source: KtSourceElement? = original.source,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    coneType: ConeKotlinType = original.coneType,
+    delegatedTypeRef: FirTypeRef? = original.delegatedTypeRef,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = original.resolvedSymbolOrigin,
+): FirResolvedTypeRef {
+    return FirResolvedTypeRefImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        coneType,
+        delegatedTypeRef,
+        resolvedSymbolOrigin,
+    )
 }

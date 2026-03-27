@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -72,20 +73,28 @@ inline fun buildAnnotationCall(init: FirAnnotationCallBuilder.() -> Unit): FirAn
     return FirAnnotationCallBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildAnnotationCallCopy(original: FirAnnotationCall, init: FirAnnotationCallBuilder.() -> Unit): FirAnnotationCall {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirAnnotationCallBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.useSiteTarget = original.useSiteTarget
-    copyBuilder.annotationTypeRef = original.annotationTypeRef
-    copyBuilder.typeArguments.addAll(original.typeArguments)
-    copyBuilder.argumentList = original.argumentList
-    copyBuilder.calleeReference = original.calleeReference
-    copyBuilder.argumentMapping = original.argumentMapping
-    copyBuilder.annotationResolvePhase = original.annotationResolvePhase
-    copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildAnnotationCallCopy(
+    original: FirAnnotationCall,
+    source: KtSourceElement? = original.source,
+    useSiteTarget: AnnotationUseSiteTarget? = original.useSiteTarget,
+    annotationTypeRef: FirTypeRef = original.annotationTypeRef,
+    typeArguments: MutableList<FirTypeProjection> = original.typeArguments.toMutableList(),
+    argumentList: FirArgumentList = original.argumentList,
+    calleeReference: FirReference = original.calleeReference,
+    argumentMapping: FirAnnotationArgumentMapping = original.argumentMapping,
+    annotationResolvePhase: FirAnnotationResolvePhase = original.annotationResolvePhase,
+    containingDeclarationSymbol: FirBasedSymbol<*> = original.containingDeclarationSymbol,
+): FirAnnotationCall {
+    return FirAnnotationCallImpl(
+        source,
+        useSiteTarget,
+        annotationTypeRef,
+        typeArguments.toMutableOrEmpty(),
+        argumentList,
+        calleeReference,
+        argumentMapping,
+        annotationResolvePhase,
+        containingDeclarationSymbol,
+    )
 }

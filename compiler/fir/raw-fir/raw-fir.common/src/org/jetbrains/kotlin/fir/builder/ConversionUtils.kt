@@ -656,9 +656,10 @@ fun KtSourceElement.isChildInParentheses(): Boolean =
 fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =
     mapNotNull {
         if (it.useSiteTarget != target) null
-        else buildAnnotationCallCopy(it) {
-            source = it.source?.fakeElement(KtFakeSourceElementKind.FromUseSiteTarget)
-        }
+        else buildAnnotationCallCopy(
+            it,
+            source = it.source?.fakeElement(KtFakeSourceElementKind.FromUseSiteTarget),
+        )
     }
 
 fun AbstractRawFirBuilder<*>.createReceiverParameter(

@@ -235,19 +235,21 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
         symbol = FirAnonymousFunctionSymbol()
         returnTypeRef = function.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
         receiverParameter = function.receiverParameter?.let { receiverParameter ->
-            buildReceiverParameterCopy(receiverParameter) {
-                typeRef = receiverParameter.typeRef.approximated(approximator, typeParameterSet, toSuper = false)
-                symbol = FirReceiverParameterSymbol()
-            }
+            buildReceiverParameterCopy(
+                receiverParameter,
+                typeRef = receiverParameter.typeRef.approximated(approximator, typeParameterSet, toSuper = false),
+                symbol = FirReceiverParameterSymbol(),
+            )
         }
 
         isLambda = (function as? FirAnonymousFunction)?.isLambda == true
         hasExplicitParameterList = (function as? FirAnonymousFunction)?.hasExplicitParameterList == true
         valueParameters.addAll(function.valueParameters.map {
-            buildValueParameterCopy(it) {
-                symbol = FirValueParameterSymbol()
-                returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false)
-            }
+            buildValueParameterCopy(
+                it,
+                symbol = FirValueParameterSymbol(),
+                returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false),
+            )
         })
         typeParameters += typeParameterSet
         status = function.status
@@ -270,10 +272,11 @@ private fun FirPropertyAccessor.copyToFreeAccessor(
         isGetter = accessor.isGetter
         status = accessor.status
         accessor.valueParameters.mapTo(valueParameters) {
-            buildValueParameterCopy(it) {
-                symbol = FirValueParameterSymbol()
-                returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false)
-            }
+            buildValueParameterCopy(
+                it,
+                symbol = FirValueParameterSymbol(),
+                returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false),
+            )
         }
         annotations += accessor.annotations
     }
@@ -290,10 +293,11 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         symbol = newPropertySymbol
         returnTypeRef = property.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
         receiverParameter = property.receiverParameter?.let { receiverParameter ->
-            buildReceiverParameterCopy(receiverParameter) {
-                typeRef = receiverParameter.typeRef.approximated(approximator, typeParameterSet, toSuper = false)
-                symbol = FirReceiverParameterSymbol()
-            }
+            buildReceiverParameterCopy(
+                receiverParameter,
+                typeRef = receiverParameter.typeRef.approximated(approximator, typeParameterSet, toSuper = false),
+                symbol = FirReceiverParameterSymbol(),
+            )
         }
         name = property.name
         initializer = property.initializer

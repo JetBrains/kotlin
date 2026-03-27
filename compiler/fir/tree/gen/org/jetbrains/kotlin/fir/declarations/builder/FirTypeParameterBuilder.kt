@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -67,22 +68,34 @@ inline fun buildTypeParameter(init: FirTypeParameterBuilder.() -> Unit): FirType
     return FirTypeParameterBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildTypeParameterCopy(original: FirTypeParameter, init: FirTypeParameterBuilder.() -> Unit): FirTypeParameter {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirTypeParameterBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.name = original.name
-    copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
-    copyBuilder.variance = original.variance
-    copyBuilder.isReified = original.isReified
-    copyBuilder.bounds.addAll(original.bounds)
-    copyBuilder.annotations.addAll(original.annotations)
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildTypeParameterCopy(
+    original: FirTypeParameter,
+    source: KtSourceElement? = original.source,
+    resolvePhase: FirResolvePhase = original.resolvePhase,
+    moduleData: FirModuleData = original.moduleData,
+    origin: FirDeclarationOrigin = original.origin,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    name: Name = original.name,
+    symbol: FirTypeParameterSymbol,
+    containingDeclarationSymbol: FirBasedSymbol<*> = original.containingDeclarationSymbol,
+    variance: Variance = original.variance,
+    isReified: Boolean = original.isReified,
+    bounds: MutableList<FirTypeRef> = original.bounds.toMutableList(),
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+): FirTypeParameter {
+    return FirTypeParameterImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        name,
+        symbol,
+        containingDeclarationSymbol,
+        variance,
+        isReified,
+        bounds.toMutableOrEmpty(),
+        annotations.toMutableOrEmpty(),
+    )
 }

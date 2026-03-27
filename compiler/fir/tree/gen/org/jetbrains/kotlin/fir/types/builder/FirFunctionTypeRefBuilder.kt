@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.types.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -55,19 +56,26 @@ inline fun buildFunctionTypeRef(init: FirFunctionTypeRefBuilder.() -> Unit): Fir
     return FirFunctionTypeRefBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildFunctionTypeRefCopy(original: FirFunctionTypeRef, init: FirFunctionTypeRefBuilder.() -> Unit): FirFunctionTypeRef {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirFunctionTypeRefBuilder()
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.source = original.source
-    copyBuilder.isMarkedNullable = original.isMarkedNullable
-    copyBuilder.receiverTypeRef = original.receiverTypeRef
-    copyBuilder.parameters.addAll(original.parameters)
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.isSuspend = original.isSuspend
-    copyBuilder.contextParameterTypeRefs.addAll(original.contextParameterTypeRefs)
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildFunctionTypeRefCopy(
+    original: FirFunctionTypeRef,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    source: KtSourceElement = original.source,
+    isMarkedNullable: Boolean = original.isMarkedNullable,
+    receiverTypeRef: FirTypeRef? = original.receiverTypeRef,
+    parameters: MutableList<FirFunctionTypeParameter> = original.parameters.toMutableList(),
+    returnTypeRef: FirTypeRef = original.returnTypeRef,
+    isSuspend: Boolean = original.isSuspend,
+    contextParameterTypeRefs: MutableList<FirTypeRef> = original.contextParameterTypeRefs.toMutableList(),
+): FirFunctionTypeRef {
+    return FirFunctionTypeRefImpl(
+        annotations.toMutableOrEmpty(),
+        source,
+        isMarkedNullable,
+        receiverTypeRef,
+        parameters,
+        returnTypeRef,
+        isSuspend,
+        contextParameterTypeRefs,
+    )
 }

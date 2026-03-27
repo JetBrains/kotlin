@@ -354,14 +354,16 @@ class Candidate(
                     this.apply { replaceOriginalExpression(newOriginal) }
                 }
                 is FirThisReceiverExpression if isImplicit -> {
-                    buildThisReceiverExpressionCopy(this) {
-                        source = callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
-                    }
+                    buildThisReceiverExpressionCopy(
+                        this,
+                        source = callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver),
+                    )
                 }
                 is FirPropertyAccessExpression if source?.kind == KtFakeSourceElementKind.ImplicitContextParameterArgument -> {
-                    buildPropertyAccessExpressionCopy(this) {
-                        source = callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
-                    }
+                    buildPropertyAccessExpressionCopy(
+                        this,
+                        source = callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument),
+                    )
                 }
                 else -> null
             }

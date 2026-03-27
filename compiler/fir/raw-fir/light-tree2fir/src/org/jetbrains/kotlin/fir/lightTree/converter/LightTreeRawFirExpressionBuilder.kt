@@ -907,10 +907,11 @@ class LightTreeRawFirExpressionBuilder(
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         isLocal = true
                         receiverParameter = variable.receiverParameter?.let { receiverParameter ->
-                            buildReceiverParameterCopy(receiverParameter) {
-                                symbol = FirReceiverParameterSymbol()
-                                containingDeclarationSymbol = this@buildProperty.symbol
-                            }
+                            buildReceiverParameterCopy(
+                                receiverParameter,
+                                symbol = FirReceiverParameterSymbol(),
+                                containingDeclarationSymbol = this@buildProperty.symbol,
+                            )
                         }
                         annotations += variable.annotations
                     }

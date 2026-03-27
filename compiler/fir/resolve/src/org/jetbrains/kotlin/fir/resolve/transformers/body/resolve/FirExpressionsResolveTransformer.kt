@@ -2111,9 +2111,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         initialGetArgument: FirExpression,
     ): FirExpression {
         val functionTypeConversionExpression = initialGetArgument as? FirFunctionTypeConversionExpression ?: return temporaryVariableAccess
-        return buildFunctionTypeConversionExpressionCopy(functionTypeConversionExpression) {
-            expression = wrapIntoFunctionConversionsIfNecessary(temporaryVariableAccess, functionTypeConversionExpression.expression)
-        }
+        return buildFunctionTypeConversionExpressionCopy(
+            functionTypeConversionExpression,
+            expression = wrapIntoFunctionConversionsIfNecessary(temporaryVariableAccess, functionTypeConversionExpression.expression),
+        )
     }
 
     private fun FirExpression.unwrapFunctionTypeConversions(): FirExpression =

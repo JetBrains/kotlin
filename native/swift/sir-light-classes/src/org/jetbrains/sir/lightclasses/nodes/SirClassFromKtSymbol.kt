@@ -126,14 +126,15 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .toList()
     }
 
-    private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
-        origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
-        visibility = SirVisibility.PACKAGE // Hide from users, but not from other Swift Export modules.
-        isOverride = true
-        body = SirFunctionBody(listOf(
-                "super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);"
-            ))
-    }.also { it.parent = this }
+    private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(
+        KotlinRuntimeModule.kotlinBaseDesignatedInit,
+        origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol)),
+        visibility = SirVisibility.PACKAGE, // Hide from users, but not from other Swift Export modules.
+        isOverride = true,
+        body = SirFunctionBody(
+            listOf("super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);")
+        )
+    ).also { it.parent = this }
 
     private fun syntheticDeclarations(): List<SirDeclaration> = when (ktSymbol.classKind) {
         KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> listOf(

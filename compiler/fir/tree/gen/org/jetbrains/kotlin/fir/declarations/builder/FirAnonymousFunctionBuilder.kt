@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -111,34 +112,58 @@ inline fun buildAnonymousFunction(init: FirAnonymousFunctionBuilder.() -> Unit):
     return FirAnonymousFunctionBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirAnonymousFunctionBuilder.() -> Unit): FirAnonymousFunction {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirAnonymousFunctionBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.status = original.status
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.receiverParameter = original.receiverParameter
-    copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.contextParameters.addAll(original.contextParameters)
-    copyBuilder.controlFlowGraphReference = original.controlFlowGraphReference
-    copyBuilder.valueParameters.addAll(original.valueParameters)
-    copyBuilder.body = original.body
-    copyBuilder.contractDescription = original.contractDescription
-    copyBuilder.label = original.label
-    copyBuilder.invocationKind = original.invocationKind
-    copyBuilder.inlineStatus = original.inlineStatus
-    copyBuilder.isLambda = original.isLambda
-    copyBuilder.hasExplicitParameterList = original.hasExplicitParameterList
-    copyBuilder.typeParameters.addAll(original.typeParameters)
-    copyBuilder.typeRef = original.typeRef
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildAnonymousFunctionCopy(
+    original: FirAnonymousFunction,
+    source: KtSourceElement? = original.source,
+    resolvePhase: FirResolvePhase = original.resolvePhase,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    moduleData: FirModuleData = original.moduleData,
+    origin: FirDeclarationOrigin = original.origin,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    status: FirDeclarationStatus = original.status,
+    returnTypeRef: FirTypeRef = original.returnTypeRef,
+    receiverParameter: FirReceiverParameter? = original.receiverParameter,
+    deprecationsProvider: DeprecationsProvider = original.deprecationsProvider,
+    dispatchReceiverType: ConeSimpleKotlinType? = original.dispatchReceiverType,
+    contextParameters: MutableList<FirValueParameter> = original.contextParameters.toMutableList(),
+    controlFlowGraphReference: FirControlFlowGraphReference? = original.controlFlowGraphReference,
+    valueParameters: MutableList<FirValueParameter> = original.valueParameters.toMutableList(),
+    body: FirBlock? = original.body,
+    contractDescription: FirContractDescription? = original.contractDescription,
+    symbol: FirAnonymousFunctionSymbol,
+    label: FirLabel? = original.label,
+    invocationKind: EventOccurrencesRange? = original.invocationKind,
+    inlineStatus: InlineStatus = original.inlineStatus,
+    isLambda: Boolean = original.isLambda,
+    hasExplicitParameterList: Boolean = original.hasExplicitParameterList,
+    typeParameters: MutableList<FirTypeParameter> = original.typeParameters.toMutableList(),
+    typeRef: FirTypeRef = original.typeRef,
+): FirAnonymousFunction {
+    return FirAnonymousFunctionImpl(
+        source,
+        resolvePhase,
+        annotations.toMutableOrEmpty(),
+        moduleData,
+        origin,
+        attributes,
+        status,
+        returnTypeRef,
+        receiverParameter,
+        deprecationsProvider,
+        dispatchReceiverType,
+        contextParameters.toMutableOrEmpty(),
+        controlFlowGraphReference,
+        valueParameters,
+        body,
+        contractDescription,
+        symbol,
+        label,
+        invocationKind,
+        inlineStatus,
+        isLambda,
+        hasExplicitParameterList,
+        typeParameters,
+        typeRef,
+    )
 }

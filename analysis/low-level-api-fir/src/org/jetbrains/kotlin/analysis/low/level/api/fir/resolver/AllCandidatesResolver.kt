@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.buildFirList
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
@@ -197,7 +198,8 @@ private fun copyQualifiedAccess(
     qualifiedAccess: FirQualifiedAccessExpression,
     element: KtElement,
 ): FirQualifiedAccessExpression? = when (qualifiedAccess) {
-    is FirFunctionCall -> buildFunctionCallCopy(qualifiedAccess) {
+    is FirFunctionCall -> buildFunctionCallCopy(
+        qualifiedAccess,
         argumentList = when (val argumentListToCopy = qualifiedAccess.argumentList) {
             is FirEmptyArgumentList -> argumentListToCopy
             is FirResolvedArgumentList -> {
@@ -210,9 +212,12 @@ private fun copyQualifiedAccess(
                  */
                 val originalArgumentList = argumentListToCopy.originalArgumentList
                 val newOriginalList = if (originalArgumentList != null) {
-                    buildArgumentListCopy(originalArgumentList) {
-                        arguments.replaceAll(::copyArgument)
-                    }
+                    buildArgumentListCopy(
+                        originalArgumentList,
+                        arguments = buildFirList {
+                            originalArgumentList.arguments.mapTo(this) { copyArgument(it) }
+                        }
+                    )
                 } else {
                     null
                 }
@@ -232,8 +237,8 @@ private fun copyQualifiedAccess(
                 return null
             }
         }
-    }
-    is FirPropertyAccessExpression -> buildPropertyAccessExpressionCopy(qualifiedAccess) {}
+    )
+    is FirPropertyAccessExpression -> buildPropertyAccessExpressionCopy(qualifiedAccess)
     else -> {
         logger<AllCandidatesResolver>().logErrorWithAttachment("Unsupported qualified access ${qualifiedAccess::class.simpleName}") {
             withFirEntry("qualifiedAccess", qualifiedAccess)
@@ -248,13 +253,22 @@ private fun copyArgument(argument: FirExpression): FirExpression = when (argumen
     is FirWrappedArgumentExpression -> {
         val newExpression = copyArgument(argument.expression)
         when (argument) {
-            is FirNamedArgumentExpression -> buildNamedArgumentExpressionCopy(argument) { expression = newExpression }
-            is FirSpreadArgumentExpression -> buildSpreadArgumentExpressionCopy(argument) { expression = newExpression }
+            is FirNamedArgumentExpression -> buildNamedArgumentExpressionCopy(
+                argument,
+                expression = newExpression
+            )
+            is FirSpreadArgumentExpression -> buildSpreadArgumentExpressionCopy(
+                argument,
+                expression = newExpression
+            )
         }
     }
     is FirAnonymousFunctionExpression -> {
         buildAnonymousFunctionExpressionCopy(argument) {
-            anonymousFunction = buildAnonymousFunctionCopy(argument.anonymousFunction) { symbol = FirAnonymousFunctionSymbol() }
+            anonymousFunction = buildAnonymousFunctionCopy(
+                argument.anonymousFunction,
+                symbol = FirAnonymousFunctionSymbol(),
+            )
         }
     }
     else -> argument

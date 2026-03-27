@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -73,25 +74,40 @@ inline fun buildValueParameter(init: FirValueParameterBuilder.() -> Unit): FirVa
     return FirValueParameterBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValueParameterBuilder.() -> Unit): FirValueParameter {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirValueParameterBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.name = original.name
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.defaultValue = original.defaultValue
-    copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
-    copyBuilder.isCrossinline = original.isCrossinline
-    copyBuilder.isNoinline = original.isNoinline
-    copyBuilder.isVararg = original.isVararg
-    copyBuilder.valueParameterKind = original.valueParameterKind
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildValueParameterCopy(
+    original: FirValueParameter,
+    source: KtSourceElement? = original.source,
+    resolvePhase: FirResolvePhase = original.resolvePhase,
+    moduleData: FirModuleData = original.moduleData,
+    origin: FirDeclarationOrigin = original.origin,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    returnTypeRef: FirTypeRef = original.returnTypeRef,
+    name: Name = original.name,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    symbol: FirValueParameterSymbol,
+    defaultValue: FirExpression? = original.defaultValue,
+    containingDeclarationSymbol: FirBasedSymbol<*> = original.containingDeclarationSymbol,
+    isCrossinline: Boolean = original.isCrossinline,
+    isNoinline: Boolean = original.isNoinline,
+    isVararg: Boolean = original.isVararg,
+    valueParameterKind: FirValueParameterKind = original.valueParameterKind,
+): FirValueParameter {
+    return FirValueParameterImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        returnTypeRef,
+        name,
+        annotations.toMutableOrEmpty(),
+        symbol,
+        defaultValue,
+        containingDeclarationSymbol,
+        isCrossinline,
+        isNoinline,
+        isVararg,
+        valueParameterKind,
+    )
 }

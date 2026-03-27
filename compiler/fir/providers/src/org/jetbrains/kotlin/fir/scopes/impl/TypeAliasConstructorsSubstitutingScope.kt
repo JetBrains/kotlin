@@ -121,21 +121,23 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
             containerSource = originalConstructor.containerSource
 
             originalConstructor.contextParameters.mapTo(contextParameters) {
-                buildValueParameterCopy(it) {
-                    symbol = FirValueParameterSymbol()
-                    moduleData = typeAliasSymbol.moduleData
-                    origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
-                    containingDeclarationSymbol = newConstructorSymbol
-                }
+                buildValueParameterCopy(
+                    it,
+                    symbol = FirValueParameterSymbol(),
+                    moduleData = typeAliasSymbol.moduleData,
+                    origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor,
+                    containingDeclarationSymbol = newConstructorSymbol,
+                )
             }
 
             originalConstructor.valueParameters.mapTo(valueParameters) {
-                buildValueParameterCopy(it) {
-                    symbol = FirValueParameterSymbol()
-                    moduleData = typeAliasSymbol.moduleData
-                    origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
-                    containingDeclarationSymbol = newConstructorSymbol
-                }
+                buildValueParameterCopy(
+                    it,
+                    symbol = FirValueParameterSymbol(),
+                    moduleData = typeAliasSymbol.moduleData,
+                    origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor,
+                    containingDeclarationSymbol = newConstructorSymbol,
+                )
             }
 
             returnTypeRef = originalConstructor.returnTypeRef.let {

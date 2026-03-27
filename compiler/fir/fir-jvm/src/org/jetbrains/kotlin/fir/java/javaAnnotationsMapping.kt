@@ -87,7 +87,8 @@ private fun List<FirAnnotation>.mergeTargetAnnotations(
     annotationWithKotlinTarget: FirAnnotation,
 ): List<FirAnnotation> {
     return filter { it !== annotationWithJavaTarget && it !== annotationWithKotlinTarget } +
-            buildAnnotationCopy(annotationWithKotlinTarget) {
+            buildAnnotationCopy(
+                annotationWithKotlinTarget,
                 argumentMapping = buildAnnotationArgumentMapping {
                     this.source = annotationWithKotlinTarget.argumentMapping.source
                     mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets] = buildVarargArgumentsExpressionWithTargets {
@@ -104,7 +105,7 @@ private fun List<FirAnnotation>.mergeTargetAnnotations(
                         arguments += annotationWithKotlinTarget.targetArgumentExpressions()
                     }
                 }
-            }
+            )
 }
 
 inline fun buildVarargArgumentsExpressionWithTargets(

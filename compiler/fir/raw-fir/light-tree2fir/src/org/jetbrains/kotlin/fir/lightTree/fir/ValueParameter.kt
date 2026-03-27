@@ -149,9 +149,10 @@ class ValueParameter(
                 // We don't need error annotation calls here,
                 // it allows us to avoid double-reporting of INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
                 // (it's already reported on a value parameter)
-                buildAnnotationCallCopy(it) {
-                    containingDeclarationSymbol = propertySymbol
-                }
+                buildAnnotationCallCopy(
+                    it,
+                    containingDeclarationSymbol = propertySymbol,
+                )
             }
 
             symbol = propertySymbol

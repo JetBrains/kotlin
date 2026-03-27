@@ -121,25 +121,40 @@ inline fun buildField(init: FirFieldBuilder.() -> Unit): FirField {
     return FirFieldBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildFieldCopy(original: FirField, init: FirFieldBuilder.() -> Unit): FirField {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirFieldBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.status = original.status
-    copyBuilder.isLocal = original.isLocal
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.name = original.name
-    copyBuilder.initializer = original.initializer
-    copyBuilder.isVar = original.isVar
-    copyBuilder.annotations.addAll(original.annotations)
-    return copyBuilder.apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildFieldCopy(
+    original: FirField,
+    source: KtSourceElement? = original.source,
+    resolvePhase: FirResolvePhase = original.resolvePhase,
+    moduleData: FirModuleData = original.moduleData,
+    origin: FirDeclarationOrigin = original.origin,
+    attributes: FirDeclarationAttributes = original.attributes.copy(),
+    status: FirDeclarationStatus = original.status,
+    isLocal: Boolean = original.isLocal,
+    returnTypeRef: FirTypeRef = original.returnTypeRef,
+    deprecationsProvider: DeprecationsProvider = original.deprecationsProvider,
+    dispatchReceiverType: ConeSimpleKotlinType? = original.dispatchReceiverType,
+    name: Name = original.name,
+    initializer: FirExpression? = original.initializer,
+    isVar: Boolean = original.isVar,
+    annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),
+    symbol: FirFieldSymbol,
+): FirField {
+    return FirFieldImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        status,
+        isLocal,
+        returnTypeRef,
+        deprecationsProvider,
+        dispatchReceiverType,
+        name,
+        initializer,
+        isVar,
+        annotations.toMutableOrEmpty(),
+        symbol,
+    )
 }

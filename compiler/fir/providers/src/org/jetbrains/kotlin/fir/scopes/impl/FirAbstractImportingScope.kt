@@ -152,10 +152,11 @@ abstract class FirAbstractImportingScope(
 }
 
 internal fun FirNamedFunction.buildImportedVersion(importedClassId: ClassId): FirNamedFunction {
-    return buildNamedFunctionCopy(this) {
-        origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-        this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
-    }.apply {
+    return buildNamedFunctionCopy(
+        this,
+        origin = FirDeclarationOrigin.ImportedFromObjectOrStatic,
+        symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name)),
+    ).apply {
         importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
     }
 }
@@ -163,19 +164,21 @@ internal fun FirNamedFunction.buildImportedVersion(importedClassId: ClassId): Fi
 internal fun FirVariable.buildImportedVersion(importedClassId: ClassId): FirVariable {
     return when (this) {
         is FirProperty -> {
-            buildPropertyCopy(this) {
-                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-                this.symbol = FirRegularPropertySymbol(CallableId(importedClassId, name))
-                this.delegateFieldSymbol = null
-            }.apply {
+            buildPropertyCopy(
+                this,
+                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic,
+                symbol = FirRegularPropertySymbol(CallableId(importedClassId, name)),
+                delegateFieldSymbol = null,
+            ).apply {
                 importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
             }
         }
         is FirField -> {
-            buildFieldCopy(this) {
-                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-                this.symbol = FirFieldSymbol(CallableId(importedClassId, name))
-            }.apply {
+            buildFieldCopy(
+                this,
+                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic,
+                symbol = FirFieldSymbol(CallableId(importedClassId, name)),
+            ).apply {
                 importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
             }
         }

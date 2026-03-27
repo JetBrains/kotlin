@@ -130,50 +130,60 @@ private class SirEnumFromKtSymbol(
         )
     }
 
-    private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
-        origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
-        parameters[0] = SirParameter(
-            argumentName = "__externalRCRefUnsafe",
-            type = unsafeMutableRawPointerFlexibleType()
-        )
+    private fun kotlinBaseInitDeclaration(): SirDeclaration {
         val ordinalBridges = this@SirEnumFromKtSymbol.withSessions {
             ordinalBridgeProxy?.createSirBridges { buildCall("") }.orEmpty()
         }
-        bridges.addAll(ordinalBridges)
         val ordinalBridgeName = ordinalBridges.filterIsInstance<SirFunctionBridge>().first().name
         val separator = "\n                    "
         var index = 0
         val caseSelector = cases.joinToString(separator = separator) {
             "case ${index++}: self = .${it.name}"
         } + defaultBranch(separator)
-        body = SirFunctionBody(
-            listOf(
-                """
-                    switch $ordinalBridgeName(__externalRCRefUnsafe) {
-                    $caseSelector
-                    }
-                """.trimIndent()
-            )
-        )
-    }.also { it.parent = this }
 
-    private fun kotlinBridgeableExternalRcRef(): SirFunction = buildFunctionCopy(KotlinRuntimeSupportModule.kotlinBridgeableExternalRcRef) {
-        origin = SirOrigin.KotlinBridgeableExternalRcRefOverride(`for` = KotlinSource(ktSymbol))
-        returnType = unsafeMutableRawPointerFlexibleType()
+        return buildInitCopy(
+            KotlinRuntimeModule.kotlinBaseDesignatedInit,
+            origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol)),
+            parameters = KotlinRuntimeModule.kotlinBaseDesignatedInit.parameters.toMutableList().apply {
+                this[0] = SirParameter(
+                    argumentName = "__externalRCRefUnsafe",
+                    type = unsafeMutableRawPointerFlexibleType()
+                )
+            },
+            bridges = ordinalBridges.toMutableList(),
+            body = SirFunctionBody(
+                listOf(
+                    """
+                        switch $ordinalBridgeName(__externalRCRefUnsafe) {
+                        $caseSelector
+                        }
+                    """.trimIndent()
+                )
+            ),
+        ).also { it.parent = this }
+    }
+
+    private fun kotlinBridgeableExternalRcRef(): SirFunction {
         val separator = "\n                    "
         val caseSelector = cases.joinToString(separator = separator) {
             "case .${it.name}: ${it.nativeCaseRepresentation()}"
         } + defaultBranch(separator)
-        body = SirFunctionBody(
-            listOf(
-                """
-                    return switch self {
-                    $caseSelector
-                    }
-                """.trimIndent()
+
+        return buildFunctionCopy(
+            KotlinRuntimeSupportModule.kotlinBridgeableExternalRcRef,
+            origin = SirOrigin.KotlinBridgeableExternalRcRefOverride(`for` = KotlinSource(ktSymbol)),
+            returnType = unsafeMutableRawPointerFlexibleType(),
+            body = SirFunctionBody(
+                listOf(
+                    """
+                        return switch self {
+                        $caseSelector
+                        }
+                    """.trimIndent()
+                )
             )
-        )
-    }.also { it.parent = this }
+        ).also { it.parent = this }
+    }
 
     private fun defaultBranch(separator: String): String =
         (if (cases.isNotEmpty()) separator else "") + "default: fatalError()"

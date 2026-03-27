@@ -657,10 +657,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 // Normally it's always `FirJavaTypeParameter` but check just in case to avoid potential exceptions.
                 if (typeParameter !is FirJavaTypeParameter) continue
 
-                this[typeParameter.javaTypeParameter] = buildTypeParameterCopy(typeParameter.symbol.fir) {
-                    symbol = FirTypeParameterSymbol()
-                    containingDeclarationSymbol = newContainingDeclarationSymbol
-                }
+                this[typeParameter.javaTypeParameter] = buildTypeParameterCopy(
+                    typeParameter.symbol.fir,
+                    symbol = FirTypeParameterSymbol(),
+                    containingDeclarationSymbol = newContainingDeclarationSymbol,
+                )
             }
         }
     }

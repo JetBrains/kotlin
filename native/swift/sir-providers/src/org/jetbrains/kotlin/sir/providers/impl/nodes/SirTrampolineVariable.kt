@@ -24,26 +24,28 @@ public class SirTrampolineVariable(
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val attributes: List<SirAttribute> get() = source.attributes
     override val getter: SirGetter by lazy {
-        buildGetterCopy(source.getter) {
-            origin = SirOrigin.Trampoline(source.getter)
+        buildGetterCopy(
+            source.getter,
+            origin = SirOrigin.Trampoline(source.getter),
             body = SirFunctionBody(
                 listOf(
                     source.swiftFqName
                 )
             ).takeUnless { attributes.any { it is SirAttribute.Available && it.isUnusable } }
-        }
+        )
     }
 
     override val setter: SirSetter? by lazy {
         source.setter?.let { setter ->
-            buildSetterCopy(setter) {
-                origin = SirOrigin.Trampoline(setter)
+            buildSetterCopy(
+                setter,
+                origin = SirOrigin.Trampoline(setter),
                 body = SirFunctionBody(
                     listOf(
                         "${source.swiftFqName} = newValue"
                     )
                 ).takeUnless { attributes.any { it is SirAttribute.Available && it.isUnusable } }
-            }
+            )
         }
     }
 

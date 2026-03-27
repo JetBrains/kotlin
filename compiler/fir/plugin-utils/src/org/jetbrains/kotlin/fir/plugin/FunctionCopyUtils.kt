@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.fir.builder.buildFirList
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -21,61 +23,70 @@ import org.jetbrains.kotlin.name.CallableId
 /**
  * This function generates a new function with [callableId] by copying [original]. It sets the [resolvePhase] of the copied
  * function as [firResolvePhase]. It sets the same [resolvePhase] for its value parameters and type parameters. It sets the
- * [origin] of the generated function as [origin] of [key]. It runs [extraInit] to support the additional custom initialization.
+ * [origin] of the generated function as [origin] of [key].
  */
 public fun copyFirFunctionWithResolvePhase(
     original: FirNamedFunction,
     callableId: CallableId,
     key: GeneratedDeclarationKey,
     firResolvePhase: FirResolvePhase,
-    extraInit: FirNamedFunctionBuilder.() -> Unit
-): FirNamedFunction = buildNamedFunctionCopy(original) {
-    symbol = FirNamedFunctionSymbol(callableId)
-    origin = key.origin
-    resolvePhase = firResolvePhase
-
-    // Match `origin` and `resolvePhase` of receiver parameter to the function.
-    receiverParameter = original.receiverParameter?.let { receiverParameter ->
-        buildReceiverParameterCopy(receiverParameter) {
-            symbol = FirReceiverParameterSymbol()
-            containingDeclarationSymbol = this@buildNamedFunctionCopy.symbol
-            origin = key.origin
-            resolvePhase = firResolvePhase
-        }
-    }
+    status: FirDeclarationStatus,
+): FirNamedFunction {
+    val newFunctionSymbol = FirNamedFunctionSymbol(callableId)
 
     /**
-     * Clears all elements and copies the elements of [originalParameters] to fill the given parameter list.
-     * It matches `origin` and `resolvePhase` of  each copied element to the function.
+     * Copies the receiver parameters.
+     * It matches `origin` and `resolvePhase` of each copied element to the function.
      */
-    fun MutableList<FirValueParameter>.copyFrom(originalParameters: List<FirValueParameter>) {
-        clear()
-        originalParameters.mapTo(this) { parameter ->
-            buildValueParameterCopy(parameter) {
-                symbol = FirValueParameterSymbol()
-                containingDeclarationSymbol = this@buildNamedFunctionCopy.symbol
-                origin = key.origin
-                resolvePhase = firResolvePhase
+    fun List<FirValueParameter>.copy(): MutableList<FirValueParameter> {
+        return buildFirList {
+            this@copy.mapTo(this) { parameter ->
+                buildValueParameterCopy(
+                    parameter,
+                    symbol = FirValueParameterSymbol(),
+                    containingDeclarationSymbol = newFunctionSymbol,
+                    origin = key.origin,
+                    resolvePhase = firResolvePhase,
+                )
             }
         }
     }
 
-    // Match `origin` and `resolvePhase` of context receivers to the function.
-    contextParameters.copyFrom(original.contextParameters)
+    return buildNamedFunctionCopy(
+        original,
+        symbol = newFunctionSymbol,
+        origin = key.origin,
+        resolvePhase = firResolvePhase,
+        status = status,
 
-    // Match `origin` and `resolvePhase` of value parameters to the function.
-    valueParameters.copyFrom(original.valueParameters)
+        // Match `origin` and `resolvePhase` of the receiver parameter to the function.
+        receiverParameter = original.receiverParameter?.let { receiverParameter ->
+            buildReceiverParameterCopy(
+                receiverParameter,
+                symbol = FirReceiverParameterSymbol(),
+                containingDeclarationSymbol = newFunctionSymbol,
+                origin = key.origin,
+                resolvePhase = firResolvePhase,
+            )
+        },
 
-    // Match `origin` and `resolvePhase` of type parameters to the function.
-    typeParameters.clear()
-    original.typeParameters.mapTo(typeParameters) { typeParameter ->
-        buildTypeParameterCopy(typeParameter) {
-            symbol = FirTypeParameterSymbol()
-            containingDeclarationSymbol = this@buildNamedFunctionCopy.symbol
-            origin = key.origin
-            resolvePhase = firResolvePhase
+        // Match `origin` and `resolvePhase` of context receivers to the function.
+        contextParameters = original.contextParameters.copy(),
+
+        // Match `origin` and `resolvePhase` of value parameters to the function.
+        valueParameters = original.valueParameters.copy(),
+
+        // Match `origin` and `resolvePhase` of type parameters to the function.
+        typeParameters = buildFirList {
+            original.typeParameters.mapTo(this) {
+                buildTypeParameterCopy(
+                    it,
+                    symbol = FirTypeParameterSymbol(),
+                    containingDeclarationSymbol = newFunctionSymbol,
+                    origin = key.origin,
+                    resolvePhase = firResolvePhase,
+                )
+            }
         }
-    }
-
-    extraInit()
+    )
 }
