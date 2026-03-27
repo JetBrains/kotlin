@@ -22,4 +22,4 @@ enum class <!NO_PARCELABLE_SUPERTYPE!>Enum<!> {
 }
 
 @Parcelize
-annotation class <!PARCELABLE_SHOULD_BE_CLASS!>Anno<!>
+annotation class <!ANNOTATION_CLASS_MEMBER, ANNOTATION_CLASS_MEMBER, PARCELABLE_SHOULD_BE_CLASS!>Anno<!>

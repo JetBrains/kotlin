@@ -150,21 +150,23 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
 
     public void <init>(k.KotlinParcelable kp)
 
-    public int describeContents()
+    public final int describeContents()
 
     public final k.KotlinParcelable getKp()
 
-    public void writeToParcel(android.os.Parcel out, int flags) {
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (out)
+          LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (0)
           GETFIELD (test/Foo, kp, Lk/KotlinParcelable;)
           ALOAD (1)
           ILOAD (2)
           INVOKEVIRTUAL (k/KotlinParcelable, writeToParcel, (Landroid/os/Parcel;I)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (40)
+          RETURN
+        LABEL (L2)
     }
 }

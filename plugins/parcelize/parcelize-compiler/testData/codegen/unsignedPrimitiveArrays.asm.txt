@@ -172,7 +172,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public static Test copy-gFjYMWk$default(Test p0, byte[] p1, short[] p2, int[] p3, long[] p4, byte[] p5, short[] p6, int[] p7, long[] p8, int p9, java.lang.Object p10)
 
-    public int describeContents()
+    public final int describeContents()
 
     public boolean equals(java.lang.Object other)
 
@@ -196,10 +196,10 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public java.lang.String toString()
 
-    public void writeToParcel(android.os.Parcel out, int flags) {
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (out)
+          LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
@@ -289,7 +289,9 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           ALOAD (0)
           GETFIELD (Test, h, [J)
           INVOKEVIRTUAL (android/os/Parcel, writeLongArray, ([J)V)
-          RETURN
         LABEL (L6)
+        LINENUMBER (17)
+          RETURN
+        LABEL (L7)
     }
 }

@@ -10,14 +10,13 @@ import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigur
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
-import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 
 abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -36,7 +35,5 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
         useConfigurators(::ParcelizeEnvironmentConfigurator)
 
         useAfterAnalysisCheckers(::FirFailingTestSuppressor)
-
-        useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
     }
 }

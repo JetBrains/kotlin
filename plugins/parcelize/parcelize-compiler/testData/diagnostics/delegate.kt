@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 package test
 
 import kotlinx.parcelize.Parcelize

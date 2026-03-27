@@ -41,5 +41,5 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final boolean isProUser()
 
-    public void writeToParcel(android.os.Parcel out, int flags)
+    public final void writeToParcel(android.os.Parcel dest, int flags)
 }

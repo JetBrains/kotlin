@@ -63,16 +63,16 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public void <init>(SerializableSimple notNull, SerializableSimple nullable)
 
-    public int describeContents()
+    public final int describeContents()
 
     public final SerializableSimple getNotNull()
 
     public final SerializableSimple getNullable()
 
-    public void writeToParcel(android.os.Parcel out, int flags) {
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (out)
+          LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
@@ -84,7 +84,9 @@ public final class User : java/lang/Object, android/os/Parcelable {
           GETFIELD (User, nullable, LSerializableSimple;)
           CHECKCAST (java/io/Serializable)
           INVOKEVIRTUAL (android/os/Parcel, writeSerializable, (Ljava/io/Serializable;)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (11)
+          RETURN
+        LABEL (L2)
     }
 }

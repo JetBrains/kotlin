@@ -19,11 +19,11 @@ public final class A : java/lang/Object, android/os/Parcelable {
 
     public void <init>(int value)
 
-    public int describeContents()
+    public final int describeContents()
 
     public final int getValue()
 
-    public void writeToParcel(android.os.Parcel out, int flags)
+    public final void writeToParcel(android.os.Parcel dest, int flags)
 }
 
 public final class B$Creator : java/lang/Object, android/os/Parcelable$Creator {
@@ -45,9 +45,9 @@ public final class B : java/lang/Object, android/os/Parcelable {
 
     public void <init>()
 
-    public int describeContents()
+    public final int describeContents()
 
-    public void writeToParcel(android.os.Parcel out, int flags)
+    public final void writeToParcel(android.os.Parcel dest, int flags)
 }
 
 public final class C$Creator : java/lang/Object, android/os/Parcelable$Creator {
@@ -71,9 +71,9 @@ public final class C : java/lang/Object, android/os/Parcelable {
 
     private void <init>()
 
-    public int describeContents()
+    public final int describeContents()
 
-    public void writeToParcel(android.os.Parcel out, int flags)
+    public final void writeToParcel(android.os.Parcel dest, int flags)
 }
 
 public final class ParcelableCreatorKt : java/lang/Object {

@@ -40,9 +40,9 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public void <init>(kotlinx.collections.immutable.PersistentList names)
 
-    public int describeContents()
+    public final int describeContents()
 
     public final kotlinx.collections.immutable.PersistentList getNames()
 
-    public void writeToParcel(android.os.Parcel out, int flags)
+    public final void writeToParcel(android.os.Parcel dest, int flags)
 }

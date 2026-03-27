@@ -18,7 +18,7 @@ class Final(val foo: String) : Parcelable
 sealed class Sealed(val foo: String) : Parcelable {
     class X : Sealed("")
     sealed class Inner : Sealed("") {
-        <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Y<!> : Inner()
+        <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Y<!> : Inner()
     }
 }
 
@@ -29,7 +29,7 @@ class Outer {
 
 fun foo() {
     @Parcelize
-    <!PARCELABLE_CANT_BE_LOCAL_CLASS!>object<!> : Parcelable {}
+    <!ABSTRACT_MEMBER_NOT_IMPLEMENTED, PARCELABLE_SHOULD_BE_CLASS!>object<!> : Parcelable {}
 
     object : Open("") {}
 
