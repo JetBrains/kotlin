@@ -29,10 +29,9 @@ internal class KaFirTypeInformationProvider(
             return samResolver.isSamType(coneType)
         }
 
-    override val KaType.functionTypeKind: FunctionTypeKind?
-        get() = withValidityAssertion {
-            (this as KaFirType).coneType.functionTypeKind(analysisSession.firSession)
-        }
+    override fun computeFunctionTypeKind(type: KaType): FunctionTypeKind? {
+        return (type as KaFirType).coneType.functionTypeKind(analysisSession.firSession)
+    }
 
     override val KaType.isNullable: Boolean
         get() = withValidityAssertion {

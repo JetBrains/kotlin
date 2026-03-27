@@ -19,10 +19,19 @@ import org.jetbrains.kotlin.name.ClassId
 
 @KaImplementationDetail
 abstract class KaBaseTypeInformationProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaTypeInformationProvider {
+    protected abstract fun computeFunctionTypeKind(type: KaType): FunctionTypeKind?
+
+    @KaExperimentalApi
+    @Deprecated("Use 'functionTypeFamily' instead", level = DeprecationLevel.HIDDEN)
+    override val KaType.functionTypeKind: FunctionTypeKind?
+        get() = withValidityAssertion {
+            computeFunctionTypeKind(this)
+        }
+
     @KaExperimentalApi
     override val KaType.functionTypeFamily: KaFunctionTypeFamily?
         get() = withValidityAssertion {
-            functionTypeKind?.let(::KaBaseFunctionTypeFamily)
+            computeFunctionTypeKind(this)?.let(::KaBaseFunctionTypeFamily)
         }
 
     @KaExperimentalApi
