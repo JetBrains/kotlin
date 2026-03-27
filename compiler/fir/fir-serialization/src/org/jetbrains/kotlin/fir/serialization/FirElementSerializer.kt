@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.constant.EnumValue
 import org.jetbrains.kotlin.constant.IntValue
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationComparator
@@ -575,12 +574,10 @@ class FirElementSerializer private constructor(
                 builder.setterFlags = accessorFlags
             }
 
-            val nonSourceAnnotations = setter.nonSourceAnnotations(session)
             if (Flags.IS_NOT_DEFAULT.get(accessorFlags)) {
                 val setterLocal = local.createChildSerializer(setter)
                 for ((index, valueParameterDescriptor) in setter.valueParameters.withIndex()) {
-                    val annotations = nonSourceAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
-                    builder.setSetterValueParameter(setterLocal.valueParameterProto(valueParameterDescriptor, index, setter, annotations))
+                    builder.setSetterValueParameter(setterLocal.valueParameterProto(valueParameterDescriptor, index, setter))
                 }
             }
 
@@ -630,7 +627,6 @@ class FirElementSerializer private constructor(
             builder.addContextParameter(
                 local.valueParameterProto(
                     contextParameter,
-                    additionalAnnotations = emptyList(),
                     declaresDefaultValue = false
                 )
             )
@@ -725,7 +721,6 @@ class FirElementSerializer private constructor(
             builder.addContextParameter(
                 local.valueParameterProto(
                     contextParameter,
-                    additionalAnnotations = emptyList(),
                     declaresDefaultValue = false
                 )
             )
@@ -881,7 +876,6 @@ class FirElementSerializer private constructor(
         parameter: FirValueParameter,
         index: Int,
         function: FirFunction,
-        additionalAnnotations: List<FirAnnotation> = emptyList(),
     ): ProtoBuf.ValueParameter.Builder = whileAnalysing(session, parameter) {
         val declaresDefaultValue = if (
             stdLibCompilation &&
@@ -893,19 +887,17 @@ class FirElementSerializer private constructor(
             function.itOrExpectHasDefaultParameterValue(index)
         }
 
-        return valueParameterProto(parameter, additionalAnnotations, declaresDefaultValue)
+        return valueParameterProto(parameter, declaresDefaultValue)
     }
 
     private fun valueParameterProto(
         parameter: FirValueParameter,
-        additionalAnnotations: List<FirAnnotation>,
         declaresDefaultValue: Boolean,
     ): ProtoBuf.ValueParameter.Builder {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
         val flags = Flags.getValueParameterFlags(
-            additionalAnnotations.isNotEmpty()
-                    || parameter.nonSourceAnnotations(session).isNotEmpty()
+            parameter.nonSourceAnnotations(session).isNotEmpty()
                     || extension.hasAdditionalAnnotations(parameter),
             declaresDefaultValue,
             parameter.isCrossinline,
