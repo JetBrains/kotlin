@@ -652,34 +652,65 @@ class PatternTest2 {
         }
 
         // Test \p{Alpha}
-        // TODO
+        regex = Regex("\\p{Alpha}+")
+        assertTrue(regex.matches("abcXYZ"), "\\p{Alpha}+ should match ASCII letters")
+        assertFalse(regex.matches("abc123"))
+        assertFalse(regex.matches("\u00c0\u00df\u03a9"), "\\p{Alpha}+ should not match non-ASCII letters")
 
         // Test \p{Digit}
-        // TODO
+        regex = Regex("\\p{Digit}+")
+        assertTrue(regex.matches("0123456789"), "\\p{Digit}+ should match ASCII digits")
+        assertFalse(regex.matches("12a45"))
+        assertFalse(regex.matches("١٢٣"), "\\p{Digit}+ should not match non-ASCII digits")
 
         // Test \p{XDigit}
-        // TODO
+        regex = Regex("\\p{XDigit}+")
+        assertTrue(regex.matches("0123456789abcdefABCDEF"), "\\p{XDigit}+ should match hexadecimal digits")
+        assertFalse(regex.matches("01234xyz"))
+        assertFalse(regex.matches("١٢٣"), "\\p{XDigit}+ should not match non-ASCII digits")
 
         // Test \p{Alnum}
-        // TODO
+        regex = Regex("\\p{Alnum}+")
+        assertTrue(regex.matches("abcXYZ123"), "\\p{Alnum}+ should match ASCII letters and digits")
+        assertFalse(regex.matches("abc-123"))
+        assertFalse(regex.matches("\u00c0١٢٣"), "\\p{Alnum}+ should not match non-ASCII letters or digits")
 
         // Test \p{Punct}
-        // TODO
+        regex = Regex("\\p{Punct}+")
+        assertTrue(regex.matches("!\"#\$%&'()*+,-./:;<=>?@[\\\\]^_`{|}~"), "\\p{Punct}+ should match ASCII punctuation")
+        assertFalse(regex.matches("abc!"))
+        assertFalse(regex.matches("«»"), "\\p{Punct}+ should not match non-ASCII punctuation")
 
         // Test \p{Graph}
-        // TODO
+        regex = Regex("\\p{Graph}+")
+        assertTrue(regex.matches("abcXYZ123!@#"), "\\p{Graph}+ should match visible ASCII characters")
+        assertFalse(regex.matches("abc xyz"))
+        assertFalse(regex.matches("abc\u00a1"), "\\p{Graph}+ should not match non-ASCII graphic characters")
 
         // Test \p{Print}
-        // TODO
+        regex = Regex("\\p{Print}+")
+        // TODO: Ignored: KT-85324
+        // assertTrue(regex.matches(" "), "\\p{Print}+ should match a space")
+        // assertTrue(regex.matches("!"), "\\p{Print}+ should match printable punctuation")
+        // assertFalse(regex.matches("\u00a0"), "\\p{Print}+ should not match non-ASCII printable characters")
 
         // Test \p{Blank}
-        // TODO
+        regex = Regex("\\p{Blank}+")
+        assertTrue(regex.matches(" \t  \t"), "\\p{Blank}+ should match spaces and tabs")
+        assertFalse(regex.matches(" \n"))
+        assertFalse(regex.matches("\u00a0"), "\\p{Blank}+ should not match non-ASCII space separators")
 
         // Test \p{Space}
-        // TODO
+        regex = Regex("\\p{Space}+")
+        assertTrue(regex.matches(" \t\n\r\u000B\u000C"), "\\p{Space}+ should match ASCII whitespace")
+        assertFalse(regex.matches(" a "))
+        assertFalse(regex.matches("\u00a0"), "\\p{Space}+ should not match non-ASCII space separators")
 
         // Test \p{Cntrl}
-        // TODO
+        regex = Regex("\\p{Cntrl}+")
+        assertTrue(regex.matches("\u0000\u0001\u001F\u007F"), "\\p{Cntrl}+ should match ASCII control characters")
+        assertFalse(regex.matches("\u0000A"))
+        assertFalse(regex.matches("\u0085"), "\\p{Cntrl}+ should not match non-ASCII control characters")
     }
 
     @Test fun testUnicodeCategories() {
