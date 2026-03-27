@@ -30,11 +30,10 @@ internal class KaFe10TypeInformationProvider(
             return JavaSingleAbstractMethodUtils.isSamType(fe10Type)
         }
 
-    override val KaType.functionTypeKind: FunctionTypeKind?
-        get() = withValidityAssertion {
-            require(this is KaFe10Type)
-            return fe10Type.constructor.declarationDescriptor?.getFunctionTypeKind()
-        }
+    override fun computeFunctionTypeKind(type: KaType): FunctionTypeKind? {
+        require(type is KaFe10Type)
+        return type.fe10Type.constructor.declarationDescriptor?.getFunctionTypeKind()
+    }
 
     override val KaType.isNullable: Boolean
         get() = withValidityAssertion {
