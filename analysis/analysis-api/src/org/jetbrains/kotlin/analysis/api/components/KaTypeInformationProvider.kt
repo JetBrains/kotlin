@@ -57,14 +57,14 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isFunctionType: Boolean
-        get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.Function }
+        get() = withValidityAssertion { functionTypeFamily == builtinFunctionTypeFamilies.function }
 
     /**
      * Whether the [KaType] is a [kotlin.reflect.KFunction] type.
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isKFunctionType: Boolean
-        get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KFunction }
+        get() = withValidityAssertion { functionTypeFamily == builtinFunctionTypeFamilies.kFunction }
 
     /**
      * Whether the [KaType] is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions)
@@ -72,14 +72,14 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isSuspendFunctionType: Boolean
-        get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.SuspendFunction }
+        get() = withValidityAssertion { functionTypeFamily == builtinFunctionTypeFamilies.suspendFunction }
 
     /**
      * Whether the [KaType] is a `KSuspendFunction` type.
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isKSuspendFunctionType: Boolean
-        get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KSuspendFunction }
+        get() = withValidityAssertion { functionTypeFamily == builtinFunctionTypeFamilies.kSuspendFunction }
 
     /**
      * Whether a public value of the [KaType] can potentially be `null`.
