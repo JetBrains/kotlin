@@ -100,10 +100,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
                 )
             )
 
-            assertEquals(
-                value,
-                operation.compilerArguments[argumentKey]
-            )
+            assertEquals(value, operation.compilerArguments[argumentKey])
         }
     }
 

@@ -98,10 +98,7 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
                 )
             )
 
-            assertEquals(
-                value,
-                operation.compilerArguments[argumentKey]
-            )
+            assertEquals(value, operation.compilerArguments[argumentKey])
         }
     }
 

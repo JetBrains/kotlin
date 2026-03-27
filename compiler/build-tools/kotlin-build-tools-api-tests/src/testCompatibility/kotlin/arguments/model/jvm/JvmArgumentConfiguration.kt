@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.JvmCompilerArgument
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentConfiguration
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentTestDescriptor
 
 internal class JvmArgumentConfiguration<T>(
     kotlinToolchain: KotlinToolchains,
-    argumentDescription: JvmArgumentDescriptor<T>,
-) : ArgumentConfiguration<T>(kotlinToolchain, argumentDescription) {
-    val argumentKey: JvmCompilerArgument<T> = argumentDescription.argumentKey
-    val argumentValues: List<T> = argumentDescription.argumentValues
+    argumentTestDescriptor: ArgumentTestDescriptor<T>,
+) : ArgumentConfiguration<T>(kotlinToolchain, argumentTestDescriptor) {
+    val argumentKey: JvmCompilerArgument<T> =
+        JvmCompilerArgument(argumentTestDescriptor.argumentId, argumentTestDescriptor.availableSinceVersion)
+    val argumentValues: List<T> = argumentTestDescriptor.argumentValues
 }

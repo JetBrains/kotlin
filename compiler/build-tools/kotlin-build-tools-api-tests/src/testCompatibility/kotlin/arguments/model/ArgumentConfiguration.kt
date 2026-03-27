@@ -17,18 +17,18 @@ import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
 internal abstract class ArgumentConfiguration<T>(
     val kotlinToolchain: KotlinToolchains,
-    private val argumentDescription: ArgumentDescriptor<T>,
+    private val argumentTestDescriptor: ArgumentTestDescriptor<T>,
 ) {
-    private val argumentName: String = argumentDescription.argumentName
+    private val argumentName: String = argumentTestDescriptor.argumentName
 
-    fun getValueString(argument: T?): String? = argumentDescription.valueString(argument)
+    fun getValueString(argument: T?): String? = argumentTestDescriptor.getValueString(argument)
 
     fun expectedArgumentStringsFor(value: String?): List<String> {
         if (value == null || value == getDefaultValueString()) {
             return emptyList()
         }
 
-        return argumentDescription.expectedArgumentStringsFor(value)
+        return argumentTestDescriptor.expectedArgumentStringsFor(value)
     }
 
     fun getDefaultValueString(): String? {

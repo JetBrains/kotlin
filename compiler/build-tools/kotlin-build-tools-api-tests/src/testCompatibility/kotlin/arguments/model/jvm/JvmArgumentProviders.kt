@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
+import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305.Mode
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JDK_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JVM_DEFAULT
@@ -18,17 +20,22 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JAVA_SOURCE_ROOTS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JDK_RELEASE
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JSPECIFY_ANNOTATIONS
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JSR305
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_KLIB
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_LAMBDAS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_MODULE_PATH
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_NULLABILITY_ANNOTATIONS
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_PROFILE
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_SAM_CONVERSIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_SCRIPT_RESOLVER_ENVIRONMENT
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_STRING_CONCAT
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_WHEN_EXPRESSIONS
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.JvmCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
+import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentDescriptor
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentTestDescriptor
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.argumentTestDescriptor
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
@@ -48,28 +55,23 @@ internal class AllJvmCompilerArgumentsWithBtaVersionsArgumentProvider : Argument
 
 internal class EnumJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.isEnum }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsEnumTest }.map { Arguments.of(it) }.stream()
     }
 }
 
 internal class NullableJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.isNullable }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsNullableTest }.map { Arguments.of(it) }.stream()
     }
 }
 
-private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentDescriptor<*>) -> Boolean = { true }): List<Named<JvmArgumentConfiguration<*>>> {
+private fun namedArgumentConfiguration(argumentPredicate: (ArgumentTestDescriptor<*>) -> Boolean = { true }): List<Named<JvmArgumentConfiguration<*>>> {
     val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
     val compilerArguments = jvmCompilerArguments.filter { argumentPredicate(it) }.map { named("[${it.argumentName}]", it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
         compilerArguments.mapNotNull { namedArgumentDescriptor ->
-            // Skip BTAv1 for Xignored-annotations-for-bridges argument
-            if (namedArgumentDescriptor.payload.argumentName == "Xignored-annotations-for-bridges" &&
-                namedKotlinToolchains.name.contains("[v1]")
-            ) {
-                return@mapNotNull null
-            }
+            if (namedArgumentDescriptor.payload.skipBtaV1 && namedKotlinToolchains.name.contains("[v1]")) return@mapNotNull null
 
             named(
                 namedKotlinToolchains.name + namedArgumentDescriptor.name,
@@ -82,195 +84,269 @@ private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentDescriptor
 private val testBaseDir: Path = Paths.get("").toAbsolutePath()
 
 @OptIn(ExperimentalCompilerArgument::class)
-private val jvmCompilerArguments: List<JvmArgumentDescriptor<*>> = listOf(
-    JvmArgumentDescriptor(
-        argumentName = "Xabi-stability",
-        argumentKey = X_ABI_STABILITY,
-        argumentValues = AbiStabilityMode.entries.toList(),
-        isEnum = true,
-        isNullable = true,
-        valueString = { value: AbiStabilityMode? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xabi-stability=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xadd-modules",
-        argumentKey = X_ADD_MODULES,
-        argumentValues = listOf(listOf("module1", "module2", "module3")),
-        isEnum = false,
-        isNullable = false,
-        valueString = { value: List<String>? -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xadd-modules=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xassertions",
-        argumentKey = X_ASSERTIONS,
-        argumentValues = AssertionsMode.entries.toList(),
-        isEnum = true,
-        isNullable = true,
-        valueString = { value: AssertionsMode? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xassertions=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "classpath",
-        argumentKey = CLASSPATH,
+private val jvmCompilerArguments: List<ArgumentTestDescriptor<*>> = listOf(
+    argumentTestDescriptor<AbiStabilityMode> {
+        argumentName = "Xabi-stability"
+        argumentId = X_ABI_STABILITY.id
+        availableSinceVersion = X_ABI_STABILITY.availableSinceVersion
+        argumentValues = AbiStabilityMode.entries.toList()
+        runsEnumTest = true
+        runsNullableTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-Xabi-stability=$value") }
+    },
+    argumentTestDescriptor<List<String>> {
+        argumentName = "Xadd-modules"
+        argumentId = X_ADD_MODULES.id
+        availableSinceVersion = X_ADD_MODULES.availableSinceVersion
+        argumentValues = listOf(listOf("module1", "module2", "module3"))
+        valueString = { value -> value?.joinToString(",") }
+        expectedArgumentStringsFor = { value -> listOf("-Xadd-modules=$value") }
+    },
+    argumentTestDescriptor<AssertionsMode> {
+        argumentName = "Xassertions"
+        argumentId = X_ASSERTIONS.id
+        availableSinceVersion = X_ASSERTIONS.availableSinceVersion
+        argumentValues = AssertionsMode.entries.toList()
+        runsEnumTest = true
+        runsNullableTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-Xassertions=$value") }
+    },
+    argumentTestDescriptor<List<Path>> {
+        argumentName = "classpath"
+        argumentId = CLASSPATH.id
+        availableSinceVersion = CLASSPATH.availableSinceVersion
         argumentValues = listOf(
             listOf(
                 testBaseDir.resolve("path/to/lib1.jar"),
                 testBaseDir.resolve("path/to/lib2.jar"),
                 testBaseDir.resolve("path/to/classes"),
             )
-        ),
-        isEnum = false,
-        isNullable = true,
-        valueString = { value: List<Path>? -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
-        expectedArgumentStringsFor = { value: String -> listOf("-classpath", value) }),
-    JvmArgumentDescriptor(
-        argumentName = "jdk-home",
-        argumentKey = JDK_HOME,
-        argumentValues = listOf(testBaseDir.resolve("path/to/jdk")),
-        isEnum = false,
-        isNullable = true,
-        valueString = { value: Path? -> value?.toFile()?.absolutePath },
-        expectedArgumentStringsFor = { value: String -> listOf("-jdk-home", value) }),
-    JvmArgumentDescriptor(
-        argumentName = "jvm-default",
-        argumentKey = JVM_DEFAULT,
-        argumentValues = JvmDefaultMode.entries.toList(),
-        isEnum = true,
-        isNullable = true,
-        valueString = { value: JvmDefaultMode? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-jvm-default", value) }),
-    JvmArgumentDescriptor(
-        argumentName = "script-templates",
-        argumentKey = SCRIPT_TEMPLATES,
-        argumentValues = listOf(listOf("org.example.Template1", "org.example.Template2")),
-        isEnum = false,
-        isNullable = false,
-        valueString = { value: List<String>? -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value: String -> listOf("-script-templates", value) }),
-    JvmArgumentDescriptor(
-        argumentName = "Xfriend-paths",
-        argumentKey = X_FRIEND_PATHS,
+        )
+        runsNullableTest = true
+        valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } }
+        expectedArgumentStringsFor = { value -> listOf("-classpath", value) }
+    },
+    argumentTestDescriptor<Path> {
+        argumentName = "jdk-home"
+        argumentId = JDK_HOME.id
+        availableSinceVersion = JDK_HOME.availableSinceVersion
+        argumentValues = listOf(testBaseDir.resolve("path/to/jdk"))
+        runsNullableTest = true
+        valueString = { value -> value?.toFile()?.absolutePath }
+        expectedArgumentStringsFor = { value -> listOf("-jdk-home", value) }
+    },
+    argumentTestDescriptor<JvmDefaultMode> {
+        argumentName = "jvm-default"
+        argumentId = JVM_DEFAULT.id
+        availableSinceVersion = JVM_DEFAULT.availableSinceVersion
+        argumentValues = JvmDefaultMode.entries.toList()
+        runsEnumTest = true
+        runsNullableTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-jvm-default", value) }
+    },
+    argumentTestDescriptor<List<String>> {
+        argumentName = "script-templates"
+        argumentId = SCRIPT_TEMPLATES.id
+        availableSinceVersion = SCRIPT_TEMPLATES.availableSinceVersion
+        argumentValues = listOf(listOf("org.example.Template1", "org.example.Template2"))
+        valueString = { value -> value?.joinToString(",") }
+        expectedArgumentStringsFor = { value -> listOf("-script-templates", value) }
+    },
+    argumentTestDescriptor<List<Path>> {
+        argumentName = "Xfriend-paths"
+        argumentId = X_FRIEND_PATHS.id
+        availableSinceVersion = X_FRIEND_PATHS.availableSinceVersion
         argumentValues = listOf(
             listOf(
                 testBaseDir.resolve("path/to/friend1"),
                 testBaseDir.resolve("path/to/friend2"),
                 testBaseDir.resolve("path/to/friend3"),
             )
-        ),
-        isEnum = false,
-        isNullable = false,
-        valueString = { value: List<Path>? -> value?.joinToString(",") { it.toFile().absolutePath } },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xfriend-paths=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xjdk-release",
-        argumentKey = X_JDK_RELEASE,
-        argumentValues = JdkRelease.entries.toList(),
-        isEnum = true,
-        isNullable = true,
-        valueString = { value: JdkRelease? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xjdk-release=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xmodule-path",
-        argumentKey = X_MODULE_PATH,
+        )
+        valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } }
+        expectedArgumentStringsFor = { value -> listOf("-Xfriend-paths=$value") }
+    },
+    argumentTestDescriptor<JdkRelease> {
+        argumentName = "Xjdk-release"
+        argumentId = X_JDK_RELEASE.id
+        availableSinceVersion = X_JDK_RELEASE.availableSinceVersion
+        argumentValues = JdkRelease.entries.toList()
+        runsEnumTest = true
+        runsNullableTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-Xjdk-release=$value") }
+    },
+    argumentTestDescriptor<List<Path>> {
+        argumentName = "Xmodule-path"
+        argumentId = X_MODULE_PATH.id
+        availableSinceVersion = X_MODULE_PATH.availableSinceVersion
         argumentValues = listOf(
             listOf(
                 testBaseDir.resolve("path/to/module1"),
                 testBaseDir.resolve("path/to/module2"),
                 testBaseDir.resolve("path/to/module3"),
             )
-        ),
-        isEnum = false,
-        isNullable = false,
-        valueString = { value: List<Path>? -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xmodule-path=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xstring-concat",
-        argumentKey = X_STRING_CONCAT,
-        argumentValues = StringConcatMode.entries.toList(),
-        isEnum = true,
-        isNullable = true,
-        valueString = { value: StringConcatMode? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xstring-concat=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xlambdas",
-        argumentKey = X_LAMBDAS,
-        argumentValues = LambdasMode.entries.toList(),
-        isEnum = true,
-        isNullable = false,
-        valueString = { value: LambdasMode? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xlambdas=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xwhen-expressions",
-        argumentKey = X_WHEN_EXPRESSIONS,
-        argumentValues = WhenExpressionsMode.entries.toList(),
-        isEnum = true,
-        isNullable = true,
-        valueString = { value: WhenExpressionsMode? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xwhen-expressions=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xsam-conversions",
-        argumentKey = X_SAM_CONVERSIONS,
-        argumentValues = SamConversionsMode.entries.toList(),
-        isEnum = true,
-        isNullable = true,
-        valueString = { value: SamConversionsMode? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xsam-conversions=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xjspecify-annotations",
-        argumentKey = X_JSPECIFY_ANNOTATIONS,
-        argumentValues = JspecifyAnnotationsMode.entries.toList(),
-        isEnum = true,
-        isNullable = true,
-        valueString = { value: JspecifyAnnotationsMode? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xjspecify-annotations=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xsupport-compatqual-checker-framework-annotations",
-        argumentKey = X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS,
-        argumentValues = CompatqualAnnotationsMode.entries.toList(),
-        isEnum = true,
-        isNullable = true,
-        valueString = { value: CompatqualAnnotationsMode? -> value?.stringValue },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xsupport-compatqual-checker-framework-annotations=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xklib",
-        argumentKey = X_KLIB,
+        )
+        valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } }
+        expectedArgumentStringsFor = { value -> listOf("-Xmodule-path=$value") }
+    },
+    argumentTestDescriptor<StringConcatMode> {
+        argumentName = "Xstring-concat"
+        argumentId = X_STRING_CONCAT.id
+        availableSinceVersion = X_STRING_CONCAT.availableSinceVersion
+        argumentValues = StringConcatMode.entries.toList()
+        runsEnumTest = true
+        runsNullableTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-Xstring-concat=$value") }
+    },
+    argumentTestDescriptor<LambdasMode> {
+        argumentName = "Xlambdas"
+        argumentId = X_LAMBDAS.id
+        availableSinceVersion = X_LAMBDAS.availableSinceVersion
+        argumentValues = LambdasMode.entries.toList()
+        runsEnumTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-Xlambdas=$value") }
+    },
+    argumentTestDescriptor<WhenExpressionsMode> {
+        argumentName = "Xwhen-expressions"
+        argumentId = X_WHEN_EXPRESSIONS.id
+        availableSinceVersion = X_WHEN_EXPRESSIONS.availableSinceVersion
+        argumentValues = WhenExpressionsMode.entries.toList()
+        runsEnumTest = true
+        runsNullableTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-Xwhen-expressions=$value") }
+    },
+    argumentTestDescriptor<SamConversionsMode> {
+        argumentName = "Xsam-conversions"
+        argumentId = X_SAM_CONVERSIONS.id
+        availableSinceVersion = X_SAM_CONVERSIONS.availableSinceVersion
+        argumentValues = SamConversionsMode.entries.toList()
+        runsEnumTest = true
+        runsNullableTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-Xsam-conversions=$value") }
+    },
+    argumentTestDescriptor<JspecifyAnnotationsMode> {
+        argumentName = "Xjspecify-annotations"
+        argumentId = X_JSPECIFY_ANNOTATIONS.id
+        availableSinceVersion = X_JSPECIFY_ANNOTATIONS.availableSinceVersion
+        argumentValues = JspecifyAnnotationsMode.entries.toList()
+        runsEnumTest = true
+        runsNullableTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-Xjspecify-annotations=$value") }
+    },
+    argumentTestDescriptor<CompatqualAnnotationsMode> {
+        argumentName = "Xsupport-compatqual-checker-framework-annotations"
+        argumentId = X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS.id
+        availableSinceVersion = X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS.availableSinceVersion
+        argumentValues = CompatqualAnnotationsMode.entries.toList()
+        runsEnumTest = true
+        runsNullableTest = true
+        valueString = { value -> value?.stringValue }
+        expectedArgumentStringsFor = { value -> listOf("-Xsupport-compatqual-checker-framework-annotations=$value") }
+    },
+    argumentTestDescriptor<List<Path>> {
+        argumentName = "Xklib"
+        argumentId = X_KLIB.id
+        availableSinceVersion = X_KLIB.availableSinceVersion
         argumentValues = listOf(
             listOf(
                 testBaseDir.resolve("path/to/lib1.klib"),
                 testBaseDir.resolve("path/to/lib2.klib"),
                 testBaseDir.resolve("path/to/lib3.klib"),
             )
-        ),
-        isEnum = false,
-        isNullable = false,
-        valueString = { value: List<Path>? -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xklib=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xjava-source-roots",
-        argumentKey = X_JAVA_SOURCE_ROOTS,
+        )
+        valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } }
+        expectedArgumentStringsFor = { value -> listOf("-Xklib=$value") }
+    },
+    argumentTestDescriptor<List<Path>> {
+        argumentName = "Xjava-source-roots"
+        argumentId = X_JAVA_SOURCE_ROOTS.id
+        availableSinceVersion = X_JAVA_SOURCE_ROOTS.availableSinceVersion
         argumentValues = listOf(
             listOf(
                 testBaseDir.resolve("path/to/java/src1"),
                 testBaseDir.resolve("path/to/java/src2"),
                 testBaseDir.resolve("path/to/java/src3"),
             )
-        ),
-        isEnum = false,
-        isNullable = false,
-        valueString = { value: List<Path>? -> value?.joinToString(",") { it.toFile().absolutePath } },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xjava-source-roots=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xignored-annotations-for-bridges",
-        argumentKey = X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
-        argumentValues = listOf(listOf("com.example.MyAnnotation", "*")),
-        isEnum = false,
-        isNullable = false,
-        valueString = { value: List<String>? -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xignored-annotations-for-bridges=$value") }),
-    JvmArgumentDescriptor(
-        argumentName = "Xscript-resolver-environment",
-        argumentKey = X_SCRIPT_RESOLVER_ENVIRONMENT,
-        argumentValues = listOf(listOf("key1=value1", "key2=value2")),
-        isEnum = false,
-        isNullable = false,
-        valueString = { value: List<String>? -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value: String -> listOf("-Xscript-resolver-environment=$value") }),
+        )
+        valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } }
+        expectedArgumentStringsFor = { value -> listOf("-Xjava-source-roots=$value") }
+    },
+    argumentTestDescriptor<List<String>> {
+        argumentName = "Xignored-annotations-for-bridges"
+        argumentId = X_IGNORED_ANNOTATIONS_FOR_BRIDGES.id
+        availableSinceVersion = X_IGNORED_ANNOTATIONS_FOR_BRIDGES.availableSinceVersion
+        argumentValues = listOf(listOf("com.example.MyAnnotation", "*"))
+        valueString = { value -> value?.joinToString(",") }
+        skipBtaV1 = true
+        expectedArgumentStringsFor = { value -> listOf("-Xignored-annotations-for-bridges=$value") }
+    },
+    argumentTestDescriptor<List<String>> {
+        argumentName = "Xscript-resolver-environment"
+        argumentId = X_SCRIPT_RESOLVER_ENVIRONMENT.id
+        availableSinceVersion = X_SCRIPT_RESOLVER_ENVIRONMENT.availableSinceVersion
+        argumentValues = listOf(listOf("key1=value1", "key2=value2"))
+        valueString = { value -> value?.joinToString(",") }
+        expectedArgumentStringsFor = { value -> listOf("-Xscript-resolver-environment=$value") }
+    },
+    argumentTestDescriptor<List<Jsr305>> {
+        argumentName = "Xjsr305"
+        argumentId = X_JSR305.id
+        availableSinceVersion = X_JSR305.availableSinceVersion
+        argumentValues = listOf(
+            listOf(
+                Jsr305.Global(Mode.STRICT),
+                Jsr305.UnderMigration(Mode.WARN),
+                Jsr305.SpecificAnnotation("com.example.Nullable", Mode.IGNORE),
+            )
+        )
+        valueString = { value ->
+            value?.joinToString(",") { item ->
+                when (item) {
+                    is Jsr305.Global -> item.mode.stringValue
+                    is Jsr305.UnderMigration -> "under-migration:${item.mode.stringValue}"
+                    is Jsr305.SpecificAnnotation -> "${item.annotationFqName}:${item.mode.stringValue}"
+                }
+            }
+        }
+        expectedArgumentStringsFor = { value -> listOf("-Xjsr305=$value") }
+    },
+    argumentTestDescriptor<List<NullabilityAnnotation>> {
+        argumentName = "Xnullability-annotations"
+        argumentId = X_NULLABILITY_ANNOTATIONS.id
+        availableSinceVersion = X_NULLABILITY_ANNOTATIONS.availableSinceVersion
+        argumentValues = listOf(
+            listOf(
+                NullabilityAnnotation("javax.annotation.Nullable", NullabilityAnnotation.Mode.STRICT),
+                NullabilityAnnotation("javax.annotation.Nonnull", NullabilityAnnotation.Mode.WARN),
+            )
+        )
+        valueString = { value -> value?.joinToString(",") { "${it.annotationFqName}:${it.mode.stringValue}" } }
+        expectedArgumentStringsFor = { value -> listOf("-Xnullability-annotations=$value") }
+    },
+
+    argumentTestDescriptor<ProfileCompilerCommand> {
+        argumentName = "Xprofile"
+        argumentId = X_PROFILE.id
+        availableSinceVersion = X_PROFILE.availableSinceVersion
+        argumentValues = listOf(
+            ProfileCompilerCommand(
+                profilerPath = testBaseDir.resolve("path/to/libasyncProfiler.so"),
+                command = "event=cpu,interval=1ms,threads,start",
+                outputDir = testBaseDir.resolve("/path/to/snapshots")
+            )
+        )
+        valueString = { value ->
+            value?.let { value.profilerPath.toFile().absolutePath + File.pathSeparator + value.command + File.pathSeparator + value.outputDir.toFile().absolutePath }
+        }
+        expectedArgumentStringsFor = { value -> listOf("-Xprofile=$value") }
+    },
 )

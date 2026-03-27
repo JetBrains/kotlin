@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.common.CommonArgumentDescriptor
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentTestDescriptor
 
 internal class CommonArgumentConfiguration<T>(
     kotlinToolchain: KotlinToolchains,
-    argumentDescription: CommonArgumentDescriptor<T>,
-) : ArgumentConfiguration<T>(kotlinToolchain, argumentDescription) {
-    val argumentKey: CommonCompilerArgument<T> = argumentDescription.argumentKey
-    val argumentValues: List<T> = argumentDescription.argumentValues
+    argumentTestDescriptor: ArgumentTestDescriptor<T>,
+) : ArgumentConfiguration<T>(kotlinToolchain, argumentTestDescriptor) {
+    val argumentKey: CommonCompilerArgument<T> =
+        CommonCompilerArgument(argumentTestDescriptor.argumentId, argumentTestDescriptor.availableSinceVersion)
+    val argumentValues: List<T> = argumentTestDescriptor.argumentValues
 }
