@@ -64,5 +64,6 @@ projectTests {
     withStdlibCommon()
     withAnnotations()
     withThirdPartyAnnotations()
+    withThirdPartyJava8Annotations()
     withThirdPartyJsr305()
 }

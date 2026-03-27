@@ -1,7 +1,7 @@
 # Remaining Test Failures — Detailed Analysis
 
 **Last updated**: 2026-03-27
-**Status**: 2676/2680 passing (4 failing: 2 remaining, 2 won't fix)
+**Status**: 2621/2624 passing (3 failing: 1 remaining, 2 won't fix)
 **Methodology**: Each test was run individually with file-based logging injected into `GlobalMetadataInfoHandler.compareAllMetaDataInfos` to capture actual vs expected FIR dump output. Diffs were then analyzed against the implementation code.
 
 ---
@@ -97,7 +97,7 @@ This is fundamentally a **test infrastructure / class finder ordering issue**, n
 
 ---
 
-## 3. testJSpecifySimple
+## 3. testJSpecifySimple — FIXED (Iteration 60)
 
 **Category**: JSpecify foreign annotation processing
 **Error type**: Missing diagnostics
@@ -156,13 +156,13 @@ Another possibility: java-direct correctly parses the annotations but doesn't re
 
 ## 4. testJSpecifyWithVarargs
 
-**Category**: JSpecify foreign annotation processing (same root cause as #3)
+**Category**: JSpecify foreign annotation processing on varargs parameters
 **Error type**: Missing diagnostics
 **Expected file**: `compiler/testData/diagnostics/tests/j+k/jSpecifyWithVarargs.fir.kt`
 
 ### What the test does
 
-Tests `@NonNull` from both JSpecify and JetBrains on vararg parameters. Both should produce `NULL_FOR_NONNULL_TYPE`.
+Tests `@NonNull` from both JSpecify and JetBrains on **vararg** parameters. Both should produce `NULL_FOR_NONNULL_TYPE`.
 
 ### Actual diff
 
@@ -174,15 +174,19 @@ Actual:   JavaClass.ofJetbrains(null)
           JavaClass.ofJspecify(null)
 ```
 
-Neither JetBrains `@NotNull` nor JSpecify `@NonNull` produces diagnostics.
+Neither JetBrains `@NotNull` nor JSpecify `@NonNull` produces diagnostics on varargs.
 
 ### Why this happens
 
-Same root cause as test #3. The fact that even JetBrains `@NotNull` doesn't work (not just JSpecify) suggests the issue is broader — possibly the `ENABLE_FOREIGN_ANNOTATIONS` directive or the annotation JAR classpath configuration is not set up for java-direct tests.
+After fixing #3 (missing `withThirdPartyJava8Annotations()` in build.gradle.kts), the `testJSpecifySimple` test passes — nullability annotations on regular parameters work correctly. But varargs parameters (`@NonNull String... args`) still fail.
+
+The annotations are parsed correctly by java-direct and passed to the type via `createJavaTypeWithAnnotations`. The `isVararg` flag is set correctly. However, FIR's nullability enhancement pipeline does not apply the annotations for varargs parameters. This is likely an interaction between how java-direct represents the varargs type and how FIR's `FirSignatureEnhancement` reads type annotations for vararg parameters.
+
+Key observation: both JetBrains `@NotNull` AND JSpecify `@NonNull` fail, so this is not an annotation-specific issue but a varargs-specific issue in the enhancement pipeline.
 
 ### Approach to fix
 
-Same as test #3. Fix one and the other should follow.
+Debug how PSI represents the type for a vararg parameter vs java-direct. Compare the `JavaType` returned by `JavaValueParameter.type` in both implementations. The difference may be in how TYPE_USE annotations are attached to the varargs component type vs array type.
 
 ---
 
@@ -428,15 +432,15 @@ The **PSI test worker JVM** happens to accept the same in-process javac compilat
 
 ## Priority Ranking
 
-**Updated 2026-03-27** — 4 fixed, 2 won't fix, 2 remaining:
+**Updated 2026-03-27** — 5 fixed, 2 won't fix, 1 remaining:
 
 | Status | Tests | Notes |
 |--------|-------|-------|
 | **FIXED** | #1 (AnnotationClass) | Iteration 59 — skip kotlin.* import resolution + reject FIR builtins |
+| **FIXED** | #3 (JSpecifySimple) | Iteration 60 — missing `withThirdPartyJava8Annotations()` in build.gradle.kts |
 | **FIXED** | #5 (KJKComplex) | Iteration 57 — outer type args for inherited inner classes |
 | **FIXED** | #6 (MapMethods) | Iteration 56 — transitive inherited inner class resolution |
 | **FIXED** | #7 (InheritanceWithKotlin) | Iteration 56 — transitive inherited inner class resolution |
 | **WON'T FIX** | #2 (ClassFromJdk) | Iteration 58 — javac sealed package in test worker |
 | **WON'T FIX** | #8 (PseudoRawTypes) | Iteration 58 — javac sealed package in test worker |
-| **Remaining** | #3 (JSpecifySimple) | FIR diagnostic mismatch — nullability annotations not processed |
-| **Remaining** | #4 (JSpecifyWithVarargs) | FIR diagnostic mismatch — same root cause as #3 |
+| **Remaining** | #4 (JSpecifyWithVarargs) | Varargs nullability enhancement — annotations not applied to varargs params |

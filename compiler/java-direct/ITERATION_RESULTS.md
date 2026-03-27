@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-27 (iter 59)
+**Last Updated**: 2026-03-27 (iter 60)
 
 ---
 
@@ -316,6 +316,36 @@ Both changes are needed together: `classifierQualifiedName` prevents the FQN fro
 - PSI's `canonicalText` returns the raw reference text (not FQN) when IntelliJ can't resolve the class — this is the primary signal that determines whether FIR creates a valid type or error type
 - FIR builtins (`FirDeclarationOrigin.BuiltIns`) are available in the symbol provider even without stdlib on classpath, but PSI can't see them — this origin distinction is key for matching PSI behavior
 - The `resolve()` callback from FIR and the `classifierQualifiedName` fallback are TWO independent resolution paths in the `null` classifier branch — both must be gated to prevent unwanted resolution
+
+---
+
+## Iteration 60: JSpecify Foreign Annotations Test Infrastructure - 2026-03-27
+
+### Root Cause Analysis
+The `testJSpecifySimple` test (and `testJSpecifyWithVarargs`) failed because the JSpecify annotation source files couldn't be found during test execution. The `JvmForeignAnnotationsConfigurator` uses `JavaForeignAnnotationType.Java8Annotations.path` which defaults to `"third-party/java8-annotations"` — a relative path resolved from the test worker's CWD. Since the java-direct test module's `build.gradle.kts` didn't call `withThirdPartyJava8Annotations()`, the system property with the absolute path was never set, causing `kotlin.io.NoSuchFileException: third-party/java8-annotations: The source file doesn't exist`.
+
+This exception was caught by the test infrastructure and reported alongside the data mismatch error. Because the foreign annotations couldn't be compiled to a JAR, the JSpecify annotation classes (`@NonNull`, `@Nullable`, `@NullMarked`) were not on the classpath, so FIR's enhancement pipeline couldn't recognize them — resulting in no nullability diagnostics.
+
+### Fix (2 files)
+1. **`build.gradle.kts`** — Added `withThirdPartyJava8Annotations()` to the `projectTests` block, which sets the `KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH` system property to the absolute path `${project.rootDir}/third-party/java8-annotations`.
+
+2. **`components.kt`** (test fixtures) — Added `registerCompilerExtensions` override to `JavaDirectConfigurator` as defense-in-depth. For CLI-based facades, extensions can be registered via this method in addition to the `COMPILER_PLUGIN_REGISTRARS` mechanism.
+
+### Test Results
+- Box: 1168/1168, Phased: 1453/1456, Total failing: 3 (down from 4)
+- `testJSpecifySimple` (#3): **FIXED**
+- `testJSpecifyWithVarargs` (#4): Still failing — nullability annotations not applied to varargs parameters
+
+### Status of Remaining 3 Failures
+| Test | Category | Status |
+|------|----------|--------|
+| #2 testClassFromJdkInLibrary | javac sealed package | Won't fix |
+| #4 testJSpecifyWithVarargs | Varargs nullability enhancement | Remaining |
+| #8 testPseudoRawTypes | javac sealed package | Won't fix |
+
+### Key Learnings
+- Test infrastructure configuration (`build.gradle.kts` `projectTests` block) must declare ALL third-party annotation dependencies used by tests with `ENABLE_FOREIGN_ANNOTATIONS`
+- The `NoSuchFileException` from `JvmForeignAnnotationsConfigurator` was masked by the test runner's multi-failure reporting — always check ALL failure causes, not just the first
 
 ---
 
