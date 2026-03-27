@@ -132,7 +132,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         fun FirPropertyAccessor.hasNoReceivers() = contextParameters.isEmpty() && receiverParameter?.typeRef == null &&
                 !propertySymbol.isExtension && !propertySymbol.hasContextParameters
 
-        // TODO: consider analyzing here the type of declaration instead of use-site target
+        // TODO: KT-85291 consider analyzing here the type of declaration instead of use-site target
         // (as at this stage all annotations should be on a declaration bound to its use-site target)
         val (hint, type) = when (annotation.useSiteTarget) {
             FIELD -> "fields" to ((declaration as? FirBackingField)?.returnTypeRef?.coneType ?: return)

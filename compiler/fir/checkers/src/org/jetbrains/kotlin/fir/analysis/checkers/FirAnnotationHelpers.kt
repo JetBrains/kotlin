@@ -168,6 +168,7 @@ fun checkRepeatedAnnotation(
     val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
     for (annotation in annotations) {
+        // TODO: KT-85288 consider dropping use-site target checks here
         val useSiteTarget = annotation.useSiteTarget.takeIf {
             it != AnnotationUseSiteTarget.ALL
         } ?: annotationContainer?.getDefaultUseSiteTarget(annotation)

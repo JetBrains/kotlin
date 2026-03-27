@@ -1059,6 +1059,23 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val annotation: Element by element(Expression) {
+        kDoc = """
+            A very general representation of an annotation in Kotlin, like `@Ann(1, 2)`.
+            
+            Notable properties:
+            - [argumentMapping] — the map "name to expression" for annotation arguments
+            - [typeArguments] — annotation type arguments with projection (in/out) if needed
+            - [annotationTypeRef] — type reference bound to this annotation (maybe used e.g. to find a corresponding [FirRegularClass] for the annotation)
+            - [useSiteTarget] — annotation use-site target like GET (`@get:Ann`) or PARAMETER (`@param:Ann`), if any;
+            normally annotation should be moved to corresponding element during raw FIR building phase or, in non-obvious cases,
+            during type resolving phase. Sometimes, e.g. for [AnnotationUseSiteTarget.ALL] or for constructor properties annotation,
+            it's copied to multiple elements. Targets [AnnotationUseSiteTarget.FIELD] and [AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD]
+            are indistinguishable this way, as both occupy a backing field.
+
+            Note: a declaration of an annotation class, like `annotation class Ann`, is represented by [FirRegularClass].
+             
+            See also a very similar [FirAnnotationCall]. 
+        """.trimIndent()
         parent(expression)
 
         +field("useSiteTarget", annotationUseSiteTargetType, nullable = true, withReplace = true)
@@ -1070,6 +1087,31 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val annotationCall: Element by element(Expression) {
+        kDoc = """
+            An extended representation of an annotation in Kotlin. See more general [FirAnnotation].
+            
+            [FirAnnotationCall] is a [FirCall], so it differs from [FirAnnotation] as it includes more detailed description,
+            despite representing generally the same `@Ann(1, 2)` or something similar.
+            [FirAnnotation] is a more light-weight, so it's used when providing [FirCall] properties is problematic,
+            e.g. in serialization, in Java interop, or in plugins.
+            [FirAnnotationCall] is used mainly for source-based annotation that require resolve.
+                      
+            Notable inherited properties from [FirAnnotation]:
+            - [argumentMapping] — the map "name to expression" for annotation arguments
+            - [typeArguments] — annotation type arguments with projection (in/out) if needed
+            - [annotationTypeRef] — type reference bound to this annotation (maybe used e.g. to find a corresponding [FirRegularClass] for the annotation)
+            - [useSiteTarget] — annotation use-site target like GET (`@get:Ann`) or PARAMETER (`@param:Ann`), if any;
+            normally annotation should be moved to corresponding element during raw FIR building phase or, in non-obvious cases,
+            during type resolving phase. Sometimes, e.g. for [AnnotationUseSiteTarget.ALL] or for constructor properties annotation,
+            it's copied to multiple elements. Targets [AnnotationUseSiteTarget.FIELD] and [AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD]
+            are indistinguishable this way, as both occupy a backing field.
+            
+            Notable inherited properties from [FirCall]:
+            - [argumentList] — list of annotation arguments to be resolved. After resolve, they are represented as [FirResolvedArgumentList].
+            - [calleeReference] — reference to an annotation class symbol, either unresolved [FirSimpleNamedReference] or resolved [FirResolvedNamedReference]
+
+            Note: a declaration of an annotation class, like `annotation class Ann`, is represented by [FirRegularClass].
+        """.trimIndent()
         parent(annotation)
         parent(call)
         parent(resolvable)
