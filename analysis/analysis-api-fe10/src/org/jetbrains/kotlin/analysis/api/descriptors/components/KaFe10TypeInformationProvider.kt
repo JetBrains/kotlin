@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.types.isNullabilityFlexible
 
 internal class KaFe10TypeInformationProvider(
     override val analysisSessionProvider: () -> KaFe10Session
-) : KaBaseSessionComponent<KaFe10Session>(), KaTypeInformationProvider, KaFe10SessionComponent {
+) : KaBaseTypeInformationProvider<KaFe10Session>(), KaFe10SessionComponent {
     override val KaType.isFunctionalInterface: Boolean
         get() = withValidityAssertion {
             require(this is KaFe10Type)
