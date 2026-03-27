@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.AllCommonCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.CommonArgumentConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.EnumCommonCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.NullableCommonCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.common.AllCommonCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.common.CommonArgumentConfiguration
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.common.EnumCommonCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.common.NullableCommonCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -95,10 +95,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
                 )
             }
 
-            assertEquals(
-                value,
-                operation.compilerArguments[argumentKey]
-            )
+            assertEquals(value, operation.compilerArguments[argumentKey])
         }
     }
 

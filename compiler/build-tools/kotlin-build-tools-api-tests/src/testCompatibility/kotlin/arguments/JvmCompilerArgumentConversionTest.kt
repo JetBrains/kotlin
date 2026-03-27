@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.AllJvmCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.EnumJvmCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.JvmArgumentConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.NullableJvmCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.AllJvmCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.EnumJvmCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.JvmArgumentConfiguration
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.NullableJvmCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -18,7 +18,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
-internal class JvmArgumentConversionTest : BaseCompilationTest() {
+internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
 
     @AllJvmCompilerArgumentsWithBtaVersionsTest
     @DisplayName("BTA argument is converted to a raw argument")
@@ -93,10 +93,7 @@ internal class JvmArgumentConversionTest : BaseCompilationTest() {
                 )
             }.build()
 
-            assertEquals(
-                value,
-                operation.compilerArguments[argumentKey]
-            )
+            assertEquals(value, operation.compilerArguments[argumentKey])
         }
     }
 
