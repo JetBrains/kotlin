@@ -149,6 +149,7 @@ dependencies {
             fatJarContents(project(it)) { isTransitive = false }
         }
 
+    libraries(project(":kotlin-jklib-compiler"))
     libraries(kotlinStdlib("jdk8"))
     librariesKotlinTest(kotlinTest("junit"))
     libraries(kotlinStdlib(classifier = "distJsJar"))
