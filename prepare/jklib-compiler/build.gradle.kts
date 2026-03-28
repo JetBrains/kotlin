@@ -7,6 +7,8 @@ plugins {
     kotlin("jvm")
 }
 
+val distContent by configurations.creating
+
 dependencies {
     embedded(project(":compiler:cli-jklib")) { isTransitive = false }
     embedded(project(":compiler:ir.serialization.jklib")) { isTransitive = false }
