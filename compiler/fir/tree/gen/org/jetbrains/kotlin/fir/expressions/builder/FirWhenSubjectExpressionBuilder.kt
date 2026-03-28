@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -80,4 +81,23 @@ inline fun buildWhenSubjectExpression(init: FirWhenSubjectExpressionBuilder.() -
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirWhenSubjectExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildWhenSubjectExpression(
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    source: KtSourceElement? = null,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf(),
+    contextSensitiveAlternative: FirPropertyAccessExpression? = null,
+    calleeReference: FirNamedReference,
+): FirWhenSubjectExpression {
+    return FirWhenSubjectExpressionImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        contextSensitiveAlternative,
+        calleeReference,
+    )
 }

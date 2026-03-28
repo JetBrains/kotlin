@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyWithExplicitBackingFieldResolvedNamedReferenceImpl
@@ -45,4 +46,21 @@ inline fun buildPropertyWithExplicitBackingFieldResolvedNamedReference(init: Fir
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildPropertyWithExplicitBackingFieldResolvedNamedReference(
+    source: KtSourceElement? = null,
+    name: Name,
+    resolvedSymbol: FirBasedSymbol<*>,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+    hasVisibleBackingField: Boolean,
+): FirPropertyWithExplicitBackingFieldResolvedNamedReference {
+    return FirPropertyWithExplicitBackingFieldResolvedNamedReferenceImpl(
+        source,
+        name,
+        resolvedSymbol,
+        resolvedSymbolOrigin,
+        hasVisibleBackingField,
+    )
 }

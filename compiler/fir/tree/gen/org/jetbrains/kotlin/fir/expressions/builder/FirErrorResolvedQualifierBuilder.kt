@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -85,4 +86,45 @@ inline fun buildErrorResolvedQualifier(init: FirErrorResolvedQualifierBuilder.()
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorResolvedQualifierBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildErrorResolvedQualifier(
+    source: KtSourceElement? = null,
+    contextSensitiveAlternative: FirPropertyAccessExpression? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    packageFqName: FqName,
+    relativeClassFqName: FqName? = null,
+    symbol: FirClassLikeSymbol<*>? = null,
+    explicitParent: FirResolvedQualifier? = null,
+    isNullableLHSForCallableReference: Boolean = false,
+    resolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType? = null,
+    resolvedToCompanionObject: Boolean,
+    canBeValue: Boolean = false,
+    isFullyQualified: Boolean = false,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf(),
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    diagnostic: ConeDiagnostic,
+): FirErrorResolvedQualifier {
+    return FirErrorResolvedQualifierImpl(
+        source,
+        contextSensitiveAlternative,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        packageFqName,
+        relativeClassFqName,
+        symbol,
+        explicitParent,
+        isNullableLHSForCallableReference,
+        resolvedLHSTypeForCallableReferenceOrNull,
+        resolvedToCompanionObject,
+        canBeValue,
+        isFullyQualified,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        resolvedSymbolOrigin,
+        typeArguments.toMutableOrEmpty(),
+        diagnostic,
+    )
 }

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -57,4 +58,17 @@ inline fun buildEnumEntryDeserializedAccessExpression(init: FirEnumEntryDeserial
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirEnumEntryDeserializedAccessExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildEnumEntryDeserializedAccessExpression(
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    enumClassId: ClassId,
+    enumEntryName: Name,
+): FirEnumEntryDeserializedAccessExpression {
+    return FirEnumEntryDeserializedAccessExpressionImpl(
+        annotations.toMutableOrEmpty(),
+        enumClassId,
+        enumEntryName,
+    )
 }

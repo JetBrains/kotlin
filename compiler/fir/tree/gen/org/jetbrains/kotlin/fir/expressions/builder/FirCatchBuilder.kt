@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -40,4 +41,17 @@ inline fun buildCatch(init: FirCatchBuilder.() -> Unit): FirCatch {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirCatchBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildCatch(
+    source: KtSourceElement? = null,
+    parameter: FirProperty,
+    block: FirBlock,
+): FirCatch {
+    return FirCatchImpl(
+        source,
+        parameter,
+        block,
+    )
 }

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -40,9 +41,24 @@ class FirBlockBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildBlock(init: FirBlockBuilder.() -> Unit = {}): FirBlock {
+inline fun buildBlock(init: FirBlockBuilder.() -> Unit): FirBlock {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirBlockBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildBlock(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    statements: MutableList<FirStatement> = mutableListOf(),
+): FirBlock {
+    return FirBlockImpl(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        statements,
+    )
 }

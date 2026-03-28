@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -50,4 +51,25 @@ inline fun buildIndexedAccessAugmentedAssignment(init: FirIndexedAccessAugmented
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirIndexedAccessAugmentedAssignmentBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildIndexedAccessAugmentedAssignment(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    lhsGetCall: FirFunctionCall,
+    rhs: FirExpression,
+    operation: FirOperation,
+    calleeReference: FirReference = FirStubReference,
+    arrayAccessSource: KtSourceElement? = null,
+): FirIndexedAccessAugmentedAssignment {
+    return FirIndexedAccessAugmentedAssignmentImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        lhsGetCall,
+        rhs,
+        operation,
+        calleeReference,
+        arrayAccessSource,
+    )
 }

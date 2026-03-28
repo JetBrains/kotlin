@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -45,4 +46,19 @@ inline fun buildCollectionLiteral(init: FirCollectionLiteralBuilder.() -> Unit):
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirCollectionLiteralBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildCollectionLiteral(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    argumentList: FirArgumentList,
+): FirCollectionLiteral {
+    return FirCollectionLiteralImpl(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        argumentList,
+    )
 }

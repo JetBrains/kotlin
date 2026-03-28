@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -34,9 +35,22 @@ class FirExplicitThisReferenceBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildExplicitThisReference(init: FirExplicitThisReferenceBuilder.() -> Unit = {}): FirThisReference {
+inline fun buildExplicitThisReference(init: FirExplicitThisReferenceBuilder.() -> Unit): FirThisReference {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirExplicitThisReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildExplicitThisReference(
+    source: KtSourceElement? = null,
+    labelName: String? = null,
+    diagnostic: ConeDiagnostic? = null,
+): FirThisReference {
+    return FirExplicitThisReference(
+        source,
+        labelName,
+        diagnostic,
+    )
 }

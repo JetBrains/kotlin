@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -62,4 +63,31 @@ inline fun buildScriptReceiverParameter(init: FirScriptReceiverParameterBuilder.
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirScriptReceiverParameterBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildScriptReceiverParameter(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    symbol: FirReceiverParameterSymbol,
+    containingDeclarationSymbol: FirBasedSymbol<*>,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    typeRef: FirTypeRef,
+    isBaseClassReceiver: Boolean,
+): FirScriptReceiverParameter {
+    return FirScriptReceiverParameterImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        symbol,
+        containingDeclarationSymbol,
+        annotations.toMutableOrEmpty(),
+        typeRef,
+        isBaseClassReceiver,
+    )
 }

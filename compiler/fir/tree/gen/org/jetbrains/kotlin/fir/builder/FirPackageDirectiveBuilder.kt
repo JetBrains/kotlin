@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.impl.FirPackageDirectiveImpl
 import org.jetbrains.kotlin.name.FqName
@@ -36,4 +37,15 @@ inline fun buildPackageDirective(init: FirPackageDirectiveBuilder.() -> Unit): F
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirPackageDirectiveBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildPackageDirective(
+    source: KtSourceElement? = null,
+    packageFqName: FqName,
+): FirPackageDirective {
+    return FirPackageDirectiveImpl(
+        source,
+        packageFqName,
+    )
 }

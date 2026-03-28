@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -54,4 +55,25 @@ inline fun buildTryExpression(init: FirTryExpressionBuilder.() -> Unit): FirTryE
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirTryExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildTryExpression(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    calleeReference: FirReference = FirStubReference,
+    tryBlock: FirBlock,
+    catches: MutableList<FirCatch> = mutableListOf(),
+    finallyBlock: FirBlock? = null,
+): FirTryExpression {
+    return FirTryExpressionImpl(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        calleeReference,
+        tryBlock,
+        catches,
+        finallyBlock,
+    )
 }

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -60,4 +61,29 @@ inline fun buildAnonymousInitializer(init: FirAnonymousInitializerBuilder.() -> 
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirAnonymousInitializerBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildAnonymousInitializer(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    body: FirBlock? = null,
+    symbol: FirAnonymousInitializerSymbol = FirAnonymousInitializerSymbol(),
+    containingDeclarationSymbol: FirBasedSymbol<*>,
+): FirAnonymousInitializer {
+    return FirAnonymousInitializerImpl(
+        source,
+        resolvePhase,
+        annotations.toMutableOrEmpty(),
+        moduleData,
+        origin,
+        attributes,
+        body,
+        symbol,
+        containingDeclarationSymbol,
+    )
 }

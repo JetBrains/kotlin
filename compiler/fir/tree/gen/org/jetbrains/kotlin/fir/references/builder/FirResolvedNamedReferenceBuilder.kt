@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
@@ -43,4 +44,19 @@ inline fun buildResolvedNamedReference(init: FirResolvedNamedReferenceBuilder.()
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedNamedReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildResolvedNamedReference(
+    source: KtSourceElement? = null,
+    name: Name,
+    resolvedSymbol: FirBasedSymbol<*>,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+): FirResolvedNamedReference {
+    return FirResolvedNamedReferenceImpl(
+        source,
+        name,
+        resolvedSymbol,
+        resolvedSymbolOrigin,
+    )
 }

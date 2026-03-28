@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.contracts.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirLegacyRawContractDescriptionImpl
@@ -40,4 +41,17 @@ inline fun buildLegacyRawContractDescription(init: FirLegacyRawContractDescripti
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirLegacyRawContractDescriptionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildLegacyRawContractDescription(
+    source: KtSourceElement? = null,
+    contractCall: FirFunctionCall,
+    diagnostic: ConeDiagnostic? = null,
+): FirLegacyRawContractDescription {
+    return FirLegacyRawContractDescriptionImpl(
+        source,
+        contractCall,
+        diagnostic,
+    )
 }

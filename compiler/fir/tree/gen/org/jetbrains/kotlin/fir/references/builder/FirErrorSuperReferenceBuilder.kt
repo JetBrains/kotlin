@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirErrorSuperReference
@@ -42,4 +43,19 @@ inline fun buildErrorSuperReference(init: FirErrorSuperReferenceBuilder.() -> Un
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorSuperReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildErrorSuperReference(
+    source: KtSourceElement? = null,
+    labelName: String? = null,
+    superTypeRef: FirTypeRef,
+    diagnostic: ConeDiagnostic,
+): FirErrorSuperReference {
+    return FirErrorSuperReferenceImpl(
+        source,
+        labelName,
+        superTypeRef,
+        diagnostic,
+    )
 }

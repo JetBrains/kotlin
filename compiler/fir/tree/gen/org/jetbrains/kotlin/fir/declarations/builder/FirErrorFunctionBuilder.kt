@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -66,4 +67,37 @@ inline fun buildErrorFunction(init: FirErrorFunctionBuilder.() -> Unit): FirErro
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorFunctionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildErrorFunction(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    containerSource: DeserializedContainerSource? = null,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    contextParameters: MutableList<FirValueParameter> = mutableListOf(),
+    valueParameters: MutableList<FirValueParameter> = mutableListOf(),
+    diagnostic: ConeDiagnostic,
+    symbol: FirErrorFunctionSymbol,
+): FirErrorFunction {
+    return FirErrorFunctionImpl(
+        source,
+        resolvePhase,
+        annotations.toMutableOrEmpty(),
+        moduleData,
+        origin,
+        attributes,
+        deprecationsProvider,
+        containerSource,
+        dispatchReceiverType,
+        contextParameters.toMutableOrEmpty(),
+        valueParameters,
+        diagnostic,
+        symbol,
+    )
 }

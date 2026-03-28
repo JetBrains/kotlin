@@ -67,6 +67,29 @@ inline fun buildSmartCastExpression(init: FirSmartCastExpressionBuilder.() -> Un
     return FirSmartCastExpressionBuilder().apply(init).build()
 }
 
+@OptIn(FirImplementationDetail::class)
+fun buildSmartCastExpression(
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    originalExpression: FirExpression,
+    upperTypesFromSmartCast: Collection<ConeKotlinType>,
+    lowerTypesFromSmartCast: Collection<DfaType>,
+    smartcastType: FirTypeRef,
+    smartcastTypeWithoutNullableNothing: FirTypeRef? = null,
+    smartcastStability: SmartcastStability,
+): FirSmartCastExpression {
+    return FirSmartCastExpressionImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        originalExpression,
+        upperTypesFromSmartCast,
+        lowerTypesFromSmartCast,
+        smartcastType,
+        smartcastTypeWithoutNullableNothing,
+        smartcastStability,
+    )
+}
+
 @OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class)
 fun buildSmartCastExpressionCopy(
     original: FirSmartCastExpression,

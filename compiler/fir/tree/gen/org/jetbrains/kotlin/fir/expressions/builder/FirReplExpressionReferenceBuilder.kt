@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirExpressionRef
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -51,4 +52,15 @@ inline fun buildReplExpressionReference(init: FirReplExpressionReferenceBuilder.
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirReplExpressionReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildReplExpressionReference(
+    source: KtSourceElement? = null,
+    expressionRef: FirExpressionRef<FirExpression>,
+): FirReplExpressionReference {
+    return FirReplExpressionReferenceImpl(
+        source,
+        expressionRef,
+    )
 }

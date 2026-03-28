@@ -52,6 +52,23 @@ inline fun buildInaccessibleReceiverExpression(init: FirInaccessibleReceiverExpr
     return FirInaccessibleReceiverExpressionBuilder().apply(init).build()
 }
 
+@OptIn(FirImplementationDetail::class)
+fun buildInaccessibleReceiverExpression(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    calleeReference: FirThisReference,
+    kind: InaccessibleReceiverKind,
+): FirInaccessibleReceiverExpression {
+    return FirInaccessibleReceiverExpressionImpl(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        calleeReference,
+        kind,
+    )
+}
+
 @OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class)
 fun buildInaccessibleReceiverExpressionCopy(
     original: FirInaccessibleReceiverExpression,

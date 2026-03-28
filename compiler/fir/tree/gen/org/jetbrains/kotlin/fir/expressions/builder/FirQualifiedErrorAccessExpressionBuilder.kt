@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -56,4 +57,21 @@ inline fun buildQualifiedErrorAccessExpression(init: FirQualifiedErrorAccessExpr
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirQualifiedErrorAccessExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildQualifiedErrorAccessExpression(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    diagnostic: ConeDiagnostic,
+    selector: FirErrorExpression,
+    receiver: FirExpression,
+): FirQualifiedErrorAccessExpression {
+    return FirQualifiedErrorAccessExpressionImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        diagnostic,
+        selector,
+        receiver,
+    )
 }

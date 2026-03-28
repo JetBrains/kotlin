@@ -66,6 +66,37 @@ inline fun buildFunctionCall(init: FirFunctionCallBuilder.() -> Unit): FirFuncti
     return FirFunctionCallBuilder().apply(init).build()
 }
 
+@OptIn(FirImplementationDetail::class)
+fun buildFunctionCall(
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    contextArguments: MutableList<FirExpression> = mutableListOf(),
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    explicitReceiver: FirExpression? = null,
+    dispatchReceiver: FirExpression? = null,
+    extensionReceiver: FirExpression? = null,
+    source: KtSourceElement? = null,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf(),
+    argumentList: FirArgumentList = FirEmptyArgumentList,
+    calleeReference: FirNamedReference,
+    origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
+): FirFunctionCall {
+    return FirFunctionCallImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        contextArguments.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        explicitReceiver,
+        dispatchReceiver,
+        extensionReceiver,
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        argumentList,
+        calleeReference,
+        origin,
+    )
+}
+
 @OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class)
 fun buildFunctionCallCopy(
     original: FirFunctionCall,

@@ -58,3 +58,18 @@ inline fun buildLazyDelegatedConstructorCall(init: FirLazyDelegatedConstructorCa
     }
     return FirLazyDelegatedConstructorCallBuilder().apply(init).build()
 }
+
+@OptIn(FirImplementationDetail::class)
+fun buildLazyDelegatedConstructorCall(
+    coneTypeOrNull: ConeKotlinType? = null,
+    constructedTypeRef: FirTypeRef,
+    calleeReference: FirReference,
+    isThis: Boolean,
+): FirDelegatedConstructorCall {
+    return FirLazyDelegatedConstructorCall(
+        coneTypeOrNull,
+        constructedTypeRef,
+        calleeReference,
+        isThis,
+    )
+}

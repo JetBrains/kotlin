@@ -40,3 +40,14 @@ inline fun buildOuterClassTypeParameterRef(init: FirOuterClassTypeParameterRefBu
     }
     return FirOuterClassTypeParameterRefBuilder().apply(init).build()
 }
+
+@OptIn(FirImplementationDetail::class)
+fun buildOuterClassTypeParameterRef(
+    source: KtSourceElement? = null,
+    symbol: FirTypeParameterSymbol,
+): FirOuterClassTypeParameterRef {
+    return FirOuterClassTypeParameterRefImpl(
+        source,
+        symbol,
+    )
+}

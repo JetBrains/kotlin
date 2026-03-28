@@ -48,6 +48,23 @@ inline fun buildFunctionTypeConversionExpression(init: FirFunctionTypeConversion
     return FirFunctionTypeConversionExpressionBuilder().apply(init).build()
 }
 
+@OptIn(FirImplementationDetail::class)
+fun buildFunctionTypeConversionExpression(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    expression: FirExpression,
+    kind: FirFunctionConversionKind,
+): FirFunctionTypeConversionExpression {
+    return FirFunctionTypeConversionExpressionImpl(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        expression,
+        kind,
+    )
+}
+
 @OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class)
 fun buildFunctionTypeConversionExpressionCopy(
     original: FirFunctionTypeConversionExpression,

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirConstructedClassTypeParameterRefImpl
@@ -37,4 +38,15 @@ inline fun buildConstructedClassTypeParameterRef(init: FirConstructedClassTypePa
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirConstructedClassTypeParameterRefBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildConstructedClassTypeParameterRef(
+    source: KtSourceElement? = null,
+    symbol: FirTypeParameterSymbol,
+): FirConstructedClassTypeParameterRef {
+    return FirConstructedClassTypeParameterRefImpl(
+        source,
+        symbol,
+    )
 }

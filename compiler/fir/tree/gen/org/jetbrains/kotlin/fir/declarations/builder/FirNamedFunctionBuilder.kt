@@ -86,6 +86,53 @@ inline fun buildNamedFunction(init: FirNamedFunctionBuilder.() -> Unit): FirName
     return FirNamedFunctionBuilder().apply(init).build()
 }
 
+@OptIn(FirImplementationDetail::class)
+fun buildNamedFunction(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    status: FirDeclarationStatus,
+    isLocal: Boolean,
+    returnTypeRef: FirTypeRef,
+    receiverParameter: FirReceiverParameter? = null,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    containerSource: DeserializedContainerSource? = null,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    contextParameters: MutableList<FirValueParameter> = mutableListOf(),
+    valueParameters: MutableList<FirValueParameter> = mutableListOf(),
+    body: FirBlock? = null,
+    contractDescription: FirContractDescription? = null,
+    name: Name,
+    symbol: FirNamedFunctionSymbol,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    typeParameters: MutableList<FirTypeParameter> = mutableListOf(),
+): FirNamedFunction {
+    return FirNamedFunctionImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        status,
+        isLocal,
+        returnTypeRef,
+        receiverParameter,
+        deprecationsProvider,
+        containerSource,
+        dispatchReceiverType,
+        contextParameters.toMutableOrEmpty(),
+        valueParameters,
+        body,
+        contractDescription,
+        name,
+        symbol,
+        annotations.toMutableOrEmpty(),
+        typeParameters,
+    )
+}
+
 @OptIn(ExperimentalContracts::class)
 inline fun buildNamedFunctionCopy(original: FirNamedFunction, init: FirNamedFunctionBuilder.() -> Unit): FirNamedFunction {
     contract {

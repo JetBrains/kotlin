@@ -70,7 +70,7 @@ class LeafBuilder<Field, Element, Implementation>(
         fun generateDirectFunction(): Boolean = this == DirectFunction || this == DirectAndBuilderFunction
     }
 
-    var buildFunctionType: ConstructFunctionType = ConstructFunctionType.BuilderFunction
+    var buildFunctionType: ConstructFunctionType = ConstructFunctionType.DirectAndBuilderFunction
 
     var copyFunctionType: ConstructFunctionType? = null
 }

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -137,4 +138,45 @@ inline fun buildErrorProperty(init: FirErrorPropertyBuilder.() -> Unit): FirErro
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorPropertyBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildErrorProperty(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    containerSource: DeserializedContainerSource? = null,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    contextParameters: MutableList<FirValueParameter> = mutableListOf(),
+    name: Name,
+    initializer: FirExpression? = null,
+    backingField: FirBackingField? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    delegateFieldSymbol: FirDelegateFieldSymbol? = null,
+    bodyResolveState: FirPropertyBodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED,
+    diagnostic: ConeDiagnostic,
+    symbol: FirErrorPropertySymbol,
+): FirErrorProperty {
+    return FirErrorPropertyImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        deprecationsProvider,
+        containerSource,
+        dispatchReceiverType,
+        contextParameters.toMutableOrEmpty(),
+        name,
+        initializer,
+        backingField,
+        annotations.toMutableOrEmpty(),
+        delegateFieldSymbol,
+        bodyResolveState,
+        diagnostic,
+        symbol,
+    )
 }

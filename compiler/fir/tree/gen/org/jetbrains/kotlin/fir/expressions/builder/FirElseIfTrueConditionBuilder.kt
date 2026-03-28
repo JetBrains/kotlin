@@ -36,9 +36,20 @@ class FirElseIfTrueConditionBuilder : FirAnnotationContainerBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildElseIfTrueCondition(init: FirElseIfTrueConditionBuilder.() -> Unit = {}): FirExpression {
+inline fun buildElseIfTrueCondition(init: FirElseIfTrueConditionBuilder.() -> Unit): FirExpression {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirElseIfTrueConditionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildElseIfTrueCondition(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+): FirExpression {
+    return FirElseIfTrueCondition(
+        source,
+        annotations.toMutableOrEmpty(),
+    )
 }

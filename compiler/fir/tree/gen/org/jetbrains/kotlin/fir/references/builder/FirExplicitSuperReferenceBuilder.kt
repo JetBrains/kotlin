@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
@@ -39,4 +40,17 @@ inline fun buildExplicitSuperReference(init: FirExplicitSuperReferenceBuilder.()
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirExplicitSuperReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildExplicitSuperReference(
+    source: KtSourceElement? = null,
+    labelName: String? = null,
+    superTypeRef: FirTypeRef,
+): FirSuperReference {
+    return FirExplicitSuperReference(
+        source,
+        labelName,
+        superTypeRef,
+    )
 }

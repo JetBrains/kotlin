@@ -125,7 +125,9 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
 
                 if (leafBuilder.buildFunctionType.generateBuilderFunction()) {
                     println()
-                    printDslBuildFunction(leafBuilder, hasRequiredFields)
+                    // Force required fields to prevent overload ambiguity errors
+                    // And to force the compiler to resolve to a faster function that don't use builder
+                    printDslBuildFunction(leafBuilder, hasRequiredFields = true)
                 }
 
                 if (leafBuilder.buildFunctionType.generateDirectFunction()) {

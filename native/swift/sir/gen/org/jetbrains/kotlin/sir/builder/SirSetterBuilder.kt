@@ -43,11 +43,36 @@ class SirSetterBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildSetter(init: SirSetterBuilder.() -> Unit = {}): SirSetter {
+inline fun buildSetter(init: SirSetterBuilder.() -> Unit): SirSetter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return SirSetterBuilder().apply(init).build()
+}
+
+@OptIn(SirImplementationDetail::class)
+fun buildSetter(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    bridges: MutableList<SirBridge> = mutableListOf(),
+    body: SirFunctionBody? = null,
+    errorType: SirType = SirType.never,
+    isAsync: Boolean = false,
+    parameterName: String = "newValue",
+): SirSetter {
+    return SirSetterImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        bridges,
+        body,
+        errorType,
+        isAsync,
+        parameterName,
+    )
 }
 
 @OptIn(SirImplementationDetail::class)

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.types.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.types.FirPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.impl.FirPlaceholderProjectionImpl
@@ -29,9 +30,18 @@ class FirPlaceholderProjectionBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildPlaceholderProjection(init: FirPlaceholderProjectionBuilder.() -> Unit = {}): FirPlaceholderProjection {
+inline fun buildPlaceholderProjection(init: FirPlaceholderProjectionBuilder.() -> Unit): FirPlaceholderProjection {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirPlaceholderProjectionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildPlaceholderProjection(
+    source: KtSourceElement? = null,
+): FirPlaceholderProjection {
+    return FirPlaceholderProjectionImpl(
+        source,
+    )
 }

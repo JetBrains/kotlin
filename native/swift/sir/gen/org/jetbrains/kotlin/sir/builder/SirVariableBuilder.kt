@@ -55,3 +55,34 @@ inline fun buildVariable(init: SirVariableBuilder.() -> Unit): SirVariable {
     }
     return SirVariableBuilder().apply(init).build()
 }
+
+@OptIn(SirImplementationDetail::class)
+fun buildVariable(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    isOverride: Boolean = false,
+    isInstance: Boolean = true,
+    modality: SirModality = SirModality.UNSPECIFIED,
+    bridges: MutableList<SirBridge> = mutableListOf(),
+    name: String,
+    type: SirType,
+    getter: SirGetter,
+    setter: SirSetter? = null,
+): SirVariable {
+    return SirVariableImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        isOverride,
+        isInstance,
+        modality,
+        bridges,
+        name,
+        type,
+        getter,
+        setter,
+    )
+}

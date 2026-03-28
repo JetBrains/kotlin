@@ -43,3 +43,22 @@ inline fun buildTypealias(init: SirTypealiasBuilder.() -> Unit): SirTypealias {
     }
     return SirTypealiasBuilder().apply(init).build()
 }
+
+@OptIn(SirImplementationDetail::class)
+fun buildTypealias(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    name: String,
+    type: SirType,
+): SirTypealias {
+    return SirTypealiasImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        name,
+        type,
+    )
+}

@@ -43,3 +43,22 @@ inline fun buildEnumCase(init: SirEnumCaseBuilder.() -> Unit): SirEnumCase {
     }
     return SirEnumCaseBuilder().apply(init).build()
 }
+
+@OptIn(SirImplementationDetail::class)
+fun buildEnumCase(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    bridges: MutableList<SirBridge> = mutableListOf(),
+    name: String,
+): SirEnumCase {
+    return SirEnumCaseImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        bridges,
+        name,
+    )
+}

@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -75,4 +76,39 @@ inline fun buildAnonymousObject(init: FirAnonymousObjectBuilder.() -> Unit): Fir
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirAnonymousObjectBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildAnonymousObject(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    typeParameters: MutableList<FirTypeParameterRef> = mutableListOf(),
+    status: FirDeclarationStatus,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    scopeProvider: FirScopeProvider,
+    classKind: ClassKind,
+    superTypeRefs: MutableList<FirTypeRef> = mutableListOf(),
+    declarations: MutableList<FirDeclaration> = mutableListOf(),
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    symbol: FirAnonymousObjectSymbol,
+): FirAnonymousObject {
+    return FirAnonymousObjectImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        typeParameters,
+        status,
+        deprecationsProvider,
+        scopeProvider,
+        classKind,
+        superTypeRefs,
+        declarations,
+        annotations.toMutableOrEmpty(),
+        symbol,
+    )
 }

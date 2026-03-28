@@ -113,6 +113,61 @@ inline fun buildAnonymousFunction(init: FirAnonymousFunctionBuilder.() -> Unit):
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildAnonymousFunction(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS,
+    returnTypeRef: FirTypeRef,
+    receiverParameter: FirReceiverParameter? = null,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    contextParameters: MutableList<FirValueParameter> = mutableListOf(),
+    controlFlowGraphReference: FirControlFlowGraphReference? = null,
+    valueParameters: MutableList<FirValueParameter> = mutableListOf(),
+    body: FirBlock? = null,
+    contractDescription: FirContractDescription? = null,
+    symbol: FirAnonymousFunctionSymbol,
+    label: FirLabel? = null,
+    invocationKind: EventOccurrencesRange? = null,
+    inlineStatus: InlineStatus = InlineStatus.Unknown,
+    isLambda: Boolean,
+    hasExplicitParameterList: Boolean,
+    typeParameters: MutableList<FirTypeParameter> = mutableListOf(),
+    typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource,
+): FirAnonymousFunction {
+    return FirAnonymousFunctionImpl(
+        source,
+        resolvePhase,
+        annotations.toMutableOrEmpty(),
+        moduleData,
+        origin,
+        attributes,
+        status,
+        returnTypeRef,
+        receiverParameter,
+        deprecationsProvider,
+        dispatchReceiverType,
+        contextParameters.toMutableOrEmpty(),
+        controlFlowGraphReference,
+        valueParameters,
+        body,
+        contractDescription,
+        symbol,
+        label,
+        invocationKind,
+        inlineStatus,
+        isLambda,
+        hasExplicitParameterList,
+        typeParameters,
+        typeRef,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildAnonymousFunctionCopy(
     original: FirAnonymousFunction,
     source: KtSourceElement? = original.source,

@@ -46,3 +46,18 @@ inline fun buildPropertyFromParameterResolvedNamedReference(init: FirPropertyFro
     }
     return FirPropertyFromParameterResolvedNamedReferenceBuilder().apply(init).build()
 }
+
+@OptIn(FirImplementationDetail::class)
+fun buildPropertyFromParameterResolvedNamedReference(
+    source: KtSourceElement? = null,
+    name: Name,
+    resolvedSymbol: FirBasedSymbol<*>,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+): FirResolvedNamedReference {
+    return FirPropertyFromParameterResolvedNamedReference(
+        source,
+        name,
+        resolvedSymbol,
+        resolvedSymbolOrigin,
+    )
+}

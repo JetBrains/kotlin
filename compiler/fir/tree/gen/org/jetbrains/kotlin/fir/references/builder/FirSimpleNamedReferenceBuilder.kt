@@ -40,3 +40,14 @@ inline fun buildSimpleNamedReference(init: FirSimpleNamedReferenceBuilder.() -> 
     }
     return FirSimpleNamedReferenceBuilder().apply(init).build()
 }
+
+@OptIn(FirImplementationDetail::class)
+fun buildSimpleNamedReference(
+    source: KtSourceElement? = null,
+    name: Name,
+): FirNamedReference {
+    return FirSimpleNamedReference(
+        source,
+        name,
+    )
+}

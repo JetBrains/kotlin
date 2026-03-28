@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -48,4 +49,21 @@ inline fun buildDoWhileLoop(init: FirDoWhileLoopBuilder.() -> Unit): FirDoWhileL
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirDoWhileLoopBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildDoWhileLoop(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    block: FirBlock,
+    condition: FirExpression,
+    label: FirLabel? = null,
+): FirDoWhileLoop {
+    return FirDoWhileLoopImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        block,
+        condition,
+        label,
+    )
 }

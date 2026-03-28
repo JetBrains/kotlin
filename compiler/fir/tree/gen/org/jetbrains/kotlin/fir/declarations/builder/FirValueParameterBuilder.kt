@@ -75,6 +75,43 @@ inline fun buildValueParameter(init: FirValueParameterBuilder.() -> Unit): FirVa
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildValueParameter(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    returnTypeRef: FirTypeRef,
+    name: Name,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    symbol: FirValueParameterSymbol,
+    defaultValue: FirExpression? = null,
+    containingDeclarationSymbol: FirBasedSymbol<*>,
+    isCrossinline: Boolean = false,
+    isNoinline: Boolean = false,
+    isVararg: Boolean = false,
+    valueParameterKind: FirValueParameterKind = FirValueParameterKind.Regular,
+): FirValueParameter {
+    return FirValueParameterImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        returnTypeRef,
+        name,
+        annotations.toMutableOrEmpty(),
+        symbol,
+        defaultValue,
+        containingDeclarationSymbol,
+        isCrossinline,
+        isNoinline,
+        isVararg,
+        valueParameterKind,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildValueParameterCopy(
     original: FirValueParameter,
     source: KtSourceElement? = original.source,

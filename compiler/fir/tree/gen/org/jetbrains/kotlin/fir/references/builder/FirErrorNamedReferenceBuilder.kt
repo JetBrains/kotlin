@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -40,4 +41,17 @@ inline fun buildErrorNamedReference(init: FirErrorNamedReferenceBuilder.() -> Un
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorNamedReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildErrorNamedReference(
+    source: KtSourceElement? = null,
+    name: Name,
+    diagnostic: ConeDiagnostic,
+): FirErrorNamedReference {
+    return FirErrorNamedReferenceImpl(
+        source,
+        name,
+        diagnostic,
+    )
 }

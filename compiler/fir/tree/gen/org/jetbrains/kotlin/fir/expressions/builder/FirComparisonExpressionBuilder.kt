@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -53,4 +54,19 @@ inline fun buildComparisonExpression(init: FirComparisonExpressionBuilder.() -> 
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirComparisonExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildComparisonExpression(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    operation: FirOperation,
+    compareToCall: FirFunctionCall,
+): FirComparisonExpression {
+    return FirComparisonExpressionImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        operation,
+        compareToCall,
+    )
 }

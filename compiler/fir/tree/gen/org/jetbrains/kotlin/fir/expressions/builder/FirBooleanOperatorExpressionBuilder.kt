@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -50,4 +51,23 @@ inline fun buildBooleanOperatorExpression(init: FirBooleanOperatorExpressionBuil
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirBooleanOperatorExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildBooleanOperatorExpression(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    leftOperand: FirExpression,
+    rightOperand: FirExpression,
+    kind: LogicOperationKind,
+): FirBooleanOperatorExpression {
+    return FirBooleanOperatorExpressionImpl(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        leftOperand,
+        rightOperand,
+        kind,
+    )
 }

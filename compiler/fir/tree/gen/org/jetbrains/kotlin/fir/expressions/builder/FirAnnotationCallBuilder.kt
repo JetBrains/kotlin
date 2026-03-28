@@ -74,6 +74,31 @@ inline fun buildAnnotationCall(init: FirAnnotationCallBuilder.() -> Unit): FirAn
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildAnnotationCall(
+    source: KtSourceElement? = null,
+    useSiteTarget: AnnotationUseSiteTarget? = null,
+    annotationTypeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource,
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    argumentList: FirArgumentList = FirEmptyArgumentList,
+    calleeReference: FirReference,
+    argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping,
+    annotationResolvePhase: FirAnnotationResolvePhase = FirAnnotationResolvePhase.Unresolved,
+    containingDeclarationSymbol: FirBasedSymbol<*>,
+): FirAnnotationCall {
+    return FirAnnotationCallImpl(
+        source,
+        useSiteTarget,
+        annotationTypeRef,
+        typeArguments.toMutableOrEmpty(),
+        argumentList,
+        calleeReference,
+        argumentMapping,
+        annotationResolvePhase,
+        containingDeclarationSymbol,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildAnnotationCallCopy(
     original: FirAnnotationCall,
     source: KtSourceElement? = original.source,

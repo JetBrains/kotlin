@@ -14,6 +14,7 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -66,4 +67,37 @@ inline fun buildFile(init: FirFileBuilder.() -> Unit): FirFile {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirFileBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildFile(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    packageDirective: FirPackageDirective,
+    imports: MutableList<FirImport> = mutableListOf(),
+    declarations: MutableList<FirDeclaration> = mutableListOf(),
+    name: String,
+    sourceFile: KtSourceFile? = null,
+    sourceFileLinesMapping: KtSourceFileLinesMapping? = null,
+    symbol: FirFileSymbol = FirFileSymbol(),
+): FirFile {
+    return FirFileImpl(
+        source,
+        resolvePhase,
+        annotations.toMutableOrEmpty(),
+        moduleData,
+        origin,
+        attributes,
+        packageDirective,
+        imports,
+        declarations,
+        name,
+        sourceFile,
+        sourceFileLinesMapping,
+        symbol,
+    )
 }

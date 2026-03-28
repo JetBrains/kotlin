@@ -122,6 +122,43 @@ inline fun buildField(init: FirFieldBuilder.() -> Unit): FirField {
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildField(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    status: FirDeclarationStatus,
+    isLocal: Boolean,
+    returnTypeRef: FirTypeRef,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    name: Name,
+    initializer: FirExpression? = null,
+    isVar: Boolean,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    symbol: FirFieldSymbol,
+): FirField {
+    return FirFieldImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        status,
+        isLocal,
+        returnTypeRef,
+        deprecationsProvider,
+        dispatchReceiverType,
+        name,
+        initializer,
+        isVar,
+        annotations.toMutableOrEmpty(),
+        symbol,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildFieldCopy(
     original: FirField,
     source: KtSourceElement? = original.source,

@@ -11,10 +11,7 @@
 package org.jetbrains.kotlin.sir.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.sir.SirBuilderDsl
-import org.jetbrains.kotlin.sir.SirDeclaration
-import org.jetbrains.kotlin.sir.SirImport
-import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.impl.SirModuleImpl
 
 @SirBuilderDsl
@@ -38,4 +35,17 @@ inline fun buildModule(init: SirModuleBuilder.() -> Unit): SirModule {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return SirModuleBuilder().apply(init).build()
+}
+
+@OptIn(SirImplementationDetail::class)
+fun buildModule(
+    declarations: MutableList<SirDeclaration> = mutableListOf(),
+    name: String,
+    imports: MutableList<SirImport> = mutableListOf(),
+): SirModule {
+    return SirModuleImpl(
+        declarations,
+        name,
+        imports,
+    )
 }

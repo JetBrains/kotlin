@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.impl.FirFunctionTypeParameterImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -39,4 +40,17 @@ inline fun buildFunctionTypeParameter(init: FirFunctionTypeParameterBuilder.() -
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirFunctionTypeParameterBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildFunctionTypeParameter(
+    source: KtSourceElement,
+    name: Name? = null,
+    returnTypeRef: FirTypeRef,
+): FirFunctionTypeParameter {
+    return FirFunctionTypeParameterImpl(
+        source,
+        name,
+        returnTypeRef,
+    )
 }

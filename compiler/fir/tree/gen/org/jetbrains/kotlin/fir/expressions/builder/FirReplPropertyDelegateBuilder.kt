@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -45,4 +46,17 @@ inline fun buildReplPropertyDelegate(init: FirReplPropertyDelegateBuilder.() -> 
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirReplPropertyDelegateBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildReplPropertyDelegate(
+    source: KtSourceElement? = null,
+    propertySymbol: FirPropertySymbol,
+    delegate: FirExpression,
+): FirReplPropertyDelegate {
+    return FirReplPropertyDelegateImpl(
+        source,
+        propertySymbol,
+        delegate,
+    )
 }

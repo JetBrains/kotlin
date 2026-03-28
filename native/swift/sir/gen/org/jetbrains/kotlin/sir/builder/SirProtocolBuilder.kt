@@ -49,3 +49,28 @@ inline fun buildProtocol(init: SirProtocolBuilder.() -> Unit): SirProtocol {
     }
     return SirProtocolBuilder().apply(init).build()
 }
+
+@OptIn(SirImplementationDetail::class)
+fun buildProtocol(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    name: String,
+    declarations: MutableList<SirDeclaration> = mutableListOf(),
+    superClass: SirNominalType? = null,
+    protocols: MutableList<SirProtocol> = mutableListOf(),
+    bridges: MutableList<SirBridge> = mutableListOf(),
+): SirProtocol {
+    return SirProtocolImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        name,
+        declarations,
+        superClass,
+        protocols,
+        bridges,
+    )
+}

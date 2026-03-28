@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -54,4 +55,21 @@ inline fun buildStringConcatenationCall(init: FirStringConcatenationCallBuilder.
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirStringConcatenationCallBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildStringConcatenationCall(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    argumentList: FirArgumentList,
+    interpolationPrefix: String,
+    isFoldedStrings: Boolean = false,
+): FirStringConcatenationCall {
+    return FirStringConcatenationCallImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        argumentList,
+        interpolationPrefix,
+        isFoldedStrings,
+    )
 }

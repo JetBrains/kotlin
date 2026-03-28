@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.types.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.types.impl.FirStarProjectionImpl
@@ -29,9 +30,18 @@ class FirStarProjectionBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildStarProjection(init: FirStarProjectionBuilder.() -> Unit = {}): FirStarProjection {
+inline fun buildStarProjection(init: FirStarProjectionBuilder.() -> Unit): FirStarProjection {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirStarProjectionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildStarProjection(
+    source: KtSourceElement? = null,
+): FirStarProjection {
+    return FirStarProjectionImpl(
+        source,
+    )
 }

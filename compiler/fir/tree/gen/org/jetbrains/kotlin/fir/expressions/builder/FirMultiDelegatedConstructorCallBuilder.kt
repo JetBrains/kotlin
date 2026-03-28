@@ -51,9 +51,18 @@ class FirMultiDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder, F
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildMultiDelegatedConstructorCall(init: FirMultiDelegatedConstructorCallBuilder.() -> Unit = {}): FirMultiDelegatedConstructorCall {
+inline fun buildMultiDelegatedConstructorCall(init: FirMultiDelegatedConstructorCallBuilder.() -> Unit): FirMultiDelegatedConstructorCall {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirMultiDelegatedConstructorCallBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildMultiDelegatedConstructorCall(
+    delegatedConstructorCalls: MutableList<FirDelegatedConstructorCall> = mutableListOf(),
+): FirMultiDelegatedConstructorCall {
+    return FirMultiDelegatedConstructorCallImpl(
+        delegatedConstructorCalls,
+    )
 }

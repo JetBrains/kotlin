@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -69,4 +70,35 @@ inline fun buildImplicitInvokeCall(init: FirImplicitInvokeCallBuilder.() -> Unit
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirImplicitInvokeCallBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildImplicitInvokeCall(
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    contextArguments: MutableList<FirExpression> = mutableListOf(),
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    explicitReceiver: FirExpression? = null,
+    dispatchReceiver: FirExpression? = null,
+    extensionReceiver: FirExpression? = null,
+    source: KtSourceElement? = null,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf(),
+    argumentList: FirArgumentList = FirEmptyArgumentList,
+    calleeReference: FirNamedReference,
+    isCallWithExplicitReceiver: Boolean = false,
+): FirImplicitInvokeCall {
+    return FirImplicitInvokeCallImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        contextArguments.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        explicitReceiver,
+        dispatchReceiver,
+        extensionReceiver,
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        argumentList,
+        calleeReference,
+        isCallWithExplicitReceiver,
+    )
 }

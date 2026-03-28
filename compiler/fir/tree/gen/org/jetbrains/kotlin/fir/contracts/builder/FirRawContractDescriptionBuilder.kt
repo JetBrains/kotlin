@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.contracts.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirRawContractDescriptionImpl
@@ -32,9 +33,20 @@ class FirRawContractDescriptionBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildRawContractDescription(init: FirRawContractDescriptionBuilder.() -> Unit = {}): FirRawContractDescription {
+inline fun buildRawContractDescription(init: FirRawContractDescriptionBuilder.() -> Unit): FirRawContractDescription {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirRawContractDescriptionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildRawContractDescription(
+    source: KtSourceElement? = null,
+    rawEffects: MutableList<FirExpression> = mutableListOf(),
+): FirRawContractDescription {
+    return FirRawContractDescriptionImpl(
+        source,
+        rawEffects,
+    )
 }

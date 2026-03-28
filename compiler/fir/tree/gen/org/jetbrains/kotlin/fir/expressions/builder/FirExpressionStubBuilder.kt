@@ -39,9 +39,22 @@ class FirExpressionStubBuilder : FirAnnotationContainerBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildExpressionStub(init: FirExpressionStubBuilder.() -> Unit = {}): FirExpression {
+inline fun buildExpressionStub(init: FirExpressionStubBuilder.() -> Unit): FirExpression {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirExpressionStubBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildExpressionStub(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+): FirExpression {
+    return FirExpressionStub(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+    )
 }

@@ -140,3 +140,38 @@ inline fun buildBackingField(init: FirBackingFieldBuilder.() -> Unit): FirBackin
     }
     return FirBackingFieldBuilder().apply(init).build()
 }
+
+@OptIn(FirImplementationDetail::class)
+fun buildBackingField(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    returnTypeRef: FirTypeRef,
+    name: Name,
+    isVar: Boolean,
+    isVal: Boolean,
+    symbol: FirBackingFieldSymbol,
+    propertySymbol: FirPropertySymbol,
+    initializer: FirExpression? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    status: FirDeclarationStatus,
+): FirBackingField {
+    return FirBackingFieldImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        returnTypeRef,
+        name,
+        isVar,
+        isVal,
+        symbol,
+        propertySymbol,
+        initializer,
+        annotations.toMutableOrEmpty(),
+        status,
+    )
+}

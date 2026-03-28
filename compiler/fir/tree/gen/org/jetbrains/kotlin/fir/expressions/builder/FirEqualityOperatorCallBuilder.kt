@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -57,4 +58,21 @@ inline fun buildEqualityOperatorCall(init: FirEqualityOperatorCallBuilder.() -> 
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirEqualityOperatorCallBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildEqualityOperatorCall(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    argumentList: FirArgumentList,
+    calleeReference: FirReference = FirStubReference,
+    operation: FirOperation,
+): FirEqualityOperatorCall {
+    return FirEqualityOperatorCallImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        argumentList,
+        calleeReference,
+        operation,
+    )
 }

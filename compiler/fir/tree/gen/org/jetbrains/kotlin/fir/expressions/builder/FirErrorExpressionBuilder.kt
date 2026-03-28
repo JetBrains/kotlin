@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -56,4 +57,21 @@ inline fun buildErrorExpression(init: FirErrorExpressionBuilder.() -> Unit): Fir
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildErrorExpression(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    diagnostic: ConeDiagnostic,
+    expression: FirExpression? = null,
+    nonExpressionElement: FirElement? = null,
+): FirErrorExpression {
+    return FirErrorExpressionImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        diagnostic,
+        expression,
+        nonExpressionElement,
+    )
 }

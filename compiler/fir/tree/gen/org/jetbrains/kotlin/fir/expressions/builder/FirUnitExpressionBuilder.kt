@@ -36,9 +36,20 @@ class FirUnitExpressionBuilder : FirAnnotationContainerBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildUnitExpression(init: FirUnitExpressionBuilder.() -> Unit = {}): FirExpression {
+inline fun buildUnitExpression(init: FirUnitExpressionBuilder.() -> Unit): FirExpression {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirUnitExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildUnitExpression(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+): FirExpression {
+    return FirUnitExpression(
+        source,
+        annotations.toMutableOrEmpty(),
+    )
 }

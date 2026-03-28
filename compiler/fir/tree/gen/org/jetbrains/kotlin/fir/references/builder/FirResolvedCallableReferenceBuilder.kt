@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
@@ -50,4 +51,23 @@ inline fun buildResolvedCallableReference(init: FirResolvedCallableReferenceBuil
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedCallableReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildResolvedCallableReference(
+    source: KtSourceElement? = null,
+    name: Name,
+    resolvedSymbol: FirBasedSymbol<*>,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+    inferredTypeArguments: MutableList<ConeKotlinType> = mutableListOf(),
+    mappedArguments: CallableReferenceMappedArguments<FirExpression>,
+): FirResolvedCallableReference {
+    return FirResolvedCallableReferenceImpl(
+        source,
+        name,
+        resolvedSymbol,
+        resolvedSymbolOrigin,
+        inferredTypeArguments,
+        mappedArguments,
+    )
 }

@@ -59,6 +59,39 @@ inline fun buildInit(init: SirInitBuilder.() -> Unit): SirInit {
 }
 
 @OptIn(SirImplementationDetail::class)
+fun buildInit(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    bridges: MutableList<SirBridge> = mutableListOf(),
+    body: SirFunctionBody? = null,
+    errorType: SirType = SirType.never,
+    isAsync: Boolean = false,
+    isFailable: Boolean,
+    parameters: MutableList<SirParameter> = mutableListOf(),
+    isConvenience: Boolean = false,
+    isRequired: Boolean = false,
+    isOverride: Boolean = false,
+): SirInit {
+    return SirInitImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        bridges,
+        body,
+        errorType,
+        isAsync,
+        isFailable,
+        parameters,
+        isConvenience,
+        isRequired,
+        isOverride,
+    )
+}
+
+@OptIn(SirImplementationDetail::class)
 fun buildInitCopy(
     original: SirInit,
     origin: SirOrigin = original.origin,

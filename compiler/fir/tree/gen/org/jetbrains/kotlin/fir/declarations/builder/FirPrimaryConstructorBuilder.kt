@@ -94,3 +94,50 @@ inline fun buildPrimaryConstructor(init: FirPrimaryConstructorBuilder.() -> Unit
     }
     return FirPrimaryConstructorBuilder().apply(init).build()
 }
+
+@OptIn(FirImplementationDetail::class)
+fun buildPrimaryConstructor(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    typeParameters: MutableList<FirTypeParameterRef> = mutableListOf(),
+    status: FirDeclarationStatus,
+    isLocal: Boolean,
+    returnTypeRef: FirTypeRef,
+    receiverParameter: FirReceiverParameter? = null,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    containerSource: DeserializedContainerSource? = null,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    contextParameters: MutableList<FirValueParameter> = mutableListOf(),
+    valueParameters: MutableList<FirValueParameter> = mutableListOf(),
+    contractDescription: FirContractDescription? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    symbol: FirConstructorSymbol,
+    delegatedConstructor: FirDelegatedConstructorCall? = null,
+    body: FirBlock? = null,
+): FirConstructor {
+    return FirPrimaryConstructor(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        typeParameters,
+        status,
+        isLocal,
+        returnTypeRef,
+        receiverParameter,
+        deprecationsProvider,
+        containerSource,
+        dispatchReceiverType,
+        contextParameters.toMutableOrEmpty(),
+        valueParameters,
+        contractDescription,
+        annotations.toMutableOrEmpty(),
+        symbol,
+        delegatedConstructor,
+        body,
+    )
+}

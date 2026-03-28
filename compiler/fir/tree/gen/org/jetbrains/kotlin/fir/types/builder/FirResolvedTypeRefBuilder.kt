@@ -53,6 +53,23 @@ inline fun buildResolvedTypeRef(init: FirResolvedTypeRefBuilder.() -> Unit): Fir
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildResolvedTypeRef(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    coneType: ConeKotlinType,
+    delegatedTypeRef: FirTypeRef? = null,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+): FirResolvedTypeRef {
+    return FirResolvedTypeRefImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        coneType,
+        delegatedTypeRef,
+        resolvedSymbolOrigin,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildResolvedTypeRefCopy(
     original: FirResolvedTypeRef,
     source: KtSourceElement? = original.source,

@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -71,4 +72,29 @@ inline fun buildErrorAnnotationCall(init: FirErrorAnnotationCallBuilder.() -> Un
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorAnnotationCallBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildErrorAnnotationCall(
+    source: KtSourceElement? = null,
+    useSiteTarget: AnnotationUseSiteTarget? = null,
+    annotationTypeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource,
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    argumentList: FirArgumentList = FirEmptyArgumentList,
+    calleeReference: FirReference,
+    containingDeclarationSymbol: FirBasedSymbol<*>,
+    diagnostic: ConeDiagnostic,
+    argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping,
+): FirErrorAnnotationCall {
+    return FirErrorAnnotationCallImpl(
+        source,
+        useSiteTarget,
+        annotationTypeRef,
+        typeArguments.toMutableOrEmpty(),
+        argumentList,
+        calleeReference,
+        containingDeclarationSymbol,
+        diagnostic,
+        argumentMapping,
+    )
 }

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -59,4 +60,31 @@ inline fun buildDefaultSetterValueParameter(init: FirDefaultSetterValueParameter
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirDefaultSetterValueParameterBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildDefaultSetterValueParameter(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    returnTypeRef: FirTypeRef,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    symbol: FirValueParameterSymbol,
+    containingDeclarationSymbol: FirBasedSymbol<*>,
+): FirValueParameter {
+    return FirDefaultSetterValueParameter(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        returnTypeRef,
+        deprecationsProvider,
+        annotations.toMutableOrEmpty(),
+        symbol,
+        containingDeclarationSymbol,
+    )
 }

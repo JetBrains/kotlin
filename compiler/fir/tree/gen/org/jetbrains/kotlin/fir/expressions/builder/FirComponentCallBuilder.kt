@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -59,4 +60,33 @@ inline fun buildComponentCall(init: FirComponentCallBuilder.() -> Unit): FirComp
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirComponentCallBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildComponentCall(
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    contextArguments: MutableList<FirExpression> = mutableListOf(),
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    dispatchReceiver: FirExpression? = null,
+    extensionReceiver: FirExpression? = null,
+    source: KtSourceElement? = null,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf(),
+    argumentList: FirArgumentList = FirEmptyArgumentList,
+    explicitReceiver: FirExpression,
+    componentIndex: Int,
+): FirComponentCall {
+    return FirComponentCallImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        contextArguments.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        dispatchReceiver,
+        extensionReceiver,
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        argumentList,
+        explicitReceiver,
+        componentIndex,
+    )
 }

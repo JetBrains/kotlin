@@ -97,6 +97,45 @@ inline fun buildPropertyAccessor(init: FirPropertyAccessorBuilder.() -> Unit): F
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildPropertyAccessor(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    status: FirDeclarationStatus,
+    returnTypeRef: FirTypeRef,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    valueParameters: MutableList<FirValueParameter> = mutableListOf(),
+    body: FirBlock? = null,
+    contractDescription: FirContractDescription? = null,
+    symbol: FirPropertyAccessorSymbol,
+    propertySymbol: FirPropertySymbol,
+    isGetter: Boolean,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+): FirPropertyAccessor {
+    return FirPropertyAccessorImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        status,
+        returnTypeRef,
+        deprecationsProvider,
+        dispatchReceiverType,
+        valueParameters,
+        body,
+        contractDescription,
+        symbol,
+        propertySymbol,
+        isGetter,
+        annotations.toMutableOrEmpty(),
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildPropertyAccessorCopy(
     original: FirPropertyAccessor,
     source: KtSourceElement? = original.source,

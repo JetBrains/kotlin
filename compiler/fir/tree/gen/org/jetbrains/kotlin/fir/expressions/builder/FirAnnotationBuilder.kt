@@ -63,6 +63,23 @@ inline fun buildAnnotation(init: FirAnnotationBuilder.() -> Unit): FirAnnotation
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildAnnotation(
+    source: KtSourceElement? = null,
+    useSiteTarget: AnnotationUseSiteTarget? = null,
+    annotationTypeRef: FirTypeRef,
+    argumentMapping: FirAnnotationArgumentMapping,
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+): FirAnnotation {
+    return FirAnnotationImpl(
+        source,
+        useSiteTarget,
+        annotationTypeRef,
+        argumentMapping,
+        typeArguments.toMutableOrEmpty(),
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildAnnotationCopy(
     original: FirAnnotation,
     source: KtSourceElement? = original.source,

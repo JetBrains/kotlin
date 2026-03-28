@@ -33,11 +33,22 @@ class FirArgumentListBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildArgumentList(init: FirArgumentListBuilder.() -> Unit = {}): FirArgumentList {
+inline fun buildArgumentList(init: FirArgumentListBuilder.() -> Unit): FirArgumentList {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirArgumentListBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildArgumentList(
+    source: KtSourceElement? = null,
+    arguments: MutableList<FirExpression> = mutableListOf(),
+): FirArgumentList {
+    return FirArgumentListImpl(
+        source,
+        arguments,
+    )
 }
 
 @OptIn(FirImplementationDetail::class)

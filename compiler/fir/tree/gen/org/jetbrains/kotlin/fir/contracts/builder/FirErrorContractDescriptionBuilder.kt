@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.contracts.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirErrorContractDescriptionImpl
@@ -32,9 +33,20 @@ class FirErrorContractDescriptionBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildErrorContractDescription(init: FirErrorContractDescriptionBuilder.() -> Unit = {}): FirErrorContractDescription {
+inline fun buildErrorContractDescription(init: FirErrorContractDescriptionBuilder.() -> Unit): FirErrorContractDescription {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorContractDescriptionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildErrorContractDescription(
+    source: KtSourceElement? = null,
+    diagnostic: ConeDiagnostic? = null,
+): FirErrorContractDescription {
+    return FirErrorContractDescriptionImpl(
+        source,
+        diagnostic,
+    )
 }

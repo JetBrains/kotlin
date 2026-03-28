@@ -53,3 +53,32 @@ inline fun buildSubscript(init: SirSubscriptBuilder.() -> Unit): SirSubscript {
     }
     return SirSubscriptBuilder().apply(init).build()
 }
+
+@OptIn(SirImplementationDetail::class)
+fun buildSubscript(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    isOverride: Boolean = false,
+    isInstance: Boolean = true,
+    modality: SirModality = SirModality.UNSPECIFIED,
+    parameters: MutableList<SirParameter> = mutableListOf(),
+    returnType: SirType,
+    getter: SirGetter,
+    setter: SirSetter? = null,
+): SirSubscript {
+    return SirSubscriptImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        isOverride,
+        isInstance,
+        modality,
+        parameters,
+        returnType,
+        getter,
+        setter,
+    )
+}

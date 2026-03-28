@@ -51,3 +51,30 @@ inline fun buildClass(init: SirClassBuilder.() -> Unit): SirClass {
     }
     return SirClassBuilder().apply(init).build()
 }
+
+@OptIn(SirImplementationDetail::class)
+fun buildClass(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    name: String,
+    declarations: MutableList<SirDeclaration> = mutableListOf(),
+    superClass: SirNominalType? = null,
+    protocols: MutableList<SirProtocol> = mutableListOf(),
+    bridges: MutableList<SirBridge> = mutableListOf(),
+    modality: SirModality = SirModality.UNSPECIFIED,
+): SirClass {
+    return SirClassImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        name,
+        declarations,
+        superClass,
+        protocols,
+        bridges,
+        modality,
+    )
+}

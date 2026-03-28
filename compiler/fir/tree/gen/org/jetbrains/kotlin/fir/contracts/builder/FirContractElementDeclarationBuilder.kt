@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.contracts.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractElementDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
@@ -37,4 +38,15 @@ inline fun buildContractElementDeclaration(init: FirContractElementDeclarationBu
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirContractElementDeclarationBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildContractElementDeclaration(
+    source: KtSourceElement? = null,
+    effect: ConeContractDescriptionElement,
+): FirContractElementDeclaration {
+    return FirContractElementDeclarationImpl(
+        source,
+        effect,
+    )
 }

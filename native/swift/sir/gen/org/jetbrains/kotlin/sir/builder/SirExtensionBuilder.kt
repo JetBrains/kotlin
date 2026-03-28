@@ -47,3 +47,26 @@ inline fun buildExtension(init: SirExtensionBuilder.() -> Unit): SirExtension {
     }
     return SirExtensionBuilder().apply(init).build()
 }
+
+@OptIn(SirImplementationDetail::class)
+fun buildExtension(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    declarations: MutableList<SirDeclaration> = mutableListOf(),
+    constraints: MutableList<SirTypeConstraint> = mutableListOf(),
+    protocols: MutableList<SirProtocol> = mutableListOf(),
+    extendedType: SirType,
+): SirExtension {
+    return SirExtensionImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        declarations,
+        constraints,
+        protocols,
+        extendedType,
+    )
+}

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.contracts.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
@@ -37,4 +38,15 @@ inline fun buildEffectDeclaration(init: FirEffectDeclarationBuilder.() -> Unit):
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirEffectDeclarationBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildEffectDeclaration(
+    source: KtSourceElement? = null,
+    effect: ConeEffectDeclaration,
+): FirEffectDeclaration {
+    return FirEffectDeclarationImpl(
+        source,
+        effect,
+    )
 }

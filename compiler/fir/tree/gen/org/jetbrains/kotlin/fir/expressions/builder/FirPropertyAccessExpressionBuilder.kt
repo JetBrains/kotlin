@@ -68,6 +68,35 @@ inline fun buildPropertyAccessExpression(init: FirPropertyAccessExpressionBuilde
     return FirPropertyAccessExpressionBuilder().apply(init).build()
 }
 
+@OptIn(FirImplementationDetail::class)
+fun buildPropertyAccessExpression(
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    contextArguments: MutableList<FirExpression> = mutableListOf(),
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    explicitReceiver: FirExpression? = null,
+    dispatchReceiver: FirExpression? = null,
+    extensionReceiver: FirExpression? = null,
+    source: KtSourceElement? = null,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf(),
+    contextSensitiveAlternative: FirPropertyAccessExpression? = null,
+    calleeReference: FirNamedReference,
+): FirPropertyAccessExpression {
+    return FirPropertyAccessExpressionImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        contextArguments.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        explicitReceiver,
+        dispatchReceiver,
+        extensionReceiver,
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        contextSensitiveAlternative,
+        calleeReference,
+    )
+}
+
 @OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class, FirIdeOnly::class)
 fun buildPropertyAccessExpressionCopy(
     original: FirPropertyAccessExpression,

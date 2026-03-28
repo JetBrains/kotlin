@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -51,4 +52,17 @@ inline fun buildContinueExpression(init: FirContinueExpressionBuilder.() -> Unit
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirContinueExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildContinueExpression(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    target: FirTarget<FirLoop>,
+): FirContinueExpression {
+    return FirContinueExpressionImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        target,
+    )
 }

@@ -82,6 +82,27 @@ inline fun buildThisReceiverExpression(init: FirThisReceiverExpressionBuilder.()
     return FirThisReceiverExpressionBuilder().apply(init).build()
 }
 
+@OptIn(FirImplementationDetail::class)
+fun buildThisReceiverExpression(
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    source: KtSourceElement? = null,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf(),
+    calleeReference: FirThisReference,
+    isImplicit: Boolean = false,
+): FirThisReceiverExpression {
+    return FirThisReceiverExpressionImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        calleeReference,
+        isImplicit,
+    )
+}
+
 @OptIn(FirImplementationDetail::class, UnresolvedExpressionTypeAccess::class)
 fun buildThisReceiverExpressionCopy(
     original: FirThisReceiverExpression,

@@ -45,3 +45,24 @@ inline fun buildEnum(init: SirEnumBuilder.() -> Unit): SirEnum {
     }
     return SirEnumBuilder().apply(init).build()
 }
+
+@OptIn(SirImplementationDetail::class)
+fun buildEnum(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    name: String,
+    declarations: MutableList<SirDeclaration> = mutableListOf(),
+    protocols: MutableList<SirProtocol> = mutableListOf(),
+): SirEnum {
+    return SirEnumImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        name,
+        declarations,
+        protocols,
+    )
+}

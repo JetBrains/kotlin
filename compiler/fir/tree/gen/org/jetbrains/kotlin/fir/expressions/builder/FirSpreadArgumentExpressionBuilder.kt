@@ -58,6 +58,23 @@ inline fun buildSpreadArgumentExpression(init: FirSpreadArgumentExpressionBuilde
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildSpreadArgumentExpression(
+    source: KtSourceElement? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    expression: FirExpression,
+    isNamed: Boolean = false,
+    isFakeSpread: Boolean = false,
+): FirSpreadArgumentExpression {
+    return FirSpreadArgumentExpressionImpl(
+        source,
+        annotations.toMutableOrEmpty(),
+        expression,
+        isNamed,
+        isFakeSpread,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildSpreadArgumentExpressionCopy(
     original: FirSpreadArgumentExpression,
     source: KtSourceElement? = original.source,

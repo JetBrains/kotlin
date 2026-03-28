@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirExpressionRef
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -48,4 +49,23 @@ inline fun buildSafeCallExpression(init: FirSafeCallExpressionBuilder.() -> Unit
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirSafeCallExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildSafeCallExpression(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    receiver: FirExpression,
+    checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>,
+    selector: FirStatement,
+): FirSafeCallExpression {
+    return FirSafeCallExpressionImpl(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        receiver,
+        checkedSubjectRef,
+        selector,
+    )
 }

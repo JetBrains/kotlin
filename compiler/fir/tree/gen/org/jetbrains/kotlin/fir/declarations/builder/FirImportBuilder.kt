@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
@@ -44,4 +45,21 @@ inline fun buildImport(init: FirImportBuilder.() -> Unit): FirImport {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirImportBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildImport(
+    source: KtSourceElement? = null,
+    importedFqName: FqName? = null,
+    isAllUnder: Boolean,
+    aliasName: Name? = null,
+    aliasSource: KtSourceElement? = null,
+): FirImport {
+    return FirImportImpl(
+        source,
+        importedFqName,
+        isAllUnder,
+        aliasName,
+        aliasSource,
+    )
 }

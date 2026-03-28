@@ -61,6 +61,31 @@ inline fun buildReceiverParameter(init: FirReceiverParameterBuilder.() -> Unit):
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildReceiverParameter(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    symbol: FirReceiverParameterSymbol,
+    typeRef: FirTypeRef,
+    containingDeclarationSymbol: FirBasedSymbol<*>,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+): FirReceiverParameter {
+    return FirReceiverParameterImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        symbol,
+        typeRef,
+        containingDeclarationSymbol,
+        annotations.toMutableOrEmpty(),
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildReceiverParameterCopy(
     original: FirReceiverParameter,
     source: KtSourceElement? = original.source,

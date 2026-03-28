@@ -67,6 +67,47 @@ inline fun buildFunction(init: SirFunctionBuilder.() -> Unit): SirFunction {
 }
 
 @OptIn(SirImplementationDetail::class)
+fun buildFunction(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    bridges: MutableList<SirBridge> = mutableListOf(),
+    body: SirFunctionBody? = null,
+    errorType: SirType = SirType.never,
+    isAsync: Boolean = false,
+    isOverride: Boolean = false,
+    isInstance: Boolean = true,
+    modality: SirModality = SirModality.UNSPECIFIED,
+    name: String,
+    contextParameter: SirParameter? = null,
+    extensionReceiverParameter: SirParameter? = null,
+    parameters: MutableList<SirParameter> = mutableListOf(),
+    returnType: SirType,
+    fixity: SirFixity? = null,
+): SirFunction {
+    return SirFunctionImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        bridges,
+        body,
+        errorType,
+        isAsync,
+        isOverride,
+        isInstance,
+        modality,
+        name,
+        contextParameter,
+        extensionReceiverParameter,
+        parameters,
+        returnType,
+        fixity,
+    )
+}
+
+@OptIn(SirImplementationDetail::class)
 fun buildFunctionCopy(
     original: SirFunction,
     origin: SirOrigin = original.origin,

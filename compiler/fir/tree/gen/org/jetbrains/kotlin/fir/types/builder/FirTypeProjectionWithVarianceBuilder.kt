@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.types.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -40,4 +41,17 @@ inline fun buildTypeProjectionWithVariance(init: FirTypeProjectionWithVarianceBu
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirTypeProjectionWithVarianceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildTypeProjectionWithVariance(
+    source: KtSourceElement? = null,
+    typeRef: FirTypeRef,
+    variance: Variance,
+): FirTypeProjectionWithVariance {
+    return FirTypeProjectionWithVarianceImpl(
+        source,
+        typeRef,
+        variance,
+    )
 }

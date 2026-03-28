@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
@@ -46,4 +47,21 @@ inline fun buildResolvedErrorReference(init: FirResolvedErrorReferenceBuilder.()
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedErrorReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildResolvedErrorReference(
+    source: KtSourceElement? = null,
+    name: Name,
+    resolvedSymbol: FirBasedSymbol<*>,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+    diagnostic: ConeDiagnostic,
+): FirResolvedErrorReference {
+    return FirResolvedErrorReferenceImpl(
+        source,
+        name,
+        resolvedSymbol,
+        resolvedSymbolOrigin,
+        diagnostic,
+    )
 }

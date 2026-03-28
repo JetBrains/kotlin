@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -66,4 +67,37 @@ inline fun buildEnumEntry(init: FirEnumEntryBuilder.() -> Unit): FirEnumEntry {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirEnumEntryBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildEnumEntry(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    status: FirDeclarationStatus,
+    isLocal: Boolean,
+    returnTypeRef: FirTypeRef,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    name: Name,
+    initializer: FirExpression? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    symbol: FirEnumEntrySymbol,
+): FirEnumEntry {
+    return FirEnumEntryImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        status,
+        isLocal,
+        returnTypeRef,
+        deprecationsProvider,
+        name,
+        initializer,
+        annotations.toMutableOrEmpty(),
+        symbol,
+    )
 }

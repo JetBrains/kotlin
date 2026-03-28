@@ -41,11 +41,34 @@ class SirGetterBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildGetter(init: SirGetterBuilder.() -> Unit = {}): SirGetter {
+inline fun buildGetter(init: SirGetterBuilder.() -> Unit): SirGetter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return SirGetterBuilder().apply(init).build()
+}
+
+@OptIn(SirImplementationDetail::class)
+fun buildGetter(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    bridges: MutableList<SirBridge> = mutableListOf(),
+    body: SirFunctionBody? = null,
+    errorType: SirType = SirType.never,
+    isAsync: Boolean = false,
+): SirGetter {
+    return SirGetterImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        bridges,
+        body,
+        errorType,
+        isAsync,
+    )
 }
 
 @OptIn(SirImplementationDetail::class)

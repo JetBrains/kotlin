@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -57,4 +58,27 @@ inline fun buildCodeFragment(init: FirCodeFragmentBuilder.() -> Unit): FirCodeFr
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirCodeFragmentBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildCodeFragment(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    symbol: FirCodeFragmentSymbol,
+    block: FirBlock,
+): FirCodeFragment {
+    return FirCodeFragmentImpl(
+        source,
+        resolvePhase,
+        annotations.toMutableOrEmpty(),
+        moduleData,
+        origin,
+        attributes,
+        symbol,
+        block,
+    )
 }

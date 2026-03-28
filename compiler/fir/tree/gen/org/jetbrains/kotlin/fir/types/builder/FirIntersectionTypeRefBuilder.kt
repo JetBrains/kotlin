@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.types.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -45,4 +46,21 @@ inline fun buildIntersectionTypeRef(init: FirIntersectionTypeRefBuilder.() -> Un
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirIntersectionTypeRefBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildIntersectionTypeRef(
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    source: KtSourceElement,
+    isMarkedNullable: Boolean,
+    leftType: FirTypeRef,
+    rightType: FirTypeRef,
+): FirIntersectionTypeRef {
+    return FirIntersectionTypeRefImpl(
+        annotations.toMutableOrEmpty(),
+        source,
+        isMarkedNullable,
+        leftType,
+        rightType,
+    )
 }

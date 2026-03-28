@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -56,4 +57,29 @@ inline fun buildDanglingModifierList(init: FirDanglingModifierListBuilder.() -> 
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirDanglingModifierListBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildDanglingModifierList(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    diagnostic: ConeDiagnostic,
+    symbol: FirDanglingModifierSymbol,
+    contextParameters: MutableList<FirValueParameter> = mutableListOf(),
+): FirDanglingModifierList {
+    return FirDanglingModifierListImpl(
+        source,
+        resolvePhase,
+        annotations.toMutableOrEmpty(),
+        moduleData,
+        origin,
+        attributes,
+        diagnostic,
+        symbol,
+        contextParameters.toMutableOrEmpty(),
+    )
 }

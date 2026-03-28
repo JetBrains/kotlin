@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.impl.FirDelegateFieldReferenceImpl
@@ -40,4 +41,17 @@ inline fun buildDelegateFieldReference(init: FirDelegateFieldReferenceBuilder.()
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirDelegateFieldReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildDelegateFieldReference(
+    source: KtSourceElement? = null,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+    resolvedSymbol: FirDelegateFieldSymbol,
+): FirDelegateFieldReference {
+    return FirDelegateFieldReferenceImpl(
+        source,
+        resolvedSymbolOrigin,
+        resolvedSymbol,
+    )
 }

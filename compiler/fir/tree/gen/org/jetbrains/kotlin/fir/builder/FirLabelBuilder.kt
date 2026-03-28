@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.impl.FirLabelImpl
 
@@ -35,4 +36,15 @@ inline fun buildLabel(init: FirLabelBuilder.() -> Unit): FirLabel {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirLabelBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildLabel(
+    source: KtSourceElement? = null,
+    name: String,
+): FirLabel {
+    return FirLabelImpl(
+        source,
+        name,
+    )
 }

@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -82,4 +83,45 @@ inline fun buildRegularClass(init: FirRegularClassBuilder.() -> Unit): FirRegula
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirRegularClassBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildRegularClass(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    typeParameters: MutableList<FirTypeParameterRef> = mutableListOf(),
+    status: FirDeclarationStatus,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    scopeProvider: FirScopeProvider,
+    classKind: ClassKind,
+    declarations: MutableList<FirDeclaration> = mutableListOf(),
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    name: Name,
+    symbol: FirRegularClassSymbol,
+    companionObjectSymbol: FirRegularClassSymbol? = null,
+    superTypeRefs: MutableList<FirTypeRef> = mutableListOf(),
+    contextParameters: MutableList<FirValueParameter> = mutableListOf(),
+): FirRegularClass {
+    return FirRegularClassImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        typeParameters,
+        status,
+        deprecationsProvider,
+        scopeProvider,
+        classKind,
+        declarations,
+        annotations.toMutableOrEmpty(),
+        name,
+        symbol,
+        companionObjectSymbol,
+        superTypeRefs,
+        contextParameters.toMutableOrEmpty(),
+    )
 }

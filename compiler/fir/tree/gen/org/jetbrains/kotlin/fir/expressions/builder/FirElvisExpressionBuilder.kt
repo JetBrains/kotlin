@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -51,4 +52,23 @@ inline fun buildElvisExpression(init: FirElvisExpressionBuilder.() -> Unit): Fir
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirElvisExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildElvisExpression(
+    source: KtSourceElement? = null,
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    calleeReference: FirReference = FirStubReference,
+    lhs: FirExpression,
+    rhs: FirExpression,
+): FirElvisExpression {
+    return FirElvisExpressionImpl(
+        source,
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        calleeReference,
+        lhs,
+        rhs,
+    )
 }

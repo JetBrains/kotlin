@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -71,4 +72,25 @@ inline fun buildSuperReceiverExpression(init: FirSuperReceiverExpressionBuilder.
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirSuperReceiverExpressionBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildSuperReceiverExpression(
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    dispatchReceiver: FirExpression? = null,
+    source: KtSourceElement? = null,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf(),
+    calleeReference: FirSuperReference,
+): FirSuperReceiverExpression {
+    return FirSuperReceiverExpressionImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        dispatchReceiver,
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        calleeReference,
+    )
 }

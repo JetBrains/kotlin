@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.references.impl.FirBackingFieldReferenceImpl
@@ -40,4 +41,17 @@ inline fun buildBackingFieldReference(init: FirBackingFieldReferenceBuilder.() -
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirBackingFieldReferenceBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildBackingFieldReference(
+    source: KtSourceElement? = null,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
+    resolvedSymbol: FirBackingFieldSymbol,
+): FirBackingFieldReference {
+    return FirBackingFieldReferenceImpl(
+        source,
+        resolvedSymbolOrigin,
+        resolvedSymbol,
+    )
 }

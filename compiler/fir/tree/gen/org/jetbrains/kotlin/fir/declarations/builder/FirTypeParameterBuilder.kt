@@ -69,6 +69,37 @@ inline fun buildTypeParameter(init: FirTypeParameterBuilder.() -> Unit): FirType
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildTypeParameter(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    name: Name,
+    symbol: FirTypeParameterSymbol,
+    containingDeclarationSymbol: FirBasedSymbol<*>,
+    variance: Variance,
+    isReified: Boolean,
+    bounds: MutableList<FirTypeRef> = mutableListOf(),
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+): FirTypeParameter {
+    return FirTypeParameterImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        name,
+        symbol,
+        containingDeclarationSymbol,
+        variance,
+        isReified,
+        bounds.toMutableOrEmpty(),
+        annotations.toMutableOrEmpty(),
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildTypeParameterCopy(
     original: FirTypeParameter,
     source: KtSourceElement? = original.source,

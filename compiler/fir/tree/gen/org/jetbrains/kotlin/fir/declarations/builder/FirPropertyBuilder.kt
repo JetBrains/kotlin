@@ -97,6 +97,63 @@ inline fun buildProperty(init: FirPropertyBuilder.() -> Unit): FirProperty {
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildProperty(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    status: FirDeclarationStatus,
+    isLocal: Boolean,
+    returnTypeRef: FirTypeRef,
+    receiverParameter: FirReceiverParameter? = null,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    containerSource: DeserializedContainerSource? = null,
+    dispatchReceiverType: ConeSimpleKotlinType? = null,
+    contextParameters: MutableList<FirValueParameter> = mutableListOf(),
+    name: Name,
+    initializer: FirExpression? = null,
+    delegate: FirExpression? = null,
+    isVar: Boolean,
+    getter: FirPropertyAccessor? = null,
+    setter: FirPropertyAccessor? = null,
+    backingField: FirBackingField? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    symbol: FirPropertySymbol,
+    delegateFieldSymbol: FirDelegateFieldSymbol? = null,
+    bodyResolveState: FirPropertyBodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED,
+    typeParameters: MutableList<FirTypeParameter> = mutableListOf(),
+): FirProperty {
+    return FirPropertyImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        status,
+        isLocal,
+        returnTypeRef,
+        receiverParameter,
+        deprecationsProvider,
+        containerSource,
+        dispatchReceiverType,
+        contextParameters.toMutableOrEmpty(),
+        name,
+        initializer,
+        delegate,
+        isVar,
+        getter,
+        setter,
+        backingField,
+        annotations.toMutableOrEmpty(),
+        symbol,
+        delegateFieldSymbol,
+        bodyResolveState,
+        typeParameters,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildPropertyCopy(
     original: FirProperty,
     source: KtSourceElement? = original.source,

@@ -57,6 +57,29 @@ inline fun buildFunctionTypeRef(init: FirFunctionTypeRefBuilder.() -> Unit): Fir
 }
 
 @OptIn(FirImplementationDetail::class)
+fun buildFunctionTypeRef(
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    source: KtSourceElement,
+    isMarkedNullable: Boolean,
+    receiverTypeRef: FirTypeRef? = null,
+    parameters: MutableList<FirFunctionTypeParameter> = mutableListOf(),
+    returnTypeRef: FirTypeRef,
+    isSuspend: Boolean,
+    contextParameterTypeRefs: MutableList<FirTypeRef> = mutableListOf(),
+): FirFunctionTypeRef {
+    return FirFunctionTypeRefImpl(
+        annotations.toMutableOrEmpty(),
+        source,
+        isMarkedNullable,
+        receiverTypeRef,
+        parameters,
+        returnTypeRef,
+        isSuspend,
+        contextParameterTypeRefs,
+    )
+}
+
+@OptIn(FirImplementationDetail::class)
 fun buildFunctionTypeRefCopy(
     original: FirFunctionTypeRef,
     annotations: MutableList<FirAnnotation> = original.annotations.toMutableList(),

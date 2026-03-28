@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
@@ -39,4 +40,17 @@ inline fun buildResolvedImport(init: FirResolvedImportBuilder.() -> Unit): FirRe
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedImportBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildResolvedImport(
+    delegate: FirImport,
+    packageFqName: FqName,
+    relativeParentClassName: FqName? = null,
+): FirResolvedImport {
+    return FirResolvedImportImpl(
+        delegate,
+        packageFqName,
+        relativeParentClassName,
+    )
 }

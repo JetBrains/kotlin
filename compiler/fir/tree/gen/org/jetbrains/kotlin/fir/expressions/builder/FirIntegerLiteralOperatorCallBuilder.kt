@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -62,4 +63,35 @@ inline fun buildIntegerLiteralOperatorCall(init: FirIntegerLiteralOperatorCallBu
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirIntegerLiteralOperatorCallBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildIntegerLiteralOperatorCall(
+    coneTypeOrNull: ConeKotlinType? = null,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+    contextArguments: MutableList<FirExpression> = mutableListOf(),
+    typeArguments: MutableList<FirTypeProjection> = mutableListOf(),
+    explicitReceiver: FirExpression? = null,
+    source: KtSourceElement? = null,
+    nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf(),
+    argumentList: FirArgumentList = FirEmptyArgumentList,
+    calleeReference: FirNamedReference,
+    origin: FirFunctionCallOrigin,
+    dispatchReceiver: FirExpression? = null,
+    extensionReceiver: FirExpression? = null,
+): FirIntegerLiteralOperatorCall {
+    return FirIntegerLiteralOperatorCallImpl(
+        coneTypeOrNull,
+        annotations.toMutableOrEmpty(),
+        contextArguments.toMutableOrEmpty(),
+        typeArguments.toMutableOrEmpty(),
+        explicitReceiver,
+        source,
+        nonFatalDiagnostics.toMutableOrEmpty(),
+        argumentList,
+        calleeReference,
+        origin,
+        dispatchReceiver,
+        extensionReceiver,
+    )
 }

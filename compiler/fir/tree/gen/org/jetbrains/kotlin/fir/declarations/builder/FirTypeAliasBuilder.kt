@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -66,4 +67,37 @@ inline fun buildTypeAlias(init: FirTypeAliasBuilder.() -> Unit): FirTypeAlias {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirTypeAliasBuilder().apply(init).build()
+}
+
+@OptIn(FirImplementationDetail::class)
+fun buildTypeAlias(
+    source: KtSourceElement? = null,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes(),
+    typeParameters: MutableList<FirTypeParameterRef> = mutableListOf(),
+    status: FirDeclarationStatus,
+    deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
+    scopeProvider: FirScopeProvider,
+    name: Name,
+    symbol: FirTypeAliasSymbol,
+    expandedTypeRef: FirTypeRef,
+    annotations: MutableList<FirAnnotation> = mutableListOf(),
+): FirTypeAlias {
+    return FirTypeAliasImpl(
+        source,
+        resolvePhase,
+        moduleData,
+        origin,
+        attributes,
+        typeParameters,
+        status,
+        deprecationsProvider,
+        scopeProvider,
+        name,
+        symbol,
+        expandedTypeRef,
+        annotations.toMutableOrEmpty(),
+    )
 }

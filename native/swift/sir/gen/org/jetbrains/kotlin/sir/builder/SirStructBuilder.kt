@@ -43,3 +43,22 @@ inline fun buildStruct(init: SirStructBuilder.() -> Unit): SirStruct {
     }
     return SirStructBuilder().apply(init).build()
 }
+
+@OptIn(SirImplementationDetail::class)
+fun buildStruct(
+    origin: SirOrigin = SirOrigin.Unknown,
+    visibility: SirVisibility = SirVisibility.PUBLIC,
+    documentation: String? = null,
+    attributes: MutableList<SirAttribute> = mutableListOf(),
+    name: String,
+    declarations: MutableList<SirDeclaration> = mutableListOf(),
+): SirStruct {
+    return SirStructImpl(
+        origin,
+        visibility,
+        documentation,
+        attributes,
+        name,
+        declarations,
+    )
+}
