@@ -15474,6 +15474,7 @@
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
+                                        "affectsCompilationOutcome": true,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {

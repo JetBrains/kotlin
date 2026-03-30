@@ -23,7 +23,7 @@ internal fun invokeReloadSuccessHandler() {
 private class HotReloadStatsBuilder(
         var start: Long = 0,
         var end: Long = 0,
-        var loadedLibraries: List<String> = emptyList(),
+        var loadedObjects: List<String> = emptyList(),
         var reboundSymbols: Int = 0,
         var successful: Boolean = false,
 ) {
@@ -31,7 +31,7 @@ private class HotReloadStatsBuilder(
     @OptIn(NativeRuntimeApi::class)
     fun build(): HotReload.Stats {
         fill()
-        return HotReload.Stats(start, end, loadedLibraries, reboundSymbols, successful)
+        return HotReload.Stats(start, end, loadedObjects, reboundSymbols, successful)
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStartEpoch")
@@ -45,8 +45,8 @@ private class HotReloadStatsBuilder(
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary")
-    private fun setLoadedLibrary(paths: List<String>) {
-        loadedLibraries = paths
+    private fun setLoadedObjects(paths: List<String>) {
+        loadedObjects = paths
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setReboundSymbols")
