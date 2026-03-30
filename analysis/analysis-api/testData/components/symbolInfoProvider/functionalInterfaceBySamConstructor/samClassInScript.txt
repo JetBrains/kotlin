@@ -224,6 +224,6 @@ FUNCTIONAL INTERFACE:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClassInScript.kts)
   getContainingModule: KaScriptModule "Script samClassInScript.kts"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: IntPredicate

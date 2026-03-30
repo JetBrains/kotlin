@@ -28,6 +28,6 @@ KaNamedClassSymbol:
   visibility: PACKAGE_PRIVATE
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: JavaClass

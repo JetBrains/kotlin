@@ -337,6 +337,6 @@ FUNCTIONAL INTERFACE:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: Predicate
