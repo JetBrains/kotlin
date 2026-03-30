@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
@@ -175,12 +174,10 @@ internal class KotlinWrapperPre2_3_20(
                 sourcesChanges: SourcesChanges,
                 dependenciesSnapshotFiles: List<Path>,
             ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-                val options = createSnapshotBasedIcOptions()
                 return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
                     workingDirectory,
                     sourcesChanges,
                     dependenciesSnapshotFiles,
-                    options
                 )
             }
 
@@ -195,51 +192,45 @@ internal class KotlinWrapperPre2_3_20(
                 dependenciesSnapshotFiles: List<Path>,
                 shrunkClasspathSnapshot: Path,
             ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-                val options = createSnapshotBasedIcOptions()
                 return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
                     workingDirectory,
                     sourcesChanges,
                     dependenciesSnapshotFiles,
                     shrunkClasspathSnapshot,
-                    options
                 )
             }
 
             inner class JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
-                workingDirectory: Path,
-                sourcesChanges: SourcesChanges,
-                dependenciesSnapshotFiles: List<Path>,
-                shrunkClasspathSnapshot: Path,
-                options: JvmSnapshotBasedIncrementalCompilationOptions,
-            ) : JvmSnapshotBasedIncrementalCompilationConfiguration(
-                workingDirectory,
-                sourcesChanges,
-                dependenciesSnapshotFiles,
-                shrunkClasspathSnapshot,
-                options
-            ), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
+                override val workingDirectory: Path,
+                override val sourcesChanges: SourcesChanges,
+                override val dependenciesSnapshotFiles: List<Path>,
+                @Deprecated("This property is no longer required and will be removed in a future release.")
+                override val shrunkClasspathSnapshot: Path,
+            ) : JvmSnapshotBasedIncrementalCompilationConfiguration, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
 
                 constructor(
                     workingDirectory: Path,
                     sourcesChanges: SourcesChanges,
                     dependenciesSnapshotFiles: List<Path>,
-                    options: JvmSnapshotBasedIncrementalCompilationOptions,
                 ) : this(
                     workingDirectory,
                     sourcesChanges,
                     dependenciesSnapshotFiles,
                     workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
-                    options
                 )
 
-                override fun toBuilder(): Builder = deepCopy()
+                override fun toBuilder(): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder = deepCopy()
 
-                override fun <V> get(key: Option<V>): V {
-                    return options[key]
+
+                override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V {
+                    TODO("Not yet implemented")
                 }
 
-                override fun <V> set(key: Option<V>, value: V) {
-                    options[key] = value
+                override fun <V> set(
+                    key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>,
+                    value: V,
+                ) {
+                    TODO("Not yet implemented")
                 }
 
                 override fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration = deepCopy()
@@ -247,21 +238,6 @@ internal class KotlinWrapperPre2_3_20(
                 private fun deepCopy(): JvmSnapshotBasedIncrementalCompilationConfigurationWrapper {
                     return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
                         workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot,
-                        createSnapshotBasedIcOptions().also { newOptions ->
-                            JvmSnapshotBasedIncrementalCompilationConfiguration::class.java.declaredFields.filter {
-                                it.type.isAssignableFrom(
-                                    Option::class.java
-                                )
-                            }.forEach { field ->
-                                try {
-                                    @Suppress("UNCHECKED_CAST")
-                                    newOptions[field.get(Companion) as Option<Any?>] =
-                                        this[field.get(Companion) as Option<*>]
-                                } catch (_: IllegalStateException) {
-                                    // this field was not set and has no default
-                                }
-                            }
-                        }
                     )
                 }
             }

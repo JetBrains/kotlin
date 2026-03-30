@@ -56,19 +56,19 @@ public sealed class DisableCacheInKotlinVersion private constructor(
   override fun compareTo(other: DisableCacheInKotlinVersion): Int = compareValuesBy(this, other, { it.major }, { it.minor }, { it.patch })
 
   /**
-   * Represents the Kotlin version constant for 2.3.20.
-   */
-  @Deprecated(message = "Disabling native cache for this Kotlin version is no longer supported. Please update to the latest version constant or remove this DSL entry.", level = DeprecationLevel.ERROR)
-  public object `2_3_20` : DisableCacheInKotlinVersion(2, 3, 20)
-
-  /**
    * Represents the Kotlin version constant for 2.4.0.
    */
-  @Deprecated(message = "Disabling native cache for this Kotlin version is deprecated. Please re-evaluate if this is still needed. If so, update to the latest version constant. If not, remove this DSL entry.")
+  @Deprecated(message = "Disabling native cache for this Kotlin version is no longer supported. Please update to the latest version constant or remove this DSL entry.", level = DeprecationLevel.ERROR)
   public object `2_4_0` : DisableCacheInKotlinVersion(2, 4, 0)
 
   /**
    * Represents the Kotlin version constant for 2.4.253.
    */
+  @Deprecated(message = "Disabling native cache for this Kotlin version is deprecated. Please re-evaluate if this is still needed. If so, update to the latest version constant. If not, remove this DSL entry.")
   public object `2_4_253` : DisableCacheInKotlinVersion(2, 4, 253)
+
+  /**
+   * Represents the Kotlin version constant for 2.4.254.
+   */
+  public object `2_4_254` : DisableCacheInKotlinVersion(2, 4, 254)
 }

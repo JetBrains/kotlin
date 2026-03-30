@@ -6,7 +6,11 @@ plugins {
     id("test-inputs-check")
 }
 
-val btaApiVersion = "2.3.0"
+val btaApiVersion = "2.4.253-SNAPSHOT"
+
+repositories {
+    mavenLocal()
+}
 
 val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
 val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplResolvable") {

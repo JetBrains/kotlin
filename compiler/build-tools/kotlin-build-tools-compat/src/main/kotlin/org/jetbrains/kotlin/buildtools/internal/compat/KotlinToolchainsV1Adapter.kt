@@ -341,19 +341,14 @@ private class JvmCompilationOperationV1Adapter private constructor(
     }
 
     private class JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter(
-        workingDirectory: Path,
-        sourcesChanges: SourcesChanges,
-        dependenciesSnapshotFiles: List<Path>,
-        shrunkClasspathSnapshot: Path,
+        override val workingDirectory: Path,
+        override val sourcesChanges: SourcesChanges,
+        override val dependenciesSnapshotFiles: List<Path>,
+        @Deprecated("This property is no longer required and will be removed in a future release.")
+        override val shrunkClasspathSnapshot: Path,
         @Deprecated("Use `get` and `set` directly instead.")
         override val options: JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter = JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(),
-    ) : JvmSnapshotBasedIncrementalCompilationConfiguration(
-        workingDirectory,
-        sourcesChanges,
-        dependenciesSnapshotFiles,
-        shrunkClasspathSnapshot,
-        options
-    ), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
+    ) : JvmSnapshotBasedIncrementalCompilationConfiguration, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
         DeepCopyable<JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter> {
 
         constructor(
