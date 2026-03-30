@@ -324,11 +324,11 @@ fun Project.publishJarsForIde(
     libraryDependencies: List<String> = emptyList(),
     jarTaskConfiguration: Jar.() -> Unit = {},
 ) {
-    val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
+    val projectsDependingOnStableStdlib: Array<String> by rootProject.extra
 
     for (projectName in projects) {
-        check(projectName in projectsUsedInIntelliJKotlinPlugin) {
-            "`$projectName` is used in IntelliJ Kotlin Plugin, it should be added to `extra[\"projectsUsedInIntelliJKotlinPlugin\"]`"
+        check(projectName in projectsDependingOnStableStdlib) {
+            "`$projectName` is used in IntelliJ Kotlin Plugin, it should be added to `extra[\"projectsDependingOnStableStdlib\"]`"
         }
     }
 
