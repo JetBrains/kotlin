@@ -1,7 +1,7 @@
 function topLevel$ref() {
   var l = () => {
     topLevel();
-    return Unit_getInstance();
+    return Unit_instance;
   };
   l.callableName = 'topLevel';
   l.$flags = 0;

@@ -1,7 +1,7 @@
 function Foo$bar$ref() {
   var l = (p0) => {
-    p0.bar_jdmw8t_k$();
-    return Unit_getInstance();
+    p0.a();
+    return Unit_instance;
   };
   l.callableName = 'bar';
   l.$flags = 0;

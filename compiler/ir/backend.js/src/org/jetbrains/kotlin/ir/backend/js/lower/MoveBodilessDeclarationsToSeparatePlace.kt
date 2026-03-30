@@ -87,32 +87,22 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
             }
         }
 
-        if (declaration is IrPossiblyExternalDeclaration
-            && declaration.isEffectivelyExternal()
-            && (irFile.getJsModule() != null || irFile.getJsQualifier() != null)
-        ) {
-            externalPackageFragment.declarations += declaration
-            declaration.originalFileForExternalDeclaration = irFile
-            declaration.parent = externalPackageFragment
-
-            context.packageLevelJsModules += externalPackageFragment
-
-            return emptyList()
-        } else {
-            val d = declaration as? IrDeclarationWithName ?: return null
-
-            if (isBuiltInClass(d) || isIntrinsic(d)) {
-                context.bodilessBuiltInsPackageFragment.addChild(d)
-
-                return emptyList()
-            } else if (d.isEffectivelyExternal()) {
-                externalPackageFragment.declarations += d
-                d.parent = externalPackageFragment
-
-                return emptyList()
+        return when (declaration) {
+            is IrDeclarationWithName if (isBuiltInClass(declaration) || isIntrinsic(declaration)) -> {
+                context.bodilessBuiltInsPackageFragment.addChild(declaration)
+                emptyList()
             }
+            is IrPossiblyExternalDeclaration if declaration.isEffectivelyExternal() -> {
+                externalPackageFragment.declarations += declaration
+                declaration.originalFileForExternalDeclaration = irFile
+                declaration.parent = externalPackageFragment
 
-            return null
+                if (irFile.getJsModule() != null || irFile.getJsQualifier() != null)
+                    context.packageLevelJsModules += externalPackageFragment
+
+                emptyList()
+            }
+            else -> null
         }
     }
 }
