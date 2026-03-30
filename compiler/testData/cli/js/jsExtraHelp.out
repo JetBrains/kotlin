@@ -7,7 +7,7 @@ where advanced options include:
                              Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.
   -Xenable-suspend-function-exporting
                              Enable exporting suspend functions to JavaScript/TypeScript.
-  -Xes-arrow-functions       Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
+  -Xes-arrow-functions  ]     Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
   -Xes-classes               Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
   -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
   -Xes-long-as-bigint        Compile Long values as ES2020 bigint instead of object.
@@ -48,6 +48,8 @@ where advanced options include:
   -Xir-dump-declaration-ir-sizes-to-file=<path>
                              Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xwasm                     Use the WebAssembly compiler backend.
+  -Xwasm-coroutines-stack-switching
+                             Compile Kotlin Coroutines with Wasm Stack Switching Proposal
   -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-debugger-custom-formatters
