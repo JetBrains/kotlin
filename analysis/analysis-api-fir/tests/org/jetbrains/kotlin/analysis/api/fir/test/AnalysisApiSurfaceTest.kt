@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaTypeParameterSy
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSour
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
@@ -157,6 +159,37 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
 
             val contextParameterBridgeResult = contextParameterBridgeMethod.invoke(null, this@analyze, kotlinType)
             assertEquals(expectedResult, contextParameterBridgeResult)
+        }
+    }
+
+    @Test
+    fun deprecatedAnnotationApplicableTargets(mainFile: KtFile) {
+        val annotationClass = mainFile.declarations.firstIsInstance<KtClass>()
+        assertEquals("MyAnnotation", annotationClass.name)
+
+        analyze(annotationClass) {
+            val classSymbol = annotationClass.classSymbol!!
+
+            val memberMethod = this@analyze::class.java
+                .getMethod("getAnnotationApplicableTargets", KaClassSymbol::class.java)
+
+            // For some reason, getters of HIDDEN-deprecated interface properties aren't synthetic
+            assert(!memberMethod.isSynthetic)
+
+            val contextParameterBridgeMethod = Class
+                .forName("org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProviderKt")
+                .getMethod("getAnnotationApplicableTargets", KaSession::class.java, KaClassSymbol::class.java)
+
+            assert(contextParameterBridgeMethod.isSynthetic)
+
+            @Suppress("UNCHECKED_CAST")
+            val memberResult = memberMethod.invoke(this@analyze, classSymbol) as Set<KotlinTarget>
+            assert(KotlinTarget.CLASS in memberResult)
+            assert(KotlinTarget.FUNCTION in memberResult)
+
+            @Suppress("UNCHECKED_CAST")
+            val contextParameterBridgeResult = contextParameterBridgeMethod.invoke(null, this@analyze, classSymbol) as Set<KotlinTarget>
+            assertEquals(memberResult, contextParameterBridgeResult)
         }
     }
 }
