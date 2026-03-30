@@ -25,7 +25,7 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library library"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: one.Producer.NestedClass
   isPublicApi: false

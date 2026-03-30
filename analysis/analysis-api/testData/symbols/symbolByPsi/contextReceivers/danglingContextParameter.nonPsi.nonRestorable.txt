@@ -157,7 +157,7 @@ KaNamedClassSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: null
 

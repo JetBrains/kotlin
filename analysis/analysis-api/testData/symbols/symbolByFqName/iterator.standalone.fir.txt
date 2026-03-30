@@ -43,6 +43,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: kotlin.collections.Iterator

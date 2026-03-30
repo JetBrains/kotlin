@@ -28,6 +28,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(valueClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: ValueClass

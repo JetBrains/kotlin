@@ -163,7 +163,7 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: test.C
 
@@ -194,7 +194,7 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: test.I
 
@@ -225,6 +225,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: test.O

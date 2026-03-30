@@ -25,6 +25,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(funInterfaceTwoMethods.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: MyInterface

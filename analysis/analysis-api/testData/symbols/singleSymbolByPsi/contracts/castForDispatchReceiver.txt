@@ -42,7 +42,7 @@ KaNamedFunctionSymbol:
                   visibility: PUBLIC
                   getContainingFileSymbol: KaFileSymbol(castForDispatchReceiver.kt)
                   getContainingModule: KaSourceModule "Sources of main"
-                  annotationApplicableTargets: null
+                  applicableAnnotationTargets: null
                   deprecation: null
                   importableFqName: Result
           type:

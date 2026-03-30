@@ -18,6 +18,6 @@ KaAnonymousObjectSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(objectWithTypeArgsAsExpression.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: null

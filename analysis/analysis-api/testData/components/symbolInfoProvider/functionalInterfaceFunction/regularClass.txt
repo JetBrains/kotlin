@@ -37,7 +37,7 @@ CLASS:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(regularClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  applicableAnnotationTargets: null
   deprecation: null
   importableFqName: RegularClass
 
