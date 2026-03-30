@@ -5,6 +5,8 @@ where advanced options include:
   -Xir-dump-declaration-ir-sizes-to-file=<path>
                              Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xwasm                     Use the WebAssembly compiler backend.
+  -Xwasm-coroutines-stack-switching
+                             Compile Kotlin Coroutines with Wasm Stack Switching Proposal
   -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-debugger-custom-formatters
