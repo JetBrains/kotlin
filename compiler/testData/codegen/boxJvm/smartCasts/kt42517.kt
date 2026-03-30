@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: ANY
 // ^^^ java.lang.reflect.* is available only in JDK
 // WITH_STDLIB
 // FULL_JDK

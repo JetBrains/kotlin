@@ -1,5 +1,6 @@
 // LANGUAGE: +SuspendConversion
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
 
 import kotlin.reflect.KCallable

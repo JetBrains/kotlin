@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: ANY
 // WITH_REFLECT
 // JVM_TARGET: 1.8
 // FILE: syntheticClasses.kt

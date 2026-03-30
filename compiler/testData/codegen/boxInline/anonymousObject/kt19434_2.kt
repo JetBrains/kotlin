@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: ANY
 // FILE: 1.kt
 package test
 

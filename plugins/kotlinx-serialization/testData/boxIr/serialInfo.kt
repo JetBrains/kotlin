@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
 
 import kotlinx.serialization.*
