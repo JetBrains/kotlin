@@ -80,7 +80,7 @@ class MoveCallableFactoriesToDeclarationsLowering(private val context: JsIrBacke
         if (declaration.origin != JsStatementOrigins.FACTORY_ORIGIN) return null
 
         val originalReference = declaration.richFunctionReference ?: return null
-        val originalFunction = originalReference.reflectionTargetSymbol as? IrSimpleFunction ?: return null
+        val originalFunction = originalReference.reflectionTargetSymbol?.owner as? IrSimpleFunction ?: return null
         val destinationFile = originalFunction.originalFileForExternalDeclaration ?: originalFunction.fileOrNull ?: return null
         if (declaration.fileOrNull == destinationFile) return null
 

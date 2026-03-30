@@ -89,8 +89,7 @@ class DeduplicateCallableReferenceFactoriesLowering(private val context: JsIrBac
                 declarations.removeAll { it is IrSimpleFunction && it in duplicatingFactories }
             }
         }
-        for (irFile in irModule.files)
-            irFile.transformChildrenVoid(callRewriter)
+        irModule.transformChildrenVoid(callRewriter)
     }
 
     private fun createKey(reference: IrRichFunctionReference): CallableFunctionReferenceId? {
