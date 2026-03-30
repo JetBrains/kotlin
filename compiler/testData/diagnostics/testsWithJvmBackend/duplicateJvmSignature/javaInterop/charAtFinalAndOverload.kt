@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // SCOPE_DUMP: KA:get
 
 // FILE: A.java

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER -REDUNDANT_PROJECTION
 
 class FunctionHolder<out T : Any>(val f: (@UnsafeVariance T) -> Unit) {

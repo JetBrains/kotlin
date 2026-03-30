@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 abstract class Parser {
     open fun parseString(x: String): List<Int> = null!!

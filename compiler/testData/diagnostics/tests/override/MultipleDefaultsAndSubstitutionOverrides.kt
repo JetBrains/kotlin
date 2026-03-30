@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 interface A<T> {
     fun foo(x: Int = 42): Int
 }

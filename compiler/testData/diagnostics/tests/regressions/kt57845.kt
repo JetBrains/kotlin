@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR
 
 // FILE: priv/members/check/MyJClass.java

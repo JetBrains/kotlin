@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 @PublishedApi
 internal interface History<T> {
     var isIgnoringPlatformChanges: Boolean

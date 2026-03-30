@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-72036
 
 fun <Failure, Value> progressive(block: Thrower<Failure>.() -> Value) {}

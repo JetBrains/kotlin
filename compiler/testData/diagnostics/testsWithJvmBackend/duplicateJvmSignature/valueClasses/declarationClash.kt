@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +JvmInlineMultiFieldValueClasses
 // WITH_STDLIB
 

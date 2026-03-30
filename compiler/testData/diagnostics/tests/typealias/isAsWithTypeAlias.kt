@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 typealias S = String
 
 fun test1(x: Any) = x is S

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-57446
 
 fun test1() : suspend (Int) -> Unit = when {

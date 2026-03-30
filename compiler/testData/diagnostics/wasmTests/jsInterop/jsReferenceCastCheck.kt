@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
-// FIR_IDENTICAL
 // TARGET_BACKEND: WASM
 // MODULE: main
 

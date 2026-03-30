@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 // FILE: MyInterface.java
 public interface MyInterface<T> {

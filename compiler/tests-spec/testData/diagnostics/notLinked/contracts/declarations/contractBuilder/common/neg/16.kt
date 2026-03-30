@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 

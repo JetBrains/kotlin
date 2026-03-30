@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // CHECK_TYPE
 
 //KT-2179 Nested function literal breaks compiler

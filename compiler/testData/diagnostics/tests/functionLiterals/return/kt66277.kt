@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-66277
-// FIR_IDENTICAL
 
 fun foo() {}
 typealias MyUnit = Unit

@@ -1,6 +1,5 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun println(x: String) {

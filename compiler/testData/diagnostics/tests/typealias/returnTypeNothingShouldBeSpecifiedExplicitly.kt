@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 typealias N = Nothing
 
 fun <!ABBREVIATED_NOTHING_RETURN_TYPE!>testFun<!>(): N = null!!

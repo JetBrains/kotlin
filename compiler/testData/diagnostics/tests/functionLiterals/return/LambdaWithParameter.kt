@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 val flag = true
 
 val a /*: (Int) -> String */ = l@ {

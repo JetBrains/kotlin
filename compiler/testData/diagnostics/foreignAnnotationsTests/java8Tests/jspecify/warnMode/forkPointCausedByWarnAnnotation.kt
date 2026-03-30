@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // JSPECIFY_STATE: warn
 // LANGUAGE: +ConsiderForkPointsWhenCheckingContradictions

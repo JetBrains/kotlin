@@ -1,6 +1,5 @@
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class DummyClass001
 
 fun DummyClass001.component1() = "1"

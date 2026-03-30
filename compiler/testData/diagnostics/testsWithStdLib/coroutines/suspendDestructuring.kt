@@ -1,6 +1,5 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // SKIP_TXT
 class A {
     suspend operator fun component1(): String = "K"

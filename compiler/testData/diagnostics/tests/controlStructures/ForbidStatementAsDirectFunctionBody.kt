@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 fun foo1() = <!EXPRESSION_EXPECTED!>while (b()) {}<!>
 
 fun foo2() = <!EXPRESSION_EXPECTED!>for (i in <!ITERATOR_MISSING!>10<!>) {}<!>

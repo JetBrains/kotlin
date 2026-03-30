@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ExplicitBackingFields +MultiPlatformProjects
 // MODULE: m1-common

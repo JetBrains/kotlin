@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74823
 // LANGUAGE: +AllowDnnTypeOverridingFlexibleType

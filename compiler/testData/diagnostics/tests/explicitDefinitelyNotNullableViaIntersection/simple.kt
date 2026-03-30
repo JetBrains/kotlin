@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T> foo(x: T, y: T & Any): T & Any = x ?: y

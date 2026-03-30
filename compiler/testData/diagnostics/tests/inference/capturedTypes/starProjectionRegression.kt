@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // See KT-14453 and KT-35703
 val <T : Any> KClass1<T>.primaryConstructor: KFunction1<T>? get() = null!!
 

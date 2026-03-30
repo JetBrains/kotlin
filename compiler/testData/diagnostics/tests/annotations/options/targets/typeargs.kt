@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 annotation class base
 
 val x: List<<!WRONG_ANNOTATION_TARGET!>@base<!> String>? = null

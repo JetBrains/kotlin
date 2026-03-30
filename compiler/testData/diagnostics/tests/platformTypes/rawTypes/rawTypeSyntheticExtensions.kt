@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// FIR_IDENTICAL
 // FILE: Generic.java
 import java.util.List;
 

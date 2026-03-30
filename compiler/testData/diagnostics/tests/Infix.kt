@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // RENDER_DIAGNOSTICS_FULL_TEXT
 class Pair<out A, out B>(val first: A, val second: B)
 

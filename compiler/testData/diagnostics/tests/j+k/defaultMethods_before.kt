@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -AllowSuperCallToJavaInterface -JvmDefaultEnableByDefault
-// FIR_IDENTICAL
 // FILE: JavaInterface.java
 
 public interface JavaInterface {

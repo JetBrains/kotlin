@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: KotlinFile.kt
 abstract class KotlinClass : JavaInterface3 {
     override fun getSomething(): String = ""

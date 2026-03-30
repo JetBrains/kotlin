@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 import java.lang.annotation.RetentionPolicy
 
 enum class E {

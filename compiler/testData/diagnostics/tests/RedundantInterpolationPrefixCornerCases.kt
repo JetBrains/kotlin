@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +MultiDollarInterpolation
 // WITH_EXPERIMENTAL_CHECKERS
-// FIR_IDENTICAL
 
 fun test() {
     "foo\\\$bar"

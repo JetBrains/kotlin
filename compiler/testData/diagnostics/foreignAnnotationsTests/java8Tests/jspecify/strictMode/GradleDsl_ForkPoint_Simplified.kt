@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-83824
 // JSPECIFY_STATE: strict
 // LANGUAGE: +CheckPackageInfoNullnessAnnotations

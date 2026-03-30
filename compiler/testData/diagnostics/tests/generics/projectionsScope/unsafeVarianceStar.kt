@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 interface A<out K> {
     fun foo(x: @UnsafeVariance K): Unit

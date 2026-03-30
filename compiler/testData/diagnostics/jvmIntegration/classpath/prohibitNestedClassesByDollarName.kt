@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // MODULE: library
 // FILE: test/JavaOuter.java
 package test;

@@ -1,6 +1,5 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // JAVAC_EXPECTED_FILE
 // FILE: A.java
 abstract public class A<F> extends B<F> {

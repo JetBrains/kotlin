@@ -1,5 +1,4 @@
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FILE: J.java

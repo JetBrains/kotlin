@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // KT-716 Type inference failed
 
 class TypeInfo<T>

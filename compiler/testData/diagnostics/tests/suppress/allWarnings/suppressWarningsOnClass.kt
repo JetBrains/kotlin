@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 @Suppress("warnings")
 class C {
     fun foo(p: String??) {

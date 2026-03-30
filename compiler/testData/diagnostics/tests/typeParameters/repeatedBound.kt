@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 interface I1
 
 class A1<T> where T : I1, T : <!REPEATED_BOUND!>I1<!>

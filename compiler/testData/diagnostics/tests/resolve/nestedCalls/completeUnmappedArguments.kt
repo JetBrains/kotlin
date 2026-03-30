@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 package c
 
 fun zzz(i: Int, f: (Int) -> Int) { throw Exception("$i $f")}

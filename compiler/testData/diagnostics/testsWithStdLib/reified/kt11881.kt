@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class Inv<T>
 
 inline operator fun <reified T> Inv<T>.invoke() {}

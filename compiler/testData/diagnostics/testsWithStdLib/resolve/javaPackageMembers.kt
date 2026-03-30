@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 fun fn(): Nothing = throw java.lang.RuntimeException("oops")
 
 val x: Nothing = throw java.lang.RuntimeException("oops")

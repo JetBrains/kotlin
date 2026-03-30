@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: KotlinFile.kt
 public interface I {
     public fun doIt()

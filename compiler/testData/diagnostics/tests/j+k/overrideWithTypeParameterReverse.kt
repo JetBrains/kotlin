@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: Super.kt
 interface Super {
     fun <B : Any?> foo(klass: Class<B & Any>): B

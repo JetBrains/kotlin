@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 fun <T> foo(t: T) = t
 
 fun test(map: MutableMap<Int, Int>, t: Int) {

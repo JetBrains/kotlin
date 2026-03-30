@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // See KT-9438: Enforce the Single Instantiation Inheritance Rule for type parameters
 
 interface A

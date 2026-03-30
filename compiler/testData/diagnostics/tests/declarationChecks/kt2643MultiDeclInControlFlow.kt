@@ -1,5 +1,4 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 //KT-2643 Support multi-declarations in Data-Flow analysis
 package n

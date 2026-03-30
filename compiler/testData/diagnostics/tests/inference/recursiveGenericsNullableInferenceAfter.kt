@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-76826
 // LANGUAGE: +InferenceEnhancementsIn23, +DontIgnoreUpperBoundViolatedOnImplicitArguments
-// FIR_IDENTICAL
 
 class Recursive<T1 : Recursive<T1>>
 

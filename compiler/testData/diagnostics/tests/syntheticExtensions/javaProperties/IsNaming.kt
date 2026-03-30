@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     javaClass.isSomething = !javaClass.isSomething

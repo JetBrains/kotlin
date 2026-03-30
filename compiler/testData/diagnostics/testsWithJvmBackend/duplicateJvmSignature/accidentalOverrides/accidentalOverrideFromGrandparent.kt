@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 interface Foo<X> {
     fun foo(x: X)

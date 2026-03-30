@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // SKIP_TXT
 // FILE: TSFBuilder.java
 public abstract class TSFBuilder<F extends CharSequence, B extends TSFBuilder<F,B>> {

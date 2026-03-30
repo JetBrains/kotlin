@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 open class B {
     private fun getX() = 1
 }

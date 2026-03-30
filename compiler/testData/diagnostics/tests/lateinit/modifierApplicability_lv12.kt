@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +LateinitTopLevelProperties +LateinitLocalVariables
 import kotlin.reflect.KProperty
 

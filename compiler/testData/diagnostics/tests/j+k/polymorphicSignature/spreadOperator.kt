@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // JDK_KIND: FULL_JDK_21
 
 import java.lang.invoke.MethodHandle

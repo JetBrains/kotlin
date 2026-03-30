@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass
 // MODULE: m1
 // FILE: A.kt

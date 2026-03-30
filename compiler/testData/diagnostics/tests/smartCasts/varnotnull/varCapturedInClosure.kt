@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 public fun foo() {
     var s: String? = ""
     fun closure(): Int {

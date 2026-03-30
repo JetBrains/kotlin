@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: one/two/ClassWithExternalAnnotatedMembers.java
 package one.two;
 

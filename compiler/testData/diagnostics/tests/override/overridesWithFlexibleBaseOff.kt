@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74049
-// FIR_IDENTICAL
 // LANGUAGE: -AllowDnnTypeOverridingFlexibleType
 
 // FILE: Inv.java

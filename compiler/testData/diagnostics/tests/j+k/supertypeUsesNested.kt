@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // SKIP_TXT
 // FILE: JavaClass.java
 public class JavaClass extends ContainerType<Container<JavaClass.Nested>> {

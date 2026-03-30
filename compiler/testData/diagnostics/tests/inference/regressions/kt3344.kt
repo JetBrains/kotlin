@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 //KT-3344 InternalError in compiler when type arguments are not specified
 
 package i

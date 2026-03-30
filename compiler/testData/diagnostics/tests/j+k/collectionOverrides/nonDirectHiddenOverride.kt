@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
-// FIR_IDENTICAL
 // WITH_STDLIB
 
 class A<T> : ArrayList<T>() {

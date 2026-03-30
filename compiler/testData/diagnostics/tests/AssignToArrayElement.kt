@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 
 fun getArray(): Array<Int> = throw Exception()

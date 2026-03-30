@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-81262
 // LANGUAGE: +ForbidExposingLessVisibleTypesInInline
-// FIR_IDENTICAL
 
 private val x = object {
     val bar = "2"

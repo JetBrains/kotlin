@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class Ann(vararg val i: Int)

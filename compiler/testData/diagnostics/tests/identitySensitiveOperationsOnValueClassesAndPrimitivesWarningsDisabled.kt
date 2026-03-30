@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // SKIP_TXT
-// FIR_IDENTICAL
 // LANGUAGE: +DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 @JvmInline
 value class VcString(val s: String)

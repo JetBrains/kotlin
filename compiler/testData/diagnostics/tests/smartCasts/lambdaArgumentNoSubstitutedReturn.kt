@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 class Indexed<T>(val x: T, val y: Int)
 
 class Value<out T>(val x: T)

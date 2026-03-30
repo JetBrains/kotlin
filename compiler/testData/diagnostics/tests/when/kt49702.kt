@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 sealed class A {
     class B:A()
     class<!SYNTAX!><!> :A()

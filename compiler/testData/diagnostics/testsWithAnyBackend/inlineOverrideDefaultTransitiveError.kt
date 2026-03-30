@@ -2,7 +2,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // LANGUAGE: +ForbidOverriddenDefaultParametersInInline
-// FIR_IDENTICAL
 
 // MODULE: lib
 interface I {

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 fun foo1() :  (Int) -> Int = { x: Int -> x }
 
 fun foo() {

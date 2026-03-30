@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-83204
 
 // FILE: DataAndNoArgs.java

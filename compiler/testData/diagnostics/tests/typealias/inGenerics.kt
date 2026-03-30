@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 typealias MyString = String
 
 class Container<T>(val x: T)

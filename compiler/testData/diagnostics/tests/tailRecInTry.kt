@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
     try {
         <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo1<!>()

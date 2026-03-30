@@ -1,5 +1,4 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 val receiver = { Int.(<!SYNTAX!><!>) <!SYNTAX!>-><!> }
 val receiverWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!UNRESOLVED_REFERENCE!>a<!>)<!> <!SYNTAX!>-><!> }

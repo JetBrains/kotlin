@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 inline fun <R> doCall(p: () -> R) {
     p()
 }

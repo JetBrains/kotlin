@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 val test: String by materializeDelegate()
 
 fun <T> materializeDelegate(): Delegate<T> = Delegate()

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class Foo(var x: Int?) {
     init {
         if (x != null) {

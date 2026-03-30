@@ -1,6 +1,5 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm +LocalVariableTargetedAnnotationOnDestructuring
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 annotation class Ann
 
 data class Pair(val x: Int, val y: Int)

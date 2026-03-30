@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 abstract class C<T, ModelPropertyT : ModelListPropertyCore<T>>() :
     A<ModelPropertyT, T>(),

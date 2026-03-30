@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +ResolveTopLevelLambdasAsSyntheticCallArgument
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80434

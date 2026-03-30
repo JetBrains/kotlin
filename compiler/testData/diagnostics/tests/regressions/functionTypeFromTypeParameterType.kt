@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 class A {
     fun <T : Function0<String>> eased(p1: T, p2: T): Int {

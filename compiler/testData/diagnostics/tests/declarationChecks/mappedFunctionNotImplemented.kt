@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // KT-48102
-// FIR_IDENTICAL
 
 // FILE: MyCharSequence.java
 public class MyCharSequence implements CharSequence {

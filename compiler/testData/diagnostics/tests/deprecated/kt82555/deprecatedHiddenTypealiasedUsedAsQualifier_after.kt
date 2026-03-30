@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 //  ^ ignored in K1
 // LANGUAGE: +NestedTypeAliases, +SkipHiddenObjectsInResolution
 // ISSUE: KT-82555

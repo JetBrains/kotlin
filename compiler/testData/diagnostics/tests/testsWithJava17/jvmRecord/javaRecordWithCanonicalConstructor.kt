@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 // FILE: WithCompactCtor.java
 public record WithCompactCtor(String s) {

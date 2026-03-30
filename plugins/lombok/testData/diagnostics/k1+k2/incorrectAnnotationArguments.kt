@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-73027, KT-73029
 
 // FILE: Klass.java

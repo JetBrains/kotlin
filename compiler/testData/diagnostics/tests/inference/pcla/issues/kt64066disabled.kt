@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-64066, KT-53478
 // LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // FILE: K.kt
 abstract class ATest1 : TestNN.JNullVsNotNull()
 

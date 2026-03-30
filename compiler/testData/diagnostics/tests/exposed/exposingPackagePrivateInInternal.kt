@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -ForbidExposingPackagePrivateInInternal
 // FILE: Foo.java

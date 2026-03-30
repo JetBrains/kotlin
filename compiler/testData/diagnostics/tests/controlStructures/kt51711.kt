@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: -ProhibitNonExhaustiveIfInRhsOfElvis
 // ISSUE: KT-51711
 // WITH_STDLIB

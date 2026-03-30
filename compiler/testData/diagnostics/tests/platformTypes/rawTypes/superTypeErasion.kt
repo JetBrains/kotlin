@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 // FILE: BaseOperation.java
 class BaseOperation<T extends Bar, L extends Foo<T>> {}

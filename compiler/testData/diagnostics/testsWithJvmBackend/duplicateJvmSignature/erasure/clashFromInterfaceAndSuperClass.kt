@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 public open class A<T> {

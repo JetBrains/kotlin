@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
 // DIAGNOSTICS: -UNUSED_PARAMETER
 

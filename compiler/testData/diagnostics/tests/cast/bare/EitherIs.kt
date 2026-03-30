@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 interface Either<out A, out B>
 interface Left<out A>: Either<A, Nothing> {

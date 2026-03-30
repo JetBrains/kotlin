@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // FULL_JDK
 
 class A : java.util.concurrent.ConcurrentHashMap<String, Int>() {

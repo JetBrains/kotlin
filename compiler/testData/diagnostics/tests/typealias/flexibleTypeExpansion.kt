@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: J.java
 public class J {
     public static <T> T id(T t) { return null; }

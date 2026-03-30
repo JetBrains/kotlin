@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-71547
 
 // FILE: User.java

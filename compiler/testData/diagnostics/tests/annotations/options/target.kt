@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 @Target(AnnotationTarget.CLASS)
 annotation class base
 

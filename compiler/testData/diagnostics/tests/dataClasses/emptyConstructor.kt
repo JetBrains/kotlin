@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 data class A<!DATA_CLASS_WITHOUT_PARAMETERS!>()<!>
 
 fun foo(a: A) {

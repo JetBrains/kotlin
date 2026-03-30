@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 import kotlin.reflect.KProperty
 
 interface In<in T>

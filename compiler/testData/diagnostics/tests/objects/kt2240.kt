@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 package a
 
 //KT-2240 Wrong overload resolution ambiguity when object literal is involved

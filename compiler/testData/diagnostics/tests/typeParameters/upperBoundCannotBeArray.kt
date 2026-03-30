@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 fun <<!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<Any><!>> f1() {}
 fun <T, <!UPPER_BOUND_CANNOT_BE_ARRAY!>A : Array<out T><!>> f2() {}
 fun <S, T : S, <!UPPER_BOUND_CANNOT_BE_ARRAY!>A<!>> f3() where A : Array<out S>, A : <!REPEATED_BOUND!>Array<out T><!> {}

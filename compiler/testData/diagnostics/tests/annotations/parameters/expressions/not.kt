@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
-// FIR_IDENTICAL
 package test
 
 annotation class Ann(

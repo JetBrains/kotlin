@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 annotation class unrepann(val x: Int)
 
 annotation class ann(val y: Int)

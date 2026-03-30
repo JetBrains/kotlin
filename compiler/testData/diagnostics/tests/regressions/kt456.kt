@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 //KT-456 No check for obligatory return in getters
 
 package kt456

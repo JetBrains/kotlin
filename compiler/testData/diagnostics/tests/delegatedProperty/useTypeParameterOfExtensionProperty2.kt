@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // WITH_REFLECT
 
 import kotlin.reflect.KProperty

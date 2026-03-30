@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-63466
 // JSPECIFY_STATE: warn
 // FILE: J.java

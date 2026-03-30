@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 //  ^ K1 is ignored
 // LANGUAGE: +ContextParameters, +SkipHiddenObjectsInResolution
 // ISSUE: KT-82555

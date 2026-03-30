@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 interface A<T> {
     operator fun getValue(x: Any?, y: Any?): T = TODO()

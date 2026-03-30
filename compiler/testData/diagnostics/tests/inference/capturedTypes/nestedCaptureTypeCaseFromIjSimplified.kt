@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
-// FIR_IDENTICAL
 import kotlin.reflect.KClass
 
 // Just some case found in IJ

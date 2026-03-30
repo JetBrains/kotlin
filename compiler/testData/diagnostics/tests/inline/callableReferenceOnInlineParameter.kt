@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 fun interface Warp<A, B> {
     fun apply(input: A): B

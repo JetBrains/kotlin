@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 @Target(AnnotationTarget.ANNOTATION_CLASS) annotation class base
 
 @base annotation class derived

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
-// FIR_IDENTICAL
 
 interface Some {
     fun foo(b: Boolean? = null): Int = 10

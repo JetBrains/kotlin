@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 // LANGUAGE: +ImprovedCapturedTypeApproximationInInference
 fun <R> sequenceOf(elements: Array<R>) {}

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +AllowCheckForErasedTypesInContracts, +ContextParameters
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // ISSUES: KT-79221

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
-// FIR_IDENTICAL
 @JsFun("() => {}")
 external fun topLevelExternalFun(): Unit
 

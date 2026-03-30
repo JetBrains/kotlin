@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 package a
 
 fun foo(l: List<Int>): Int = l.get(0)

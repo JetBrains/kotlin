@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // SCOPE_DUMP: KB:contains
 // SCOPE_DUMP: B:contains
 

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 val ns: String? = null
 
 val testElvis1: String? = ns ?: ""

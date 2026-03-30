@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 fun inlineCall(): String {
     inlineFun {
         if (true) {

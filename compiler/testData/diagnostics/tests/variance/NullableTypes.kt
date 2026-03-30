@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 interface In<in I>
 interface Out<out O>
 interface Inv<P>

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 import kotlin.reflect.KProperty
 
 fun <X> myEmptyList1(): List<X> = TODO()

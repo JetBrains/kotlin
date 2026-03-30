@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 fun test() {
   var a : Any? = null
   if (a is Any) else a = null;

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +DataObjects
 
 <!WRONG_MODIFIER_TARGET!>data<!> enum class First(val x: Int) {

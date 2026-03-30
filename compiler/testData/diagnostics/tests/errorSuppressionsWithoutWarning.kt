@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 @Deprecated("", level = DeprecationLevel.ERROR)
 class DeprecatedClass
 

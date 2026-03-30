@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-83256
 
 // FILE: ValuePlusDataBasic.java

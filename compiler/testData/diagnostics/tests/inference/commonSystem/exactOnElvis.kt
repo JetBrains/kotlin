@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // SKIP_TXT
 interface SelectBuilder<in X> {
     fun foo(block: () -> X)

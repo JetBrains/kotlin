@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 annotation class Ann(val x: Int, val value: String, val y: Double)
 
 @Ann(value = "a", x = 1, y = 1.0) fun foo1() {}

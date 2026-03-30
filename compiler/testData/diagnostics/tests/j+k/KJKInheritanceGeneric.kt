@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: K1.kt
 open class KFirst<T: java.io.Serializable>() {
     fun foo(t: T): T = t

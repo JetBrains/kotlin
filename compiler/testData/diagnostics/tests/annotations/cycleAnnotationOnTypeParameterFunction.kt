@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 package myPack
 
 @Target(AnnotationTarget.TYPE_PARAMETER)

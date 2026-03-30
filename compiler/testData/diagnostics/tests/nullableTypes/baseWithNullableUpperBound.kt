@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 fun <NN: Any, NNN: NN> nonMisleadingNullable(
         nn: NN?,
         nnn: NNN?

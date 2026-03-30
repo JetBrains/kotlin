@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 interface Trait<N : Number>
 
 object O1 : Trait<Int>

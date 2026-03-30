@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // KT-9051: Allow smart cast for captured variables if they are not modified
 
 fun foo(y: String?) {

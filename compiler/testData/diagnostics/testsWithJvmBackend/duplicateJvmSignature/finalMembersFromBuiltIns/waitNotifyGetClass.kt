@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 // KT-7174 Report error on members with the same signature as non-overridable methods from mapped Java types (like Object.wait/notify)

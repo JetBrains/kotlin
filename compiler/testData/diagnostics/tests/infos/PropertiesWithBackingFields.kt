@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 abstract class Test() {
     abstract val x : Int
     abstract val x1 : Int get

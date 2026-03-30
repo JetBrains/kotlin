@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: -ReferencesToSyntheticJavaProperties
-// FIR_IDENTICAL
 
 // FILE: Foo.java
 public class Foo extends Base {

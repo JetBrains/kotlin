@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_EXTRA_CHECKERS
 //KT-3501 Variable/parameter is highlighted as unused if it is used in member of local class

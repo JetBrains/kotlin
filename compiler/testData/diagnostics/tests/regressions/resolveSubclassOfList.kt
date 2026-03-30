@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 import java.util.ArrayList
 
 fun foo(p: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<String><!>) {

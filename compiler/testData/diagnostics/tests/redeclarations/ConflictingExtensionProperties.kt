@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
-// FIR_IDENTICAL
 package foo
 
 val Int.<!REDECLARATION!>simple<!>: Int get() = 0

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 fun nonlocals(b : Boolean) {
     a@{
         fun foo() {

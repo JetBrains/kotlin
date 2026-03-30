@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // NULLABILITY_ANNOTATIONS: @io.vertx.codegen.annotations:ignore
 
 // FILE: A.java

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE

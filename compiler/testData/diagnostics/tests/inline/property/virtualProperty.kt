@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 final class FinalProperty {
     inline val valProp: Int
         get() = 1

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: +LocalVariableTargetedAnnotationOnDestructuring
 fun test(): Any? {
     @ann val (a, b) = P(1, 1)

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 abstract class FirBasedSymbol<E : FirDeclaration> {
     val fir: E get() = null!!

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 fun foo(arg: Boolean) {
     val x : Int
     if (arg) {

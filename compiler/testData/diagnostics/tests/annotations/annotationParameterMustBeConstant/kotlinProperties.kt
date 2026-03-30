@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 annotation class Ann(vararg val i: Int)
 
 @Ann(

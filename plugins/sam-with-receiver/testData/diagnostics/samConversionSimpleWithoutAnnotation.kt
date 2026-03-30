@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: Sam.java
 public interface Sam {
     void run(String a);

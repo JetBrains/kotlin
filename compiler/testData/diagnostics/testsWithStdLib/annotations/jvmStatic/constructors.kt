@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class A {
     <!WRONG_ANNOTATION_TARGET!>@JvmStatic<!> constructor() {}
     inner class B {

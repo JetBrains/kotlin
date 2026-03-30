@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: -ForbidSuperDelegationToAbstractFakeOverride
 interface Foo {
     fun check(): String = "OK"
