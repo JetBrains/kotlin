@@ -173,6 +173,17 @@ val irCompilerModulesForIDE = arrayOf(
     ":compiler:ir.validation",
 ).also { extra["irCompilerModulesForIDE"] = it }
 
+val analysisApiSurfaceDependencies by extra {
+    listOf(
+        ":core:names",
+        ":core:language.model",
+        ":core:language.targets",
+        ":core:language.targets.jvm",
+        ":core:language.version-settings",
+        ":compiler:psi:psi-api",
+    )
+}
+
 val commonCompilerModules = arrayOf(
     ":compiler:cli-base",
     ":compiler:cli",
@@ -310,6 +321,17 @@ extra["compilerModules"] =
             commonCompilerModules +
             firAllCompilerModules
 
+val analysisApiArtifacts by extra {
+    listOf(
+        ":prepare:analysis-api:kotlin-analysis-api",
+        ":prepare:analysis-api:kotlin-analysis-api-surface",
+        ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
+        ":prepare:analysis-api:kotlin-analysis-api-implementation",
+        ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
+        ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
+    )
+}
+
 /**
  * An array of projects used in the IntelliJ Kotlin Plugin.
  *
@@ -321,6 +343,7 @@ val projectsDependingOnStableStdlib =
             commonCompilerModules +
             firCompilerCoreModules +
             irCompilerModulesForIDE +
+            analysisApiArtifacts.toTypedArray() +
             arrayOf(
                 ":analysis:analysis-api",
                 ":analysis:analysis-api-fe10",
@@ -1149,24 +1172,38 @@ tasks {
     }
 
     register("publishGradlePluginArtifacts") {
-        idePluginDependency {
+        idePluginPublishingLatch {
             dependsOnKotlinGradlePluginPublish()
         }
     }
 
-    register("publishIdeArtifacts") {
-        idePluginDependency {
-            @Suppress("UNCHECKED_CAST")
-            dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:publish" })
+    fun registerSpecialPublishingTasks(nameSuffix: String, artifactProjectList: List<String>, latch: Project.(() -> Unit) -> Unit) {
+        register("publish$nameSuffix") {
+            latch {
+                @Suppress("UNCHECKED_CAST")
+                dependsOn(artifactProjectList.map { "$it:publish" })
+            }
+        }
+
+        register("install$nameSuffix") {
+            latch {
+                @Suppress("UNCHECKED_CAST")
+                dependsOn(artifactProjectList.map { "$it:install" })
+            }
         }
     }
 
-    register("installIdeArtifacts") {
-        idePluginDependency {
-            @Suppress("UNCHECKED_CAST")
-            dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:install" })
-        }
-    }
+    registerSpecialPublishingTasks(
+        nameSuffix = "IdeArtifacts",
+        artifactProjectList = @Suppress("UNCHECKED_CAST") (rootProject.extra["compilerArtifactsForIde"] as List<String>),
+        latch = Project::idePluginPublishingLatch
+    )
+
+    registerSpecialPublishingTasks(
+        nameSuffix = "AnalysisApiArtifacts",
+        artifactProjectList = analysisApiArtifacts,
+        latch = Project::analysisApiPublishingLatch
+    )
 
     register<Exec>("mvnInstall") {
         group = "publishing"

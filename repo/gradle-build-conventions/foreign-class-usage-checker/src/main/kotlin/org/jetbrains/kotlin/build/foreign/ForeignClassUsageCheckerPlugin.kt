@@ -134,6 +134,21 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
     abstract val outputFile: RegularFileProperty
 
     /**
+     * The output file for the classpath check.
+     *
+     * This file is only accessed if the [classpath] property is not empty.
+     * The file format is the same as in the [outputFile].
+     *
+     * If the [outputFile] isn't set while there are missing classes in the classpath, the task will fail with an explanatory comment.
+     * This should be the desired behavior – no API is ever expected to have broken classpath references.
+     * However, achieving that at once might be non-trivial for existing "dirty" artifacts. In that case, the
+     * [missingClasspathEntriesOutputFile] can at least ensure that there won't be additional API dependency breakages.
+     */
+    @get:OutputFile
+    @get:Optional
+    abstract val missingClasspathEntriesOutputFile: RegularFileProperty
+
+    /**
      * Whether to include detailed usage information for each foreign class in the [outputFile].
      *
      * When enabled, the output file will contain not only the list of foreign classes, but also the specific locations
@@ -206,11 +221,20 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
 
         val missingClassNames = classNames.toSet() - classpathClasses
 
-        if (missingClassNames.isNotEmpty()) {
+        if (missingClassNames.isEmpty()) {
+            return
+        }
+
+        val expectedFile = missingClasspathEntriesOutputFile.getOrNull()?.asFile
+        if (expectedFile != null) {
+            val actualText = renderClassNames(missingClassNames.toList(), processor)
+            assertEqualsToFile(expectedFile, actualText)
+        } else {
             val missingClassNamesText = buildString {
                 append(System.lineSeparator())
                 append(renderClassNames(missingClassNames.toList(), processor))
             }
+
             throw GradleException("The following class names are missing in the classpath:$missingClassNamesText")
         }
     }
@@ -226,7 +250,10 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
         }
 
         val actualText = renderClassNames(classNames, processor)
+        assertEqualsToFile(expectedFile, actualText)
+    }
 
+    private fun assertEqualsToFile(expectedFile: File, actualText: String) {
         if (!expectedFile.exists()) {
             expectedFile.writeText(actualText)
             throw GradleException("Expected file did not exist and has been created. Please review and commit the changes")

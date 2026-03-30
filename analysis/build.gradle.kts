@@ -20,6 +20,8 @@ tasks.register("analysisAllTests") {
         ":compiler:psi:psi-impl:check",
         ":compiler:psi:psi-utils:check",
         ":compiler:psi:psi-frontend-utils:check",
+        ":prepare:kotlin-analysis-api-surface:check",
+        ":prepare:kotlin-analysis-api-platform-interface:check",
     )
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {

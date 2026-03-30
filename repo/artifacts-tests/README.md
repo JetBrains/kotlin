@@ -6,7 +6,7 @@ as well as verifies the contents of the Kotlin distribution
 To reproduce locally, first run:
 
 ```shell
-./gradlew clean install publish mvnPublish dist -Pteamcity=true
+./gradlew clean install publish mvnPublish dist -Pteamcity=true -Ppublish.analysis.api=true -Panalysis.api.version=kotlin.version
 ```
 
 `-Pteamcity=true` is needed for Gradle metadata tests because the tests expect artifacts to contain metadata for Javadoc elements, 
