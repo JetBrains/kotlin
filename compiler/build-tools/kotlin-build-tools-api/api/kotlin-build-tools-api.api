@@ -397,9 +397,6 @@ public abstract class org/jetbrains/kotlin/buildtools/api/arguments/Jsr305 {
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Global : org/jetbrains/kotlin/buildtools/api/arguments/Jsr305 {
 	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;)V
-	public final fun component1 ()Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;
-	public final fun copy (Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;)Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Global;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Global;Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Global;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getMode ()Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;
 	public fun hashCode ()I
@@ -417,10 +414,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode : j
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/Jsr305$SpecificAnnotation : org/jetbrains/kotlin/buildtools/api/arguments/Jsr305 {
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;
-	public final fun copy (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;)Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$SpecificAnnotation;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$SpecificAnnotation;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$SpecificAnnotation;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAnnotationFqName ()Ljava/lang/String;
 	public final fun getFqName ()Ljava/lang/String;
@@ -431,9 +424,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Specific
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/Jsr305$UnderMigration : org/jetbrains/kotlin/buildtools/api/arguments/Jsr305 {
 	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;)V
-	public final fun component1 ()Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;
-	public final fun copy (Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;)Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$UnderMigration;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$UnderMigration;Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$UnderMigration;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getMode ()Lorg/jetbrains/kotlin/buildtools/api/arguments/Jsr305$Mode;
 	public fun hashCode ()I
@@ -537,9 +527,12 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArgu
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/NullabilityAnnotation {
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/NullabilityAnnotation$Mode;)V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAnnotationFqName ()Ljava/lang/String;
 	public final fun getFqName ()Ljava/lang/String;
 	public final fun getMode ()Lorg/jetbrains/kotlin/buildtools/api/arguments/NullabilityAnnotation$Mode;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/NullabilityAnnotation$Mode : java/lang/Enum {
@@ -553,15 +546,21 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/NullabilityAnno
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/ProfileCompilerCommand {
 	public fun <init> (Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;)V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCommand ()Ljava/lang/String;
 	public final fun getOutputDir ()Ljava/nio/file/Path;
 	public final fun getProfilerPath ()Ljava/nio/file/Path;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/WarningLevel {
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/WarningLevel$Severity;)V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getSeverity ()Lorg/jetbrains/kotlin/buildtools/api/arguments/WarningLevel$Severity;
 	public final fun getWarningName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/WarningLevel$Severity : java/lang/Enum {
