@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.isSmokeTest
+
 plugins {
     kotlin("jvm")
     id("generated-sources")
@@ -28,3 +31,8 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+tasks.test.configure {
+    @OptIn(TemporaryTestFederationApi::class)
+    isSmokeTest = true
+}
