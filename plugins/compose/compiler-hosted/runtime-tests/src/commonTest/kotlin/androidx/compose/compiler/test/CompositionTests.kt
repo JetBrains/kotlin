@@ -25,10 +25,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.BeforeClass
+import org.junit.experimental.categories.Category
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@Category(SmokeTest::class)
 class CompositionTests {
     companion object {
         @OptIn(ExperimentalCoroutinesApi::class)
