@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -41,6 +41,7 @@ import kotlin.test.assertTrue
 
 @DisplayName("Basic Kotlin/JVM plugin tests")
 @JvmGradlePluginTests
+@SmokeTest
 class KotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("Kotlin/Java cross compilation")
