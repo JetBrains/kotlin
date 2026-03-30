@@ -34,7 +34,7 @@ fun consumer1(): String {
 fun consumer2(): String {
     call(::topLevel)
     if (::topLevel != ::topLevel)
-        return "fail: topLevelCallable is not equal to itself"
+        return "fail: topLevel is not equal to itself"
 
     Foo().call(Foo::bar)
     if (Foo::bar != Foo::bar)
