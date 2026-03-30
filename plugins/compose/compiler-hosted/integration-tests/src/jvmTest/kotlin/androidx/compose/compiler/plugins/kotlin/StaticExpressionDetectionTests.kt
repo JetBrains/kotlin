@@ -68,9 +68,17 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     )
 
     @Test
-    fun testObjectReferencesInTheSameFileAsTheObjectDeclarationAreStatic() = assertStatic(
+    fun testObjectReferencesInTheSameFileAsTheDeclarationAreStatic() = assertStatic(
         expression = "Singleton",
         sameFileExtraSrc = """
+            object Singleton
+        """
+    )
+
+    @Test
+    fun testObjectReferencesInADifferentFileThanTheDeclarationAreStatic() = assertStatic(
+        expression = "Singleton",
+        otherFileExtraSrc = """
             object Singleton
         """
     )

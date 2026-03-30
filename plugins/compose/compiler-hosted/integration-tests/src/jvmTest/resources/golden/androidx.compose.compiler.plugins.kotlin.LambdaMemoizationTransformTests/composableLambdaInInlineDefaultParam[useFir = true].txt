@@ -19,7 +19,7 @@ fun <T: Any> NavGraphBuilder.bottomSheet(noinline dragHandle: Function2<Composer
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    BottomSheetDefaults.DragHandle(%composer, BottomSheetDefaults.%stable)
+    BottomSheetDefaults.DragHandle(%composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -35,7 +35,7 @@ internal object ComposableSingletons%TestKt {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      BottomSheetDefaults.DragHandle(%composer, BottomSheetDefaults.%stable)
+      BottomSheetDefaults.DragHandle(%composer, 0b0110)
       if (isTraceInProgress()) {
         traceEventEnd()
       }

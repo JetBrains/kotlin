@@ -647,4 +647,25 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
             }
         """
     )
+
+    // We expect the type of the receiver of an invocation of a composable method defined within an
+    // object to be stable. We validate this by checking that `Object.%stable` does not appear in
+    // the golden file.
+    @Test
+    fun testObjectTypesAreStable() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable fun Test() {
+                Object.bar() 
+            }
+        """.trimIndent(),
+        """
+            import androidx.compose.runtime.Composable
+
+            object Object {
+                @Composable fun bar() {}
+            }
+        """.trimIndent(),
+    )
 }

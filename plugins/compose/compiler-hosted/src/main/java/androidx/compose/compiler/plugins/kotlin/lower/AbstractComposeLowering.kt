@@ -1023,7 +1023,7 @@ abstract class AbstractComposeLowering(
             // Getting a companion object or top level object can be considered static if the
             // type of that object is Stable. (`Modifier` for instance is a common example)
             is IrGetObjectValue -> {
-                if (symbol.owner.isCompanion) true
+                if (symbol.owner.isObject) true
                 else stabilityInferencer.stabilityOf(type, fileContainingDependent).knownStable()
             }
 
