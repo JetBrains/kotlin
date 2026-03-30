@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.NEW_INFERENCE_CATCH_EXCEPTION
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
+import org.jetbrains.kotlin.resolve.calls.ParameterSpreadProjectionValueArgumentImpl
 import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
@@ -782,7 +784,74 @@ class PSICallResolver(
         // argumentExpression instead of ktExpression is hack -- type info should be stored also for parenthesized expression
         val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
 
-        return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: createParseErrorElement()
+        val simpleArgument = createSimplePSICallArgument(context, valueArgument, typeInfo) ?: return createParseErrorElement()
+        return if (valueArgument is KtValueArgument && valueArgument.isParameterSpread() && simpleArgument is ExpressionKotlinCallArgument) {
+            ParameterSpreadKotlinCallArgumentImpl(
+                simpleArgument.psiCallArgument,
+                outerCallContext,
+                isSpecialFunction,
+                tracingStrategy
+            )
+        } else {
+            simpleArgument
+        }
+    }
+
+    private inner class ParameterSpreadKotlinCallArgumentImpl(
+        private val delegate: PSIKotlinCallArgument,
+        private val outerCallContext: BasicCallResolutionContext,
+        private val isSpecialFunction: Boolean,
+        private val tracingStrategy: TracingStrategy
+    ) : SimplePSIKotlinCallArgument(), ExpressionKotlinCallArgument, ParameterSpreadKotlinCallArgument {
+        private val projectionCache = LinkedHashMap<Name, KotlinCallArgument?>()
+
+        override val valueArgument: ValueArgument
+            get() = delegate.valueArgument
+
+        override val dataFlowInfoBeforeThisArgument: DataFlowInfo
+            get() = delegate.dataFlowInfoBeforeThisArgument
+
+        override val dataFlowInfoAfterThisArgument: DataFlowInfo
+            get() = delegate.dataFlowInfoAfterThisArgument
+
+        override val receiver: ReceiverValueWithSmartCastInfo
+            get() = (delegate as SimpleKotlinCallArgument).receiver
+
+        override val isSafeCall: Boolean
+            get() = (delegate as ReceiverKotlinCallArgument).isSafeCall
+
+        override val isSpread: Boolean
+            get() = false
+
+        override val argumentName: Name?
+            get() = null
+
+        override fun projectTo(parameterName: Name): KotlinCallArgument? {
+            return projectionCache.getOrPut(parameterName) {
+                val ktValueArgument = valueArgument as? KtValueArgument
+                if (ktValueArgument?.getParameterSpreadExcludedNames()?.contains(parameterName) == true) {
+                    return@getOrPut null
+                }
+
+                val argumentExpression = ktValueArgument?.getParameterSpreadReceiverExpression()
+                    ?: valueArgument.getArgumentExpression()
+                    ?: return@getOrPut null
+                val projectedArgument = ParameterSpreadProjectionValueArgumentImpl(
+                    valueArgument,
+                    argumentExpression,
+                    parameterName
+                )
+                val resolvedArgument = resolveValueArgument(
+                    outerCallContext,
+                    dataFlowInfoBeforeThisArgument,
+                    projectedArgument,
+                    isSpecialFunction,
+                    tracingStrategy
+                )
+                val resolvedType = (resolvedArgument as? SimpleKotlinCallArgument)?.receiver?.receiverValue?.type
+                if (resolvedType == null || resolvedType.isError) null else resolvedArgument
+            }
+        }
     }
 
     fun getLhsResult(context: BasicCallResolutionContext, ktExpression: KtCallableReferenceExpression): Pair<DoubleColonLHS?, LHSResult> {

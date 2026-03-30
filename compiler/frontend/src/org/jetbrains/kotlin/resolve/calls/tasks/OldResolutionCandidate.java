@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.Call;
+import org.jetbrains.kotlin.resolve.calls.ParameterSpreadCallAdapter;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
@@ -45,14 +46,25 @@ public class OldResolutionCandidate<D extends CallableDescriptor> {
     public static <D extends CallableDescriptor> OldResolutionCandidate<D> create(
             @NotNull Call call, @NotNull D descriptor
     ) {
-        return new OldResolutionCandidate<>(call, descriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
+        return new OldResolutionCandidate<>(
+                ParameterSpreadCallAdapter.adaptCallIfNeeded(call, descriptor),
+                descriptor,
+                null,
+                ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                null
+        );
     }
 
     public static <D extends CallableDescriptor> OldResolutionCandidate<D> create(
             @NotNull Call call, @NotNull D descriptor, @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
     ) {
-        return new OldResolutionCandidate<>(call, descriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-                                         knownTypeParametersResultingSubstitutor);
+        return new OldResolutionCandidate<>(
+                ParameterSpreadCallAdapter.adaptCallIfNeeded(call, descriptor),
+                descriptor,
+                null,
+                ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                knownTypeParametersResultingSubstitutor
+        );
     }
 
     public static <D extends CallableDescriptor> OldResolutionCandidate<D> create(
@@ -60,7 +72,13 @@ public class OldResolutionCandidate<D extends CallableDescriptor> {
             @NotNull ExplicitReceiverKind explicitReceiverKind,
             @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
     ) {
-        return new OldResolutionCandidate<>(call, descriptor, dispatchReceiver, explicitReceiverKind, knownTypeParametersResultingSubstitutor);
+        return new OldResolutionCandidate<>(
+                ParameterSpreadCallAdapter.adaptCallIfNeeded(call, descriptor),
+                descriptor,
+                dispatchReceiver,
+                explicitReceiverKind,
+                knownTypeParametersResultingSubstitutor
+        );
     }
 
     public void setDispatchReceiver(@Nullable ReceiverValue dispatchReceiver) {

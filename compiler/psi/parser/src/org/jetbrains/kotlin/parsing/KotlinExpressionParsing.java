@@ -429,7 +429,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      */
     private void parseSelectorCallExpression() {
         PsiBuilder.Marker mark = mark();
-        parseAtomicExpression();
+        if (at(FIELD_IDENTIFIER)) {
+            parseSimpleNameExpression();
+        }
+        else {
+            parseAtomicExpression();
+        }
         if (!myBuilder.newlineBeforeCurrentToken() && parseCallSuffix()) {
             mark.done(CALL_EXPRESSION);
         }
@@ -1047,7 +1052,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      */
     public void parseSimpleNameExpression() {
         PsiBuilder.Marker simpleName = mark();
-        expect(IDENTIFIER, "Expecting an identifier");
+        if (at(FIELD_IDENTIFIER)) {
+            advance(); // FIELD_IDENTIFIER
+        } else {
+            expect(IDENTIFIER, "Expecting an identifier");
+        }
         simpleName.done(REFERENCE_EXPRESSION);
     }
 
@@ -1836,7 +1845,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * (SimpleName "=")? "*"? element
+     * (SimpleName "=")? ("*" | "...")? element
      */
     private void parseValueArgument() {
         PsiBuilder.Marker argument = mark();
@@ -1848,8 +1857,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             argName.done(VALUE_ARGUMENT_NAME);
             advance(); // EQ
         }
-        if (at(MUL)) {
-            advance(); // MUL
+        if (at(MUL) || at(RESERVED)) {
+            advance();
         }
         parseExpression("Expecting an argument");
         argument.done(VALUE_ARGUMENT);

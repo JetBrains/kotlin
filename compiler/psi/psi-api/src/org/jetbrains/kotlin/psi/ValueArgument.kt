@@ -28,6 +28,13 @@ interface ValueArgument {
     fun isExternal(): Boolean
 }
 
+interface ParameterSpreadProjectionValueArgument : ValueArgument {
+    val spreadReceiverExpression: KtExpression
+    val parameterName: Name
+    val originalSpreadArgument: ValueArgument
+    val cacheKey: String
+}
+
 interface FakePositionalValueArgumentForCallableReference : ValueArgument {
     val index: Int
 }

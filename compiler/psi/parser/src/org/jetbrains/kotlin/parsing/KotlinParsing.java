@@ -53,7 +53,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
             TokenSet.orSet(
-                    TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD),
+                    TokenSet.create(IDENTIFIER, LBRACKET, RESERVED, VAL_KEYWORD, VAR_KEYWORD),
                     TokenSet.andNot(MODIFIER_KEYWORDS, TokenSet.create(FUN_KEYWORD))
             );
     private static final TokenSet LAMBDA_VALUE_PARAMETER_FIRST =
@@ -2719,6 +2719,15 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (at(COMMA) || at(RPAR)) {
             error("Expecting a parameter declaration");
             noErrors = false;
+        } else if (at(RESERVED)) {
+            advance(); // RESERVED
+            myExpressionParsing.parseExpression();
+            if (at(EQ)) {
+                error("Pack expansion parameters cannot have default values");
+                advance(); // EQ
+                myExpressionParsing.parseExpression();
+                noErrors = false;
+            }
         } else if (at(IDENTIFIER) && lookahead(1) == LT) {
             // Recovery for the case 'fun foo(Array<String>) {}'
             error("Parameter name expected");

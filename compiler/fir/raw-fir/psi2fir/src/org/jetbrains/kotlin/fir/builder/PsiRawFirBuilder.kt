@@ -534,7 +534,8 @@ open class PsiRawFirBuilder(
 
         private fun ValueArgument.toFirExpression(): FirExpression {
             val name = this.getArgumentName()?.asName
-            val firExpression = when (val expression = this.getArgumentExpression()) {
+            val argumentExpression = (this as? KtValueArgument)?.parameterSpreadReceiverExpression ?: this.getArgumentExpression()
+            val firExpression = when (val expression = argumentExpression) {
                 is KtConstantExpression, is KtStringTemplateExpression -> {
                     expression.accept(this@Visitor, null) as FirExpression
                 }
@@ -544,16 +545,24 @@ open class PsiRawFirBuilder(
                 }
             }
 
-            val isSpread = isSpread
+            val isParameterSpread = (this as? KtValueArgument)?.isParameterSpread() == true
+            val isSpread = isSpread || isParameterSpread
+            val argumentSource = (this@toFirExpression as? PsiElement)?.toFirSourceElement()?.let { source ->
+                if (isParameterSpread) {
+                    source.fakeElement(KtFakeSourceElementKind.ParameterSpreadArgument)
+                } else {
+                    source
+                }
+            }
             return when {
                 name != null -> buildNamedArgumentExpression {
-                    source = (this@toFirExpression as? PsiElement)?.toFirSourceElement()
+                    source = argumentSource
                     this.expression = firExpression
                     this.isSpread = isSpread
                     this.name = name
                 }
                 isSpread -> buildSpreadArgumentExpression {
-                    source = (this@toFirExpression as? PsiElement)?.toFirSourceElement()
+                    source = argumentSource
                     this.expression = firExpression
                 }
                 else -> firExpression
@@ -768,6 +777,10 @@ open class PsiRawFirBuilder(
                         buildErrorExpression {
                             source = this@toFirValueParameter.toFirSourceElement(KtFakeSourceElementKind.ContextParameterDefaultValue)
                             diagnostic = ConeContextParameterWithDefaultValue
+                        }
+                    } else if (mode == BodyBuildingMode.NORMAL && this@toFirValueParameter.stub != null) {
+                        buildExpressionStub {
+                            source = this@toFirValueParameter.toFirSourceElement()
                         }
                     } else {
                         buildOrLazyExpression(null) {

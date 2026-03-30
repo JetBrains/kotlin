@@ -405,7 +405,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
         contextReceivers.forEachIndexed { index, expression ->
             irCall.arguments[index + dispatchReceiverOffset] = expression
         }
-        return if (call.isValueArgumentReorderingRequired()) {
+        return if (call.isValueArgumentReorderingRequired() || call.needsParameterSpreadReceiverCaching()) {
             generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, irResultType, contextReceivers.size)
         } else {
             val valueArguments = call.getValueArgumentsInParameterOrder()
@@ -451,12 +451,25 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
         contextReceiversCount: Int
     ): IrExpression {
         val irBlock = IrBlockImpl(startOffset, endOffset, irResultType, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL)
+        val spreadProjectionUseCounts = call.parameterSpreadProjectionInfoByIndex.values.groupingBy { it.key }.eachCount()
+        val cachedSpreadReceivers = mutableMapOf<String, IntermediateValue>()
 
         fun IrExpression.freeze(nameHint: String) =
             if (isUnchanging())
                 this
             else
                 scope.createTemporaryVariableInBlock(context, this, irBlock, nameHint).load()
+
+        fun IrExpression.withCachedSpreadReceiver(index: Int): IrExpression {
+            val projectionInfo = call.parameterSpreadProjectionInfoByIndex[index] ?: return this
+            if ((spreadProjectionUseCounts[projectionInfo.key] ?: 0) <= 1 || projectionInfo.receiverExpression.isUnchanging()) {
+                return this
+            }
+            val cachedReceiver = cachedSpreadReceivers.getOrPut(projectionInfo.key) {
+                scope.createTemporaryVariableInBlock(context, projectionInfo.receiverExpression, irBlock, "\$spread")
+            }
+            return replaceParameterSpreadReceiver(cachedReceiver.load())
+        }
 
         val hasDispatchReceiver = irCall.symbol.descriptor.dispatchReceiverParameter != null
         if (hasDispatchReceiver) {
@@ -470,20 +483,52 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
 
         val resolvedCall = call.original
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
-        val valueArgumentsToIndex = HashMap<ResolvedValueArgument, Int>()
-        for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
-            valueArgumentsToIndex[valueArgument] = index
+        val orderedParameterIndexes = buildList {
+            val seenIndexes = LinkedHashSet<Int>()
+            for (valueArgument in resolvedCall.call.valueArguments) {
+                val argumentMatch = resolvedCall.getArgumentMapping(valueArgument) as? org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch ?: continue
+                val parameterIndex = argumentMatch.valueParameter.index
+                if (seenIndexes.add(parameterIndex)) {
+                    add(parameterIndex)
+                }
+            }
         }
-        for (valueArgument in resolvedCall.valueArguments.values) {
-            val index = valueArgumentsToIndex[valueArgument]!!
+        for (index in orderedParameterIndexes) {
             val irArgument = call.getValueArgument(valueParameters[index]) ?: continue
             val dispatchReceiverOffset = if (hasDispatchReceiver) 1 else 0
             val extensionReceiverOffset = if (hasExtensionReceiver) 1 else 0
             val indexOffset = dispatchReceiverOffset + extensionReceiverOffset + contextReceiversCount
-            irCall.arguments[index + indexOffset] = irArgument.freeze(valueParameters[index].name.asString())
+            irCall.arguments[index + indexOffset] =
+                irArgument.withCachedSpreadReceiver(index).freeze(valueParameters[index].name.asString())
         }
         irBlock.statements.add(irCall)
         return irBlock
+    }
+
+    private fun IrExpression.replaceParameterSpreadReceiver(newReceiver: IrExpression): IrExpression {
+        return when (this) {
+            is IrCall -> {
+                when {
+                    dispatchReceiver != null -> dispatchReceiver = newReceiver
+                    extensionReceiver != null -> extensionReceiver = newReceiver
+                    else -> throw AssertionError("Parameter spread projection has no receiver: ${render()}")
+                }
+                this
+            }
+            is IrGetField -> {
+                receiver = newReceiver
+                this
+            }
+            is IrDynamicMemberExpression -> {
+                receiver = newReceiver
+                this
+            }
+            is IrTypeOperatorCall -> {
+                argument = argument.replaceParameterSpreadReceiver(newReceiver)
+                this
+            }
+            else -> throw AssertionError("Unsupported parameter spread projection: ${render()} (${this::class.java.simpleName})")
+        }
     }
 
     private fun IrFunctionAccessExpression.putValueArguments(

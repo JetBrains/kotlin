@@ -49,7 +49,7 @@ class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpres
     }
 
     override fun getIdentifier(): PsiElement? {
-        return findChildByType(KtTokens.IDENTIFIER)
+        return findChildByType(NAME_REFERENCE_IDENTIFIERS)
     }
 
     override fun getReferencedNameElementType(): IElementType {
@@ -64,6 +64,7 @@ class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpres
         get() = getIdentifier()?.text?.equals("_") == true
 
     companion object {
-        private val NAME_REFERENCE_EXPRESSIONS = TokenSet.create(IDENTIFIER, THIS_KEYWORD, SUPER_KEYWORD)
+        private val NAME_REFERENCE_EXPRESSIONS = TokenSet.create(IDENTIFIER, FIELD_IDENTIFIER, THIS_KEYWORD, SUPER_KEYWORD)
+        private val NAME_REFERENCE_IDENTIFIERS = TokenSet.create(KtTokens.IDENTIFIER, KtTokens.FIELD_IDENTIFIER)
     }
 }

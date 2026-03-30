@@ -5,27 +5,41 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.areNamedArgumentsForbiddenIgnoringOverridden
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ConeSimpleLeafResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
 import org.jetbrains.kotlin.fir.resolve.forbiddenNamedArgumentsTargetOrNull
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.references.isError
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.valueParameterName
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.Name
@@ -120,9 +134,16 @@ private class FirCallArgumentsProcessor(
     private val isIndexedSetOperator: Boolean,
     private val lookInContextParameters: Boolean,
 ) {
+    private sealed interface OrderedArgumentEntry {
+        data class Explicit(val parameter: FirValueParameter) : OrderedArgumentEntry
+        data class ParameterSpread(val argument: ConeResolutionAtom) : OrderedArgumentEntry
+    }
+
     private var state = State.POSITION_ARGUMENTS
     private var currentPositionedParameterIndex = 0
     private var varargArguments: MutableList<ConeResolutionAtom>? = null
+    private val parameterSpreadArguments = mutableListOf<ConeResolutionAtom>()
+    private val orderedArgumentEntries = mutableListOf<OrderedArgumentEntry>()
     private var nameToParameter: Map<Name, FirValueParameter>? = null
     private var namedDynamicArgumentsNamesImpl: MutableSet<Name>? = null
     private val namedDynamicArgumentsNames: MutableSet<Name>
@@ -130,7 +151,6 @@ private class FirCallArgumentsProcessor(
     var diagnostics: MutableList<ResolutionDiagnostic>? = null
         private set
     val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument<ConeResolutionAtom>> = LinkedHashMap(function.valueParameters.size)
-
     val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget? by lazy {
         function.forbiddenNamedArgumentsTargetOrNull(originScope as? FirTypeScope)
     }
@@ -152,6 +172,11 @@ private class FirCallArgumentsProcessor(
 
     private fun processNonLambdaArgument(atom: ConeResolutionAtom, isLastArgument: Boolean) {
         val argument = atom.expression
+        if (argument.isParameterSpread) {
+            parameterSpreadArguments += atom
+            orderedArgumentEntries += OrderedArgumentEntry.ParameterSpread(atom)
+            return
+        }
         // process position argument
         if (argument !is FirNamedArgumentExpression) {
             if (state == State.VARARG_POSITION && isIndexedSetOperator && isLastArgument) {
@@ -215,6 +240,7 @@ private class FirCallArgumentsProcessor(
             currentPositionedParameterIndex++
 
             result[parameter] = ResolvedCallArgument.SimpleArgument(argument)
+            orderedArgumentEntries += OrderedArgumentEntry.Explicit(parameter)
             state = State.POSITION_ARGUMENTS
         }
         // all position arguments will be mapped to current vararg parameter
@@ -239,6 +265,7 @@ private class FirCallArgumentsProcessor(
         }
 
         result[parameter] = ResolvedCallArgument.SimpleArgument(atom)
+        orderedArgumentEntries += OrderedArgumentEntry.Explicit(parameter)
 
         if (stateAllowsMixedNamedAndPositionArguments && valueParameters.getOrNull(currentPositionedParameterIndex) == parameter) {
             state = State.POSITION_ARGUMENTS
@@ -267,10 +294,12 @@ private class FirCallArgumentsProcessor(
             }
 
             result[lastParameter] = ResolvedCallArgument.SimpleArgument(externalArgument)
+            orderedArgumentEntries += OrderedArgumentEntry.Explicit(lastParameter)
         } else {
             val existing = result[lastParameter]
             if (existing == null) {
                 result[lastParameter] = ResolvedCallArgument.SimpleArgument(externalArgument)
+                orderedArgumentEntries += OrderedArgumentEntry.Explicit(lastParameter)
             } else {
                 result[lastParameter] = ResolvedCallArgument.VarargArgument(existing.arguments + externalArgument)
             }
@@ -282,6 +311,8 @@ private class FirCallArgumentsProcessor(
     }
 
     fun processDefaultsAndRunChecks() {
+        expandParameterSpreadArguments()
+
         for ((parameter, resolvedArgument) in result) {
             if (!parameter.isVararg) {
                 if (resolvedArgument !is ResolvedCallArgument.SimpleArgument) {
@@ -320,6 +351,7 @@ private class FirCallArgumentsProcessor(
         assert(state == State.VARARG_POSITION) { "Incorrect state: $state" }
         val parameter = valueParameters[currentPositionedParameterIndex]
         result[parameter] = ResolvedCallArgument.VarargArgument(varargArguments!!)
+        orderedArgumentEntries += OrderedArgumentEntry.Explicit(parameter)
     }
 
     private fun addVarargArgument(argument: ConeResolutionAtom) {
@@ -454,11 +486,134 @@ private class FirCallArgumentsProcessor(
         diagnostics!!.add(diagnostic)
     }
 
+    private fun expandParameterSpreadArguments() {
+        if (parameterSpreadArguments.isEmpty()) return
+
+        val explicitArguments = LinkedHashMap(result)
+        val explicitlyAssignedParameters = explicitArguments.keys.toHashSet()
+        val orderedResult = LinkedHashMap<FirValueParameter, ResolvedCallArgument<ConeResolutionAtom>>(function.valueParameters.size)
+        val assignedParameters = linkedSetOf<FirValueParameter>()
+
+        for (entry in orderedArgumentEntries) {
+            when (entry) {
+                is OrderedArgumentEntry.Explicit -> {
+                    val resolvedArgument = explicitArguments[entry.parameter] ?: continue
+                    orderedResult[entry.parameter] = resolvedArgument
+                    assignedParameters += entry.parameter
+                }
+
+                is OrderedArgumentEntry.ParameterSpread -> {
+                    val excludedParameters = entry.argument.expression.parameterSpreadExcludedParameterNames()
+                    for (parameter in valueParameters) {
+                        if (parameter.isVararg
+                            || parameter in explicitlyAssignedParameters
+                            || parameter in assignedParameters
+                            || parameter.name in excludedParameters
+                        ) {
+                            continue
+                        }
+
+                        val syntheticArgument = createParameterSpreadProjection(entry.argument, parameter) ?: continue
+                        orderedResult[parameter] = ResolvedCallArgument.SimpleArgument(syntheticArgument)
+                        assignedParameters += parameter
+                    }
+                }
+            }
+        }
+
+        result.clear()
+        result.putAll(orderedResult)
+    }
+
+    private fun createParameterSpreadProjection(
+        spreadArgument: ConeResolutionAtom,
+        parameter: FirValueParameter,
+    ): ConeResolutionAtom? {
+        val spreadExpression = spreadArgument.expression as? FirSpreadArgumentExpression ?: return null
+        val receiverExpression = spreadExpression.expression
+        val spreadSource = spreadExpression.source ?: return null
+        val projection = buildPropertyAccessExpression {
+            source = spreadSource.fakeElement(KtFakeSourceElementKind.ParameterSpreadProjection)
+            explicitReceiver = receiverExpression
+            calleeReference = buildSimpleNamedReference {
+                source = spreadSource.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+                name = parameter.name
+            }
+        }
+
+        val resolvedProjection = bodyResolveComponents.callResolver.resolveVariableAccessAndSelectCandidateInIsolatedTower(
+            projection,
+            isUsedAsReceiver = false,
+            isUsedAsGetClassReceiver = false,
+            callSite = projection,
+            ResolutionMode.ContextIndependent,
+        )
+
+        val resolvedProjectionWithoutCandidate: FirExpression = when (resolvedProjection) {
+            is FirResolvable -> {
+                val candidateReference = resolvedProjection.calleeReference as? FirNamedReferenceWithCandidateBase
+                if (candidateReference != null) {
+                    resolvedProjection.replaceCalleeReference(
+                        buildResolvedNamedReference {
+                            source = candidateReference.source
+                            name = candidateReference.name
+                            resolvedSymbol = candidateReference.candidateSymbol
+                        }
+                    )
+                }
+                resolvedProjection
+            }
+
+            else -> resolvedProjection
+        }
+
+        val calleeReference = (resolvedProjectionWithoutCandidate as? FirResolvable)?.calleeReference
+        if (calleeReference?.isError() == true) {
+            return null
+        }
+        if (resolvedProjectionWithoutCandidate.resolvedType is ConeErrorType) {
+            return null
+        }
+
+        return ConeSimpleLeafResolutionAtom(resolvedProjectionWithoutCandidate, allowUnresolvedExpression = false)
+    }
+
     private val FirExpression.isSpread: Boolean
         get() = when (this) {
             is FirWrappedArgumentExpression -> isSpread
             else -> false
         }
+
+    private val FirExpression.isParameterSpread: Boolean
+        get() = this is FirWrappedArgumentExpression && source?.kind == KtFakeSourceElementKind.ParameterSpreadArgument
+
+    private fun FirExpression.parameterSpreadExcludedParameterNames(): Set<Name> {
+        if (!isParameterSpread) {
+            return emptySet()
+        }
+
+        val normalizedText = source?.text
+            ?.toString()
+            ?.filterNot(Char::isWhitespace)
+            ?: return emptySet()
+        val excludePrefix = ".exclude("
+        val excludeIndex = normalizedText.lastIndexOf(excludePrefix)
+        if (excludeIndex < 0 || !normalizedText.endsWith(")")) {
+            return emptySet()
+        }
+
+        val excludedNamesText = normalizedText.substring(excludeIndex + excludePrefix.length, normalizedText.length - 1)
+        if (excludedNamesText.isEmpty()) {
+            return emptySet()
+        }
+
+        return excludedNamesText
+            .split(',')
+            .mapNotNullTo(linkedSetOf()) { excludedName ->
+                val normalizedName = excludedName.removeSurrounding("`")
+                normalizedName.takeIf { it.isNotEmpty() }?.let(Name::identifier)
+            }
+    }
 
     private val valueParameters: List<FirValueParameter>
         get() = function.valueParameters

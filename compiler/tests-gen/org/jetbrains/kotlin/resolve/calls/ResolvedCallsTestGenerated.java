@@ -169,6 +169,56 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/namedArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
+      @TestMetadata("parameterSpread.kt")
+      public void testParameterSpread() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpread.kt");
+      }
+
+      @TestMetadata("parameterSpreadAfterNamed.kt")
+      public void testParameterSpreadAfterNamed() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpreadAfterNamed.kt");
+      }
+
+      @TestMetadata("parameterSpreadAfterPositional.kt")
+      public void testParameterSpreadAfterPositional() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpreadAfterPositional.kt");
+      }
+
+      @TestMetadata("parameterSpreadMultiple.kt")
+      public void testParameterSpreadMultiple() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpreadMultiple.kt");
+      }
+
+      @TestMetadata("parameterSpreadMultipleWithNamedOverride.kt")
+      public void testParameterSpreadMultipleWithNamedOverride() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpreadMultipleWithNamedOverride.kt");
+      }
+
+      @TestMetadata("parameterSpreadNamedBeforeOverlapping.kt")
+      public void testParameterSpreadNamedBeforeOverlapping() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpreadNamedBeforeOverlapping.kt");
+      }
+
+      @TestMetadata("parameterSpreadNamedBetweenSpreads.kt")
+      public void testParameterSpreadNamedBetweenSpreads() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpreadNamedBetweenSpreads.kt");
+      }
+
+      @TestMetadata("parameterSpreadOverlapping.kt")
+      public void testParameterSpreadOverlapping() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpreadOverlapping.kt");
+      }
+
+      @TestMetadata("parameterSpreadThreeWayOverlap.kt")
+      public void testParameterSpreadThreeWayOverlap() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpreadThreeWayOverlap.kt");
+      }
+
+      @TestMetadata("parameterSpreadWithNamedOverride.kt")
+      public void testParameterSpreadWithNamedOverride() {
+        runTest("compiler/testData/resolvedCalls/arguments/namedArguments/parameterSpreadWithNamedOverride.kt");
+      }
+
       @TestMetadata("positionedAfterNamed.kt")
       public void testPositionedAfterNamed() {
         runTest("compiler/testData/resolvedCalls/arguments/namedArguments/positionedAfterNamed.kt");

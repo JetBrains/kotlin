@@ -14,39 +14,73 @@ import org.jetbrains.kotlin.analysis.stubs.jvm.AbstractCompiledJvmStubsTest
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
+private const val PARSER_ONLY_PACK_SELECTOR_PATTERN = "^(PackSelectors|PackSelectorsRecovery)\\.kt$"
+
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("analysis/stubs/tests-gen", "compiler/testData") {
             testClass<AbstractSourceStubsTest> {
-                model("psi", pattern = TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
+                model(
+                    "psi",
+                    pattern = TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME,
+                    excludedPattern = PARSER_ONLY_PACK_SELECTOR_PATTERN,
+                )
             }
 
             testClass<AbstractCompiledJvmStubsTest> {
-                model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model(
+                    "psi",
+                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
+                    excludedPattern = PARSER_ONLY_PACK_SELECTOR_PATTERN,
+                )
             }
 
             testClass<AbstractCompiledJsStubsTest> {
                 // 1.9 is not supported for non-JVM platforms, so k1 is excluded
-                model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model(
+                    "psi",
+                    excludeDirs = listOf("k1"),
+                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
+                    excludedPattern = PARSER_ONLY_PACK_SELECTOR_PATTERN,
+                )
             }
 
             testClass<AbstractCompiledCommonStubsTest> {
                 // 1.9 is not supported for non-JVM platforms, so k1 is excluded
-                model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model(
+                    "psi",
+                    excludeDirs = listOf("k1"),
+                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
+                    excludedPattern = PARSER_ONLY_PACK_SELECTOR_PATTERN,
+                )
             }
 
             testClass<AbstractDecompiledJvmTextTest> {
-                model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model(
+                    "psi",
+                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
+                    excludedPattern = PARSER_ONLY_PACK_SELECTOR_PATTERN,
+                )
             }
 
             testClass<AbstractDecompiledJsTextTest> {
                 // 1.9 is not supported for non-JVM platforms, so k1 is excluded
-                model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model(
+                    "psi",
+                    excludeDirs = listOf("k1"),
+                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
+                    excludedPattern = PARSER_ONLY_PACK_SELECTOR_PATTERN,
+                )
             }
 
             testClass<AbstractDecompiledCommonTextTest> {
                 // 1.9 is not supported for non-JVM platforms, so k1 is excluded
-                model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model(
+                    "psi",
+                    excludeDirs = listOf("k1"),
+                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
+                    excludedPattern = PARSER_ONLY_PACK_SELECTOR_PATTERN,
+                )
             }
         }
     }

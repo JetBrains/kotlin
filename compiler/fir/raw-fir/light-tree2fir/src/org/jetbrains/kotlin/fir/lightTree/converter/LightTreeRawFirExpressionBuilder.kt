@@ -1695,29 +1695,90 @@ class LightTreeRawFirExpressionBuilder(
     private fun convertValueArgument(valueArgument: LighterASTNode): FirExpression {
         var identifier: String? = null
         var isSpread = false
-        var firExpression: FirExpression? = null
+        var isParameterSpread = false
+        var calculatedFirExpression: FirExpression? = null
+        var argumentExpressionNode: LighterASTNode? = null
         valueArgument.forEachChildren {
             when (it.tokenType) {
                 VALUE_ARGUMENT_NAME -> identifier = it.asText
                 MUL -> isSpread = true
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "Argument is absent")
+                RESERVED -> {
+                    isSpread = true
+                    isParameterSpread = true
+                }
+                else -> if (it.isExpression()) {
+                    argumentExpressionNode = it
+                    if (!isParameterSpread) {
+                        calculatedFirExpression = getAsFirExpression(it, "Argument is absent")
+                    }
+                }
             }
         }
-        val calculatedFirExpression =
-            firExpression ?: buildErrorExpression(valueArgument.toFirSourceElement(), ConeSyntaxDiagnostic("Argument is absent"))
+        if (isParameterSpread) {
+            val effectiveExpressionNode = argumentExpressionNode?.parameterSpreadReceiverExpressionNode() ?: argumentExpressionNode
+            calculatedFirExpression =
+                effectiveExpressionNode?.let { getAsFirExpression(it, "Argument is absent") }
+        }
+        val finalFirExpression = calculatedFirExpression
+            ?: buildErrorExpression(valueArgument.toFirSourceElement(), ConeSyntaxDiagnostic("Argument is absent"))
+        val argumentSource = valueArgument.toFirSourceElement().let { source ->
+            if (isParameterSpread) {
+                source.fakeElement(KtFakeSourceElementKind.ParameterSpreadArgument)
+            } else {
+                source
+            }
+        }
         return when {
             identifier != null -> buildNamedArgumentExpression {
-                source = valueArgument.toFirSourceElement()
-                expression = calculatedFirExpression
+                source = argumentSource
+                expression = finalFirExpression
                 this.isSpread = isSpread
                 name = identifier.nameAsSafeName()
             }
             isSpread -> buildSpreadArgumentExpression {
-                source = valueArgument.toFirSourceElement()
-                expression = calculatedFirExpression
+                source = argumentSource
+                expression = finalFirExpression
             }
-            else -> calculatedFirExpression
+            else -> finalFirExpression
         }
+    }
+
+    private fun LighterASTNode.parameterSpreadReceiverExpressionNode(): LighterASTNode? {
+        val baseSelectorNode = when {
+            tokenType == DOT_QUALIFIED_EXPRESSION && selectorExpression.isExcludeCallNode() -> receiverExpression
+            else -> this
+        } ?: return null
+
+        if (baseSelectorNode.tokenType != DOT_QUALIFIED_EXPRESSION) {
+            return null
+        }
+
+        val selectorCall = baseSelectorNode.selectorExpression
+        if (!selectorCall.isPackSelectorCallNode()) {
+            return null
+        }
+
+        val valueArgumentList = selectorCall?.getChildNodeByType(VALUE_ARGUMENT_LIST) ?: return null
+        val selectorValueArgument = valueArgumentList.getChildNodeByType(VALUE_ARGUMENT) ?: return null
+        return selectorValueArgument.getChildExpression()
+    }
+
+    private fun LighterASTNode?.isExcludeCallNode(): Boolean {
+        if (this?.tokenType != CALL_EXPRESSION) {
+            return false
+        }
+
+        val callee = getChildNodeByType(REFERENCE_EXPRESSION) ?: return false
+        return callee.asText == "exclude"
+    }
+
+    private fun LighterASTNode?.isPackSelectorCallNode(): Boolean {
+        if (this?.tokenType != CALL_EXPRESSION) {
+            return false
+        }
+
+        val callee = getChildNodeByType(REFERENCE_EXPRESSION) ?: return false
+        return callee.asText in setOf("\$props", "\$sharedProps", "\$attrs", "\$callbacks", "\$slots")
     }
 
     override fun convertScript(

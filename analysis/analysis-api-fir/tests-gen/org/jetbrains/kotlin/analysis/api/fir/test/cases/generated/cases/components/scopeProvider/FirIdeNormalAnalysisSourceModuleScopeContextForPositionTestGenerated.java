@@ -153,6 +153,102 @@ public class FirIdeNormalAnalysisSourceModuleScopeContextForPositionTestGenerate
   }
 
   @Test
+  @TestMetadata("packDeclarationFromType.kt")
+  public void testPackDeclarationFromType() {
+    run("packDeclarationFromType.kt");
+  }
+
+  @Test
+  @TestMetadata("packDeclarationFromTypeHierarchy.kt")
+  public void testPackDeclarationFromTypeHierarchy() {
+    run("packDeclarationFromTypeHierarchy.kt");
+  }
+
+  @Test
+  @TestMetadata("packExplicitFunctionSelector.kt")
+  public void testPackExplicitFunctionSelector() {
+    run("packExplicitFunctionSelector.kt");
+  }
+
+  @Test
+  @TestMetadata("packExplicitFunctionSelectorFromDependency.kt")
+  public void testPackExplicitFunctionSelectorFromDependency() {
+    run("packExplicitFunctionSelectorFromDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("packFunctionFromDependency.kt")
+  public void testPackFunctionFromDependency() {
+    run("packFunctionFromDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("packFunctionFromSource.kt")
+  public void testPackFunctionFromSource() {
+    run("packFunctionFromSource.kt");
+  }
+
+  @Test
+  @TestMetadata("packFunctionOverloadAmbiguity.kt")
+  public void testPackFunctionOverloadAmbiguity() {
+    run("packFunctionOverloadAmbiguity.kt");
+  }
+
+  @Test
+  @TestMetadata("packFunctionSharedProps.kt")
+  public void testPackFunctionSharedProps() {
+    run("packFunctionSharedProps.kt");
+  }
+
+  @Test
+  @TestMetadata("packFunctionValueAlias.kt")
+  public void testPackFunctionValueAlias() {
+    run("packFunctionValueAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("packFunctionValueAliasFromDependency.kt")
+  public void testPackFunctionValueAliasFromDependency() {
+    run("packFunctionValueAliasFromDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("packRecursiveFunctionFromDependency.kt")
+  public void testPackRecursiveFunctionFromDependency() {
+    run("packRecursiveFunctionFromDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("packRecursiveFunctionFromSource.kt")
+  public void testPackRecursiveFunctionFromSource() {
+    run("packRecursiveFunctionFromSource.kt");
+  }
+
+  @Test
+  @TestMetadata("packSelectorAttrsFromType.kt")
+  public void testPackSelectorAttrsFromType() {
+    run("packSelectorAttrsFromType.kt");
+  }
+
+  @Test
+  @TestMetadata("packSelectorCallbacksFromFunctionValue.kt")
+  public void testPackSelectorCallbacksFromFunctionValue() {
+    run("packSelectorCallbacksFromFunctionValue.kt");
+  }
+
+  @Test
+  @TestMetadata("packSelectorSlotsFromDependency.kt")
+  public void testPackSelectorSlotsFromDependency() {
+    run("packSelectorSlotsFromDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("packSelectorSlotsFromFunctionValueDependency.kt")
+  public void testPackSelectorSlotsFromFunctionValueDependency() {
+    run("packSelectorSlotsFromFunctionValueDependency.kt");
+  }
+
+  @Test
   @TestMetadata("simpleScopeContextForPosition.kt")
   public void testSimpleScopeContextForPosition() {
     run("simpleScopeContextForPosition.kt");

@@ -31,7 +31,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
   @Test
   public void testAllFilesPresentInPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "k1");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true, "k1");
   }
 
   @Test
@@ -1418,7 +1418,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInAnnotation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -1545,7 +1545,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInAt() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/at"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/at"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -1649,7 +1649,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInFunctionalTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Nested
@@ -1662,7 +1662,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInRegressionForSimilarSyntax() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes/regressionForSimilarSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes/regressionForSimilarSyntax"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -1694,7 +1694,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInWithParentheses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes/withParentheses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes/withParentheses"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -1720,7 +1720,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInWithoutParentheses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes/withoutParentheses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes/withoutParentheses"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -1765,7 +1765,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInList() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/list"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/list"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -1791,7 +1791,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInModifiersMigration() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/modifiersMigration"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/modifiersMigration"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -1817,7 +1817,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInOptions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/options"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/options"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -1855,7 +1855,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInTargeted() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -1874,7 +1874,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInOnField() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onField"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -1918,7 +1918,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInOnFile() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onFile"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onFile"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -1980,7 +1980,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInOnGetSetSparam() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onGetSetSparam"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onGetSetSparam"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -2012,7 +2012,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInOnParam() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onParam"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onParam"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -2051,7 +2051,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInValues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/values"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/values"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -2138,7 +2138,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInCompanionBlocks() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/companionBlocks"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/companionBlocks"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -2164,7 +2164,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInContextParameters() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contextParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contextParameters"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -2298,7 +2298,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInContracts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -2389,7 +2389,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInGood() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Nested
@@ -2402,7 +2402,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInCallsInPlace() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -2482,7 +2482,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInHoldsIn() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/holdsIn"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/holdsIn"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -2568,7 +2568,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInReturnsImplies() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -2702,7 +2702,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInVariousContracts() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Nested
@@ -2715,7 +2715,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
           @Test
           public void testAllFilesPresentInNewSyntax() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
           }
 
           @Test
@@ -2738,7 +2738,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInDestructuring() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/destructuring"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/destructuring"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -2824,7 +2824,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInExamples() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -2921,7 +2921,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInArray() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/array"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/array"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -2941,7 +2941,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInCollections() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/collections"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/collections"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -3027,7 +3027,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInIo() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/io"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/io"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -3047,7 +3047,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInMap() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/map"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/map"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -3067,7 +3067,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInPriorityqueues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/priorityqueues"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/priorityqueues"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -3099,7 +3099,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInUtil() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/util"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/examples/util"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -3126,7 +3126,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInFunctionReceivers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/functionReceivers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/functionReceivers"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3182,7 +3182,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInGreatSyntacticShift() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/greatSyntacticShift"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/greatSyntacticShift"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3220,7 +3220,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInKdoc() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/kdoc"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/kdoc"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3438,7 +3438,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInNewLabels() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/newLabels"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/newLabels"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3476,7 +3476,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInOperators() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/operators"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3520,7 +3520,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInPackages() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/packages"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/packages"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3600,7 +3600,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInPlatformTypesRecovery() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/platformTypesRecovery"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/platformTypesRecovery"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3674,7 +3674,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInPrimaryConstructor() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/primaryConstructor"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/primaryConstructor"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3718,7 +3718,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInPropertyBackingField() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/propertyBackingField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/propertyBackingField"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3756,7 +3756,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInPropertyDelegate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/propertyDelegate"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/propertyDelegate"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -3842,7 +3842,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInRecovery() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -4263,7 +4263,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInBinaryExpression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/binaryExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/binaryExpression"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -4301,7 +4301,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInObjects() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/objects"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/objects"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Nested
@@ -4314,7 +4314,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInDeclarations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/objects/declarations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/objects/declarations"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -4376,7 +4376,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
         @Test
         public void testAllFilesPresentInExpressions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/objects/expressions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/objects/expressions"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
         }
 
         @Test
@@ -4445,7 +4445,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInQualifiedExpression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/qualifiedExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/qualifiedExpression"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -4495,7 +4495,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
       @Test
       public void testAllFilesPresentInUnnamedParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/unnamedParameter"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/unnamedParameter"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
       }
 
       @Test
@@ -4576,7 +4576,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInScript() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/script"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/script"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
   }
 
@@ -4590,7 +4590,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInSecondaryConstructors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/secondaryConstructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/secondaryConstructors"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test
@@ -4676,7 +4676,7 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
 
     @Test
     public void testAllFilesPresentInStringTemplates() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/stringTemplates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/stringTemplates"), Pattern.compile("^([^.]+)\\.kt$"), Pattern.compile("^(PackSelectors|PackSelectorsRecovery)\\.kt$"), true);
     }
 
     @Test

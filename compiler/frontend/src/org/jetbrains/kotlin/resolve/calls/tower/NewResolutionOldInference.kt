@@ -211,7 +211,7 @@ class NewResolutionOldInference(
             }
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
-                resolvedCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
+                resolvedCall, basicCallContext, candidateTrace, tracing, candidate.call,
                 CandidateResolveMode.EXIT_ON_FIRST_ERROR
             )
             candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo
@@ -459,7 +459,7 @@ class NewResolutionOldInference(
             }
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
-                candidateCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
+                candidateCall, basicCallContext, candidateTrace, tracing, candidateCall.call,
                 CandidateResolveMode.EXIT_ON_FIRST_ERROR
             )
             candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo

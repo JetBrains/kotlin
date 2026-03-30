@@ -1,0 +1,28 @@
+class A
+class B
+class C
+
+data class Head(val a: A)
+data class Tail(val b: B, val c: C)
+
+fun foo(a: A, b: B, c: C) {}
+
+fun bar(head: Head, tail: Tail, b: B) {
+    <caret>foo(...head, b = b, ...tail)
+}
+
+
+
+Resolved call:
+
+Resulting descriptor: fun foo(a: A, b: B, c: C): Unit defined in root package
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  a : A = head.a
+SUCCESS  b : B = b
+SUCCESS  c : C = tail.c

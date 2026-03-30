@@ -1,0 +1,28 @@
+class A
+class B
+class C
+
+data class Left(val a: A, val b: B)
+data class Right(val b: B, val c: C)
+
+fun foo(a: A, b: B, c: C) {}
+
+fun bar(a: A, left: Left, right: Right) {
+    <caret>foo(a = a, ...left, ...right)
+}
+
+
+
+Resolved call:
+
+Resulting descriptor: fun foo(a: A, b: B, c: C): Unit defined in root package
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  a : A = a
+SUCCESS  b : B = left.b
+SUCCESS  c : C = right.c

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.calls.util.isNotSimpleCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
@@ -55,7 +57,19 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
         valueArguments: Map<ValueParameterDescriptor, ResolvedValueArgument>,
     ): Map<ValueArgument, ArgumentMatchImpl>
 
-    override fun getCall(): Call = psiKotlinCall.psiCall
+    override fun getCall(): Call {
+        val psiCall = psiKotlinCall.psiCall
+        if (psiCall.valueArguments.none { it is KtValueArgument && it.isParameterSpread() }) {
+            return psiCall
+        }
+
+        val renderedArguments = getValueArguments().values.flatMap { it.arguments }
+        return object : DelegatingCall(psiCall) {
+            override fun getValueArguments(): List<ValueArgument> {
+                return renderedArguments
+            }
+        }
+    }
 
     override fun getValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> {
         if (valueArguments == null) {
@@ -224,7 +238,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
                                 continue
                             }
                         } else {
-                            ExpressionValueArgument(valueArgument)
+                            ExpressionValueArgument.create(valueArgument)
                         }
                     }
                     is ResolvedCallArgument.VarargArgument ->

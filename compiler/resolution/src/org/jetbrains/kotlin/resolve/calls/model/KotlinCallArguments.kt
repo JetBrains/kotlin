@@ -45,6 +45,10 @@ interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgum
 
 interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom
 
+interface ParameterSpreadKotlinCallArgument : SimpleKotlinCallArgument {
+    fun projectTo(parameterName: Name): KotlinCallArgument?
+}
+
 interface SubKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom {
     val callResult: PartialCallResolutionResult
 }

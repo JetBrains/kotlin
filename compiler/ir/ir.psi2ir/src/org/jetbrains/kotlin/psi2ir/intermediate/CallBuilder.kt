@@ -22,9 +22,15 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.hasNoSideEffects
+import org.jetbrains.kotlin.ir.expressions.isUnchanging
 import org.jetbrains.kotlin.psi2ir.isValueArgumentReorderingRequired
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
+
+internal data class ParameterSpreadProjectionIrInfo(
+    val key: String,
+    val receiverExpression: IrExpression,
+)
 
 internal class CallBuilder(
     val original: ResolvedCall<*>, // TODO get rid of "original", sometimes we want to generate a call without ResolvedCall
@@ -39,6 +45,7 @@ internal class CallBuilder(
     private val parametersOffset = if (isExtensionInvokeCall) 1 else 0
 
     val irValueArgumentsByIndex = arrayOfNulls<IrExpression>(descriptor.valueParameters.size)
+    val parameterSpreadProjectionInfoByIndex = mutableMapOf<Int, ParameterSpreadProjectionIrInfo>()
 
     fun getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) =
         irValueArgumentsByIndex[valueParameterDescriptor.index + parametersOffset]
@@ -59,6 +66,13 @@ internal fun CallBuilder.getValueArgumentsInParameterOrder(): List<IrExpression?
 
 internal fun CallBuilder.isValueArgumentReorderingRequired() =
     original.isValueArgumentReorderingRequired() && irValueArgumentsByIndex.any { it != null && !it.hasNoSideEffects() }
+
+internal fun CallBuilder.needsParameterSpreadReceiverCaching(): Boolean {
+    val useCounts = parameterSpreadProjectionInfoByIndex.values.groupingBy { it.key }.eachCount()
+    return parameterSpreadProjectionInfoByIndex.values.any { info ->
+        (useCounts[info.key] ?: 0) > 1 && !info.receiverExpression.isUnchanging()
+    }
+}
 
 internal val CallBuilder.hasExtensionReceiver: Boolean
     get() =

@@ -13,7 +13,10 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl;
 
@@ -31,7 +34,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         StringRef fqNameRef = StringRef.fromString(fqName != null ? fqName.asString() : null);
         return new KotlinParameterStubImpl(
                 (StubElement<?>) parentStub, fqNameRef, StringRef.fromString(psi.getName()),
-                psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue(), null
+                psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue(), null, psi.getPackExpansionReceiverName()
         );
     }
 
@@ -44,6 +47,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         FqName name = stub.getFqName();
         dataStream.writeName(name != null ? name.asString() : null);
         dataStream.writeName(stub.getFunctionTypeParameterName());
+        dataStream.writeName(stub.getPackExpansionReceiverName());
     }
 
     @NotNull
@@ -56,7 +60,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         StringRef fqName = dataStream.readName();
 
         return new KotlinParameterStubImpl((StubElement<?>) parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue,
-                                           dataStream.readNameString());
+                                           dataStream.readNameString(), dataStream.readNameString());
     }
 
     @Override

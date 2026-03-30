@@ -364,7 +364,7 @@ public class ValueArgumentsToParametersMapper {
                     candidateCall.getTrace().report(NON_VARARG_SPREAD.onError(spread));
                     setStatus(WEAK_ERROR);
                 }
-                ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument);
+                ResolvedValueArgument argument = ExpressionValueArgument.create(valueArgument);
                 candidateCall.recordValueArgument(valueParameterDescriptor, argument);
             }
         }

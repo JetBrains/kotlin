@@ -1,0 +1,41 @@
+element: a
+implicit values:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 1
+      `<no name provided>`: ERROR
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 1
+      fun source(`<no name provided>`: ERROR)
+    constructors: 0
+
+  PackageMemberScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 1
+      fun target(`<no name provided>`: ERROR)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 4
+
+  DefaultSimpleImportingScope, index = 5
+
+  ExplicitStarImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 7

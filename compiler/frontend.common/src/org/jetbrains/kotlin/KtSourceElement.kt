@@ -17,6 +17,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getElementTextWithContext
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
@@ -363,6 +364,10 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * `fun bar(1, 2, 3)` --> (resolved) `fun bar(VarargArgument(1, 2, 3))`
      */
     object VarargArgument : KtFakeSourceElementKind()
+
+    object ParameterSpreadArgument : KtFakeSourceElementKind()
+    object ParameterSpreadProjection : KtFakeSourceElementKind()
+    object PackExpandedValueParameter : KtFakeSourceElementKind()
 
     /**
      * Part of desugared x?.y
@@ -984,10 +989,57 @@ val AbstractKtSourceElement?.psi: PsiElement? get() = (this as? KtPsiSourceEleme
 
 val KtSourceElement?.text: CharSequence?
     get() = when (this) {
-        is KtPsiSourceElement -> psi.text
+        is KtPsiSourceElement -> {
+            val fileContents = psi.containingFile.viewProvider.contents
+            val safeStart = startOffset.coerceIn(0, fileContents.length)
+            val safeEnd = endOffset.coerceIn(safeStart, fileContents.length)
+            fileContents.subSequence(safeStart, safeEnd)
+        }
         is KtLightSourceElement -> treeStructure.toString(lighterASTNode)
         else -> null
     }
+
+val KtSourceElement?.packExpansionReceiverName: Name?
+    get() {
+        if (this is KtPsiSourceElement) {
+            return psi
+                .packExpansionReceiverNameFromPsiApi()
+                ?.let(Name::identifier)
+        }
+
+        return this?.text
+            ?.toString()
+            ?.filterNot(Char::isWhitespace)
+            ?.packExpansionReceiverNameFromText()
+            ?.let(Name::identifier)
+    }
+
+private fun String.packExpansionReceiverNameFromText(): String? {
+    val normalizedText = this
+    val spreadPrefixIndex = normalizedText.indexOf("...")
+    if (spreadPrefixIndex < 0) {
+        return null
+    }
+
+    val selectorText = normalizedText.substring(spreadPrefixIndex + 3)
+    val selectorSuffix = listOf(".\$props", ".\$sharedProps", ".\$attrs", ".\$callbacks", ".\$slots")
+        .firstOrNull { selectorText.endsWith(it) }
+        ?: return null
+
+    val receiverText = selectorText.removeSuffix(selectorSuffix).removeSurrounding("`")
+    if (receiverText.isEmpty() || '.' in receiverText) {
+        return null
+    }
+
+    return receiverText
+}
+
+private fun PsiElement.packExpansionReceiverNameFromPsiApi(): String? {
+    val method = javaClass.methods.firstOrNull {
+        it.name == "getPackExpansionReceiverName" && it.parameterCount == 0
+    } ?: return null
+    return runCatching { method.invoke(this) as? String }.getOrNull()
+}
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {

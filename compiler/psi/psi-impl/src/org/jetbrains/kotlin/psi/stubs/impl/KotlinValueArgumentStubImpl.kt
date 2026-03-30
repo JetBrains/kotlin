@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentElementType
 class KotlinValueArgumentStubImpl<T : KtValueArgument>(
     parent: StubElement<*>?,
     elementType: KtValueArgumentElementType<T>,
-    override val isSpread: Boolean
+    override val isSpread: Boolean,
+    override val isParameterSpread: Boolean,
 ) : KotlinPlaceHolderStubImpl<T>(parent, elementType), KotlinValueArgumentStub<T> {
     @KtImplementationDetail
     @Suppress("UNCHECKED_CAST")
@@ -25,5 +26,6 @@ class KotlinValueArgumentStubImpl<T : KtValueArgument>(
             @Suppress("DEPRECATION") // KT-78356
             stubType as KtValueArgumentElementType<T>,
         isSpread = isSpread,
+        isParameterSpread = isParameterSpread,
     )
 }

@@ -491,7 +491,11 @@ internal open class KotlinExpressionParsing(
      */
     private fun parseSelectorCallExpression() {
         val mark = mark()
-        parseAtomicExpression()
+        if (at(KtTokens.FIELD_IDENTIFIER)) {
+            parseSimpleNameExpression()
+        } else {
+            parseAtomicExpression()
+        }
         if (!builder.newlineBeforeCurrentToken() && parseCallSuffix()) {
             mark.done(KtNodeTypes.CALL_EXPRESSION)
         } else {
@@ -1048,7 +1052,11 @@ internal open class KotlinExpressionParsing(
      */
     fun parseSimpleNameExpression() {
         val simpleName = mark()
-        expectIdentifierWithRemap("Expecting an identifier")
+        if (at(KtTokens.FIELD_IDENTIFIER)) {
+            advance() // FIELD_IDENTIFIER
+        } else {
+            expectIdentifierWithRemap("Expecting an identifier")
+        }
         simpleName.done(KtNodeTypes.REFERENCE_EXPRESSION)
     }
 
@@ -1829,7 +1837,7 @@ internal open class KotlinExpressionParsing(
     }
 
     /*
-     * (SimpleName "=")? "*"? element
+     * (SimpleName "=")? ("*" | "...")? element
      */
     private fun parseValueArgument() {
         val argument = mark()
@@ -1841,8 +1849,8 @@ internal open class KotlinExpressionParsing(
             argName.done(KtNodeTypes.VALUE_ARGUMENT_NAME)
             advance() // EQ
         }
-        if (at(KtTokens.MUL)) {
-            advance() // MUL
+        if (at(KtTokens.MUL) || at(KtTokens.RESERVED)) {
+            advance()
         }
         parseExpression("Expecting an argument")
         argument.done(KtNodeTypes.VALUE_ARGUMENT)

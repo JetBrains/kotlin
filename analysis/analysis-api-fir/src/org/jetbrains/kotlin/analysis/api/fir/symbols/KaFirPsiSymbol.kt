@@ -340,7 +340,12 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifNotLibrarySource(action: () -> R)
 internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaValueParameters(): List<KaValueParameterSymbol>? =
     ifNotLibrarySource {
         with(analysisSession) {
-            backingPsi?.valueParameters?.map { it.symbol as KaValueParameterSymbol }
+            val valueParameters = backingPsi?.valueParameters ?: return@ifNotLibrarySource null
+            if (valueParameters.any(KtParameter::isPackExpansionParameter)) {
+                return@ifNotLibrarySource null
+            }
+
+            valueParameters.map { it.symbol as KaValueParameterSymbol }
         }
     }
 

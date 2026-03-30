@@ -360,11 +360,14 @@ private fun StatementGenerator.generateValueArgumentUsing(
     valueArgument: ResolvedValueArgument,
     valueParameter: ValueParameterDescriptor,
     resolvedCall: ResolvedCall<*>,
+    call: CallBuilder? = null,
     generateArgumentExpression: (KtExpression) -> IrExpression?
 ): IrExpression? =
     when (valueArgument) {
         is DefaultValueArgument ->
             null
+        is ParameterSpreadProjectionResolvedValueArgument ->
+            generateParameterSpreadProjectionArgumentUsing(valueArgument, valueParameter, resolvedCall, call, generateArgumentExpression)
         is ExpressionValueArgument -> {
             val valueArgument1 = valueArgument.valueArgument
                 ?: throw AssertionError("No value argument: $valueArgument")
@@ -379,6 +382,33 @@ private fun StatementGenerator.generateValueArgumentUsing(
         else ->
             TODO("Unexpected valueArgument: ${valueArgument::class.java.simpleName}")
     }
+
+private fun StatementGenerator.generateParameterSpreadProjectionArgumentUsing(
+    valueArgument: ParameterSpreadProjectionResolvedValueArgument,
+    valueParameter: ValueParameterDescriptor,
+    resolvedCall: ResolvedCall<*>,
+    call: CallBuilder?,
+    generateArgumentExpression: (KtExpression) -> IrExpression?
+): IrExpression? {
+    val projectionValueArgument = valueArgument.valueArgument
+        ?: throw AssertionError("No value argument: $valueArgument")
+    val projectionExpression = projectionValueArgument.getArgumentExpression()
+        ?: throw AssertionError("No argument expression: $projectionValueArgument")
+    val projectionResolvedCall = getResolvedCall(projectionExpression)
+        ?: return generateArgumentExpression(projectionExpression)
+    val projection = valueArgument.projection
+    val receiverExpression = generateArgumentExpression(projection.spreadReceiverExpression) ?: return null
+    val projectionCall = unwrapCallableDescriptorAndTypeArguments(projectionResolvedCall).apply {
+        callReceiver = SimpleCallReceiver(OnceExpressionValue(receiverExpression), null, emptyList())
+        superQualifier = getSuperQualifier(projectionResolvedCall)
+    }
+    call?.parameterSpreadProjectionInfoByIndex?.set(
+        valueParameter.index,
+        ParameterSpreadProjectionIrInfo(projection.cacheKey, receiverExpression)
+    )
+    val irExpression = CallGenerator(this).generateCall(projectionExpression, projectionCall)
+    return applySuspendConversionForValueArgumentIfRequired(irExpression, projectionValueArgument, valueParameter, resolvedCall)
+}
 
 private fun StatementGenerator.applySuspendConversionForValueArgumentIfRequired(
     expression: IrExpression,
@@ -771,7 +801,7 @@ internal fun StatementGenerator.pregenerateValueArgumentsUsing(
     resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
         val valueParameter = call.descriptor.valueParameters[index]
         call.irValueArgumentsByIndex[index] =
-            generateValueArgumentUsing(valueArgument, valueParameter, resolvedCall, generateArgumentExpression)
+            generateValueArgumentUsing(valueArgument, valueParameter, resolvedCall, call, generateArgumentExpression)
     }
 }
 

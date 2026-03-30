@@ -21,15 +21,17 @@ class KtValueArgumentElementType<T : KtValueArgument>(debugName: String, psiClas
     ) {
 
     override fun createStub(psi: T, parentStub: StubElement<out PsiElement>?): KotlinValueArgumentStubImpl<T> {
-        return KotlinValueArgumentStubImpl(parentStub, this, psi.isSpread)
+        return KotlinValueArgumentStubImpl(parentStub, this, psi.isSpread, psi.isParameterSpread)
     }
 
     override fun serialize(stub: KotlinValueArgumentStubImpl<T>, dataStream: StubOutputStream) {
         dataStream.writeBoolean(stub.isSpread)
+        dataStream.writeBoolean(stub.isParameterSpread)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>?): KotlinValueArgumentStubImpl<T> {
         val isSpread = dataStream.readBoolean()
-        return KotlinValueArgumentStubImpl(parentStub, this, isSpread)
+        val isParameterSpread = dataStream.readBoolean()
+        return KotlinValueArgumentStubImpl(parentStub, this, isSpread, isParameterSpread)
     }
 }

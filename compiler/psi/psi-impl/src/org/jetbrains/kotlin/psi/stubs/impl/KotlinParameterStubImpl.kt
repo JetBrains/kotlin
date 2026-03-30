@@ -22,6 +22,7 @@ class KotlinParameterStubImpl(
     override val hasValOrVar: Boolean,
     override val hasDefaultValue: Boolean,
     val functionTypeParameterName: String?,
+    override val packExpansionReceiverName: String?,
 ) : KotlinStubBaseImpl<KtParameter>(parent, KtStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
 
     override fun getName(): String? = name?.string
@@ -39,5 +40,6 @@ class KotlinParameterStubImpl(
         hasValOrVar = hasValOrVar,
         hasDefaultValue = hasDefaultValue,
         functionTypeParameterName = functionTypeParameterName,
+        packExpansionReceiverName = packExpansionReceiverName,
     )
 }

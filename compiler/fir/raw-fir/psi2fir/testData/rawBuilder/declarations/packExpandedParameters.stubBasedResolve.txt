@@ -1,0 +1,14 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] packExpandedParameters.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class TextPack : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TextPack] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/TextPack.color] color: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/TextPack.fontSize] fontSize: R|kotlin/Int|): R|TextPack| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val color: R|kotlin/String| = R|<local>/color|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TextPack] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val fontSize: R|kotlin/Int| = R|<local>/fontSize|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TextPack] get(): R|kotlin/Int|
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun renderLabel([ResolvedTo(ANNOTATION_ARGUMENTS)] text: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] color: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] fontSize: R|kotlin/Int|): R|kotlin/String| { LAZY_BLOCK }

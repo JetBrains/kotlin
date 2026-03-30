@@ -202,13 +202,22 @@ class ArgumentsToParametersMapper(
 
 
         fun processArgumentsInParenthesis(arguments: List<KotlinCallArgument>) {
+            val explicitlyNamedParameters = arguments.mapNotNull { it.argumentName }.toSet()
             for (argument in arguments) {
                 val argumentName = argument.argumentName
 
                 // process position argument
                 if (argumentName == null) {
-                    if (processPositionArgument(argument)) {
-                        state = State.VARARG_POSITION
+                    if (argument is ParameterSpreadKotlinCallArgument && !parameters.any { it.isVararg }) {
+                        if (state == State.VARARG_POSITION) {
+                            completeVarargPositionArguments()
+                        }
+
+                        processParameterSpreadArgument(argument, explicitlyNamedParameters)
+                    } else {
+                        if (processPositionArgument(argument)) {
+                            state = State.VARARG_POSITION
+                        }
                     }
                 }
                 // process named argument
@@ -222,6 +231,20 @@ class ArgumentsToParametersMapper(
             }
             if (state == State.VARARG_POSITION) {
                 completeVarargPositionArguments()
+            }
+        }
+
+        private fun processParameterSpreadArgument(argument: ParameterSpreadKotlinCallArgument, explicitlyNamedParameters: Set<Name>) {
+            state = State.NAMED_ONLY_ARGUMENTS
+
+            for (index in currentPositionedParameterIndex until parameters.size) {
+                val parameter = parameters[index]
+                if (result.containsKey(parameter.original) || parameter.name in explicitlyNamedParameters) {
+                    continue
+                }
+
+                val projectedArgument = argument.projectTo(parameter.name) ?: continue
+                result[parameter.original] = ResolvedCallArgument.SimpleArgument(projectedArgument)
             }
         }
 
@@ -274,5 +297,4 @@ class ArgumentsToParametersMapper(
         }
     }
 }
-
 

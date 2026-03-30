@@ -1,0 +1,17 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+
+class A
+class B
+class C
+
+data class Left(val a: A, val b: B)
+data class Right(val b: B, val c: C)
+
+fun foo(a: A, b: B, c: C) {}
+
+fun test(a: A, left: Left, right: Right) {
+    foo(a = a, ...left, ...right)
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, primaryConstructor, propertyDeclaration */

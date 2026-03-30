@@ -87,6 +87,7 @@ interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T> {
     val isSpread: Boolean
+    val isParameterSpread: Boolean
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -195,6 +196,7 @@ interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
     val isMutable: Boolean
     val hasValOrVar: Boolean
     val hasDefaultValue: Boolean
+    val packExpansionReceiverName: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)

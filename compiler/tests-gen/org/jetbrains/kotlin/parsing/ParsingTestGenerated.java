@@ -806,6 +806,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/objects.kt");
     }
 
+    @TestMetadata("PackSelectors.kt")
+    public void testPackSelectors() {
+      runTest("compiler/testData/psi/PackSelectors.kt");
+    }
+
     @TestMetadata("ParameterNameMising.kt")
     public void testParameterNameMising() {
       runTest("compiler/testData/psi/ParameterNameMising.kt");
@@ -3542,6 +3547,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       @TestMetadata("NoGTInTypeArguments.kt")
       public void testNoGTInTypeArguments() {
         runTest("compiler/testData/psi/recovery/NoGTInTypeArguments.kt");
+      }
+
+      @TestMetadata("PackSelectorsRecovery.kt")
+      public void testPackSelectorsRecovery() {
+        runTest("compiler/testData/psi/recovery/PackSelectorsRecovery.kt");
       }
 
       @TestMetadata("PackageNewLineRecovery.kt")

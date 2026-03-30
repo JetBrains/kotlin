@@ -65,6 +65,16 @@ class CallAndReferenceGenerator(
     private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by c {
 
+    private sealed interface CachedParameterSpreadReceiver {
+        object Recompute : CachedParameterSpreadReceiver
+        class Frozen(val symbol: IrValueSymbol) : CachedParameterSpreadReceiver
+    }
+
+    private data class ParameterSpreadProjectionInfo(
+        val key: String,
+        val receiver: FirExpression,
+    )
+
     private fun FirTypeRef.toIrType(): IrType = toIrType(conversionScope.defaultConversionTypeOrigin())
 
     private fun ConeKotlinType.toIrType(): IrType = toIrType(conversionScope.defaultConversionTypeOrigin())
@@ -1111,20 +1121,25 @@ class CallAndReferenceGenerator(
         argument: FirExpression,
         parameter: FirValueParameter?,
         substitutor: ConeSubstitutor,
+        explicitReceiverExpression: IrExpression? = null,
     ): IrExpression {
         val unsubstitutedParameterType = parameter?.returnTypeRef?.coneType?.fullyExpandedType()
-        var irArgument = visitor.convertToIrExpression(
-            argument,
-            // Normally an argument type should be correct itself.
-            // However, for deserialized annotations it's possible to have an imprecise Array<Any> type
-            // for empty integer literal arguments.
-            // In this case we have to use a parameter type itself which is more precise, like Array<String> or IntArray.
-            // See KT-62598 and its fix for details
-            // In all other cases, we don't pass the expected type and insert casts ourselves below because we need to pass
-            // substitutedExpectedType separately.
-            expectedType =
-                unsubstitutedParameterType.takeIf { visitor.annotationMode && unsubstitutedParameterType?.isArrayType == true }
-        )
+        var irArgument = if (explicitReceiverExpression != null && argument is FirQualifiedAccessExpression) {
+            convertToIrCall(argument, argument.resolvedType, explicitReceiverExpression)
+        } else {
+            visitor.convertToIrExpression(
+                argument,
+                // Normally an argument type should be correct itself.
+                // However, for deserialized annotations it's possible to have an imprecise Array<Any> type
+                // for empty integer literal arguments.
+                // In this case we have to use a parameter type itself which is more precise, like Array<String> or IntArray.
+                // See KT-62598 and its fix for details
+                // In all other cases, we don't pass the expected type and insert casts ourselves below because we need to pass
+                // substitutedExpectedType separately.
+                expectedType =
+                    unsubstitutedParameterType.takeIf { visitor.annotationMode && unsubstitutedParameterType?.isArrayType == true }
+            )
+        }
         if (unsubstitutedParameterType != null) {
             // Unsubstituted parameter type is only used for generating nullability check if the argument being used is flexible,
             // while the value parameter doesn't accept nulls.
@@ -1604,7 +1619,20 @@ class CallAndReferenceGenerator(
         val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledCallable() ?: ConeSubstitutor.Empty
         val contextArgumentCount = contextParameters.size
 
-        data class ArgumentInfo(val parameter: FirValueParameter, val expression: IrExpression, val parameterIndex: Int)
+        data class ArgumentInfo(
+            val parameter: FirValueParameter,
+            val argument: FirExpression?,
+            val expression: IrExpression,
+            val parameterIndex: Int,
+        )
+
+        val parameterSpreadReceiverUseCounts = mutableMapOf<String, Int>().also { counts ->
+            argumentList.mappingIncludingContextArguments.keys.forEach { argument ->
+                val projection = argument.parameterSpreadProjectionInfoOrNull() ?: return@forEach
+                counts[projection.key] = (counts[projection.key] ?: 0) + 1
+            }
+        }
+        val needsParameterSpreadReceiverCaching = parameterSpreadReceiverUseCounts.values.any { it > 1 }
 
         // Convert all context and value arguments.
         // It's important to preserve the order of the explicit arguments including explicit context arguments
@@ -1619,7 +1647,7 @@ class CallAndReferenceGenerator(
                 val parameterIndex = receiverInfo.contextArgumentOffset() + index
 
                 val irExpression = convertArgument(contextArgument, parameter, substitutor)
-                add(ArgumentInfo(parameter, irExpression, parameterIndex))
+                add(ArgumentInfo(parameter, contextArgument, irExpression, parameterIndex))
             }
 
             argumentList.mappingIncludingContextArguments.entries.forEach { (argument, parameter) ->
@@ -1633,21 +1661,35 @@ class CallAndReferenceGenerator(
                         visitor.annotationMode && call is FirAnnotation -> call.argumentMapping.mapping[parameter.name]
                         else -> argument
                     }
-                    val irExpression = argToConvert?.let { convertArgument(it, parameter, substitutor) }
+                    val irExpression = argToConvert?.let { argumentToConvert ->
+                        val spreadProjection = argumentToConvert.parameterSpreadProjectionInfoOrNull()
+                        if (spreadProjection != null && needsParameterSpreadReceiverCaching && (parameterSpreadReceiverUseCounts[spreadProjection.key] ?: 0) > 1) {
+                            IrErrorExpressionImpl(
+                                startOffset,
+                                endOffset,
+                                type,
+                                "Parameter spread projection is converted lazily to preserve receiver evaluation order",
+                            )
+                        } else {
+                            convertArgument(argumentToConvert, parameter, substitutor)
+                        }
+                    }
                         ?: IrErrorExpressionImpl(
                             startOffset, endOffset, type,
                             "No evaluated argument found for parameter `${parameter.name}` in ${call.render()}"
                         )
-                    add(ArgumentInfo(parameter, irExpression, parameterIndex))
+                    add(ArgumentInfo(parameter, argToConvert, irExpression, parameterIndex))
                 }
             }
         }
 
         // If none of the parameters have side effects, the evaluation order doesn't matter anyway.
         // For annotations, this is always true, since arguments have to be compile-time constants.
-        if (!visitor.annotationMode && !converted.all { (_, irArgument) -> irArgument.hasNoSideEffects() } &&
-            needArgumentReordering(argumentList.mappingIncludingContextArguments.values, contextParameters + valueParameters)
-        ) {
+        val needsArgumentReordering =
+            !visitor.annotationMode && !converted.all { it.expression.hasNoSideEffects() } &&
+                needArgumentReordering(argumentList.mappingIncludingContextArguments.values, contextParameters + valueParameters)
+
+        if (needsArgumentReordering || needsParameterSpreadReceiverCaching) {
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 fun IrExpression.freeze(nameHint: String): IrExpression {
                     if (isUnchanging()) return this
@@ -1656,25 +1698,75 @@ class CallAndReferenceGenerator(
                     return IrGetValueImpl(startOffset, endOffset, symbol, null)
                 }
 
+                val cachedParameterSpreadReceivers = mutableMapOf<String, CachedParameterSpreadReceiver>()
+                val shouldFreezeExplicitEvaluations = needsArgumentReordering || needsParameterSpreadReceiverCaching
+
+                fun convertArgumentPreservingSpreadReceiver(info: ArgumentInfo): IrExpression {
+                    val argument = info.argument ?: return info.expression
+                    val spreadProjection = argument.parameterSpreadProjectionInfoOrNull() ?: return info.expression
+                    if ((parameterSpreadReceiverUseCounts[spreadProjection.key] ?: 0) <= 1) {
+                        return info.expression
+                    }
+
+                    val cachedReceiver = cachedParameterSpreadReceivers[spreadProjection.key] ?: run {
+                        val irReceiver = visitor.convertToIrExpression(spreadProjection.receiver)
+                        val newReceiver = if (irReceiver.isUnchanging()) {
+                            CachedParameterSpreadReceiver.Recompute
+                        } else {
+                            val (variable, symbol) = conversionScope.createTemporaryVariable(
+                                irReceiver,
+                                "spreadReceiver",
+                            )
+                            statements.add(variable)
+                            CachedParameterSpreadReceiver.Frozen(symbol)
+                        }
+                        cachedParameterSpreadReceivers[spreadProjection.key] = newReceiver
+                        newReceiver
+                    }
+
+                    return when (cachedReceiver) {
+                        CachedParameterSpreadReceiver.Recompute ->
+                            convertArgument(
+                                argument,
+                                info.parameter,
+                                substitutor,
+                                explicitReceiverExpression = visitor.convertToIrExpression(spreadProjection.receiver),
+                            )
+
+                        is CachedParameterSpreadReceiver.Frozen ->
+                            convertArgument(
+                                argument,
+                                info.parameter,
+                                substitutor,
+                                explicitReceiverExpression = IrGetValueImpl(startOffset, endOffset, cachedReceiver.symbol, null),
+                            )
+                    }
+                }
+
                 // Freeze receivers first
-                if (receiverInfo.hasDispatchReceiver) {
+                if (shouldFreezeExplicitEvaluations && receiverInfo.hasDispatchReceiver) {
                     arguments[0] = arguments[0]?.freeze($$"$this")
                 }
 
-                if (receiverInfo.hasExtensionReceiver) {
+                if (shouldFreezeExplicitEvaluations && receiverInfo.hasExtensionReceiver) {
                     val extensionReceiverIndex = receiverInfo.extensionReceiverOffset(contextArgumentCount)
                     arguments[extensionReceiverIndex] = arguments[extensionReceiverIndex]?.freeze($$"$receiver")
                 }
 
                 // Add and freeze context and value arguments in source order
-                for ((parameter, irArgument, parameterIndex) in converted) {
-                    arguments[parameterIndex] = irArgument.freeze(parameter.name.asString())
+                for (info in converted) {
+                    val irArgument = convertArgumentPreservingSpreadReceiver(info)
+                    arguments[info.parameterIndex] = if (shouldFreezeExplicitEvaluations) {
+                        irArgument.freeze(info.parameter.name.asString())
+                    } else {
+                        irArgument
+                    }
                 }
                 statements.add(this@applyArgumentsWithReorderingIfNeeded)
             }
         } else {
-            for ((_, irArgument, parameterIndex) in converted) {
-                arguments[parameterIndex] = irArgument
+            for (info in converted) {
+                arguments[info.parameterIndex] = info.expression
             }
             if (visitor.annotationMode) {
                 val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction
@@ -1697,6 +1789,14 @@ class CallAndReferenceGenerator(
             }
             return this
         }
+    }
+
+    private fun FirExpression.parameterSpreadProjectionInfoOrNull(): ParameterSpreadProjectionInfo? {
+        val access = this as? FirQualifiedAccessExpression ?: return null
+        if (access.source?.kind != KtFakeSourceElementKind.ParameterSpreadProjection) return null
+        val receiver = access.explicitReceiver ?: return null
+        val source = access.source ?: return null
+        return ParameterSpreadProjectionInfo("${source.startOffset}:${source.endOffset}", receiver)
     }
 
     private fun needArgumentReordering(

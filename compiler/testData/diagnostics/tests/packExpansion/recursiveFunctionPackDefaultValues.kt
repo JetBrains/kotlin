@@ -1,0 +1,30 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+
+class TextPack(
+    val color: String = "blue",
+    val fontSize: Int = 12,
+)
+
+fun render(text: String = "title", <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>...<!DEBUG_INFO_MISSING_UNRESOLVED!>TextPack<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>$props<!><!>) {}
+
+fun headline(<!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>...<!DEBUG_INFO_MISSING_UNRESOLVED!>render<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>$props<!><!>) {
+    <!UNRESOLVED_REFERENCE!>text<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
+    <!UNRESOLVED_REFERENCE!>color<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
+    <!UNRESOLVED_REFERENCE!>fontSize<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>inc<!>()
+}
+
+fun card(<!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>...<!DEBUG_INFO_MISSING_UNRESOLVED!>headline<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>$props<!><!>) {
+    <!UNRESOLVED_REFERENCE!>text<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
+    <!UNRESOLVED_REFERENCE!>color<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
+    <!UNRESOLVED_REFERENCE!>fontSize<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>inc<!>()
+}
+
+fun use() {
+    headline<!NO_VALUE_FOR_PARAMETER!>()<!>
+    headline(<!NAMED_PARAMETER_NOT_FOUND!>text<!> = "title", <!NAMED_PARAMETER_NOT_FOUND!>color<!> = "blue", <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>fontSize<!> = 12)<!>
+    headline(<!NAMED_PARAMETER_NOT_FOUND!>text<!> = "title", <!NAMED_PARAMETER_NOT_FOUND!>color<!> = "blue", <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>fontSize<!> = 18)<!>
+    card<!NO_VALUE_FOR_PARAMETER!>()<!>
+    card(<!NAMED_PARAMETER_NOT_FOUND!>text<!> = "title", <!NAMED_PARAMETER_NOT_FOUND!>color<!> = "blue", <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>fontSize<!> = 12)<!>
+    card(<!NAMED_PARAMETER_NOT_FOUND!>text<!> = "body", <!NAMED_PARAMETER_NOT_FOUND!>color<!> = "red", <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>fontSize<!> = 12)<!>
+}

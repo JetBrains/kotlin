@@ -639,6 +639,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeUnderscoreIsReserved -> FirErrors.UNDERSCORE_IS_RESERVED.createOn(this.source, session)
     is ConeAmbiguousSuper -> FirErrors.AMBIGUOUS_SUPER.createOn(source, this.candidateTypes, session)
     is ConeUnresolvedParentInImport -> null // reported in FirUnresolvedImportChecker
+    is ConePackFunctionAmbiguity -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, symbols, session)
     is ConeAmbiguousAlteredAssign -> FirErrors.AMBIGUOUS_ALTERED_ASSIGN.createOn(source, this.altererNames, session)
     is ConeAmbiguouslyResolvedAnnotationFromPlugin -> {
         FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY.createOn(source, typeFromCompilerPhase, typeFromTypesPhase, session)

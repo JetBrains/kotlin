@@ -729,24 +729,14 @@ internal object MapArguments : ResolutionStage() {
             callSiteIsOperatorCall = (candidate.callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator,
             lookInContextParameters = LanguageFeature.ExplicitContextArguments.isEnabled(),
         )
+        val argumentToParameterMapping = mapping.toArgumentToParameterMapping()
         candidate.initializeArgumentMapping(
-            arguments.unwrapNamedArgumentsForDynamicCall(function),
-            mapping.toArgumentToParameterMapping()
+            argumentToParameterMapping.keys.toList(),
+            argumentToParameterMapping
         )
         candidate.numDefaults = mapping.numDefaults()
         mapping.diagnostics.forEach(sink::reportDiagnostic)
         sink.yieldIfNeed()
-    }
-
-    private fun List<ConeResolutionAtom>.unwrapNamedArgumentsForDynamicCall(function: FirFunction): List<ConeResolutionAtom> {
-        if (function.origin != FirDeclarationOrigin.DynamicScope) return this
-        return map {
-            if (it is ConeResolutionAtomWithSingleChild && it.expression is FirNamedArgumentExpression) {
-                it.subAtom ?: error("SubAtom for named argument is null")
-            } else {
-                it
-            }
-        }
     }
 
     /**

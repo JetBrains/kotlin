@@ -1,0 +1,347 @@
+element: content
+implicit values:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 1
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDeclaredDefaultValue: false
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: content
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaFunctionType:
+          annotations: [
+            kotlin/ParameterName(name = "content")
+              psi: null
+            <error>()
+              psi: KtAnnotationEntry
+          ]
+          typeArguments: [
+            KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Unit
+          ]
+          type: () -> kotlin/Unit
+        visibility: PUBLIC
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 1
+      KaKotlinPropertySymbol:
+        annotations: []
+        backingFieldSymbol: KaBackingFieldSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Private
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isNotDefault: false
+          isVal: true
+          location: PROPERTY
+          modality: FINAL
+          name: field
+          origin: PROPERTY_BACKING_FIELD
+          owningProperty: KaKotlinPropertySymbol(lib/textButton)
+          receiverParameter: null
+          returnType: KaFunctionType:
+            annotations: []
+            typeArguments: [
+              KaUsualClassType:
+                annotations: [
+                  kotlin/ParameterName(name = "text")
+                    psi: null
+                ]
+                typeArguments: []
+                type: @R|kotlin/ParameterName|(name = String(text))  kotlin/String
+              KaUsualClassType:
+                annotations: [
+                  kotlin/ParameterName(name = "enabled")
+                    psi: null
+                ]
+                typeArguments: []
+                type: @R|kotlin/ParameterName|(name = String(enabled))  kotlin/Boolean
+              KaFunctionType:
+                annotations: [
+                  kotlin/ParameterName(name = "onClick")
+                    psi: null
+                ]
+                typeArguments: [
+                  KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: kotlin/Unit
+                ]
+                type: () -> kotlin/Unit
+              KaFunctionType:
+                annotations: [
+                  kotlin/ParameterName(name = "content")
+                    psi: null
+                  <error>()
+                    psi: KtAnnotationEntry
+                ]
+                typeArguments: [
+                  KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: kotlin/Unit
+                ]
+                type: () -> kotlin/Unit
+              KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/Unit
+            ]
+            type: (@R|kotlin/ParameterName|(name = String(text))  kotlin/String, @R|kotlin/ParameterName|(name = String(enabled))  kotlin/Boolean, () -> kotlin/Unit, () -> kotlin/Unit) -> kotlin/Unit
+          visibility: PRIVATE
+        callableId: lib/textButton
+        compilerVisibility: Public
+        contextParameters: []
+        contextReceivers: []
+        getter: KaPropertyGetterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          hasStableParameterNames: true
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isInline: false
+          isNotDefault: false
+          isOverride: false
+          location: PROPERTY
+          modality: FINAL
+          origin: SOURCE
+          receiverParameter: null
+          returnType: KaFunctionType:
+            annotations: []
+            typeArguments: [
+              KaUsualClassType:
+                annotations: [
+                  kotlin/ParameterName(name = "text")
+                    psi: null
+                ]
+                typeArguments: []
+                type: @R|kotlin/ParameterName|(name = String(text))  kotlin/String
+              KaUsualClassType:
+                annotations: [
+                  kotlin/ParameterName(name = "enabled")
+                    psi: null
+                ]
+                typeArguments: []
+                type: @R|kotlin/ParameterName|(name = String(enabled))  kotlin/Boolean
+              KaFunctionType:
+                annotations: [
+                  kotlin/ParameterName(name = "onClick")
+                    psi: null
+                ]
+                typeArguments: [
+                  KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: kotlin/Unit
+                ]
+                type: () -> kotlin/Unit
+              KaFunctionType:
+                annotations: [
+                  kotlin/ParameterName(name = "content")
+                    psi: null
+                  <error>()
+                    psi: KtAnnotationEntry
+                ]
+                typeArguments: [
+                  KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: kotlin/Unit
+                ]
+                type: () -> kotlin/Unit
+              KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/Unit
+            ]
+            type: (@R|kotlin/ParameterName|(name = String(text))  kotlin/String, @R|kotlin/ParameterName|(name = String(enabled))  kotlin/Boolean, () -> kotlin/Unit, () -> kotlin/Unit) -> kotlin/Unit
+          valueParameters: []
+          visibility: PUBLIC
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: KaNonConstantInitializerValue(::Button)
+        isActual: false
+        isConst: false
+        isDelegatedProperty: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isFromPrimaryConstructor: false
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        location: TOP_LEVEL
+        modality: FINAL
+        name: textButton
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaFunctionType:
+          annotations: []
+          typeArguments: [
+            KaUsualClassType:
+              annotations: [
+                kotlin/ParameterName(name = "text")
+                  psi: null
+              ]
+              typeArguments: []
+              type: @R|kotlin/ParameterName|(name = String(text))  kotlin/String
+            KaUsualClassType:
+              annotations: [
+                kotlin/ParameterName(name = "enabled")
+                  psi: null
+              ]
+              typeArguments: []
+              type: @R|kotlin/ParameterName|(name = String(enabled))  kotlin/Boolean
+            KaFunctionType:
+              annotations: [
+                kotlin/ParameterName(name = "onClick")
+                  psi: null
+              ]
+              typeArguments: [
+                KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: kotlin/Unit
+              ]
+              type: () -> kotlin/Unit
+            KaFunctionType:
+              annotations: [
+                kotlin/ParameterName(name = "content")
+                  psi: null
+                <error>()
+                  psi: KtAnnotationEntry
+              ]
+              typeArguments: [
+                KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: kotlin/Unit
+              ]
+              type: () -> kotlin/Unit
+            KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Unit
+          ]
+          type: (@R|kotlin/ParameterName|(name = String(text))  kotlin/String, @R|kotlin/ParameterName|(name = String(enabled))  kotlin/Boolean, () -> kotlin/Unit, () -> kotlin/Unit) -> kotlin/Unit
+        setter: null
+        typeParameters: []
+        visibility: PUBLIC
+    constructors: 0
+
+  PackageMemberScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 1
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: main/Wrapper
+        compilerVisibility: Public
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: TOP_LEVEL
+        modality: FINAL
+        name: Wrapper
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Unit
+        typeParameters: []
+        valueParameters: [
+          KaValueParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            generatedPrimaryConstructorProperty: null
+            hasDeclaredDefaultValue: false
+            hasDefaultValue: false
+            isActual: false
+            isCrossinline: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isImplicitLambdaParameter: false
+            isNoinline: false
+            isVal: true
+            isVararg: false
+            location: LOCAL
+            modality: FINAL
+            name: <no name provided>
+            origin: SOURCE
+            receiverParameter: null
+            returnType: KaErrorType:
+              annotations: []
+              type: ERROR_TYPE
+            visibility: PUBLIC
+        ]
+        visibility: PUBLIC
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 4
+
+  DefaultSimpleImportingScope, index = 5
+
+  ExplicitStarImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 7

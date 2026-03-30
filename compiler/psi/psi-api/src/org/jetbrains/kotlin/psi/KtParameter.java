@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.TokenSet;
@@ -108,6 +109,52 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     @Nullable
     public PsiElement getEqualsToken() {
         return findChildByType(KtTokens.EQ);
+    }
+
+    @Nullable
+    public LeafPsiElement getPackExpansionElement() {
+        ASTNode node = getNode().findChildByType(KtTokens.RESERVED);
+        return node == null ? null : (LeafPsiElement) node.getPsi();
+    }
+
+    public boolean isPackExpansionParameter() {
+        return getPackExpansionReceiverName() != null || getPackExpansionElement() != null;
+    }
+
+    @Nullable
+    public KtExpression getPackExpansionExpression() {
+        LeafPsiElement packExpansionElement = getPackExpansionElement();
+        return packExpansionElement != null ? PsiTreeUtil.getNextSiblingOfType(packExpansionElement, KtExpression.class) : null;
+    }
+
+    @Nullable
+    public String getPackExpansionReceiverName() {
+        KotlinParameterStub stub = getGreenStub();
+        if (stub != null) {
+            return stub.getPackExpansionReceiverName();
+        }
+
+        KtExpression expression = getPackExpansionExpression();
+        if (!(expression instanceof KtDotQualifiedExpression)) {
+            return null;
+        }
+
+        KtExpression receiverExpression = ((KtDotQualifiedExpression) expression).getReceiverExpression();
+        KtExpression selectorExpression = ((KtDotQualifiedExpression) expression).getSelectorExpression();
+        if (!(receiverExpression instanceof KtSimpleNameExpression) || !(selectorExpression instanceof KtSimpleNameExpression)) {
+            return null;
+        }
+
+        String selectorName = ((KtSimpleNameExpression) selectorExpression).getReferencedName();
+        if (!"$props".equals(selectorName)
+                && !"$sharedProps".equals(selectorName)
+                && !"$attrs".equals(selectorName)
+                && !"$callbacks".equals(selectorName)
+                && !"$slots".equals(selectorName)) {
+            return null;
+        }
+
+        return ((KtSimpleNameExpression) receiverExpression).getReferencedName();
     }
 
     public boolean hasDefaultValue() {

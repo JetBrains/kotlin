@@ -166,6 +166,13 @@ class ConeAmbiguityError(
     override val candidates: Collection<AbstractCandidate> get() = candidatesWithErrors.keys
 }
 
+class ConePackFunctionAmbiguity(
+    val name: Name,
+    val symbols: Collection<FirNamedFunctionSymbol>,
+) : ConeDiagnostic {
+    override val reason: String get() = "Ambiguous function pack selector: $name, ${symbols.map { describeSymbol(it) }}"
+}
+
 class ConeOperatorAmbiguityError(override val candidates: Collection<AbstractCallCandidate<*>>) : ConeDiagnosticWithCandidates {
     override val reason: String get() = "Operator overload ambiguity. Compatible candidates: ${candidateSymbols.map { describeSymbol(it) }}"
 }

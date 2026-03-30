@@ -8,7 +8,13 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
+import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.text
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -18,33 +24,73 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentListCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCallCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildInaccessibleReceiverExpressionCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpressionCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressionCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpressionCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildStringConcatenationCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.TypeResolutionConfiguration
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePackFunctionAmbiguity
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.removeParameterNameAnnotation
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
+import org.jetbrains.kotlin.fir.scopes.getClassifiers
+import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.fir.types.valueParameterTypesWithoutReceivers
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -81,6 +127,9 @@ open class FirTypeResolveTransformer(
     initialCurrentFile: FirFile? = null,
     @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
+    private val packExpansionInProgress: MutableSet<FirNamedFunctionSymbol> = mutableSetOf()
+    private val packExpansionFinished: MutableSet<FirNamedFunctionSymbol> = mutableSetOf()
+
     /**
      * All current scopes sorted from outermost to innermost.
      */
@@ -318,6 +367,7 @@ open class FirTypeResolveTransformer(
 
             withDeclaration(namedFunction) {
                 addTypeParametersScope(namedFunction)
+                expandPackParametersIfNeeded(namedFunction)
                 val result = transformDeclaration(namedFunction, data).also {
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                 }
@@ -334,6 +384,861 @@ open class FirTypeResolveTransformer(
                 result
             }
         } as FirNamedFunction
+    }
+
+    private fun expandPackParametersIfNeeded(function: FirNamedFunction) {
+        if (!packExpansionFinished.add(function.symbol)) {
+            return
+        }
+
+        val originalParameters = function.valueParameters
+        if (originalParameters.none { it.packSelector() != null }) {
+            return
+        }
+
+        if (!packExpansionInProgress.add(function.symbol)) {
+            return
+        }
+
+        try {
+            val expandedParameters = mutableListOf<FirValueParameter>()
+            var changed = false
+
+            for (parameter in originalParameters) {
+                val packSelector = parameter.packSelector() ?: run {
+                    expandedParameters += parameter
+                    continue
+                }
+
+                val replacementParameters = expandPackParameter(function, parameter, packSelector)
+                if (replacementParameters == null) {
+                    expandedParameters += parameter
+                    continue
+                }
+
+                changed = true
+                expandedParameters += replacementParameters
+            }
+
+            if (changed) {
+                function.replaceValueParameters(expandedParameters)
+            }
+        } finally {
+            packExpansionInProgress.remove(function.symbol)
+        }
+    }
+
+    private fun expandPackParameter(
+        owner: FirNamedFunction,
+        packParameter: FirValueParameter,
+        packSelector: PackSelector,
+    ): List<FirValueParameter>? {
+        resolveClassifier(packSelector.receiverName)?.let { classifierSymbol ->
+            if (packSelector.kind == PackSelectorKind.SharedProps) {
+                return packParameter.reportPackExpansionError(
+                    ConeUnsupported(
+                        "Type pack selector ${packSelector.render()} is only supported for function overload sets.",
+                        packParameter.source
+                    )
+                )
+            }
+
+            if (packSelector.overloadSelectorName != null) {
+                return packParameter.reportPackExpansionError(
+                    ConeUnsupported(
+                        "Type pack selector ${packSelector.render()} does not support overload selectors.",
+                        packParameter.source
+                    )
+                )
+            }
+
+            val sourceType = classifierSymbol.toPackSourceType() ?: return null
+            val properties = collectPackProperties(sourceType)
+                .filter { packSelector.kind.matchesPackProjection(it.returnTypeRef) }
+            return properties.map { property ->
+                buildPackValueParameter(
+                    owner,
+                    packParameter,
+                    property.name,
+                    property.returnTypeRef,
+                    packDefaultValue = property.packDefaultValue()
+                )
+            }
+        }
+
+        val targetFunctions = resolveFunctions(packSelector.receiverName)
+        if (targetFunctions.isEmpty()) {
+            return expandPackVariableParameter(owner, packParameter, packSelector)
+        }
+
+        val targetParameters = when (packSelector.kind) {
+            PackSelectorKind.Props,
+            PackSelectorKind.Attrs,
+            PackSelectorKind.Callbacks,
+            PackSelectorKind.Slots -> {
+                val targetFunctionSymbol = when {
+                    packSelector.overloadSelectorName != null ->
+                        selectPackFunctionOverload(targetFunctions, packSelector.overloadSelectorName, packParameter)
+                    targetFunctions.size == 1 -> targetFunctions.single()
+                    else -> {
+                        return packParameter.reportPackExpansionError(
+                            ConePackFunctionAmbiguity(packSelector.receiverName, targetFunctions)
+                        )
+                    }
+                } ?: return null
+
+                resolveExpandedFunctionParameters(targetFunctionSymbol)
+                    ?.filter { packSelector.kind.matchesPackProjection(it.returnTypeRef) }
+                    ?: return null
+            }
+            PackSelectorKind.SharedProps -> {
+                buildSharedFunctionParameters(owner, packParameter, packSelector, targetFunctions) ?: return null
+            }
+        }
+
+        return targetParameters.map { targetParameter ->
+            buildPackValueParameter(
+                owner,
+                packParameter,
+                targetParameter.name,
+                targetParameter.returnTypeRef,
+                packDefaultValue = null,
+            )
+        }
+    }
+
+    private fun selectPackFunctionOverload(
+        functionSymbols: List<FirNamedFunctionSymbol>,
+        overloadSelectorName: Name,
+        packParameter: FirValueParameter,
+    ): FirNamedFunctionSymbol? {
+        val selectorVariable = resolveVariable(overloadSelectorName)
+            ?: return packParameter.reportPackExpansionError(
+                ConeUnsupported(
+                    "Pack overload selector ${overloadSelectorName.asString()} must resolve to a function-typed value.",
+                    packParameter.source
+                )
+            )
+        val selectorShape = selectorVariable.functionTypeShape()
+            ?: return packParameter.reportPackExpansionError(
+                ConeUnsupported(
+                    "Pack overload selector ${overloadSelectorName.asString()} must have an explicit function type.",
+                    packParameter.source
+                )
+            )
+
+        val matchingSymbols = functionSymbols.filter { symbol ->
+            val parameters = resolveExpandedFunctionParameters(symbol) ?: return@filter false
+                    parameters.size == selectorShape.parameterTypes.size &&
+                    parameters.zip(selectorShape.parameterTypes).all { (parameter, selectorType) ->
+                        val parameterType = parameter.returnTypeRef.coneTypeOrNull ?: return@all false
+                        parameterType.equalPackSelectorOverloadType(selectorType)
+                    }
+        }
+
+        return when (matchingSymbols.size) {
+            0 -> packParameter.reportPackExpansionError(
+                ConeUnsupported(
+                    "No overload of ${packParameter.packSelector()?.receiverName?.asString()} matches selector ${overloadSelectorName.asString()}.",
+                    packParameter.source
+                )
+            )
+            1 -> matchingSymbols.single()
+            else -> packParameter.reportPackExpansionError(
+                ConePackFunctionAmbiguity(packParameter.packSelector()!!.receiverName, matchingSymbols)
+            )
+        }
+    }
+
+    private fun buildSharedFunctionParameters(
+        owner: FirNamedFunction,
+        packParameter: FirValueParameter,
+        packSelector: PackSelector,
+        functionSymbols: List<FirNamedFunctionSymbol>,
+    ): List<FirValueParameter>? {
+        val expandedSignatures = functionSymbols.map { symbol ->
+            symbol to (resolveExpandedFunctionParameters(symbol) ?: return null)
+        }
+        val anchorParameters = expandedSignatures.firstOrNull()?.second ?: return null
+        val sharedParameters = anchorParameters.mapNotNull { anchorParameter ->
+            val matchingParameters = expandedSignatures.mapNotNull { (_, parameters) ->
+                parameters.find { it.name == anchorParameter.name }
+            }
+            if (matchingParameters.size != expandedSignatures.size) {
+                return@mapNotNull null
+            }
+
+            val anchorType = anchorParameter.returnTypeRef.coneTypeOrNull ?: return@mapNotNull null
+            val hasDifferentType = matchingParameters.drop(1).any { parameter ->
+                val parameterType = parameter.returnTypeRef.coneTypeOrNull ?: return@any true
+                !anchorType.equalTypes(parameterType, session)
+            }
+            if (hasDifferentType) {
+                return@mapNotNull null
+            }
+
+            buildPackValueParameter(
+                owner,
+                packParameter,
+                anchorParameter.name,
+                anchorParameter.returnTypeRef,
+                packDefaultValue = null,
+            )
+        }
+
+        if (sharedParameters.isEmpty()) {
+            return packParameter.reportPackExpansionError(
+                ConeUnsupported(
+                    "Function pack selector ${packSelector.render()} has no shared parameters across overloads.",
+                    packParameter.source
+                )
+            )
+        }
+
+        return sharedParameters
+    }
+
+    private fun resolveExpandedFunctionParameters(functionSymbol: FirNamedFunctionSymbol): List<FirValueParameter>? {
+        val targetFunction = functionSymbol.fir
+        val requiresPackExpansion = targetFunction.valueParameters.any { it.packSelector() != null }
+        val hasUnresolvedParameterTypes = targetFunction.valueParameters.any { it.returnTypeRef !is FirResolvedTypeRef }
+        if (requiresPackExpansion || hasUnresolvedParameterTypes) {
+            if (functionSymbol in packExpansionInProgress) {
+                return null
+            }
+
+            withScopeCleanup {
+                withFunctionResolutionScope(functionSymbol) {
+                    withDeclaration(targetFunction) {
+                        addTypeParametersScope(targetFunction)
+                        if (requiresPackExpansion) {
+                            expandPackParametersIfNeeded(targetFunction)
+                        }
+                        targetFunction.transformValueParameters(this@FirTypeResolveTransformer, null)
+                    }
+                }
+            }
+        }
+
+        return targetFunction.valueParameters
+    }
+
+    private inline fun <T> withFunctionResolutionScope(functionSymbol: FirNamedFunctionSymbol, crossinline action: () -> T): T {
+        return withCallableResolutionScope(functionSymbol, action)
+    }
+
+    private inline fun <T> withCallableResolutionScope(symbol: FirCallableSymbol<*>, crossinline action: () -> T): T {
+        val targetSession = symbol.moduleData.session
+        if (targetSession === session) {
+            val targetFile = targetSession.firProvider.getFirCallableContainerFile(symbol)
+            if (targetFile != null) {
+                return withFileScope(targetFile, action)
+            }
+        }
+
+        return action()
+    }
+
+    private fun expandPackVariableParameter(
+        owner: FirNamedFunction,
+        packParameter: FirValueParameter,
+        packSelector: PackSelector,
+    ): List<FirValueParameter>? {
+        if (packSelector.overloadSelectorName != null) {
+            return packParameter.reportPackExpansionError(
+                ConeUnsupported(
+                    "Value pack selector ${packSelector.render()} does not support overload selectors.",
+                    packParameter.source
+                )
+            )
+        }
+
+        val variableSymbol = resolveVariable(packSelector.receiverName) ?: return null
+        val functionShape = variableSymbol.functionTypeShape() ?: return null
+        return functionShape.parameterNames.indices
+            .filter { index ->
+                packSelector.kind.matchesPackProjection(
+                    functionShape.parameterTypes[index],
+                    functionShape.parameterSourceTexts?.getOrNull(index),
+                )
+            }
+            .map { index ->
+                buildPackValueParameter(
+                    owner,
+                    packParameter,
+                    functionShape.parameterNames[index],
+                    functionShape.parameterTypes[index].toFirResolvedTypeRef(),
+                    packDefaultValue = null,
+                )
+            }
+    }
+
+    private fun collectPackProperties(type: ConeKotlinType): List<FirProperty> {
+        val orderedProperties = LinkedHashMap<Name, FirProperty>()
+        collectPackProperties(type, orderedProperties, mutableSetOf<FirClassLikeSymbol<*>>())
+        return orderedProperties.values.toList()
+    }
+
+    private fun collectPackProperties(
+        type: ConeKotlinType,
+        orderedProperties: LinkedHashMap<Name, FirProperty>,
+        visitedClasses: MutableSet<FirClassLikeSymbol<*>>,
+    ) {
+        when (type) {
+            is ConeClassLikeType -> {
+                val classSymbol = type.lookupTag.toClassSymbol(session) ?: return
+                if (!visitedClasses.add(classSymbol)) {
+                    return
+                }
+
+                classSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+                val klass = classSymbol.fir
+                for (superType in klass.superConeTypes) {
+                    collectPackProperties(superType, orderedProperties, visitedClasses)
+                }
+                for (declaration in klass.declarations) {
+                    val property = declaration as? FirProperty ?: continue
+                    if (property.receiverParameter != null || property.isStatic) {
+                        continue
+                    }
+                    orderedProperties[property.name] = property
+                }
+            }
+
+            is ConeTypeParameterType -> {
+                val symbol = type.lookupTag.symbol
+                symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+                symbol.resolvedBounds.forEach { bound ->
+                    collectPackProperties(bound.coneType, orderedProperties, visitedClasses)
+                }
+            }
+
+            is ConeIntersectionType -> {
+                type.intersectedTypes.forEach { intersectedType ->
+                    collectPackProperties(intersectedType, orderedProperties, visitedClasses)
+                }
+            }
+
+            is ConeFlexibleType -> {
+                collectPackProperties(type.lowerBound, orderedProperties, visitedClasses)
+            }
+
+            is ConeDefinitelyNotNullType -> {
+                collectPackProperties(type.original, orderedProperties, visitedClasses)
+            }
+
+            is ConeCapturedType -> {
+                type.constructor.supertypes?.forEach { superType ->
+                    collectPackProperties(superType, orderedProperties, visitedClasses)
+                }
+            }
+
+            else -> {}
+        }
+    }
+
+    private fun buildPackValueParameter(
+        owner: FirNamedFunction,
+        originalPackParameter: FirValueParameter,
+        name: Name,
+        returnTypeRef: FirTypeRef,
+        packDefaultValue: FirExpression?,
+    ): FirValueParameter {
+        return buildValueParameter {
+            source = originalPackParameter.source?.fakeElement(KtFakeSourceElementKind.PackExpandedValueParameter)
+            moduleData = owner.moduleData
+            origin = FirDeclarationOrigin.Source
+            this.returnTypeRef = returnTypeRef
+            this.name = name
+            symbol = FirValueParameterSymbol()
+            containingDeclarationSymbol = owner.symbol
+            defaultValue = packDefaultValue
+        }
+    }
+
+    private fun FirProperty.packDefaultValue(): FirExpression? {
+        val constructorParameter = correspondingValueParameterFromPrimaryConstructor?.fir
+        if (constructorParameter != null) {
+            return constructorParameter.packDefaultValue()
+        }
+
+        return initializer?.clonePackDefaultValue()
+    }
+
+    private fun FirValueParameter.packDefaultValue(): FirExpression? {
+        return defaultValue.clonePackDefaultValue()
+    }
+
+    private fun FirExpression?.clonePackDefaultValue(): FirExpression? {
+        val defaultValue = this ?: return null
+        if (defaultValue is org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub) {
+            return null
+        }
+
+        return defaultValue.copyPackDefaultExpression()
+    }
+
+    @OptIn(FirIdeOnly::class, UnresolvedExpressionTypeAccess::class)
+    private fun FirExpression.copyPackDefaultExpression(): FirExpression? {
+        return when (this) {
+            is FirLiteralExpression -> buildLiteralExpression(
+                source = source,
+                kind = kind,
+                value = value,
+                annotations = annotations.takeIf { it.isNotEmpty() }?.toMutableList(),
+                setType = false,
+                prefix = prefix,
+            ).apply {
+                this@copyPackDefaultExpression.coneTypeOrNull?.let(::replaceConeTypeOrNull)
+            }
+
+            is FirResolvedQualifier -> buildResolvedQualifier {
+                source = this@copyPackDefaultExpression.source
+                contextSensitiveAlternative =
+                    this@copyPackDefaultExpression.contextSensitiveAlternative?.copyPackDefaultExpression() as? FirPropertyAccessExpression
+                coneTypeOrNull = this@copyPackDefaultExpression.coneTypeOrNull
+                annotations += this@copyPackDefaultExpression.annotations
+                packageFqName = this@copyPackDefaultExpression.packageFqName
+                relativeClassFqName = this@copyPackDefaultExpression.relativeClassFqName
+                symbol = this@copyPackDefaultExpression.symbol
+                explicitParent = this@copyPackDefaultExpression.explicitParent?.copyPackDefaultExpression() as? FirResolvedQualifier
+                isNullableLHSForCallableReference = this@copyPackDefaultExpression.isNullableLHSForCallableReference
+                resolvedLHSTypeForCallableReferenceOrNull = this@copyPackDefaultExpression.resolvedLHSTypeForCallableReferenceOrNull
+                resolvedToCompanionObject = this@copyPackDefaultExpression.resolvedToCompanionObject
+                canBeValue = this@copyPackDefaultExpression.canBeValue
+                isFullyQualified = this@copyPackDefaultExpression.isFullyQualified
+                nonFatalDiagnostics += this@copyPackDefaultExpression.nonFatalDiagnostics
+                resolvedSymbolOrigin = this@copyPackDefaultExpression.resolvedSymbolOrigin
+                typeArguments += this@copyPackDefaultExpression.typeArguments
+            }
+
+            is FirPropertyAccessExpression -> buildPropertyAccessExpressionCopy(this) {
+                explicitReceiver = this@copyPackDefaultExpression.explicitReceiver?.copyPackDefaultExpression()
+                dispatchReceiver = this@copyPackDefaultExpression.dispatchReceiver?.copyPackDefaultExpression()
+                extensionReceiver = this@copyPackDefaultExpression.extensionReceiver?.copyPackDefaultExpression()
+                contextArguments.clear()
+                contextArguments += this@copyPackDefaultExpression.contextArguments.mapNotNull { it.copyPackDefaultExpression() }
+                calleeReference = this@copyPackDefaultExpression.calleeReference.copyPackDefaultReference(source)
+                contextSensitiveAlternative =
+                    this@copyPackDefaultExpression.contextSensitiveAlternative?.copyPackDefaultExpression() as? FirPropertyAccessExpression
+            }
+
+            is FirFunctionCall -> buildFunctionCallCopy(this) {
+                explicitReceiver = this@copyPackDefaultExpression.explicitReceiver?.copyPackDefaultExpression()
+                dispatchReceiver = this@copyPackDefaultExpression.dispatchReceiver?.copyPackDefaultExpression()
+                extensionReceiver = this@copyPackDefaultExpression.extensionReceiver?.copyPackDefaultExpression()
+                contextArguments.clear()
+                contextArguments += this@copyPackDefaultExpression.contextArguments.mapNotNull { it.copyPackDefaultExpression() }
+                argumentList = buildArgumentListCopy(this@copyPackDefaultExpression.argumentList) {
+                    arguments.clear()
+                    arguments += this@copyPackDefaultExpression.argumentList.arguments.mapNotNull { it.copyPackDefaultExpression() }
+                }
+                calleeReference = this@copyPackDefaultExpression.calleeReference.copyPackDefaultReference(source)
+            }
+
+            is FirNamedArgumentExpression -> {
+                val copiedExpression = this.expression.copyPackDefaultExpression() ?: return null
+                buildNamedArgumentExpressionCopy(this) {
+                    expression = copiedExpression
+                }
+            }
+
+            is FirStringConcatenationCall -> buildStringConcatenationCall {
+                source = this@copyPackDefaultExpression.source
+                annotations += this@copyPackDefaultExpression.annotations
+                interpolationPrefix = this@copyPackDefaultExpression.interpolationPrefix
+                isFoldedStrings = this@copyPackDefaultExpression.isFoldedStrings
+                argumentList = buildArgumentListCopy(this@copyPackDefaultExpression.argumentList) {
+                    arguments.clear()
+                    arguments += this@copyPackDefaultExpression.argumentList.arguments.mapNotNull { it.copyPackDefaultExpression() }
+                }
+            }
+
+            is FirThisReceiverExpression -> buildThisReceiverExpressionCopy(this) {}
+            is FirInaccessibleReceiverExpression -> buildInaccessibleReceiverExpressionCopy(this) {}
+            is FirSmartCastExpression -> {
+                val copiedOriginalExpression = this.originalExpression.copyPackDefaultExpression() ?: return null
+                buildSmartCastExpressionCopy(this) {
+                    originalExpression = copiedOriginalExpression
+                    smartcastType = this@copyPackDefaultExpression.smartcastType
+                }
+            }
+
+            else -> null
+        }
+    }
+
+    private fun FirNamedReference.copyPackDefaultReference(newSource: KtSourceElement?): FirNamedReference {
+        return when (this) {
+            is FirResolvedNamedReference -> buildResolvedNamedReference {
+                source = newSource
+                name = this@copyPackDefaultReference.name
+                resolvedSymbol = this@copyPackDefaultReference.resolvedSymbol
+            }
+
+            is FirNamedReferenceWithCandidate -> FirNamedReferenceWithCandidate(
+                newSource,
+                this@copyPackDefaultReference.name,
+                candidate = this@copyPackDefaultReference.candidate,
+            )
+
+            is FirSimpleNamedReference -> buildSimpleNamedReference {
+                source = newSource
+                name = this@copyPackDefaultReference.name
+            }
+
+            is FirErrorNamedReference -> buildErrorNamedReference {
+                source = newSource
+                name = this@copyPackDefaultReference.name
+                diagnostic = this@copyPackDefaultReference.diagnostic
+            }
+
+            else -> this
+        }
+    }
+
+    private fun FirValueParameter.packSelector(): PackSelector? = source.parsePackSelector()
+
+    private fun resolveClassifier(name: Name): FirClassifierSymbol<*>? {
+        for (scope in scopes.asReversed()) {
+            val classifier = scope.getClassifiers(name).firstOrNull() ?: continue
+            return classifier
+        }
+        return null
+    }
+
+    private fun resolveFunctions(name: Name): List<FirNamedFunctionSymbol> {
+        for (scope in scopes.asReversed()) {
+            val functions = scope.getFunctions(name).distinct().toList()
+            if (functions.isEmpty()) {
+                continue
+            }
+            return functions
+        }
+        return emptyList()
+    }
+
+    private fun resolveVariable(name: Name): FirVariableSymbol<*>? {
+        for (scope in scopes.asReversed()) {
+            val properties = scope.getProperties(name).distinct().toList()
+            if (properties.isEmpty()) {
+                continue
+            }
+            if (properties.size == 1) {
+                return properties.single()
+            }
+            return null
+        }
+        return null
+    }
+
+    private fun KtSourceElement?.extractNamedFunctionTypeParameters(): List<PackFunctionTypeParameterSource>? {
+        return text?.toString().extractNamedFunctionTypeParameters()
+    }
+
+    private fun String?.extractNamedFunctionTypeParameters(): List<PackFunctionTypeParameterSource>? {
+        val normalizedText = this
+            ?.filterNot(Char::isWhitespace)
+            ?: return null
+        if (!normalizedText.startsWith("(")) {
+            return null
+        }
+
+        val arrowIndex = normalizedText.indexOf(")->")
+        if (arrowIndex < 0) {
+            return null
+        }
+
+        val parameterBlock = normalizedText.substring(1, arrowIndex)
+        if (parameterBlock.isEmpty()) {
+            return emptyList()
+        }
+
+        return splitTopLevel(parameterBlock).map { parameterText ->
+            val colonIndex = parameterText.indexOf(':')
+            if (colonIndex <= 0) {
+                return null
+            }
+
+            val name = parameterText.substring(0, colonIndex).removeSurrounding("`")
+            if (name.isEmpty()) {
+                return null
+            }
+
+            PackFunctionTypeParameterSource(
+                name = Name.identifier(name),
+                typeText = parameterText.substring(colonIndex + 1),
+            )
+        }
+    }
+
+    private fun splitTopLevel(text: String): List<String> {
+        val result = mutableListOf<String>()
+        var startIndex = 0
+        var angleDepth = 0
+        var roundDepth = 0
+        var squareDepth = 0
+
+        for ((index, char) in text.withIndex()) {
+            when (char) {
+                '<' -> angleDepth++
+                '>' -> angleDepth--
+                '(' -> roundDepth++
+                ')' -> roundDepth--
+                '[' -> squareDepth++
+                ']' -> squareDepth--
+                ',' -> {
+                    if (angleDepth == 0 && roundDepth == 0 && squareDepth == 0) {
+                        result += text.substring(startIndex, index)
+                        startIndex = index + 1
+                    }
+                }
+            }
+        }
+
+        result += text.substring(startIndex)
+        return result
+    }
+
+    private fun KtSourceElement?.parsePackSelector(): PackSelector? {
+        val normalizedText = text
+            ?.toString()
+            ?.filterNot(Char::isWhitespace)
+            ?: return null
+        val spreadPrefixIndex = normalizedText.indexOf("...")
+        if (spreadPrefixIndex < 0) {
+            return null
+        }
+
+        return normalizedText.substring(spreadPrefixIndex + 3).parsePackSelectorText()
+    }
+
+    private fun String.parsePackSelectorText(): PackSelector? {
+        val dotIndex = indexOf(".$")
+        if (dotIndex <= 0) {
+            return null
+        }
+
+        val receiverName = substring(0, dotIndex).parsePackSelectorName() ?: return null
+        val selectorText = substring(dotIndex + 1)
+        PackSelectorKind.entries.firstOrNull { selectorText == it.selectorText }?.let { selectorKind ->
+            return PackSelector(receiverName, selectorKind)
+        }
+
+        return PackSelectorKind.entries.firstNotNullOfOrNull { selectorKind ->
+            if (!selectorKind.supportsOverloadSelector) {
+                return@firstNotNullOfOrNull null
+            }
+
+            val selectorPrefix = "${selectorKind.selectorText}("
+            if (!selectorText.startsWith(selectorPrefix) || !selectorText.endsWith(")")) {
+                return@firstNotNullOfOrNull null
+            }
+
+            val overloadSelectorName = selectorText
+                .removePrefix(selectorPrefix)
+                .removeSuffix(")")
+                .parsePackSelectorName()
+                ?: return@firstNotNullOfOrNull null
+            PackSelector(receiverName, selectorKind, overloadSelectorName)
+        }
+    }
+
+    private fun String.parsePackSelectorName(): Name? {
+        val normalizedName = removeSurrounding("`")
+        if (normalizedName.isEmpty() || '.' in normalizedName || '(' in normalizedName || ')' in normalizedName) {
+            return null
+        }
+
+        return Name.identifier(normalizedName)
+    }
+
+    private fun FirTypeRef.resolvePackTypeRef(): FirResolvedTypeRef? {
+        return when (this) {
+            is FirResolvedTypeRef -> this
+            else -> transformTypeRef(this, null)
+        }
+    }
+
+    private fun FirVariableSymbol<*>.functionTypeShape(): PackFunctionShape? {
+        val resolvedTypeRef = withCallableResolutionScope(this) {
+            fir.returnTypeRef.resolvePackTypeRef()
+        } ?: return null
+        val coneType = resolvedTypeRef.coneType.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
+        if (!coneType.isSomeFunctionType(session)) {
+            return null
+        }
+
+        val parameterTypes = coneType.valueParameterTypesWithoutReceivers(session)
+        val sourceParameters = fir.returnTypeRef.source.extractNamedFunctionTypeParameters()
+        val parameterNames = parameterTypes.map { it.valueParameterName(session) }
+            .takeIf { names -> names.all { it != null } }
+            ?.map { it!! }
+            ?: sourceParameters?.map { it.name }
+            ?: return null
+
+        if (parameterNames.size != parameterTypes.size) {
+            return null
+        }
+
+        val parameterSourceTexts = sourceParameters
+            ?.takeIf { it.size == parameterTypes.size }
+            ?.map { it.typeText }
+
+        return PackFunctionShape(parameterNames, parameterTypes, parameterSourceTexts)
+    }
+
+    private fun ConeKotlinType.equalPackSelectorOverloadType(other: ConeKotlinType): Boolean {
+        return normalizePackSelectorOverloadType().equalTypes(other.normalizePackSelectorOverloadType(), session)
+    }
+
+    private fun ConeKotlinType.normalizePackSelectorOverloadType(): ConeKotlinType {
+        val normalizedArguments = typeArguments.takeIf { it.isNotEmpty() }?.map { projection ->
+            val projectionType = projection.type ?: return@map projection
+            projection.replaceType(projectionType.normalizePackSelectorOverloadType())
+        }?.toTypedArray()
+
+        var normalizedType = if (normalizedArguments != null) {
+            withArguments(normalizedArguments)
+        } else {
+            this
+        }
+
+        normalizedType = normalizedType.removeParameterNameAnnotation()
+        normalizedType = normalizedType.removeAnnotations()
+        return normalizedType
+    }
+
+    private fun FirValueParameter.reportPackExpansionError(diagnostic: ConeDiagnostic): Nothing? {
+        replaceReturnTypeRef(
+            buildErrorTypeRef {
+                source = this@reportPackExpansionError.source
+                this.diagnostic = diagnostic
+            }
+        )
+        return null
+    }
+
+    private fun FirClassifierSymbol<*>.toPackSourceType(): ConeKotlinType? {
+        return when (this) {
+            is FirTypeParameterSymbol -> defaultType
+            is FirClassLikeSymbol<*> -> defaultType()
+        }
+    }
+
+    private fun PackSelectorKind.matchesPackProjection(typeRef: FirTypeRef): Boolean {
+        val coneType = typeRef.resolvePackTypeRef()?.coneType
+            ?: return when (this) {
+                PackSelectorKind.Props,
+                PackSelectorKind.SharedProps -> true
+                PackSelectorKind.Slots -> typeRef.hasPackComposableAnnotationBySource()
+                else -> false
+            }
+        if (this == PackSelectorKind.Slots && typeRef.hasPackComposableAnnotationBySource()) {
+            return coneType.isSomeFunctionType(session)
+        }
+        return matchesPackProjection(coneType)
+    }
+
+    private fun PackSelectorKind.matchesPackProjection(type: ConeKotlinType): Boolean {
+        return when (this) {
+            PackSelectorKind.Props,
+            PackSelectorKind.SharedProps -> true
+            PackSelectorKind.Attrs -> !type.isSomeFunctionType(session)
+            PackSelectorKind.Callbacks -> type.isSomeFunctionType(session) && !type.isPackComposableFunctionType()
+            PackSelectorKind.Slots -> type.isPackComposableFunctionType()
+        }
+    }
+
+    private fun ConeKotlinType.isPackComposableFunctionType(): Boolean {
+        if (!isSomeFunctionType(session)) {
+            return false
+        }
+
+        val kind = functionTypeKind(session)
+        if (kind != null && !kind.isBasicFunctionOrKFunction && kind != FunctionTypeKind.SuspendFunction && kind != FunctionTypeKind.KSuspendFunction) {
+            return true
+        }
+
+        return customAnnotations.any { annotation ->
+            val classId = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId
+            classId?.shortClassName?.asString() == "Composable" || annotation.hasPackComposableAnnotationBySource()
+        }
+    }
+
+    private fun FirAnnotation.hasPackComposableAnnotationBySource(): Boolean {
+        return source?.text?.toString().hasPackComposableAnnotationBySource() ||
+                annotationTypeRef.source?.text?.toString().hasPackComposableAnnotationBySource()
+    }
+
+    private fun PackSelectorKind.matchesPackProjection(type: ConeKotlinType, sourceTypeText: String?): Boolean {
+        if (this == PackSelectorKind.Slots && sourceTypeText.hasPackComposableAnnotationBySource()) {
+            return type.isSomeFunctionType(session)
+        }
+
+        return matchesPackProjection(type)
+    }
+
+    private fun String?.hasPackComposableAnnotationBySource(): Boolean {
+        val sourceText = this ?: return false
+        val normalizedText = sourceText.filterNot(Char::isWhitespace)
+        return PACK_COMPOSABLE_ANNOTATION_REGEX.containsMatchIn(normalizedText)
+    }
+
+    private fun FirTypeRef.hasPackComposableAnnotationBySource(): Boolean {
+        return source?.text?.toString().hasPackComposableAnnotationBySource()
+    }
+
+    private data class PackSelector(
+        val receiverName: Name,
+        val kind: PackSelectorKind,
+        val overloadSelectorName: Name? = null,
+    ) {
+        fun render(): String = buildString {
+            append(receiverName.asString())
+            append('.')
+            append(kind.selectorText)
+            if (overloadSelectorName != null) {
+                append('(')
+                append(overloadSelectorName.asString())
+                append(')')
+            }
+        }
+    }
+
+    private enum class PackSelectorKind {
+        Props,
+        SharedProps,
+        Attrs,
+        Callbacks,
+        Slots;
+
+        val selectorText: String
+            get() = when (this) {
+                Props -> "\$props"
+                SharedProps -> "\$sharedProps"
+                Attrs -> "\$attrs"
+                Callbacks -> "\$callbacks"
+                Slots -> "\$slots"
+            }
+
+        val supportsOverloadSelector: Boolean
+            get() = this != SharedProps
+    }
+
+    private data class PackFunctionShape(
+        val parameterNames: List<Name>,
+        val parameterTypes: List<ConeKotlinType>,
+        val parameterSourceTexts: List<String>? = null,
+    )
+
+    private data class PackFunctionTypeParameterSource(
+        val name: Name,
+        val typeText: String,
+    )
+
+    private companion object {
+        val PACK_COMPOSABLE_ANNOTATION_REGEX = Regex("@(?:[A-Za-z_][A-Za-z0-9_]*\\.)*Composable(?:\\(|\\b)")
     }
 
     private fun unboundCyclesInTypeParametersSupertypes(typeParametersOwner: FirTypeParameterRefsOwner) {

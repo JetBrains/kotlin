@@ -380,6 +380,27 @@ class FirCallResolver(
         ) { true }
     }
 
+    fun resolveVariableAccessAndSelectCandidateInIsolatedTower(
+        qualifiedAccess: FirQualifiedAccessExpression,
+        isUsedAsReceiver: Boolean,
+        isUsedAsGetClassReceiver: Boolean,
+        callSite: FirElement,
+        resolutionMode: ResolutionMode,
+    ): FirExpression {
+        val nestedResolver = FirCallResolver(
+            components,
+            FirTowerResolver(components, ResolutionStageRunner()),
+        )
+        nestedResolver.initTransformer(transformer)
+        return nestedResolver.resolveVariableAccessAndSelectCandidate(
+            qualifiedAccess,
+            isUsedAsReceiver,
+            isUsedAsGetClassReceiver,
+            callSite,
+            resolutionMode,
+        )
+    }
+
     private fun resolveVariableAccessAndSelectCandidateImpl(
         qualifiedAccess: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,

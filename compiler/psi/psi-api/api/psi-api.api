@@ -2054,6 +2054,8 @@ public class org/jetbrains/kotlin/psi/KtParameter : org/jetbrains/kotlin/psi/KtC
 	public synthetic fun getNameIdentifier ()Lcom/intellij/psi/PsiElement;
 	public fun getOwnerDeclaration ()Lorg/jetbrains/kotlin/psi/KtDeclaration;
 	public fun getOwnerFunction ()Lorg/jetbrains/kotlin/psi/KtDeclarationWithBody;
+	public fun getPackExpansionElement ()Lcom/intellij/psi/impl/source/tree/LeafPsiElement;
+	public fun getPackExpansionExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public fun getPresentation ()Lcom/intellij/navigation/ItemPresentation;
 	public fun getReceiverTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 	public synthetic fun getTextOffset ()I
@@ -2074,6 +2076,7 @@ public class org/jetbrains/kotlin/psi/KtParameter : org/jetbrains/kotlin/psi/KtC
 	public fun isLambdaParameter ()Z
 	public fun isLoopParameter ()Z
 	public fun isMutable ()Z
+	public fun isPackExpansionParameter ()Z
 	public fun isVarArg ()Z
 	public synthetic fun setName (Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
 	public fun setTypeReference (Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/psi/KtTypeReference;
@@ -4288,4 +4291,3 @@ public class org/jetbrains/kotlin/types/expressions/OperatorConventions {
 	public static fun getOperationSymbolForName (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/lexer/KtToken;
 	public static fun isConventionName (Lorg/jetbrains/kotlin/name/Name;)Z
 }
-

@@ -1,0 +1,31 @@
+class A
+class B
+class C
+class D
+
+data class First(val a: A, val b: B)
+data class Second(val b: B, val c: C)
+data class Third(val c: C, val d: D)
+
+fun foo(a: A, b: B, c: C, d: D) {}
+
+fun bar(first: First, second: Second, third: Third) {
+    <caret>foo(...first, ...second, ...third)
+}
+
+
+
+Resolved call:
+
+Resulting descriptor: fun foo(a: A, b: B, c: C, d: D): Unit defined in root package
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+Dispatch receiver = NO_RECEIVER
+Extension receiver = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  a : A = first.a
+SUCCESS  b : B = first.b
+SUCCESS  c : C = second.c
+SUCCESS  d : D = third.d

@@ -1,0 +1,43 @@
+element: content
+implicit values:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 1
+      content: @`<error>` (() -> kotlin.Unit)
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 3
+      val textButton: (text: kotlin.String, enabled: kotlin.Boolean, onClick: () -> kotlin.Unit, content: @`<error>` (() -> kotlin.Unit)) -> kotlin.Unit
+      fun Button(text: kotlin.String, enabled: kotlin.Boolean, onClick: () -> kotlin.Unit, content: @`<error>` (() -> kotlin.Unit))
+      fun Button(value: kotlin.Int, enabled: kotlin.Boolean, content: @`<error>` (() -> kotlin.Unit))
+    constructors: 0
+
+  PackageMemberScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 1
+      fun Wrapper(`<no name provided>`: ERROR)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 4
+
+  DefaultSimpleImportingScope, index = 5
+
+  ExplicitStarImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 7

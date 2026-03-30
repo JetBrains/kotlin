@@ -70,7 +70,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         private val MODIFIER_WITHOUT_FUN = KtTokens.MODIFIERS - KtTokens.FUN_MODIFIER
         private val VALUE_PARAMETER_FIRST =
-            syntaxElementTypeSetOf(KtTokens.IDENTIFIER, KtTokens.LBRACKET, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD) +
+            syntaxElementTypeSetOf(KtTokens.IDENTIFIER, KtTokens.LBRACKET, KtTokens.RESERVED, KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD) +
                     MODIFIER_WITHOUT_FUN
         private val LAMBDA_VALUE_PARAMETER_FIRST =
             syntaxElementTypeSetOf(KtTokens.IDENTIFIER, KtTokens.LBRACKET) +
@@ -2803,6 +2803,15 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (at(KtTokens.COMMA) || at(KtTokens.RPAR)) {
             error("Expecting a parameter declaration")
             noErrors = false
+        } else if (at(KtTokens.RESERVED)) {
+            advance() // RESERVED
+            expressionParsing.parseExpression()
+            if (at(KtTokens.EQ)) {
+                error("Pack expansion parameters cannot have default values")
+                advance() // EQ
+                expressionParsing.parseExpression()
+                noErrors = false
+            }
         } else if (atWithRemap(KtTokens.IDENTIFIER) && lookahead(1) === KtTokens.LT) {
             // Recovery for the case 'fun foo(Array<String>) {}'
             error("Parameter name expected")

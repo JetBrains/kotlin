@@ -421,6 +421,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noPrimaryConstructor.kt");
     }
 
+    @TestMetadata("packExpandedParameters.kt")
+    public void testPackExpandedParameters() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/packExpandedParameters.kt");
+    }
+
     @TestMetadata("primaryConstructorWithoutConstructorKeyword.kt")
     public void testPrimaryConstructorWithoutConstructorKeyword() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/primaryConstructorWithoutConstructorKeyword.kt");

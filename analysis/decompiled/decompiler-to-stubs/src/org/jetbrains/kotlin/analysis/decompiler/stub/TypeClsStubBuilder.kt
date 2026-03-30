@@ -329,6 +329,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 hasValOrVar = false,
                 hasDefaultValue = false,
                 functionTypeParameterName = getFunctionTypeParameterName(annotations),
+                packExpansionReceiverName = null,
             )
 
             createTypeReferenceStub(parameter, parameterType, loadTypeAnnotations = { annotations })
@@ -389,6 +390,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 hasValOrVar = false,
                 isMutable = false,
                 functionTypeParameterName = null,
+                packExpansionReceiverName = null,
             )
 
             val varargElementType = valueParameterProto.varargElementType(c.typeTable)

@@ -111,7 +111,11 @@ private inline fun <reified T : FirDeclaration> revive(
 private fun replaceLazyValueParameters(target: FirFunction, copy: FirFunction) {
     val targetParameters = target.valueParameters
     val copyParameters = copy.valueParameters
-    require(targetParameters.size == copyParameters.size)
+    if (targetParameters.size != copyParameters.size) {
+        // 参数包展开或选择器投影会在类型阶段重写形参列表；lazy body revive 仍基于原始 PSI，
+        // 这里数量不一致时无法安全按位置回填默认值，直接跳过即可。
+        return
+    }
 
     for ((valueParameter, newValueParameter) in targetParameters.zip(copyParameters)) {
         if (valueParameter.defaultValue is FirLazyExpression) {

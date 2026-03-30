@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 
@@ -36,7 +37,7 @@ interface KtSimpleNameExpression : KtReferenceExpression {
 }
 
 abstract class KtSimpleNameExpressionImpl(node: ASTNode) : KtExpressionImpl(node), KtSimpleNameExpression {
-    override fun getIdentifier(): PsiElement? = findChildByType(KtTokens.IDENTIFIER)
+    override fun getIdentifier(): PsiElement? = findChildByType(NAME_REFERENCE_TOKENS)
 
     override fun getReferencedNameElementType() = getReferencedNameElementTypeImpl(this)
 
@@ -50,6 +51,8 @@ abstract class KtSimpleNameExpressionImpl(node: ASTNode) : KtExpressionImpl(node
 
     //NOTE: an unfortunate way to share an implementation between stubbed and not stubbed tree
     companion object {
+        private val NAME_REFERENCE_TOKENS = TokenSet.create(KtTokens.IDENTIFIER, KtTokens.FIELD_IDENTIFIER)
+
         fun getReferencedNameElementTypeImpl(expression: KtSimpleNameExpression): IElementType {
             return expression.getReferencedNameElement().node!!.elementType
         }

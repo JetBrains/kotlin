@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.ParameterSpreadProjectionValueArgument;
 import org.jetbrains.kotlin.psi.ValueArgument;
 
 import java.util.Collections;
@@ -29,6 +30,14 @@ public class ExpressionValueArgument implements ResolvedValueArgument {
 
     public ExpressionValueArgument(@Nullable ValueArgument valueArgument) {
         this.valueArgument = valueArgument;
+    }
+
+    @NotNull
+    public static ExpressionValueArgument create(@Nullable ValueArgument valueArgument) {
+        if (valueArgument instanceof ParameterSpreadProjectionValueArgument) {
+            return new ParameterSpreadProjectionResolvedValueArgument((ParameterSpreadProjectionValueArgument) valueArgument);
+        }
+        return new ExpressionValueArgument(valueArgument);
     }
 
     // Nullable when something like f(a, , b) was in the source code

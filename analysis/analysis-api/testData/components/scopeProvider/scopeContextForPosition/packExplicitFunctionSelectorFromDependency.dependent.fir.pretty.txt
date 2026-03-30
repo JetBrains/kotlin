@@ -1,0 +1,44 @@
+element: text
+implicit values:
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 2
+      text: kotlin.String
+      color: kotlin.String
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 3
+      val textString: (text: kotlin.String, color: kotlin.String) -> kotlin.Unit
+      fun Text(text: kotlin.String, color: kotlin.String)
+      fun Text(value: kotlin.Int, color: kotlin.String)
+    constructors: 0
+
+  PackageMemberScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 1
+      fun Wrapper(`<no name provided>`: ERROR)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 4
+
+  DefaultSimpleImportingScope, index = 5
+
+  ExplicitStarImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 7
