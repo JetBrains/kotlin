@@ -1,5 +1,10 @@
 # Spread Pack Prototype PR Draft
 
+Related language-design docs:
+
+- [spread-pack-design-note.md](spread-pack-design-note.md)
+- [spread-pack-youtrack-draft.md](spread-pack-youtrack-draft.md)
+
 ## Summary
 
 This change set prototypes named spread-pack support in the Kotlin compiler and analysis stack.
@@ -72,4 +77,4 @@ Generated compiler artifact:
 
 - This branch intentionally includes compiler, analysis API, parser, PSI, diagnostics, and demo validation work together because declaration packs are not useful if bodies and scopes still treat them as opaque syntax.
 - Stock IntelliJ Kotlin plugins will not understand the new syntax until matching analysis and IDE artifacts from the same fork are used.
-- PR publication is still blocked on GitHub setup for a real fork remote under `zjarlin`.
+- The implementation prototype now has a draft upstream PR, but formal acceptance still requires Language Design discussion and a KEEP-level proposal.
