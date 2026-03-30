@@ -14,18 +14,18 @@ public sealed class Jsr305 {
     /**
      * Corresponds to -Xjsr305={ignore/strict/warn}
      */
-    public data class Global(override val mode: Mode) : Jsr305()
+    public class Global(override val mode: Mode) : Jsr305()
 
     /**
      * Corresponds to -Xjsr305=under-migration:{ignore/strict/warn}
      */
-    public data class UnderMigration(override val mode: Mode) : Jsr305()
+    public class UnderMigration(override val mode: Mode) : Jsr305()
 
     /**
      * Corresponds to -Xjsr305=@<fq.name>:{ignore/strict/warn}
      */
-    public data class SpecificAnnotation(val fqName: String, override val mode: Mode) : Jsr305() {
-        val annotationFqName: String = "@$fqName"
+    public class SpecificAnnotation(public val fqName: String, override val mode: Mode) : Jsr305() {
+        public val annotationFqName: String = "@$fqName"
     }
 
     public enum class Mode(
