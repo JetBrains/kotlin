@@ -188,12 +188,11 @@ internal class KaFirSymbolInformationProvider(
         return SimpleDeprecationInfo(deprecationLevel, propagatesToOverrides, null)
     }
 
-    override val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
-        get() = withValidityAssertion {
-            if (this !is KaFirNamedClassSymbolBase<*>) return null
-            if (firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
-            return firSymbol.getAllowedAnnotationTargets(analysisSession.firSession)
-        }
+    override fun computeAnnotationApplicableTargets(symbol: KaClassSymbol): Set<KotlinTarget>? {
+        if (symbol !is KaFirNamedClassSymbolBase<*>) return null
+        if (symbol.firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
+        return symbol.firSymbol.getAllowedAnnotationTargets(analysisSession.firSession)
+    }
 
     override val KaSymbol.importableFqName: FqName?
         get() = withValidityAssertion {

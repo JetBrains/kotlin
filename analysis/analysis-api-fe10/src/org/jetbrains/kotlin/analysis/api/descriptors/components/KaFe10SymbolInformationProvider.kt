@@ -135,13 +135,11 @@ internal class KaFe10SymbolInformationProvider(
     override val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
         get() = withValidityAssertion { getAccessorDeprecation(this, setter) { it.setter } }
 
-    override val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
-        get() = withValidityAssertion {
-            val descriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return null
-            if (descriptor.kind != ClassKind.ANNOTATION_CLASS) return null
-
-            return AnnotationChecker.applicableTargetSet(descriptor)
-        }
+    override fun computeAnnotationApplicableTargets(symbol: KaClassSymbol): Set<KotlinTarget>? {
+        val descriptor = getSymbolDescriptor(symbol) as? ClassDescriptor ?: return null
+        if (descriptor.kind != ClassKind.ANNOTATION_CLASS) return null
+        return AnnotationChecker.applicableTargetSet(descriptor)
+    }
 
     override val KaSymbol.importableFqName: FqName?
         get() = withValidityAssertion {

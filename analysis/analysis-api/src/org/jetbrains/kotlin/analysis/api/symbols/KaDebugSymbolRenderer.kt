@@ -90,7 +90,7 @@ public class KaDebugRenderer(
                 renderComputedValue("getContainingModule", printer, currentSymbolStack) { symbol.containingModule }
 
                 if (symbol is KaClassSymbol) {
-                    renderComputedValue("annotationApplicableTargets", printer, currentSymbolStack) { symbol.annotationApplicableTargets }
+                    renderComputedValue("applicableAnnotationTargets", printer, currentSymbolStack) { symbol.applicableAnnotationTargets }
                 }
 
                 renderComputedValue("deprecation", printer, currentSymbolStack) { symbol.deprecation }

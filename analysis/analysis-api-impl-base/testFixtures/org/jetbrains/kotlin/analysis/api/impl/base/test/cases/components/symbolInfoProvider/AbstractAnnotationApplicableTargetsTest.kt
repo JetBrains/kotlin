@@ -20,7 +20,7 @@ abstract class AbstractAnnotationApplicableTargetsTest : AbstractAnalysisApiBase
         val actual = copyAwareAnalyzeForTest(annotationEntry) { contextAnnotationEntry ->
             val annotationClassSymbol = contextAnnotationEntry.typeReference?.type?.expandedSymbol!!
             val applicableTargetsInOrder =
-                annotationClassSymbol.annotationApplicableTargets
+                annotationClassSymbol.applicableAnnotationTargets
                     ?.map { it.name }
                     ?.sorted()
                     ?.joinToString(prefix = "[", separator = ", ", postfix = "]")
