@@ -13,7 +13,6 @@ com/intellij/psi/search/GlobalSearchScope
 com/intellij/psi/tree/TokenSet
 org/jetbrains/kotlin/config/LanguageVersionSettings
 org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget
-org/jetbrains/kotlin/descriptors/annotations/KotlinTarget
 org/jetbrains/kotlin/idea/references/KtReference
 org/jetbrains/kotlin/lexer/KtKeywordToken
 org/jetbrains/kotlin/lexer/KtModifierKeywordToken
