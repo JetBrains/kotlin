@@ -1,4 +1,4 @@
-FILE: hiddenPropertyAccessors2.fir.kt
+FILE: hiddenPropertyAccessors2.kt
     public final class C : R|kotlin/Any| {
         public constructor(): R|C| {
             super<R|kotlin/Any|>()

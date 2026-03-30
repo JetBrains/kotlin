@@ -1,4 +1,4 @@
-FILE: insideSAM.fir.kt
+FILE: insideSAM.kt
     @R|kotlin/RequiresOptIn|() public final annotation class ExperimentalKotlinAnnotation : R|kotlin/Annotation| {
         public constructor(): R|ExperimentalKotlinAnnotation| {
             super<R|kotlin/Any|>()

@@ -1,4 +1,4 @@
-FILE: ambiguousAnonymousExposed.fir.kt
+FILE: ambiguousAnonymousExposed.kt
     public final class My<T> : R|kotlin/Any| {
         public constructor<T>(value: R|T|): R|My<T>| {
             super<R|kotlin/Any|>()

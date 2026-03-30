@@ -1,12 +1,12 @@
-digraph castInTryWithJump_fir_kt {
+digraph castInTryWithJump_kt {
     graph [nodesep=3]
     node [shape=box penwidth=2]
     edge [penwidth=2]
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter file castInTryWithJump.fir.kt" style="filled" fillcolor=red];
-        1 [label="Exit file castInTryWithJump.fir.kt" style="filled" fillcolor=red];
+        0 [label="Enter file castInTryWithJump.kt" style="filled" fillcolor=red];
+        1 [label="Exit file castInTryWithJump.kt" style="filled" fillcolor=red];
     }
     0 -> {1} [color=green];
 

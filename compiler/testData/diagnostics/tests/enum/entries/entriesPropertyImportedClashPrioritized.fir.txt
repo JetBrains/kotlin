@@ -1,4 +1,4 @@
-FILE: entriesPropertyImportedClashPrioritized.fir.kt
+FILE: entriesPropertyImportedClashPrioritized.kt
     package foo
 
     public final enum class A : R|kotlin/Enum<foo/A>| {

@@ -1,3 +1,3 @@
-/upperBoundViolated2.fir.kt:(165,177): warning: Type argument is not within its bounds: must be subtype of 'List<CharSequence>'. This will become an error in future releases.
+/upperBoundViolated2.kt:(165,177): warning: Type argument is not within its bounds: must be subtype of 'List<CharSequence>'. This will become an error in future releases.
 
-/upperBoundViolated2.fir.kt:(165,170): error: Unknown error: Inapplicable(INAPPLICABLE): /Base.Base.
+/upperBoundViolated2.kt:(165,170): error: Unknown error: Inapplicable(INAPPLICABLE): /Base.Base.

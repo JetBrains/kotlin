@@ -1,4 +1,4 @@
-FILE: inconsistentTypeInference2.fir.kt
+FILE: inconsistentTypeInference2.kt
     public final fun bar(): R|kotlin/Unit| {
         R|kotlin/collections/buildList|<R|kotlin/String|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Boom))

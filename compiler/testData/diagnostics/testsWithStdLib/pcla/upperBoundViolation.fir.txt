@@ -1,4 +1,4 @@
-FILE: upperBoundViolation.fir.kt
+FILE: upperBoundViolation.kt
     public final fun <T : R|kotlin/Number|> printGenericNumber(t: R|T|): R|kotlin/Unit| {
         ^printGenericNumber R|kotlin/io/println|(<strcat>(String(Number is ), R|<local>/t|))
     }

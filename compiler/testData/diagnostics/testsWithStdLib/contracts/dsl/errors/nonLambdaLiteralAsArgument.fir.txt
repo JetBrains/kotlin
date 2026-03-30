@@ -1,4 +1,4 @@
-FILE: nonLambdaLiteralAsArgument.fir.kt
+FILE: nonLambdaLiteralAsArgument.kt
     public final fun passLambdaValue(l: R|kotlin/contracts/ContractBuilder.() -> kotlin/Unit|): R|kotlin/Unit| {
         R|kotlin/contracts/contract|(R|<local>/l|)
     }

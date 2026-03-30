@@ -1,4 +1,4 @@
-FILE: labelClashes.fir.kt
+FILE: labelClashes.kt
     public final fun R|kotlin/Int|.with(): R|kotlin/Unit| {
         R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): <ERROR TYPE REF: Unresolved name: inc> <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ this@R|special/anonymous|.<Unresolved name: inc>#()

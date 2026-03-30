@@ -1,4 +1,4 @@
-FILE: unsafeAssignmentExtra.fir.kt
+FILE: unsafeAssignmentExtra.kt
     public abstract interface Foo<T : R|kotlin/Any|> : R|kotlin/Any| {
         public abstract var a: R|T|
             public get(): R|T|

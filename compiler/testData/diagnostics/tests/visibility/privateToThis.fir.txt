@@ -1,4 +1,4 @@
-FILE: privateToThis.fir.kt
+FILE: privateToThis.kt
     public final class A<in T> : R|kotlin/Any| {
         public constructor<in T>(t: R|T|): R|A<T>| {
             super<R|kotlin/Any|>()

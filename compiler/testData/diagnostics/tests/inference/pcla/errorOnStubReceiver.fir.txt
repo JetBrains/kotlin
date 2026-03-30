@@ -1,4 +1,4 @@
-FILE: errorOnStubReceiver.fir.kt
+FILE: errorOnStubReceiver.kt
     public final fun R|kotlin/Any?|.test(): R|kotlin/Unit| {
     }
     public final class Bar : R|kotlin/Any| {

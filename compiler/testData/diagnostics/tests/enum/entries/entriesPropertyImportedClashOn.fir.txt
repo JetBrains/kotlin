@@ -1,4 +1,4 @@
-FILE: entriesPropertyImportedClashOn.fir.kt
+FILE: entriesPropertyImportedClashOn.kt
     package foo
 
     public final enum class A : R|kotlin/Enum<foo/A>| {

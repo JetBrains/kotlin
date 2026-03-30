@@ -1,4 +1,4 @@
-FILE: incompleteConstructorCall.fir.kt
+FILE: incompleteConstructorCall.kt
     public final class Outer<T> : R|kotlin/Any| {
         public constructor<T>(): R|Outer<T>| {
             super<R|kotlin/Any|>()

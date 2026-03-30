@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package foo.bar
 
 fun test() {
@@ -5,5 +6,7 @@ fun test() {
         inner class B
     }
 
-    fun <!UNRESOLVED_REFERENCE!>A.B<!>.foo() {}
+    fun A.B.foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inner, localClass, localFunction */

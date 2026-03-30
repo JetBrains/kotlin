@@ -1,4 +1,4 @@
-FILE: parenthesesWithIndexedAssignmentOrSetValCornerCases.fir.kt
+FILE: parenthesesWithIndexedAssignmentOrSetValCornerCases.kt
     public final object Plus : R|kotlin/Any| {
         private constructor(): R|Plus| {
             super<R|kotlin/Any|>()

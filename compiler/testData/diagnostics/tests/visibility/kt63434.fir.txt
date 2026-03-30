@@ -1,4 +1,4 @@
-FILE: kt63434.fir.kt
+FILE: kt63434.kt
     public abstract class InlineCompletionSessionManager : R|kotlin/Any| {
         public constructor(): R|InlineCompletionSessionManager| {
             super<R|kotlin/Any|>()

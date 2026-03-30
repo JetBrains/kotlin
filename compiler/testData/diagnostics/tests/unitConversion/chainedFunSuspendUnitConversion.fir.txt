@@ -1,4 +1,4 @@
-FILE: chainedFunSuspendUnitConversion.fir.kt
+FILE: chainedFunSuspendUnitConversion.kt
     public abstract fun interface SuspendRunnable : R|kotlin/Any| {
         public abstract suspend fun run(): R|kotlin/Unit|
 

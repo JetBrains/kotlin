@@ -1,4 +1,4 @@
-FILE: whileLoopNotNull.fir.kt
+FILE: whileLoopNotNull.kt
     public final fun R|kotlin/Int?|.swap(): R|kotlin/Int| {
         ^swap Int(1)
     }

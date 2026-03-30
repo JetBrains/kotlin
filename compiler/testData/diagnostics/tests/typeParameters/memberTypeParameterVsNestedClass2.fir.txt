@@ -1,4 +1,4 @@
-FILE: memberTypeParameterVsNestedClass2.fir.kt
+FILE: memberTypeParameterVsNestedClass2.kt
     public final class Outer : R|kotlin/Any| {
         public constructor(): R|Outer| {
             super<R|kotlin/Any|>()

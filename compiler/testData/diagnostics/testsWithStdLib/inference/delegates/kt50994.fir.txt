@@ -1,4 +1,4 @@
-FILE: kt50994.fir.kt
+FILE: kt50994.kt
     public final class ProcessorWithParent : R|Entity| {
         public constructor(): R|ProcessorWithParent| {
             super<R|kotlin/Any|>()

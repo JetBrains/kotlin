@@ -1,4 +1,4 @@
-FILE: genericEntriesPropertyClashOn.fir.kt
+FILE: genericEntriesPropertyClashOn.kt
     package pckg
 
     public final enum class A : R|kotlin/Enum<pckg/A>| {

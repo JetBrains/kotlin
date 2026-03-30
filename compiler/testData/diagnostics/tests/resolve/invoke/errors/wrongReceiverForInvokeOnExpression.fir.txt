@@ -1,4 +1,4 @@
-FILE: wrongReceiverForInvokeOnExpression.fir.kt
+FILE: wrongReceiverForInvokeOnExpression.kt
     public final fun test1(): R|kotlin/Unit| {
         fun R|kotlin/String|.<anonymous>(i: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
             ^ R|<local>/i|

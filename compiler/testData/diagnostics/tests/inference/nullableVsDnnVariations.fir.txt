@@ -1,4 +1,4 @@
-FILE: nullableVsDnnVariations.fir.kt
+FILE: nullableVsDnnVariations.kt
     public final fun <B> goBar(t: R|B|): R|Bar<B & Any>| {
         ^goBar R|/Bar.Bar|<R|B & Any|>(R|<local>/t|)
     }

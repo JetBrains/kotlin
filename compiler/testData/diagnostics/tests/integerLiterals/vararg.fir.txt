@@ -1,4 +1,4 @@
-FILE: vararg.fir.kt
+FILE: vararg.kt
     public final fun <A : R|kotlin/Comparable<A>|> arrayData(vararg values: R|kotlin/Array<out A>|): R|A| {
         ^arrayData Null(null)!!
     }

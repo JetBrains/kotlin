@@ -1,4 +1,4 @@
-FILE: moreSpecificProtected.fir.kt
+FILE: moreSpecificProtected.kt
     public open class Base : R|kotlin/Any| {
         public constructor(): R|Base| {
             super<R|kotlin/Any|>()

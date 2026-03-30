@@ -1,4 +1,4 @@
-FILE: AnnotatedArrayLiteral.fir.kt
+FILE: AnnotatedArrayLiteral.kt
     public final annotation class X : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/Array<Y>|): R|X| {
             super<R|kotlin/Any|>()

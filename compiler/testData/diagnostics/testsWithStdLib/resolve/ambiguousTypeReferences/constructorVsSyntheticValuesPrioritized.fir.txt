@@ -1,4 +1,4 @@
-FILE: constructorVsSyntheticValuesPrioritized.fir.kt
+FILE: constructorVsSyntheticValuesPrioritized.kt
     public final enum class SomeClass : R|kotlin/Enum<SomeClass>| {
         private constructor(): R|SomeClass| {
             super<R|kotlin/Enum<SomeClass>|>()

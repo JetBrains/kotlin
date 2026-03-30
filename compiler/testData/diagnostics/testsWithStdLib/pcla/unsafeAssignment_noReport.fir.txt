@@ -1,4 +1,4 @@
-FILE: unsafeAssignment_noReport.fir.kt
+FILE: unsafeAssignment_noReport.kt
     public final class Foo<T : R|kotlin/Any|> : R|kotlin/Any| {
         public constructor<T : R|kotlin/Any|>(): R|Foo<T>| {
             super<R|kotlin/Any|>()

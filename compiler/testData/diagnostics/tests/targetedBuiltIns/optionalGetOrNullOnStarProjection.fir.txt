@@ -1,4 +1,4 @@
-FILE: optionalGetOrNullOnStarProjection.fir.kt
+FILE: optionalGetOrNullOnStarProjection.kt
     public final val collection: R|kotlin/collections/Collection<*>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
         public get(): R|kotlin/collections/Collection<*>|
     public final val stream: R|java/util/stream/Stream<@EnhancedNullability kotlin/Any?>| = R|/collection|.R|SubstitutionOverride<kotlin/collections/Collection.stream: R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability kotlin/Any?>|>|()
