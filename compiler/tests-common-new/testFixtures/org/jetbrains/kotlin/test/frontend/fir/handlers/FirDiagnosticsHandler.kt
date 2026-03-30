@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
@@ -71,7 +70,6 @@ import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -145,9 +143,6 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
     override val additionalServices: List<ServiceRegistrationData> =
         listOf(service(::DiagnosticsService), service(::FirDiagnosticCollectorService))
-
-    override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
-        get() = listOf(::FirIdenticalChecker)
 
     private val fullDiagnosticsRenderer = FullDiagnosticsRenderer(DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT)
 

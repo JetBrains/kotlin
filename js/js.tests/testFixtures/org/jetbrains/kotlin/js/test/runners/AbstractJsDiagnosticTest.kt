@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.configuration.setupHandlersForDiagnosticTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
@@ -52,9 +52,9 @@ abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKot
         useAfterAnalysisCheckers(
             ::PhasedPipelineChecker,
             ::BlackBoxCodegenSuppressor,
+            ::FirFailingTestSuppressor,
         )
         enableMetaInfoHandler()
-        configurationForClassicAndFirTestsAlongside()
         useAdditionalService(::LibraryProvider)
     }
 }

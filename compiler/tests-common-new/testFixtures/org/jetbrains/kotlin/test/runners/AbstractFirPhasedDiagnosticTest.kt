@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.configuration.configureCommonDiagnosticTestPath
 import org.jetbrains.kotlin.test.configuration.setupHandlersForDiagnosticTest
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
@@ -66,7 +67,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
         }
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
-        useAfterAnalysisCheckers(::PhasedPipelineChecker, ::NonSourceErrorMessagesHandler)
+        useAfterAnalysisCheckers(::PhasedPipelineChecker, ::NonSourceErrorMessagesHandler, ::FirFailingTestSuppressor)
         enableMetaInfoHandler()
         useAdditionalService<SuppressionChecker>(::SuppressionChecker.bind(null, null))
     }

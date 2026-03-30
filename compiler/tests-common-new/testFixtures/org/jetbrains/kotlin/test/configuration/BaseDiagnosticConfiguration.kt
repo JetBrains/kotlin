@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_WITH_PARSER
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DUMP_VFIR
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.TEST_ALONGSIDE_K1_TESTDATA
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS
@@ -51,7 +50,6 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
@@ -83,23 +81,6 @@ fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
 
     @OptIn(TestInfrastructureInternals::class)
     useModuleStructureTransformers(DuplicateFileNameChecker)
-}
-
-/**
- * Setups the configuration for K2 diagnostics tests which share the testdata with K1 diagnostic tests.
- * Enables duplication of testdata in `.fir.kt` files in case if diagnostics are different between K1 and K2
- */
-fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
-    testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
-) {
-    defaultDirectives {
-        +TEST_ALONGSIDE_K1_TESTDATA
-    }
-    useAfterAnalysisCheckers(
-        ::FirFailingTestSuppressor,
-        testDataConsistencyHandler,
-    )
-    useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
 }
 
 /**
@@ -151,7 +132,8 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     }
 
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
-    configureCommonDiagnosticTestPaths(testDataConsistencyHandler)
+    useAfterAnalysisCheckers(::FirFailingTestSuppressor, testDataConsistencyHandler)
+    configureCommonDiagnosticTestPaths()
 }
 
 fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {
@@ -170,17 +152,7 @@ fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, Fron
 /**
  * Setups specific directives for tests located (or not located) in some specific directories
  */
-fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
-    testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
-) {
-    forTestsMatching("compiler/testData/diagnostics/*") {
-        configurationForClassicAndFirTestsAlongside(testDataConsistencyHandler)
-    }
-
-    forTestsMatching("compiler/fir/analysis-tests/testData/*") {
-        useAfterAnalysisCheckers(::FirFailingTestSuppressor)
-    }
-
+fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
     forTestsMatching("compiler/fir/analysis-tests/testData/resolve/vfir/*") {
         defaultDirectives {
             +DUMP_VFIR
@@ -209,7 +181,6 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
             +WITH_STDLIB
             +CHECK_COMPILER_OUTPUT
         }
-        configurationForClassicAndFirTestsAlongside(testDataConsistencyHandler)
     }
 
     forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitApi/*") {

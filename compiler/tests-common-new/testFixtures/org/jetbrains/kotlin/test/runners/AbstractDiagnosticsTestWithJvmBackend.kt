@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -80,10 +79,6 @@ abstract class AbstractDiagnosticsTestWithConverter<R : ResultingArtifact.Fronte
                 ::FirScopeDumpHandler,
                 ::NoFirCompilationErrorsHandler,
             )
-        }
-
-        forTestsMatching("compiler/testData/diagnostics/testsWithJvmBackend/*") {
-            configurationForClassicAndFirTestsAlongside()
         }
 
         facadeStep(converter)

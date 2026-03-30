@@ -6,34 +6,10 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.TEST_ALONGSIDE_K1_TESTDATA
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.*
 import java.io.File
-
-class FirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChecker(testServices) {
-    override fun checkTestDataFile(testDataFile: File) {
-        // Skip `.ll.kt` test files, which are instead checked by `LLFirIdenticalChecker`.
-        if (testDataFile.isLLFirTestData) return
-        if (testDataFile.isLatestLVTestData) return
-
-        if (testDataFile.isFirTestData) {
-            val helper = Helper()
-            val classicFile = helper.getClassicFileToCompare(testDataFile)
-            if (classicFile.isLLFirSpecializedTestData) return
-
-            if (helper.contentsAreEquals(classicFile, testDataFile, trimLines = true)) {
-                helper.deleteFirFileToCompareAndAssertIfExists(testDataFile, suppressAssertion = true)
-                helper.addDirectiveToClassicFileAndAssert(classicFile)
-            }
-        } else {
-            Helper().deleteFirFileToCompareAndAssertIfExists(testDataFile)
-        }
-    }
-}
 
 class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChecker(testServices) {
     companion object {
@@ -47,11 +23,7 @@ class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdentica
 
     override fun checkTestDataFile(testDataFile: File) {
         if (!testDataFile.isLatestLVTestData) return
-        val directives = testServices.moduleStructure.allDirectives
-        val (originalFile, additionalFile) = when {
-            TEST_ALONGSIDE_K1_TESTDATA in directives && FIR_IDENTICAL !in directives -> testDataFile.firTestDataFile to testDataFile.originalTestDataFile
-            else -> testDataFile.originalTestDataFile to null
-        }
+        val originalFile = testDataFile.originalTestDataFile
         val helper = Helper(originalFile)
         if (helper.contentsAreEquals(originalFile, testDataFile)) {
             testServices.assertions.assertAll(
@@ -70,11 +42,6 @@ class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdentica
                         .mapTo(this) { file ->
                             { helper.removeDirectiveFromClassicFileAndAssert(file, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message) }
                         }
-                    add {
-                        if (additionalFile != null) {
-                            helper.removeDirectiveFromClassicFileAndAssert(additionalFile, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message)
-                        }
-                    }
                 }
             )
         }

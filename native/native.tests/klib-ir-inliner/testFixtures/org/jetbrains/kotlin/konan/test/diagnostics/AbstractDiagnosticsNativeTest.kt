@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
@@ -72,10 +71,6 @@ abstract class AbstractDiagnosticsNativeTestBase(
 
         baseFirNativeDiagnosticTestConfiguration()
         enableLazyResolvePhaseChecking()
-
-        forTestsMatching("compiler/testData/diagnostics/*") {
-            configurationForClassicAndFirTestsAlongside()
-        }
 
         defaultDirectives {
             LANGUAGE + "+EnableDfaWarningsInK2"

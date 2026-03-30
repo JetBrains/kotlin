@@ -22,25 +22,20 @@ abstract class AbstractFirBlackBoxCodegenTestSpecBase(parser: FirParser) : Abstr
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            baseFirSpecBlackBoxCodegenTestConfiguration()
+            defaultDirectives {
+                +SPEC_HELPERS
+                +WITH_STDLIB
+                +WITH_REFLECT
+                +FULL_JDK
+            }
+            useSourcePreprocessor(::PackageNamePreprocessor)
+            useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("codegen/box"))
+            useAfterAnalysisCheckers(
+                ::FirFailingTestSuppressor,
+                ::BlackBoxCodegenSuppressor,
+            )
         }
     }
 }
 
 open class AbstractFirBlackBoxCodegenTestSpec : AbstractFirBlackBoxCodegenTestSpecBase(FirParser.LightTree)
-
-private fun TestConfigurationBuilder.baseFirSpecBlackBoxCodegenTestConfiguration() {
-    defaultDirectives {
-        +SPEC_HELPERS
-        +WITH_STDLIB
-        +WITH_REFLECT
-        +FULL_JDK
-    }
-    useSourcePreprocessor(::PackageNamePreprocessor)
-    useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("codegen/box"))
-
-    useAfterAnalysisCheckers(
-        ::FirFailingTestSuppressor,
-        ::BlackBoxCodegenSuppressor,
-    )
-}

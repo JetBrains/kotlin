@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 
 abstract class AbstractFirForeignAnnotationsTestBase(
     kind: ForeignAnnotationsTestKind,
@@ -45,7 +44,6 @@ abstract class AbstractFirForeignAnnotationsTestBase(
 
         forTestsMatching("compiler/testData/diagnostics/*") {
             useAfterAnalysisCheckers(::FirFailingTestSuppressor)
-            useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
         }
     }
 }
