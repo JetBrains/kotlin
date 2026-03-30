@@ -247,4 +247,9 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Disable JsExportSourcePreprocessor",
         applicability = DirectiveApplicability.Any,
     )
+
+    val CHECK_OPTIMIZED_JS by directive(
+        description = "Forces EXPECT_GENERATED_JS directive handler to check optimized JS output files instead of dev ones",
+        applicability = DirectiveApplicability.Any,
+    )
 }
