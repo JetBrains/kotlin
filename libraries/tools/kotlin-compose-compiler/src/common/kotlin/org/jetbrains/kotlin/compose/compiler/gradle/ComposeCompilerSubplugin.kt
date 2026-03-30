@@ -63,7 +63,7 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
         val allPluginProperties = project.objects
             .listProperty(SubpluginOption::class.java)
             .apply {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 add(composeExtension.generateFunctionKeyMetaClasses.map { value ->
                     if (value) SubpluginOption("generateFunctionKeyMetaClasses", value.toString())
                     else EMPTY_OPTION
@@ -86,7 +86,7 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                     FilesSubpluginOption("reportsDestination", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
 
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 add(composeExtension.stabilityConfigurationFile.map<SubpluginOption> {
                     FilesSubpluginOption("stabilityConfigurationPath", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
@@ -99,7 +99,7 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                     SubpluginOption("traceMarkersEnabled", it.toString())
                 })
 
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR", "DEPRECATION")
                 addAll(
                     composeExtension.featureFlags
                         .zip(composeExtension.enableIntrinsicRemember) { featureFlags, intrinsicRemember ->
