@@ -117,10 +117,3 @@ open class WasiBoxRunner(
         }
     }
 }
-
-class WasiStackSwitchingRunner(
-    testServices: TestServices,
-    functionToRun: String = "runBoxTest"
-) : WasiBoxRunner(testServices, functionToRun) {
-    override val vmsToCheck: List<WasmVM> = listOf(WasmVM.ReferenceInterpreter)
-}
