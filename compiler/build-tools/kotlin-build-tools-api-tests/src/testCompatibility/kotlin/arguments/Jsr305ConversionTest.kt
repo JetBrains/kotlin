@@ -66,7 +66,7 @@ internal class Jsr305ConversionTest : BaseArgumentTest<List<Jsr305>>("Xjsr305") 
 
         val actualJsr305 = jvmOperation.compilerArguments[X_JSR305]
 
-        assertListEquals(expectedJsr305, actualJsr305)
+        assertEquals(expectedJsr305, actualJsr305)
     }
 
     @DisplayName("Jsr305 has the default value when not set")
@@ -99,10 +99,7 @@ internal class Jsr305ConversionTest : BaseArgumentTest<List<Jsr305>>("Xjsr305") 
             )
         )
 
-        assertListEquals(
-            expectedJsr305,
-            operation.compilerArguments[X_JSR305]
-        )
+        assertEquals(expectedJsr305, operation.compilerArguments[X_JSR305])
     }
 
     @DisplayName("Jsr305 has the default value when no raw arguments are applied")
@@ -130,11 +127,4 @@ internal class Jsr305ConversionTest : BaseArgumentTest<List<Jsr305>>("Xjsr305") 
                 is Jsr305.SpecificAnnotation -> "${item.annotationFqName}:${item.mode.stringValue}"
             }
         }
-
-    private fun assertListEquals(expected: List<Jsr305>, actual: List<Jsr305>) {
-        assertEquals(expected.size, actual.size)
-        expected.forEachIndexed { index, expectedItem ->
-            assertEquals(expectedItem, actual[index])
-        }
-    }
 }

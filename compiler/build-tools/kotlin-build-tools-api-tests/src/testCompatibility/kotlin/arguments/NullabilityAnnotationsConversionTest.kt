@@ -64,7 +64,7 @@ internal class NullabilityAnnotationsConversionTest : BaseArgumentTest<List<Null
 
         val actualAnnotations = jvmOperation.compilerArguments[X_NULLABILITY_ANNOTATIONS]
 
-        assertListEquals(expectedAnnotations, actualAnnotations)
+        assertEquals(expectedAnnotations, actualAnnotations)
     }
 
     @DisplayName("NullabilityAnnotations has the default value when not set")
@@ -96,7 +96,7 @@ internal class NullabilityAnnotationsConversionTest : BaseArgumentTest<List<Null
             )
         )
 
-        assertListEquals(
+        assertEquals(
             expectedAnnotations,
             operation.compilerArguments[X_NULLABILITY_ANNOTATIONS]
         )
@@ -121,15 +121,4 @@ internal class NullabilityAnnotationsConversionTest : BaseArgumentTest<List<Null
 
     override fun getValueString(argument: List<NullabilityAnnotation>?): String? =
         argument?.joinToString(",") { "${it.annotationFqName}:${it.mode.stringValue}" }
-
-    private fun assertListEquals(expectedList: List<NullabilityAnnotation>, actualList: List<NullabilityAnnotation>) {
-        assertEquals(expectedList.size, actualList.size)
-
-        expectedList.forEachIndexed { index, expected ->
-            val actual = actualList[index]
-
-            assertEquals(expected.annotationFqName, actual.annotationFqName)
-            assertEquals(expected.mode.stringValue, actual.mode.stringValue)
-        }
-    }
 }

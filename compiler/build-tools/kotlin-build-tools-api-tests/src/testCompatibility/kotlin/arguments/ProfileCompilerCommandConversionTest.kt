@@ -66,9 +66,7 @@ internal class ProfileCompilerCommandConversionTest : BaseArgumentTest<ProfileCo
 
         val actualProfileCommand = jvmOperation.compilerArguments[X_PROFILE]
 
-        assertEquals(expectedProfileCommand.profilerPath, actualProfileCommand?.profilerPath)
-        assertEquals(expectedProfileCommand.command, actualProfileCommand?.command)
-        assertEquals(expectedProfileCommand.outputDir, actualProfileCommand?.outputDir)
+        assertEquals(expectedProfileCommand, actualProfileCommand)
     }
 
     @DisplayName("ProfileCompilerCommand has the default value when not set")
@@ -102,9 +100,7 @@ internal class ProfileCompilerCommandConversionTest : BaseArgumentTest<ProfileCo
         )
         val actualProfileCommand = operation.compilerArguments[X_PROFILE]
 
-        assertEquals(expectedProfileCommand.profilerPath, actualProfileCommand?.profilerPath)
-        assertEquals(expectedProfileCommand.command, actualProfileCommand?.command)
-        assertEquals(expectedProfileCommand.outputDir, actualProfileCommand?.outputDir)
+        assertEquals(expectedProfileCommand, actualProfileCommand)
     }
 
     @DisplayName("ProfileCompilerCommand has the default value when no raw arguments are applied")

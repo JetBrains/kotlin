@@ -76,7 +76,7 @@ internal class WarningLevelConversionTest : BaseArgumentTest<List<WarningLevel>>
 
         val actualConfigs = jvmOperation.compilerArguments[X_WARNING_LEVEL]
 
-        assertListEquals(expectedConfigs, actualConfigs)
+        assertEquals(expectedConfigs, actualConfigs)
     }
 
     @DisplayName("WarningLevel has the default value when not set")
@@ -110,7 +110,7 @@ internal class WarningLevelConversionTest : BaseArgumentTest<List<WarningLevel>>
             )
         )
 
-        assertListEquals(
+        assertEquals(
             expectedConfigs,
             operation.compilerArguments[X_WARNING_LEVEL]
         )
@@ -136,17 +136,6 @@ internal class WarningLevelConversionTest : BaseArgumentTest<List<WarningLevel>>
 
     override fun getValueString(argument: List<WarningLevel>?): String? =
         argument?.joinToString(",") { "${it.warningName}:${it.severity.stringValue}" }
-
-    private fun assertListEquals(expectedList: List<WarningLevel>, actualList: List<WarningLevel>) {
-        assertEquals(expectedList.size, actualList.size)
-
-        expectedList.forEachIndexed { index, expected ->
-            val actual = actualList[index]
-
-            assertEquals(expected.warningName, actual.warningName)
-            assertEquals(expected.severity.stringValue, actual.severity.stringValue)
-        }
-    }
 
     private fun assumeWarningLevelSupported(compilerVersion: String) {
         assumeTrue(
