@@ -37,15 +37,15 @@ application {
     mainClass.set("org.jetbrains.kotlin.ide.plugin.dependencies.validator.MainKt")
 }
 
-val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
-val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
+val projectsDependingOnStableStdlib: Array<String> by rootProject.extra
+val kotlinApiVersionForProjectsDependingOnStableStdlib: String by rootProject.extra
 
 tasks.withType<JavaExec> {
     notCompatibleWithConfigurationCache("Uses project in task action")
     workingDir = rootProject.projectDir
 
     doFirst {
-        val srcDirsOfProjectsUsedInIntelliJKotlinPlugin = projectsUsedInIntelliJKotlinPlugin.flatMap {
+        val srcDirsOfProjectsDependingOnStableStdlib = projectsDependingOnStableStdlib.flatMap {
             project(it).extensions
                 .findByType(JavaPluginExtension::class.java)
                 ?.sourceSets?.flatMap { sourceSet ->
@@ -54,7 +54,7 @@ tasks.withType<JavaExec> {
         }
         args = buildList {
             add(project(":kotlin-stdlib").projectDir.path)
-            addAll(srcDirsOfProjectsUsedInIntelliJKotlinPlugin)
+            addAll(srcDirsOfProjectsDependingOnStableStdlib)
         }
     }
 }
@@ -62,18 +62,18 @@ tasks.withType<JavaExec> {
 tasks.register("checkIdeDependenciesConfiguration") {
     notCompatibleWithConfigurationCache("Uses project in task action")
     doFirst {
-        for (projectName in projectsUsedInIntelliJKotlinPlugin) {
+        for (projectName in projectsDependingOnStableStdlib) {
             project(projectName).checkIdeDependencyConfiguration()
         }
     }
 }
 
 fun Project.checkIdeDependencyConfiguration() {
-    val expectedApiVersion = KotlinVersion.fromVersion(kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin)
+    val expectedApiVersion = KotlinVersion.fromVersion(kotlinApiVersionForProjectsDependingOnStableStdlib)
     for (compileTask in tasks.withType<KotlinJvmCompile>()) {
         val projectApiVersion = compileTask.compilerOptions.apiVersion.get()
         check(projectApiVersion <= expectedApiVersion) {
-            "Expected the API Version to be less or equal to `$kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin`" +
+            "Expected the API Version to be less or equal to `$kotlinApiVersionForProjectsDependingOnStableStdlib`" +
                     " for the project `$path`, " +
                     "but `$projectApiVersion` found. The project is used in the IntelliJ, so it should use the same API version" +
                     "for binary compatibility with Kotlin stdlib . " +

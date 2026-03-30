@@ -99,8 +99,8 @@ fun Project.configureJavaCompile() {
     }
 }
 
-val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
-val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
+val projectsDependingOnStableStdlib: Array<String> by rootProject.extra
+val kotlinApiVersionForProjectsDependingOnStableStdlib: String by rootProject.extra
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
@@ -136,8 +136,8 @@ fun Project.configureKotlinCompilationOptions() {
                 apiVersion.set(KotlinVersion.fromVersion(kotlinLanguageVersion))
                 freeCompilerArgs.add("-Xskip-prerelease-check")
 
-                if (project.path in projectsUsedInIntelliJKotlinPlugin) {
-                    apiVersion.set(KotlinVersion.fromVersion(kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin))
+                if (project.path in projectsDependingOnStableStdlib) {
+                    apiVersion.set(KotlinVersion.fromVersion(kotlinApiVersionForProjectsDependingOnStableStdlib))
                 }
             }
 

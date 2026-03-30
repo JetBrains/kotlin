@@ -232,7 +232,7 @@ extra["compilerModules"] =
  * Experimental declarations from Kotlin stdlib cannot be used in those projects to avoid stdlib binary compatibility problems.
  * See KT-62510 for details.
  */
-val projectsUsedInIntelliJKotlinPlugin =
+val projectsDependingOnStableStdlib =
     fe10CompilerModules +
             commonCompilerModules +
             firCompilerModules +
@@ -332,7 +332,7 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
             )
 
-extra["projectsUsedInIntelliJKotlinPlugin"] = projectsUsedInIntelliJKotlinPlugin
+extra["projectsDependingOnStableStdlib"] = projectsDependingOnStableStdlib
 
 // They are embedded just because we don't publish those dependencies as separate Maven artifacts (yet)
 extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
