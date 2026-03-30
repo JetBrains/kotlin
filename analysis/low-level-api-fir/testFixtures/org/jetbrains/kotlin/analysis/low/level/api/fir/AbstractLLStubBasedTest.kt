@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.testFederation.SmokeTest
 
 /**
  * This test case allows testing differences between stub-based and AST-based files.
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
  * @see com.intellij.psi.impl.PsiManagerEx.isAssertOnFileLoading
  */
+@SmokeTest
 abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
