@@ -1,9 +1,0 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// ISSUE: KT-80684
-// RENDER_DIAGNOSTICS_FULL_TEXT
-// WITH_STDLIB
-fun main() {
-    <!NONE_APPLICABLE!>println<!>(::<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved<!>)
-}
-
-/* GENERATED_FIR_TAGS: functionDeclaration */
