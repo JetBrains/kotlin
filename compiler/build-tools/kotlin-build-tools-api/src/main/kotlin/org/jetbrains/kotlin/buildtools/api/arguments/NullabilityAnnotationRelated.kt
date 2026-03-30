@@ -15,6 +15,21 @@ public class NullabilityAnnotation(
 
     public val annotationFqName: String = "@$fqName"
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is NullabilityAnnotation) return false
+        if (fqName != other.fqName) return false
+        return mode == other.mode
+    }
+
+    override fun hashCode(): Int {
+        var result = fqName.hashCode()
+        result = 31 * result + mode.hashCode()
+        return result
+    }
+
+    override fun toString(): String = "NullabilityAnnotation(fqName=$fqName, mode=$mode)"
+
     public enum class Mode(
         public val stringValue: String,
     ) {

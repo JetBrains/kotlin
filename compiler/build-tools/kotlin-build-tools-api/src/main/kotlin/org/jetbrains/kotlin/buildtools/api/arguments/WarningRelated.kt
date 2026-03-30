@@ -14,6 +14,21 @@ public class WarningLevel(
     public val severity: Severity,
 ) {
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is WarningLevel) return false
+        if (warningName != other.warningName) return false
+        return severity == other.severity
+    }
+
+    override fun hashCode(): Int {
+        var result = warningName.hashCode()
+        result = 31 * result + severity.hashCode()
+        return result
+    }
+
+    override fun toString(): String = "WarningLevel(warningName=$warningName, severity=$severity)"
+
     public enum class Severity(
         public val stringValue: String,
     ) {

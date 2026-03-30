@@ -15,4 +15,21 @@ public class ProfileCompilerCommand(
     public val profilerPath: Path,
     public val command: String,
     public val outputDir: Path,
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ProfileCompilerCommand) return false
+        if (profilerPath != other.profilerPath) return false
+        if (command != other.command) return false
+        return outputDir == other.outputDir
+    }
+
+    override fun hashCode(): Int {
+        var result = profilerPath.hashCode()
+        result = 31 * result + command.hashCode()
+        result = 31 * result + outputDir.hashCode()
+        return result
+    }
+
+    override fun toString(): String = "ProfileCompilerCommand(profilerPath=$profilerPath, command=$command, outputDir=$outputDir)"
+}
