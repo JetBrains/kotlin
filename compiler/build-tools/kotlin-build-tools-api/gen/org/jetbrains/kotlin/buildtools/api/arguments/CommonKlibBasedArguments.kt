@@ -3,10 +3,11 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
-import kotlin.Array
+import java.nio.`file`.Path
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -140,7 +141,7 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_KLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgument<Array<String>?> =
+    public val X_KLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgument<List<Path>> =
         CommonKlibBasedArgument("X_KLIB_RELATIVE_PATH_BASE", KotlinReleaseVersion(2, 0, 20))
 
     /**

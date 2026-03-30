@@ -3,8 +3,10 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Boolean
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 
@@ -76,7 +78,7 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_CACHE_DIRECTORY: CommonJsAndWasmArgument<String?> =
+    public val X_CACHE_DIRECTORY: CommonJsAndWasmArgument<Path?> =
         CommonJsAndWasmArgument("X_CACHE_DIRECTORY", KotlinReleaseVersion(1, 8, 20))
 
     /**
@@ -96,7 +98,7 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_FRIEND_MODULES: CommonJsAndWasmArgument<String?> =
+    public val X_FRIEND_MODULES: CommonJsAndWasmArgument<List<Path>?> =
         CommonJsAndWasmArgument("X_FRIEND_MODULES", KotlinReleaseVersion(1, 1, 3))
 
     /**
@@ -126,7 +128,7 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_INCLUDE: CommonJsAndWasmArgument<String?> =
+    public val X_INCLUDE: CommonJsAndWasmArgument<Path?> =
         CommonJsAndWasmArgument("X_INCLUDE", KotlinReleaseVersion(1, 4, 0))
 
     /**
@@ -247,7 +249,7 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
      * Paths to Kotlin libraries with .meta.js and .kjsm files, separated by the system path separator.
      */
     @JvmField
-    public val LIBRARIES: CommonJsAndWasmArgument<String?> =
+    public val LIBRARIES: CommonJsAndWasmArgument<List<Path>?> =
         CommonJsAndWasmArgument("LIBRARIES", KotlinReleaseVersion(1, 1, 0))
 
     /**

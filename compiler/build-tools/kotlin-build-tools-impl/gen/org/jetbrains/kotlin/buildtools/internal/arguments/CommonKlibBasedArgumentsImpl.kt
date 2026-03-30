@@ -7,16 +7,19 @@ package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import java.lang.IllegalStateException
 import kotlin.Any
-import kotlin.Array
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
+import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.map
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.collections.toTypedArray
+import kotlin.io.path.Path
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ABI_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY
@@ -82,7 +85,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS in this) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)}
     if (X_KLIB_IR_INLINER in this) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER).stringValue}
     if (X_KLIB_NORMALIZE_ABSOLUTE_PATH in this) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH)}
-    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE) ?: emptyArray()}
+    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
     if (X_PARTIAL_LINKAGE in this) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE)}
     if (X_PARTIAL_LINKAGE_LOGLEVEL in this) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL)}
@@ -98,7 +101,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     try { this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization.let { KlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = arguments.normalizeAbsolutePath } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases } catch (_: NoSuchMethodError) {  }
+    try { this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
     try { this[X_PARTIAL_LINKAGE] = arguments.partialLinkageMode } catch (_: NoSuchMethodError) {  }
     try { this[X_PARTIAL_LINKAGE_LOGLEVEL] = arguments.partialLinkageLogLevel } catch (_: NoSuchMethodError) {  }
@@ -114,7 +117,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS in this) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)}
     if (X_KLIB_IR_INLINER in this) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER).stringValue}
     if (X_KLIB_NORMALIZE_ABSOLUTE_PATH in this) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH)}
-    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE) ?: emptyArray()}
+    if (X_KLIB_RELATIVE_PATH_BASE in this) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
     if (X_PARTIAL_LINKAGE in this) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE)}
     if (X_PARTIAL_LINKAGE_LOGLEVEL in this) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL)}
@@ -147,7 +150,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     public val X_KLIB_NORMALIZE_ABSOLUTE_PATH: CommonKlibBasedArgument<Boolean> =
         CommonKlibBasedArgument("X_KLIB_NORMALIZE_ABSOLUTE_PATH")
 
-    public val X_KLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgument<Array<String>?> =
+    public val X_KLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgument<List<java.nio.`file`.Path>> =
         CommonKlibBasedArgument("X_KLIB_RELATIVE_PATH_BASE")
 
     public val X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT: CommonKlibBasedArgument<Int> =

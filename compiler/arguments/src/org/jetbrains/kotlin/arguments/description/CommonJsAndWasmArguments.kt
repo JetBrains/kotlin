@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.PathType
+import org.jetbrains.kotlin.arguments.dsl.types.SearchPathType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
 val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonJsAndWasmArguments) {
@@ -33,12 +35,14 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xinclude"
         compilerName = "includes"
         description = "Path to an intermediate library that should be processed in the same manner as source files.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
@@ -91,12 +95,14 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "libraries"
         description =
             "Paths to Kotlin libraries with .meta.js and .kjsm files, separated by the system path separator.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = SearchPathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_0,
@@ -104,22 +110,26 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xfriend-modules"
         description = "Paths to friend modules.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = SearchPathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_3,
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xcache-directory"
         description = "Path to the cache directory.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,

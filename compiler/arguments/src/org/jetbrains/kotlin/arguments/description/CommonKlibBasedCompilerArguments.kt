@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.*
 
 val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonKlibBasedArguments) {
+
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xklib-relative-path-base"
         compilerName = "relativePathBases"
@@ -26,6 +30,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
                     "Provide a base path to compute the source's relative paths in klib (default is empty)."
         )
         valueType = StringArrayType.defaultNull
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,

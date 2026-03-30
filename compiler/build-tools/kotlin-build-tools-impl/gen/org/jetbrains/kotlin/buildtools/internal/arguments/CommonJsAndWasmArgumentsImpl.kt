@@ -5,16 +5,22 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
+import java.io.File
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
+import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.joinToString
+import kotlin.collections.map
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.io.path.Path
+import kotlin.text.split
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.IR_OUTPUT_DIR
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.IR_OUTPUT_NAME
@@ -88,12 +94,12 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)}
+    if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)?.absolutePathStringOrThrow()}
     if (X_FAKE_OVERRIDE_VALIDATOR in this) { arguments.fakeOverrideValidator = get(X_FAKE_OVERRIDE_VALIDATOR)}
-    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)}
+    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.joinToString(File.pathSeparator)}
     if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
     if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
-    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)}
+    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)?.absolutePathStringOrThrow()}
     if (X_IR_DCE in this) { arguments.irDce = get(X_IR_DCE)}
     if (X_IR_DCE_PRINT_REACHABILITY_INFO in this) { arguments.irDcePrintReachabilityInfo = get(X_IR_DCE_PRINT_REACHABILITY_INFO)}
     if (X_IR_DCE_RUNTIME_DIAGNOSTIC in this) { arguments.irDceRuntimeDiagnostic = get(X_IR_DCE_RUNTIME_DIAGNOSTIC)}
@@ -106,7 +112,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (X_STRICT_IMPLICIT_EXPORT_TYPES in this) { arguments.strictImplicitExportType = get(X_STRICT_IMPLICIT_EXPORT_TYPES)}
     if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)}
     if (IR_OUTPUT_NAME in this) { arguments.moduleName = get(IR_OUTPUT_NAME)}
-    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)}
+    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.joinToString(File.pathSeparator)}
     if (MAIN in this) { arguments.main = get(MAIN)}
     if (SOURCE_MAP in this) { arguments.sourceMap = get(SOURCE_MAP)}
     if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)}
@@ -119,12 +125,12 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun applyCompilerArguments(arguments: CommonJsAndWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_CACHE_DIRECTORY] = arguments.cacheDirectory } catch (_: NoSuchMethodError) {  }
+    try { this[X_CACHE_DIRECTORY] = arguments.cacheDirectory?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_FAKE_OVERRIDE_VALIDATOR] = arguments.fakeOverrideValidator } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRIEND_MODULES] = arguments.friendModules } catch (_: NoSuchMethodError) {  }
+    try { this[X_FRIEND_MODULES] = arguments.friendModules?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_FRIEND_MODULES_DISABLED] = arguments.friendModulesDisabled } catch (_: NoSuchMethodError) {  }
     try { this[X_GENERATE_DTS] = arguments.generateDts } catch (_: NoSuchMethodError) {  }
-    try { this[X_INCLUDE] = arguments.includes } catch (_: NoSuchMethodError) {  }
+    try { this[X_INCLUDE] = arguments.includes?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE] = arguments.irDce } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE_PRINT_REACHABILITY_INFO] = arguments.irDcePrintReachabilityInfo } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic } catch (_: NoSuchMethodError) {  }
@@ -137,7 +143,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     try { this[X_STRICT_IMPLICIT_EXPORT_TYPES] = arguments.strictImplicitExportType } catch (_: NoSuchMethodError) {  }
     try { this[IR_OUTPUT_DIR] = arguments.outputDir } catch (_: NoSuchMethodError) {  }
     try { this[IR_OUTPUT_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
-    try { this[LIBRARIES] = arguments.libraries } catch (_: NoSuchMethodError) {  }
+    try { this[LIBRARIES] = arguments.libraries?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[MAIN] = arguments.main } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP] = arguments.sourceMap } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_BASE_DIRS] = arguments.sourceMapBaseDirs } catch (_: NoSuchMethodError) {  }
@@ -150,12 +156,12 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: CommonJsAndWasmCompilerArguments): CommonJsAndWasmCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)}
+    if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)?.absolutePathStringOrThrow()}
     if (X_FAKE_OVERRIDE_VALIDATOR in this) { arguments.fakeOverrideValidator = get(X_FAKE_OVERRIDE_VALIDATOR)}
-    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)}
+    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.joinToString(File.pathSeparator)}
     if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
     if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
-    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)}
+    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)?.absolutePathStringOrThrow()}
     if (X_IR_DCE in this) { arguments.irDce = get(X_IR_DCE)}
     if (X_IR_DCE_RUNTIME_DIAGNOSTIC in this) { arguments.irDceRuntimeDiagnostic = get(X_IR_DCE_RUNTIME_DIAGNOSTIC)}
     if (X_IR_MODULE_NAME in this) { arguments.irModuleName = get(X_IR_MODULE_NAME)}
@@ -167,7 +173,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (X_STRICT_IMPLICIT_EXPORT_TYPES in this) { arguments.strictImplicitExportType = get(X_STRICT_IMPLICIT_EXPORT_TYPES)}
     if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)}
     if (IR_OUTPUT_NAME in this) { arguments.moduleName = get(IR_OUTPUT_NAME)}
-    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)}
+    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.joinToString(File.pathSeparator)}
     if (MAIN in this) { arguments.main = get(MAIN)}
     if (SOURCE_MAP in this) { arguments.sourceMap = get(SOURCE_MAP)}
     if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)}
@@ -187,13 +193,13 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val X_CACHE_DIRECTORY: CommonJsAndWasmArgument<String?> =
+    public val X_CACHE_DIRECTORY: CommonJsAndWasmArgument<java.nio.`file`.Path?> =
         CommonJsAndWasmArgument("X_CACHE_DIRECTORY")
 
     public val X_FAKE_OVERRIDE_VALIDATOR: CommonJsAndWasmArgument<Boolean> =
         CommonJsAndWasmArgument("X_FAKE_OVERRIDE_VALIDATOR")
 
-    public val X_FRIEND_MODULES: CommonJsAndWasmArgument<String?> =
+    public val X_FRIEND_MODULES: CommonJsAndWasmArgument<List<java.nio.`file`.Path>?> =
         CommonJsAndWasmArgument("X_FRIEND_MODULES")
 
     public val X_FRIEND_MODULES_DISABLED: CommonJsAndWasmArgument<Boolean> =
@@ -202,7 +208,8 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     public val X_GENERATE_DTS: CommonJsAndWasmArgument<Boolean> =
         CommonJsAndWasmArgument("X_GENERATE_DTS")
 
-    public val X_INCLUDE: CommonJsAndWasmArgument<String?> = CommonJsAndWasmArgument("X_INCLUDE")
+    public val X_INCLUDE: CommonJsAndWasmArgument<java.nio.`file`.Path?> =
+        CommonJsAndWasmArgument("X_INCLUDE")
 
     public val X_IR_DCE: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("X_IR_DCE")
 
@@ -239,7 +246,8 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     public val IR_OUTPUT_NAME: CommonJsAndWasmArgument<String?> =
         CommonJsAndWasmArgument("IR_OUTPUT_NAME")
 
-    public val LIBRARIES: CommonJsAndWasmArgument<String?> = CommonJsAndWasmArgument("LIBRARIES")
+    public val LIBRARIES: CommonJsAndWasmArgument<List<java.nio.`file`.Path>?> =
+        CommonJsAndWasmArgument("LIBRARIES")
 
     public val MAIN: CommonJsAndWasmArgument<String?> = CommonJsAndWasmArgument("MAIN")
 

@@ -16,3 +16,4 @@ Another one representation is JSON-based that is bundled into a published jar as
       `JspecifyAnnotationsMode`, `LambdasMode`, `SamConversionsMode`, `StringConcatMode`, `CompatqualAnnotationsMode`,
       `WhenExpressionsMode`, `JdkRelease`, `AnnotationDefaultTargetMode`, `NameBasedDestructuringMode`, `VerifyIrMode`.
     - New argument value types: `PathType`, `StringListType`, `SearchPathType`, `PathListType`, `EnumType`.
+    - Add relevant Path argumentType to some String arguments carrying paths in Klib and JS argument
