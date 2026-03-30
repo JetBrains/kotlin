@@ -94,7 +94,6 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
             }
             is IrPossiblyExternalDeclaration if declaration.isEffectivelyExternal() -> {
                 externalPackageFragment.declarations += declaration
-                declaration.originalFileForExternalDeclaration = irFile
                 declaration.parent = externalPackageFragment
 
                 if (irFile.getJsModule() != null || irFile.getJsQualifier() != null)
@@ -107,20 +106,23 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
     }
 }
 
-fun validateIsExternal(packageFragment: IrPackageFragment) {
-    for (declaration in packageFragment.declarations) {
-        validateNestedExternalDeclarations(declaration, (declaration as? IrPossiblyExternalDeclaration)?.isExternal ?: false)
+fun validateIsExternal(file: IrFile) {
+    for (declaration in file.declarations) {
+        validateNestedExternalDeclarations(file, declaration, (declaration as? IrPossiblyExternalDeclaration)?.isExternal ?: false)
     }
 }
 
 
-fun validateNestedExternalDeclarations(declaration: IrDeclaration, isExternalTopLevel: Boolean) {
+fun validateNestedExternalDeclarations(file: IrFile, declaration: IrDeclaration, isExternalTopLevel: Boolean) {
     fun IrPossiblyExternalDeclaration.checkExternal() {
         if (isExternal != isExternalTopLevel) {
             compilationException(
                 "isExternal validation failed for declaration",
                 declaration,
             )
+        }
+        if (isExternal) {
+            originalFileForExternalDeclaration = file
         }
     }
 
@@ -134,7 +136,7 @@ fun validateNestedExternalDeclarations(declaration: IrDeclaration, isExternalTop
     }
     if (declaration is IrClass) {
         declaration.declarations.forEach {
-            validateNestedExternalDeclarations(it, isExternalTopLevel)
+            validateNestedExternalDeclarations(file, it, isExternalTopLevel)
         }
     }
 }
