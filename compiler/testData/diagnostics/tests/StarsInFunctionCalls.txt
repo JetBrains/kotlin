@@ -1,7 +1,0 @@
-package
-
-public fun foo(/*0*/ a: kotlin.Any?): kotlin.Unit
-public fun </*0*/ T> getT(): kotlin.Unit
-public fun </*0*/ A, /*1*/ B> getTT(): kotlin.Unit
-public fun </*0*/ A, /*1*/ B, /*2*/ C> getTTT(/*0*/ x: kotlin.Any): kotlin.Unit
-public fun main(): kotlin.Unit

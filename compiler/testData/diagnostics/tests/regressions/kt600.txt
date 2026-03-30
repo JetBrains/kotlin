@@ -1,4 +1,0 @@
-package
-
-public fun test(): kotlin.Unit
-public fun </*0*/ T : kotlin.Any> T?._sure(): T

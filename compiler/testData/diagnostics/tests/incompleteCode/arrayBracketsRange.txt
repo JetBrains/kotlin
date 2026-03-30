@@ -1,5 +1,0 @@
-package
-
-package b {
-    public fun main(): kotlin.Unit
-}

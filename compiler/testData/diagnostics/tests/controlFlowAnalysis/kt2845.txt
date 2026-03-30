@@ -1,5 +1,0 @@
-package
-
-package h {
-    private fun doTest(): kotlin.Int
-}

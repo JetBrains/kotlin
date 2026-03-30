@@ -1,3 +1,0 @@
-package
-
-public fun test(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int): kotlin.Unit

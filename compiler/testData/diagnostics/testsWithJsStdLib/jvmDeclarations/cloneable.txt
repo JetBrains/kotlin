@@ -1,3 +1,0 @@
-package
-
-public fun cloneable(): [Error type: Unresolved type for Cloneable]

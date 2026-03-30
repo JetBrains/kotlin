@@ -1,5 +1,0 @@
-package
-
-public fun foo1(/*0*/ a: kotlin.Int): kotlin.String
-public fun foo1(/*0*/ a: kotlin.Int, /*1*/ vararg t: kotlin.Int /*kotlin.IntArray*/): kotlin.String
-public fun test1(): kotlin.Unit

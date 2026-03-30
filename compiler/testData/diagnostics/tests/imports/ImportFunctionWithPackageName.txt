@@ -1,5 +1,0 @@
-package
-
-package a {
-    public fun foo(): kotlin.Int
-}

@@ -1,3 +1,0 @@
-package
-
-public inline fun test(/*0*/ predicate: (kotlin.Char) -> kotlin.Boolean): kotlin.Unit

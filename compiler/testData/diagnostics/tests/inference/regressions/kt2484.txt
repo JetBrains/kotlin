@@ -1,7 +1,0 @@
-package
-
-package a {
-    public fun bar(/*0*/ operation: (kotlin.String) -> kotlin.Unit): kotlin.Unit
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
-    public fun </*0*/ T> kotlin.Array<T>.forEach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit
-}

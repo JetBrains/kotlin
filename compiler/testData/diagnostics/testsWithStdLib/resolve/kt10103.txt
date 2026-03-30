@@ -1,3 +1,0 @@
-package
-
-public val stringReversed: kotlin.reflect.KFunction1<kotlin.String, kotlin.String>

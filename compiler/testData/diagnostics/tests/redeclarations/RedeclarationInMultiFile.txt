@@ -1,6 +1,0 @@
-package
-
-public val a: kotlin.Int = 1
-public val a: kotlin.Int = 1
-public fun f(): kotlin.Unit
-public fun f(): kotlin.Unit

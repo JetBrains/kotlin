@@ -1,4 +1,0 @@
-package
-
-public fun foo(/*0*/ s: kotlin.String?): kotlin.Unit
-public operator fun kotlin.String.invoke(/*0*/ i: kotlin.Int): kotlin.Unit

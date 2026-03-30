@@ -1,3 +1,0 @@
-package
-
-public fun get(): kotlin.Unit

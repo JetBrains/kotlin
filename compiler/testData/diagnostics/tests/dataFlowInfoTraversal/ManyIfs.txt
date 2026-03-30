@@ -1,5 +1,0 @@
-package
-
-public fun dataFlowInfoAnd(/*0*/ a: kotlin.Array<kotlin.Number>): kotlin.Unit
-public fun dataFlowInfoOr(/*0*/ a: kotlin.Array<kotlin.Number>): kotlin.Unit
-public fun noUselessDataFlowInfoCreation(/*0*/ x: kotlin.Number): kotlin.Unit

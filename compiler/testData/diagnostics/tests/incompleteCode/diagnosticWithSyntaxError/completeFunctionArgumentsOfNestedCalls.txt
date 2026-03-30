@@ -1,5 +1,0 @@
-package
-
-package c {
-    public fun demo(): kotlin.Unit
-}

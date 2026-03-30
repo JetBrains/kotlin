@@ -1,4 +1,0 @@
-package
-
-public fun tryCatchFinally(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun tryFinally(/*0*/ x: kotlin.Int?): kotlin.Unit

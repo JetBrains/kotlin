@@ -1,4 +1,0 @@
-package
-
-public inline fun </*0*/ R> inlineAll(/*0*/ noinline p: () -> R): kotlin.Unit
-public inline fun </*0*/ R> onlyLocal(/*0*/ p: () -> R): kotlin.Unit

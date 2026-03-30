@@ -1,6 +1,0 @@
-package
-
-public fun bar(): kotlin.String?
-public fun fooHashSet(): kotlin.Unit
-public fun fooLinkedHashSet(): kotlin.Unit
-public fun fooTreeSet(): kotlin.Unit

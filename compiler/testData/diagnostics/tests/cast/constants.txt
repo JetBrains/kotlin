@@ -1,7 +1,0 @@
-package
-
-public fun asCall(): kotlin.Unit
-public fun asSafe(): kotlin.Unit
-public fun long(): kotlin.Unit
-public fun unsigned(): kotlin.Unit
-

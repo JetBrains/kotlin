@@ -1,8 +1,0 @@
-// -- Module: <lib> --
-package
-
-
-// -- Module: <main> --
-package
-
-public fun nullIfEmpty(/*0*/ list: kotlin.collections.List<kotlin.String>): kotlin.collections.List<kotlin.String>?

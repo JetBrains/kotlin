@@ -1,5 +1,0 @@
-package
-
-public val kotlin.String.countCharacters: kotlin.Int
-public var kotlin.Int.meaning: kotlin.Long
-public fun test(): kotlin.Unit

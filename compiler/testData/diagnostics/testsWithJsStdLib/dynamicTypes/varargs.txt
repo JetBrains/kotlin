@@ -1,4 +1,0 @@
-package
-
-public fun test(): kotlin.Unit
-public fun v(/*0*/ vararg d: dynamic /*kotlin.Array<out dynamic>*/): kotlin.Unit
