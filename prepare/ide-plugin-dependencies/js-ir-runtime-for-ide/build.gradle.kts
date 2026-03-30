@@ -2,7 +2,7 @@ plugins {
     java
 }
 
-idePluginDependency {
+idePluginPublishingLatch {
     publish()
 
     val jar: Jar by tasks

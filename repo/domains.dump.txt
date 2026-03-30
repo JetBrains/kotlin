@@ -121,6 +121,7 @@ AnalysisApi:
  - compiler/psi/psi-frontend-utils
  - compiler/psi/psi-impl
  - compiler/psi/psi-utils
+ - prepare/analysis-api
 
 SwiftExport:
  - native/swift

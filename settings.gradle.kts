@@ -602,6 +602,15 @@ include(
 )
 
 include(
+    ":prepare:analysis-api:kotlin-analysis-api",
+    ":prepare:analysis-api:kotlin-analysis-api-surface",
+    ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
+    ":prepare:analysis-api:kotlin-analysis-api-implementation",
+    ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
+    ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
+)
+
+include(
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-impl",
     ":compiler:build-tools:kotlin-build-tools-compat",

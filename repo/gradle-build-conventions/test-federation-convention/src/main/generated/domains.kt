@@ -58,7 +58,7 @@ internal object CoreLibsDomainInfo : DomainInfo {
 
 internal object AnalysisApiDomainInfo : DomainInfo {
     override val domain = Domain.AnalysisApi
-    override val include: List<String> = listOf("analysis/**", "compiler/psi/**")
+    override val include: List<String> = listOf("analysis/**", "compiler/psi/**", "prepare/analysis-api/**")
     override val exclude: List<String> = listOf("compiler/psi/parser/**")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }

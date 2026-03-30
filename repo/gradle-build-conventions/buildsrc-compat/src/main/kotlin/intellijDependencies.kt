@@ -12,6 +12,7 @@ val Project.intellijVersion
 
 fun Project.intellijCore() = dependencies.project(":dependencies:intellij-core")
 fun Project.intellijUtilRt() = "com.jetbrains.intellij.platform:util-rt:$intellijVersion"
+fun Project.intellijUtilRtJava8() = "com.jetbrains.intellij.platform:util-rt-java8:$intellijVersion"
 
 fun Project.jpsModel() = "com.jetbrains.intellij.platform:jps-model:$intellijVersion"
 fun Project.jpsModelSerialization() = "com.jetbrains.intellij.platform:jps-model-serialization:$intellijVersion"

@@ -48,6 +48,7 @@ AnalysisApi:
   include:
     - "analysis/**"
     - "compiler/psi/**"
+    - "prepare/analysis-api/**"
   exclude:
     - "compiler/psi/parser/**"
   fullyAffectedBy:

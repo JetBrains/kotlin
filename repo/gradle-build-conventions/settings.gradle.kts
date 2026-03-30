@@ -26,6 +26,7 @@ dependencyResolutionManagement {
 }
 
 include(":buildsrc-compat")
+include(":analysis-api-artifact")
 include(":generators")
 include(":project-tests-convention")
 include(":android-sdk-provisioner")

@@ -312,8 +312,16 @@ fun Project.publish(moduleMetadata: Boolean = false, sbom: Boolean = true, confi
     }
 }
 
-fun Project.idePluginDependency(block: () -> Unit) {
-    val shouldActivate = rootProject.findProperty("publish.ide.plugin.dependencies")?.toString()?.toBoolean() == true
+fun Project.idePluginPublishingLatch(block: () -> Unit) {
+    specialPublishingLatch("publish.ide.plugin.dependencies", block)
+}
+
+fun Project.analysisApiPublishingLatch(block: () -> Unit) {
+    specialPublishingLatch("publish.analysis.api", block)
+}
+
+private fun Project.specialPublishingLatch(latchPropertyName: String, block: () -> Unit) {
+    val shouldActivate = rootProject.findProperty(latchPropertyName)?.toString()?.toBoolean() == true
     if (shouldActivate) {
         block()
     }
@@ -332,7 +340,7 @@ fun Project.publishJarsForIde(
         }
     }
 
-    idePluginDependency {
+    idePluginPublishingLatch {
         publishProjectJars(projects, libraryDependencies, jarTaskConfiguration)
     }
     configurations.all {
@@ -360,7 +368,7 @@ fun Project.publishTestJarsForIde(
     projectWithFixturesNames: List<String> = emptyList(),
     projectWithRenamedTestJarNames: List<String> = emptyList(),
 ) {
-    idePluginDependency {
+    idePluginPublishingLatch {
         // Compiler test infrastructure should not affect test running in IDE.
         // If required, the components should be registered on the IDE plugin side.
         val excludedPaths = listOf("junit-platform.properties", "META-INF/services/**/*")

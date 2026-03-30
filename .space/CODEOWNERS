@@ -462,6 +462,7 @@
 /plugins/test-plugins/ "Kotlin Frontend"
 
 /prepare/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/prepare/analysis-api/ "Kotlin Analysis API"
 
 /repo/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /repo/gradle-build-conventions/kgp-npm-tooling-helper "Kotlin Build Tools"
