@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractExecutable
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
@@ -235,8 +237,13 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         target.binaries.all { binary ->
             binary.linkTaskProvider.configure { linkTask ->
                 // FIXME: KT-84809 Wire this only when we will call ld
+                val isFrameworkBinary = binary is Framework
                 val ldArgDumpPath = defFilesAndLdDumpGenerationTask.map {
-                    it.ldFilePath(target.konanTarget.appleArchitecture)
+                    if (isFrameworkBinary) {
+                        it.ldFileForFrameworkLinkagePath(target.konanTarget.appleArchitecture)
+                    } else {
+                        it.ldFilePath(target.konanTarget.appleArchitecture)
+                    }
                 }
                 val ldArgDumpFingerprintPath = defFilesAndLdDumpGenerationTask.map {
                     it.ldFileFingerprintPath(target.konanTarget.appleArchitecture)
@@ -444,7 +451,6 @@ internal fun Project.locateOrRegisterRegenerateLinkageImportProjectTask(): TaskP
              * linkage package well if it regenerates during the build.
              */
             it.failOnNonIdempotentChanges.set(true)
-            it.produceIndirectionForFrameworkCopying.set(true)
             it.buildingFromXcode.set(project.providers.systemProperty("idea.active").map { _ -> false }.orElse(true))
             it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
             it.onlyIf {
@@ -515,7 +521,6 @@ private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
     ) {
         it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
         it.configureWithExtension(swiftPMImportExtension)
-        it.produceIndirectionForFrameworkCopying.set(true)
         it.syntheticImportProjectRoot.set(
             projectPathProvider.flatMap {
                 project.layout.dir(

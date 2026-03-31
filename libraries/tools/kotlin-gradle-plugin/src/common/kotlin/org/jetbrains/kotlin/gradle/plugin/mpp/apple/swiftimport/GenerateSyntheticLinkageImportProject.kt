@@ -105,34 +105,43 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
         failOnNonIdempotentChangesIfNeeded {
             val packageRoot = syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
-            val transitiveSyntheticPackages =
-                dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys.toMutableSet()
             when (syntheticProductType.get()) {
                 SyntheticProductType.DYNAMIC -> {
-                    /**
-                     * When the user emits a dynamic framework, force all transitive dependencies to become dynamic libraries
-                     */
-                    val promoteKmpDependenciesToBeDynamicLibraries = "PromoteKMPDependenciesToDynamicLibraries"
                     generatePackageManifest(
-                        identifier = promoteKmpDependenciesToBeDynamicLibraries,
-                        packageRoot = packageRoot.resolve("${SUBPACKAGES}/${promoteKmpDependenciesToBeDynamicLibraries}"),
+                        identifier = SYNTHETIC_IMPORT_DYLIB,
+                        packageRoot = packageRoot.resolve("${SUBPACKAGES}/${SYNTHETIC_IMPORT_DYLIB}"),
                         syntheticProductType = SyntheticProductType.DYNAMIC,
                         directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
                         transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
-                        transitiveSyntheticPackagesPath = "../${SUBPACKAGES}",
+                        transitiveSyntheticPackagesPath = "..",
                     )
-                    transitiveSyntheticPackages.add(SwiftPMDependencyIdentifier(promoteKmpDependenciesToBeDynamicLibraries))
+                    generatePackageManifest(
+                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                        packageRoot = packageRoot,
+                        syntheticProductType = SyntheticProductType.INFERRED,
+                        // Leave only version constraints - SwiftPM doesn't pick it up from subproject dependency when product is not consumed explicitly from the package
+                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get().mapNotNull {
+                            val remoteDependency = when (it) {
+                                is SwiftPMDependency.Local -> return@mapNotNull null
+                                is SwiftPMDependency.Remote -> it
+                            }
+                            remoteDependency.copy(products = emptyList())
+                        }.toSet(),
+                        transitiveSyntheticPackages = setOf(SwiftPMDependencyIdentifier(SYNTHETIC_IMPORT_DYLIB)),
+                        transitiveSyntheticPackagesPath = SUBPACKAGES,
+                    )
                 }
-                SyntheticProductType.INFERRED, null -> Unit
+                SyntheticProductType.INFERRED, null -> {
+                    generatePackageManifest(
+                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                        packageRoot = packageRoot,
+                        syntheticProductType = SyntheticProductType.INFERRED,
+                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
+                        transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
+                        transitiveSyntheticPackagesPath = SUBPACKAGES,
+                    )
+                }
             }
-            generatePackageManifest(
-                identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-                packageRoot = packageRoot,
-                syntheticProductType = if (produceIndirectionForFrameworkCopying.get()) SyntheticProductType.INFERRED else syntheticProductType.get(),
-                directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
-                transitiveSyntheticPackages = transitiveSyntheticPackages,
-                transitiveSyntheticPackagesPath = SUBPACKAGES,
-            )
             dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.forEach { (dependencyIdentifier, swiftPMDependencies) ->
                 generatePackageManifest(
                     identifier = dependencyIdentifier.identifier,
@@ -145,7 +154,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                     syntheticProductType = SyntheticProductType.INFERRED,
                     directlyImportedSwiftPMDependencies = swiftPMDependencies.dependencies,
                     transitiveSyntheticPackages = setOf(),
-                    transitiveSyntheticPackagesPath = "../${SUBPACKAGES}",
+                    transitiveSyntheticPackagesPath = "..",
                 )
             }
         }
@@ -342,6 +351,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     companion object {
         const val TASK_NAME = "generateSyntheticLinkageSwiftPMImportProject"
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "KotlinMultiplatformLinkedPackage"
+        const val SYNTHETIC_IMPORT_DYLIB = "KotlinMultiplatformLinkedPackageDylib"
         const val SUBPACKAGES = "subpackages"
         const val MANIFEST_NAME = "Package.swift"
 

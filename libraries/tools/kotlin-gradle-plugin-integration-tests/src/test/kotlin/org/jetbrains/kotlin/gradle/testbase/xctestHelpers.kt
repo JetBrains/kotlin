@@ -49,8 +49,8 @@ internal class XCTestHelpers : Closeable {
             )
         }
 
-        fun launch(bundleId: String, stdout: File, stderr: File) {
-            ProcessBuilder(
+        fun launch(bundleId: String, stdout: File, stderr: File): Int {
+            return ProcessBuilder(
                 listOf(
                     "/usr/bin/xcrun", "simctl", "launch",
                     "--console",

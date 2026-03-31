@@ -86,7 +86,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `integrateLinkagePackage sets dynamic synthetic product type for dynamic frameworks to inferred and creates a dynamic package to force promotion`(version: GradleVersion) {
+    fun `integrateLinkagePackage sets dynamic synthetic product type for dynamic frameworks to inferred and creates a dynamic package`(version: GradleVersion) {
         project("emptyxcode", version) {
             val localSwiftPackageRelativePath = "../localSwiftPackage"
             createLocalSwiftPackage(projectPath.resolve(localSwiftPackageRelativePath))
@@ -116,7 +116,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
             }
 
             val manifestFile = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift")
-            val promotionManifestFile = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/PromoteKMPDependenciesToDynamicLibraries/Package.swift")
+            val promotionManifestFile = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/$SYNTHETIC_IMPORT_DYLIB/Package.swift")
 
             build(
                 "integrateLinkagePackage",
@@ -135,7 +135,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     message = "Synthetic package product type should be '.dynamic' when isStatic=false"
                 )
                 assertEquals(
-                    setOf("promotekmpdependenciestodynamiclibraries", "localswiftpackage"),
+                    setOf("kotlinmultiplatformlinkedpackagedylib"),
                     manifest.dependencies.map { it.identity }.toSet(),
                 )
 
