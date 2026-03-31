@@ -1,0 +1,211 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelConstRepl_repl] get(): <implicit>
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelConstRepl_repl] get(): <implicit>
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? const [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=TopLevelConstRepl_repl] get(): <implicit>
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? const [ResolvedTo(COMPANION_GENERATION)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=TopLevelConstRepl_repl] get(): <implicit>
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? const [ResolvedTo(SUPER_TYPES)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=TopLevelConstRepl_repl] get(): <implicit>
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(TYPES)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? const [ResolvedTo(TYPES)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(TYPES)] [ContainingClassKey=TopLevelConstRepl_repl] get(): <implicit>
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final const [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelConstRepl_repl] get(): <implicit>
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final const [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=TopLevelConstRepl_repl] get(): <implicit>
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final const [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=TopLevelConstRepl_repl] get(): <implicit>
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val x: R|kotlin/Int| = Int(1)
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=TopLevelConstRepl_repl] get(): R|kotlin/Int|
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final const [ResolvedTo(CONSTANT_EVALUATION)] [EvaluatedValue=Int(1), ReplSnippetTopLevelDeclaration=true] val x: R|kotlin/Int| = Int(1)
+                public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=TopLevelConstRepl_repl] get(): R|kotlin/Int|
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] [EvaluatedValue=Int(1), ReplSnippetTopLevelDeclaration=true] val x: R|kotlin/Int| = Int(1)
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=TopLevelConstRepl_repl] get(): R|kotlin/Int|
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1), ReplSnippetTopLevelDeclaration=true] val x: R|kotlin/Int| = Int(1)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelConstRepl_repl] get(): R|kotlin/Int|
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelConstRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-topLevelConstRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object TopLevelConstRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] TopLevelConstRepl_repl.constructor(): R|TopLevelConstRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /TopLevelConstRepl_repl.x
+            }
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1), ReplSnippetTopLevelDeclaration=true] val x: R|kotlin/Int| = Int(1)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelConstRepl_repl] get(): R|kotlin/Int|
+
+        }

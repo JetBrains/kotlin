@@ -1,0 +1,15 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] scriptRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-scriptRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object ScriptRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] ScriptRepl_repl.constructor(): R|ScriptRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /ScriptRepl_repl.scriptFun
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun scriptFun(): R|kotlin/Unit| {
+            }
+
+        }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,6 +30,15 @@ internal object FileElementFactory {
         is FirScript -> {
             firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
             RootScriptStructureElement(firFile, firDeclaration, moduleComponents)
+        }
+
+        is FirReplSnippet -> {
+            firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
+
+            firDeclaration.snippetClass.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
+            lazyResolveClassGeneratedMembers(firDeclaration.snippetClass)
+
+            RootReplSnippetStructureElement(firFile, firDeclaration, moduleComponents)
         }
 
         else -> {

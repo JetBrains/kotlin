@@ -875,14 +875,26 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    override fun transformReplSnippet(replSnippet: FirReplSnippet, data: ResolutionMode): FirReplSnippet {
-        context.withReplSnippet(replSnippet, components) {
+    open fun withReplSnippet(
+        snippet: FirReplSnippet,
+        action: () -> FirReplSnippet,
+    ): FirReplSnippet = context.withReplSnippet(snippet, components) {
+        action()
+        snippet
+    }
+
+    override fun transformReplSnippet(
+        replSnippet: FirReplSnippet,
+        data: ResolutionMode,
+    ): FirReplSnippet = whileAnalysing(session, replSnippet) {
+        withReplSnippet(replSnippet) {
             replSnippet.transformSnippetClass(this, data)
             if (!implicitTypeOnly) {
                 session.replSnippetResolveExtension?.updateResolved(replSnippet)
             }
+
+            replSnippet
         }
-        return replSnippet
     }
 
     override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {

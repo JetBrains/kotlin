@@ -1,0 +1,309 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+            }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+            }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+            }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+            }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+            }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(TYPES)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+            }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONTRACTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnPrimaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-annotationOnPrimaryConstructor.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object AnnotationOnPrimaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] AnnotationOnPrimaryConstructor_repl.constructor(): R|AnnotationOnPrimaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /AnnotationOnPrimaryConstructor_repl.WithConstructor
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnPrimaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationOnPrimaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnPrimaryConstructor_repl.WithConstructor| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+            }
+
+        }

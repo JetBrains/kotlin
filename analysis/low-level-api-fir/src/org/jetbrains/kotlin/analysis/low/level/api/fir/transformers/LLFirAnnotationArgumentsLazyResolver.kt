@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -178,7 +178,10 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
                 }
             }
 
-            is FirScript -> target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            is FirScript, is FirReplSnippet -> {
+                target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            }
+
             is FirFile -> transformer.declarationsTransformer.withFile(target) {
                 target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
             }

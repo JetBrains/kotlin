@@ -507,6 +507,26 @@ private class ContextCollectorVisitor(
         }
     }
 
+    override fun visitReplSnippet(replSnippet: FirReplSnippet) = withProcessor(replSnippet) {
+        dumpContext(replSnippet, ContextKind.SELF)
+
+        processAnnotations(replSnippet)
+
+        onActive {
+            val holder = getSessionHolder(replSnippet)
+
+            context.withReplSnippet(replSnippet, holder) {
+                dumpContext(replSnippet, ContextKind.BODY)
+
+                onActive {
+                    withInterceptor {
+                        processChildren(replSnippet)
+                    }
+                }
+            }
+        }
+    }
+
     override fun visitFile(file: FirFile) = withProcessor(file) {
         val holder = getSessionHolder(file)
 

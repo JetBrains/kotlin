@@ -1,0 +1,26 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-secondaryConstructorRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object SecondaryConstructorRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] SecondaryConstructorRepl_repl.constructor(): R|SecondaryConstructorRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /SecondaryConstructorRepl_repl.WithConstructor
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|SecondaryConstructorRepl_repl.WithConstructor| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+                public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Int|): R|SecondaryConstructorRepl_repl.WithConstructor| {
+                    this<R|SecondaryConstructorRepl_repl.WithConstructor|>(R|<local>/x|)
+                }
+
+            }
+
+        }

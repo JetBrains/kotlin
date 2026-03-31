@@ -1,0 +1,23 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] replResult.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-replResult.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object ReplResult_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] ReplResult_repl.constructor(): R|ReplResult_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl property initializer: /$$result> = when () {
+                    Boolean(true) ->  {
+                        Int(1)
+                    }
+                    else ->  {
+                        String(str)
+                    }
+                }
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Any| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any|
+
+        }

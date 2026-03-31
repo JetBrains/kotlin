@@ -1,0 +1,52 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final? class Bar : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final object TopLevelFunction_repl : R|kotlin/Any|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final object TopLevelFunction_repl : R|kotlin/Any|
+                Type: TopLevelFunction_repl
+
+FILE: [ResolvedTo(IMPORTS)] topLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelFunction.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelFunction_repl.constructor(): R|TopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] class Bar : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] constructor(): R|TopLevelFunction_repl.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = REPL_EXPRESSION_REF
+                public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            public? final? [ResolvedTo(RAW_FIR)] val y: <implicit>
+                public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }

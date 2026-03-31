@@ -1,0 +1,22 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] memberPropertyRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-memberPropertyRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object MemberPropertyRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] MemberPropertyRepl_repl.constructor(): R|MemberPropertyRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /MemberPropertyRepl_repl.MyClass
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|MemberPropertyRepl_repl.MyClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] val memberProp: R|kotlin/Int| = Int(42)
+                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            }
+
+        }

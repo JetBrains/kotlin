@@ -1,0 +1,62 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final? data class MyPair : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final object DestructuringEntry_repl : R|kotlin/Any|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final object DestructuringEntry_repl : R|kotlin/Any|
+                Type: DestructuringEntry_repl
+
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] x: Int, [ResolvedTo(RAW_FIR)] y: String): R|DestructuringEntry_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] get(): Int
+
+                public? final? [ResolvedTo(RAW_FIR)] val y: String = R|<local>/y|
+                    public? [ResolvedTo(RAW_FIR)] get(): String
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): String
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] x: Int = this@R|/DestructuringEntry_repl.MyPair|.R|/DestructuringEntry_repl.MyPair.x|, [ResolvedTo(RAW_FIR)] y: String = this@R|/DestructuringEntry_repl.MyPair|.R|/DestructuringEntry_repl.MyPair.y|): R|DestructuringEntry_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(RAW_FIR)] val x: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] val y: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }

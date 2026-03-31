@@ -1,0 +1,22 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-primaryConstructorRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object PrimaryConstructorRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] PrimaryConstructorRepl_repl.constructor(): R|PrimaryConstructorRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /PrimaryConstructorRepl_repl.WithConstructor
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|PrimaryConstructorRepl_repl.WithConstructor| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            }
+
+        }

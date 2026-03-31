@@ -1,0 +1,677 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Base = LAZY_EXPRESSION
+
+            }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Base = LAZY_EXPRESSION
+
+            }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] field $$delegate_0: Base = LAZY_EXPRESSION
+
+            }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(COMPANION_GENERATION)] field $$delegate_0: Base = LAZY_EXPRESSION
+
+            }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(SUPER_TYPES)] field $$delegate_0: Base = LAZY_EXPRESSION
+
+            }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(TYPES)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(TYPES)] field $$delegate_0: R|AnnotationOnExpression_repl.Base| = LAZY_EXPRESSION
+
+            }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public abstract [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|AnnotationOnExpression_repl.Base|): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(STATUS)] field $$delegate_0: R|AnnotationOnExpression_repl.Base| = LAZY_EXPRESSION
+
+            }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public abstract [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|AnnotationOnExpression_repl.Base|): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|AnnotationOnExpression_repl.Base| = LAZY_EXPRESSION
+
+            }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public abstract [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final [ResolvedTo(CONTRACTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|AnnotationOnExpression_repl.Base|): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|AnnotationOnExpression_repl.Base| = LAZY_EXPRESSION
+
+            }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public abstract [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|AnnotationOnExpression_repl.Base|): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|AnnotationOnExpression_repl.Base| = LAZY_EXPRESSION
+
+            }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public abstract [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|AnnotationOnExpression_repl.Base|): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(CONSTANT_EVALUATION)] field $$delegate_0: R|AnnotationOnExpression_repl.Base| = LAZY_EXPRESSION
+
+            }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public abstract [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: String): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
+
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|AnnotationOnExpression_repl.Base|): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|AnnotationOnExpression_repl.Base| = LAZY_EXPRESSION
+
+            }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public abstract [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : Base {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: Int): R|AnnotationOnExpression_repl.BaseImpl| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] get(): Int
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: R|kotlin/String|): R|AnnotationOnExpression_repl.Some| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): R|kotlin/String|
+
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|AnnotationOnExpression_repl.Base|): R|AnnotationOnExpression_repl.Derived| {
+                    LAZY_super<<implicit>>
+                }
+
+                private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|AnnotationOnExpression_repl.Base| = @R|AnnotationOnExpression_repl.Some|[Types](s = String(Anything) [evaluated = String(Anything)]) R|<local>/b|
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnExpression.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-annotationOnExpression.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object AnnotationOnExpression_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] AnnotationOnExpression_repl.constructor(): R|AnnotationOnExpression_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /AnnotationOnExpression_repl.Base
+                <repl declaration reference>: /AnnotationOnExpression_repl.BaseImpl
+                <repl declaration reference>: /AnnotationOnExpression_repl.Some
+                <repl declaration reference>: /AnnotationOnExpression_repl.Derived
+            }
+
+            public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
+                public abstract [ResolvedTo(BODY_RESOLVE)] fun print(): R|kotlin/Unit|
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] class BaseImpl : R|AnnotationOnExpression_repl.Base| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationOnExpression_repl.BaseImpl.x] x: R|kotlin/Int|): R|AnnotationOnExpression_repl.BaseImpl| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseImpl] get(): R|kotlin/Int|
+
+                public open override [ResolvedTo(BODY_RESOLVE)] fun print(): R|kotlin/Unit| {
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, ReplSnippetTopLevelDeclaration=true] annotation class Some : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationOnExpression_repl.Some.s] s: R|kotlin/String|): R|AnnotationOnExpression_repl.Some| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] get(): R|kotlin/String|
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnExpression_repl, DelegateFieldsMapKey={0=/AnnotationOnExpression_repl.Derived.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class Derived : R|AnnotationOnExpression_repl.Base| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor([ResolvedTo(BODY_RESOLVE)] b: R|AnnotationOnExpression_repl.Base|): R|AnnotationOnExpression_repl.Derived| {
+                    super<R|kotlin/Any|>()
+                }
+
+                private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|AnnotationOnExpression_repl.Base| = @R|AnnotationOnExpression_repl.Some|[Types](s = String(Anything) [evaluated = String(Anything)]) R|<local>/b|
+
+            }
+
+        }

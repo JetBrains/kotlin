@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.replExpressionReference
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirReplExpressionReference
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.resolve.FirRegularTowerDataContexts
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -283,15 +284,13 @@ open class ReturnTypeCalculatorWithJump(
 
     private val FirCallableSymbol<*>.isUnresolvedReplProperty: Boolean
         get() {
-            if (this !is FirRegularPropertySymbol || isReplSnippetDeclaration != true) return false
-            val initializer = fir.initializer as? FirReplExpressionReference
-            val delegate = fir.delegate as? FirReplExpressionReference
-            // Some properties like constants are not moved to the eval, so they should be treated as regular ones
-            if (initializer == null && delegate == null) {
-                return false
-            }
+            if (this !is FirPropertySymbol) return false
 
-            return initializer?.hasResolvedType != true && delegate?.hasResolvedType != true
+            // Some properties like constants are not moved to the eval (don't have an expression reference),
+            // so they should be treated as regular ones
+            val expressionReference = fir.replExpressionReference ?: return false
+
+            return expressionReference.expressionRef.value.takeUnless { it is FirLazyExpression }?.hasResolvedType != true
         }
 
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {

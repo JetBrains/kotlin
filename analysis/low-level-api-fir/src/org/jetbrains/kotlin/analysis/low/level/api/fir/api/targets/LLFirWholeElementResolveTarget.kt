@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isDeclarationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.*
 
 /**
  * [LLFirResolveTarget] representing all declarations in [target] recursively.
@@ -44,6 +41,12 @@ internal class LLFirWholeElementResolveTarget(designation: FirDesignation) : LLF
             }
 
             element is FirScript -> visitor.withScript(element) {
+                element.forEachDeclaration {
+                    visitTargetElement(it, visitor)
+                }
+            }
+
+            element is FirReplSnippet -> visitor.withReplSnippet(element) {
                 element.forEachDeclaration {
                     visitTargetElement(it, visitor)
                 }

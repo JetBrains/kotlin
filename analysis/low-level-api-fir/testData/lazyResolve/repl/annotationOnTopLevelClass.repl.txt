@@ -1,0 +1,267 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(TYPES)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnTopLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-annotationOnTopLevelClass.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object AnnotationOnTopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] AnnotationOnTopLevelClass_repl.constructor(): R|AnnotationOnTopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /AnnotationOnTopLevelClass_repl.ResolveMe
+            }
+
+            @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class ResolveMe : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor(): R|AnnotationOnTopLevelClass_repl.ResolveMe| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }

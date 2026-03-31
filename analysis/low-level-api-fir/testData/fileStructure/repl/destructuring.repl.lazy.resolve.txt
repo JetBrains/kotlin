@@ -1,0 +1,40 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] destructuring.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-destructuring.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object Destructuring_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] Destructuring_repl.constructor(): R|Destructuring_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /Destructuring_repl.MyPair
+                [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|Destructuring_repl.MyPair| = R|/Destructuring_repl.MyPair.MyPair|(Int(0), String(str))
+                <repl property initializer: /Destructuring_repl.aaa> = R|<local>/<destruct>|.R|/Destructuring_repl.MyPair.component1|()
+                <repl property initializer: /Destructuring_repl.b> = R|<local>/<destruct>|.R|/Destructuring_repl.MyPair.component2|()
+            }
+
+            public final data [ResolvedTo(BODY_RESOLVE)] class MyPair : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|Destructuring_repl.MyPair| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int| = R|<local>/a|
+                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+                public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/String| = R|<local>/b|
+                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+                public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+                public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/String|
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = this@R|/Destructuring_repl.MyPair|.R|/Destructuring_repl.MyPair.a|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String| = this@R|/Destructuring_repl.MyPair|.R|/Destructuring_repl.MyPair.b|): R|Destructuring_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val aaa: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/String| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+        }

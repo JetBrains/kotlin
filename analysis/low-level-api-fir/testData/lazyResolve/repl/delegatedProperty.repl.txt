@@ -1,0 +1,244 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] [ReplPropertyCopy={/DelegatedProperty_repl.bar=/DelegatedProperty_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] [ReplPropertyCopy={/DelegatedProperty_repl.bar=/DelegatedProperty_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplPropertyCopy={/DelegatedProperty_repl.bar=/DelegatedProperty_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=DelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(COMPANION_GENERATION)] [ReplPropertyCopy={/DelegatedProperty_repl.bar=/DelegatedProperty_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(COMPANION_GENERATION)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=DelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(SUPER_TYPES)] [ReplPropertyCopy={/DelegatedProperty_repl.bar=/DelegatedProperty_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(SUPER_TYPES)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=DelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(TYPES)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(TYPES)] [ReplPropertyCopy={/DelegatedProperty_repl.bar=/DelegatedProperty_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(TYPES)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public? [ResolvedTo(TYPES)] [ContainingClassKey=DelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplPropertyCopy={/DelegatedProperty_repl.bar=/DelegatedProperty_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplPropertyCopy={/DelegatedProperty_repl.bar=/DelegatedProperty_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=DelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(CONTRACTS)] [ReplPropertyCopy={/DelegatedProperty_repl.bar=/DelegatedProperty_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=DelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl property delegate: /DelegatedProperty_repl.bar> = R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                    ^ String(My number is: ).R|kotlin/String.plus|(Int(1)).R|kotlin/String.plus|(String(!))
+                }
+                )
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val bar: R|kotlin/String|by REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=DelegatedProperty_repl] get(): R|kotlin/String| {
+                    ^ this@R|/DelegatedProperty_repl|.D|/DelegatedProperty_repl.bar|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/DelegatedProperty_repl|, ::R|/DelegatedProperty_repl.bar|)
+                }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl property delegate: /DelegatedProperty_repl.bar> = R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                    ^ String(My number is: ).R|kotlin/String.plus|(Int(1)).R|kotlin/String.plus|(String(!))
+                }
+                )
+            }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ReplSnippetTopLevelDeclaration=true] val bar: R|kotlin/String|by REPL_EXPRESSION_REF
+                public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=DelegatedProperty_repl] get(): R|kotlin/String| {
+                    ^ this@R|/DelegatedProperty_repl|.D|/DelegatedProperty_repl.bar|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/DelegatedProperty_repl|, ::R|/DelegatedProperty_repl.bar|)
+                }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl property delegate: /DelegatedProperty_repl.bar> = R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                    ^ String(My number is: ).R|kotlin/String.plus|(Int(1)).R|kotlin/String.plus|(String(!))
+                }
+                )
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ReplSnippetTopLevelDeclaration=true] val bar: R|kotlin/String|by REPL_EXPRESSION_REF
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=DelegatedProperty_repl] get(): R|kotlin/String| {
+                    ^ this@R|/DelegatedProperty_repl|.D|/DelegatedProperty_repl.bar|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/DelegatedProperty_repl|, ::R|/DelegatedProperty_repl.bar|)
+                }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl property delegate: /DelegatedProperty_repl.bar> = R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                    ^ String(My number is: ).R|kotlin/String.plus|(Int(1)).R|kotlin/String.plus|(String(!))
+                }
+                )
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val bar: R|kotlin/String|by REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DelegatedProperty_repl] get(): R|kotlin/String| {
+                    ^ this@R|/DelegatedProperty_repl|.D|/DelegatedProperty_repl.bar|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/DelegatedProperty_repl|, ::R|/DelegatedProperty_repl.bar|)
+                }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl property delegate: /DelegatedProperty_repl.bar> = R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                    ^ String(My number is: ).R|kotlin/String.plus|(Int(1)).R|kotlin/String.plus|(String(!))
+                }
+                )
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val bar: R|kotlin/String|by REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DelegatedProperty_repl] get(): R|kotlin/String| {
+                    ^ this@R|/DelegatedProperty_repl|.D|/DelegatedProperty_repl.bar|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/DelegatedProperty_repl|, ::R|/DelegatedProperty_repl.bar|)
+                }
+
+        }

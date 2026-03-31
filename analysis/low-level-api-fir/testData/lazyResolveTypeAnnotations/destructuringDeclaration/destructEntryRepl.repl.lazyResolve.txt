@@ -1,0 +1,781 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final? data [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: Int): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val pair: MyPair
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): MyPair
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final? data [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: Int): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val pair: MyPair
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): MyPair
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final? data [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: Int): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val pair: MyPair
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): MyPair
+
+            public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(COMPANION_GENERATION)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final? data [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: Int): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val pair: MyPair
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): MyPair
+
+            public final [ResolvedTo(COMPANION_GENERATION)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(SUPER_TYPES)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final? data [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: Int): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val pair: MyPair
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): MyPair
+
+            public final [ResolvedTo(SUPER_TYPES)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(TYPES)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(TYPES)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final? data [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: Int): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val pair: MyPair
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DestructEntryRepl_repl] get(): MyPair
+
+            public final [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(TYPES)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public final const [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final? data [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: Int): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val pair: R|util/DestructEntryRepl_repl.MyPair|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|util/DestructEntryRepl_repl.MyPair|
+
+            public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public final const [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final? data [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: Int): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val pair: R|util/DestructEntryRepl_repl.MyPair|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|util/DestructEntryRepl_repl.MyPair|
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
+
+            public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(CONTRACTS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public final const [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final? data [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: Int): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val pair: R|util/DestructEntryRepl_repl.MyPair|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|util/DestructEntryRepl_repl.MyPair|
+
+            public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(CONTRACTS)] get(): <implicit>
+
+            public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: util/DestructEntryRepl_repl.Anno
+                <repl declaration reference>: util/DestructEntryRepl_repl.constant
+                <repl declaration reference>: util/DestructEntryRepl_repl.MyPair
+                <repl declaration reference>: util/DestructEntryRepl_repl.pair
+                [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/DestructEntryRepl_repl.MyPair| = this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.pair|
+                <repl property initializer: util/DestructEntryRepl_repl.left> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component1|()
+                <repl property initializer: util/DestructEntryRepl_repl.right> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component2|()
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public final const [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final data [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(STATUS)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: R|kotlin/Int|): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+                public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+
+                public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+                public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val pair: R|util/DestructEntryRepl_repl.MyPair|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|util/DestructEntryRepl_repl.MyPair|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/DestructEntryRepl_repl.MyPair.MyPair], ReplSnippetTopLevelDeclaration=true] val left: R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: util/DestructEntryRepl_repl.Anno
+                <repl declaration reference>: util/DestructEntryRepl_repl.constant
+                <repl declaration reference>: util/DestructEntryRepl_repl.MyPair
+                <repl declaration reference>: util/DestructEntryRepl_repl.pair
+                [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/DestructEntryRepl_repl.MyPair| = this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.pair|
+                <repl property initializer: util/DestructEntryRepl_repl.left> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component1|()
+                <repl property initializer: util/DestructEntryRepl_repl.right> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component2|()
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: String): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public final const [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): <implicit>
+
+            public final data [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(STATUS)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: R|kotlin/Int|): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+                public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+
+                public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+                public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val pair: R|util/DestructEntryRepl_repl.MyPair|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|util/DestructEntryRepl_repl.MyPair|
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/DestructEntryRepl_repl.MyPair.MyPair], ReplSnippetTopLevelDeclaration=true] val left: R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = REPL_EXPRESSION_REF
+                public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: util/DestructEntryRepl_repl.Anno
+                <repl declaration reference>: util/DestructEntryRepl_repl.constant
+                <repl declaration reference>: util/DestructEntryRepl_repl.MyPair
+                <repl declaration reference>: util/DestructEntryRepl_repl.pair
+                [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/DestructEntryRepl_repl.MyPair| = this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.pair|
+                <repl property initializer: util/DestructEntryRepl_repl.left> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component1|()
+                <repl property initializer: util/DestructEntryRepl_repl.right> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component2|()
+            }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: R|kotlin/String|): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            }
+
+            public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|kotlin/Int|
+
+            public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: R|kotlin/Int|): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+                public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+                public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+                public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val pair: R|util/DestructEntryRepl_repl.MyPair|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|util/DestructEntryRepl_repl.MyPair|
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>| = REPL_EXPRESSION_REF
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: util/DestructEntryRepl_repl.Anno
+                <repl declaration reference>: util/DestructEntryRepl_repl.constant
+                <repl declaration reference>: util/DestructEntryRepl_repl.MyPair
+                <repl declaration reference>: util/DestructEntryRepl_repl.pair
+                [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/DestructEntryRepl_repl.MyPair| = this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.pair|
+                <repl property initializer: util/DestructEntryRepl_repl.left> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component1|()
+                <repl property initializer: util/DestructEntryRepl_repl.right> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component2|()
+            }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: R|kotlin/String|): R|util/DestructEntryRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            }
+
+            public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|kotlin/Int|
+
+            public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: R|kotlin/Int|): R|util/DestructEntryRepl_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+                public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+                public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+                public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val pair: R|util/DestructEntryRepl_repl.MyPair|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|util/DestructEntryRepl_repl.MyPair|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] destructEntryRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-destructEntryRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object DestructEntryRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] util/DestructEntryRepl_repl.constructor(): R|util/DestructEntryRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: util/DestructEntryRepl_repl.Anno
+                <repl declaration reference>: util/DestructEntryRepl_repl.constant
+                <repl declaration reference>: util/DestructEntryRepl_repl.MyPair
+                <repl declaration reference>: util/DestructEntryRepl_repl.pair
+                [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|util/DestructEntryRepl_repl.MyPair| = this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.pair|
+                <repl property initializer: util/DestructEntryRepl_repl.left> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component1|()
+                <repl property initializer: util/DestructEntryRepl_repl.right> = R|<local>/<destruct>|.R|util/DestructEntryRepl_repl.MyPair.component2|()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/DestructEntryRepl_repl.Anno.str] str: R|kotlin/String|): R|util/DestructEntryRepl_repl.Anno| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            }
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0), ReplSnippetTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|kotlin/Int|
+
+            public final data [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol DestructEntryRepl_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.a] a: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/DestructEntryRepl_repl.MyPair.b] b: R|kotlin/Int|): R|util/DestructEntryRepl_repl.MyPair| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/a|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+                public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=util/DestructEntryRepl_repl.MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+                public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+                public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] a: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.a|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|util/DestructEntryRepl_repl.MyPair|.R|util/DestructEntryRepl_repl.MyPair.b|): R|util/DestructEntryRepl_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val pair: R|util/DestructEntryRepl_repl.MyPair|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DestructEntryRepl_repl] get(): R|util/DestructEntryRepl_repl.MyPair|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val left: R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/DestructEntryRepl_repl.Anno|(str = Int(0).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(1).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/DestructEntryRepl_repl.Anno|(str = Int(2).R|kotlin/Int.plus|(this@R|util/DestructEntryRepl_repl|.R|util/DestructEntryRepl_repl.constant|) [evaluated = Int(2)])  kotlin/Int>>|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val right: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }

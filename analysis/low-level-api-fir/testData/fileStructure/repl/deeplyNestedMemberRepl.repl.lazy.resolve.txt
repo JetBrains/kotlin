@@ -1,0 +1,29 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] deeplyNestedMemberRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-deeplyNestedMemberRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object DeeplyNestedMemberRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] DeeplyNestedMemberRepl_repl.constructor(): R|DeeplyNestedMemberRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /DeeplyNestedMemberRepl_repl.Outer
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|DeeplyNestedMemberRepl_repl.Outer| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|DeeplyNestedMemberRepl_repl.Outer.Middle| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun deepFun(): R|kotlin/Unit| {
+                    }
+
+                }
+
+            }
+
+        }

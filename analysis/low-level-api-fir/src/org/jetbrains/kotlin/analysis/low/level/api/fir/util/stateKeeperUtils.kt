@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,8 @@ internal fun blockGuard(fir: FirBlock): FirBlock {
 }
 
 internal fun expressionGuard(fir: FirExpression): FirExpression {
-    if (isLazyStatement(fir)) {
+    // Expression references shouldn't be replaced since they belong to the snippet
+    if (isLazyStatement(fir) || fir is FirReplExpressionReference) {
         return fir
     }
 

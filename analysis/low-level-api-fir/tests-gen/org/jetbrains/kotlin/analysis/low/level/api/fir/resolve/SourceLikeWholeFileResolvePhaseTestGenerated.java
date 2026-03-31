@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -649,5 +650,145 @@ public class SourceLikeWholeFileResolvePhaseTestGenerated extends AbstractSource
   @TestMetadata("withoutNameScript.kts")
   public void testWithoutNameScript() {
     run("withoutNameScript.kts");
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/fileStructure/repl")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Repl {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/fileStructure/repl/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInRepl() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileStructure/repl"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classInitializerRepl.repl.kts")
+    public void testClassInitializerRepl_repl() {
+      run("classInitializerRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("deeplyNestedMemberPropertyRepl.repl.kts")
+    public void testDeeplyNestedMemberPropertyRepl_repl() {
+      run("deeplyNestedMemberPropertyRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("deeplyNestedMemberRepl.repl.kts")
+    public void testDeeplyNestedMemberRepl_repl() {
+      run("deeplyNestedMemberRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("delegatedProperty.repl.kts")
+    public void testDelegatedProperty_repl() {
+      run("delegatedProperty.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("destructuring.repl.kts")
+    public void testDestructuring_repl() {
+      run("destructuring.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("eval.repl.kts")
+    public void testEval_repl() {
+      run("eval.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("memberFunctionRepl.repl.kts")
+    public void testMemberFunctionRepl_repl() {
+      run("memberFunctionRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("memberPropertyRepl.repl.kts")
+    public void testMemberPropertyRepl_repl() {
+      run("memberPropertyRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("mix.repl.kts")
+    public void testMix_repl() {
+      run("mix.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("nestedClassRepl.repl.kts")
+    public void testNestedClassRepl_repl() {
+      run("nestedClassRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructorRepl.repl.kts")
+    public void testPrimaryConstructorRepl_repl() {
+      run("primaryConstructorRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("replResult.repl.kts")
+    public void testReplResult_repl() {
+      run("replResult.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("replSnippetClass.repl.kts")
+    public void testReplSnippetClass_repl() {
+      run("replSnippetClass.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("replWithResult.repl.kts")
+    public void testReplWithResult_repl() {
+      run("replWithResult.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptRepl.repl.kts")
+    public void testScriptRepl_repl() {
+      run("scriptRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorRepl.repl.kts")
+    public void testSecondaryConstructorRepl_repl() {
+      run("secondaryConstructorRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelClassRepl.repl.kts")
+    public void testTopLevelClassRepl_repl() {
+      run("topLevelClassRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunctionRepl.repl.kts")
+    public void testTopLevelFunctionRepl_repl() {
+      run("topLevelFunctionRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunctionWithPackageRepl.repl.kts")
+    public void testTopLevelFunctionWithPackageRepl_repl() {
+      run("topLevelFunctionWithPackageRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelPropertyRepl.repl.kts")
+    public void testTopLevelPropertyRepl_repl() {
+      run("topLevelPropertyRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("typeAliasRepl.repl.kts")
+    public void testTypeAliasRepl_repl() {
+      run("typeAliasRepl.repl.kts");
+    }
   }
 }

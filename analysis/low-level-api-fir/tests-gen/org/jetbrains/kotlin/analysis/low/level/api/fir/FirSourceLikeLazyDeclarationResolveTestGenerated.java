@@ -2402,6 +2402,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("danglingAnnotationMemberFunctionScript.kts")
+    public void testDanglingAnnotationMemberFunctionScript() {
+      run("danglingAnnotationMemberFunctionScript.kts");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationTopLevelFunction.kt")
     public void testDanglingAnnotationTopLevelFunction() {
       run("danglingAnnotationTopLevelFunction.kt");
@@ -2417,6 +2423,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     @TestMetadata("danglingAnnotationTopLevelFunction3.kt")
     public void testDanglingAnnotationTopLevelFunction3() {
       run("danglingAnnotationTopLevelFunction3.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevelFunctionScript.kts")
+    public void testDanglingAnnotationTopLevelFunctionScript() {
+      run("danglingAnnotationTopLevelFunctionScript.kts");
     }
 
     @Test
@@ -3245,6 +3257,248 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     @TestMetadata("unresolvedAnnotationOnPropertyType.kt")
     public void testUnresolvedAnnotationOnPropertyType() {
       run("unresolvedAnnotationOnPropertyType.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/repl")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Repl {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/repl/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInRepl() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/repl"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotationClassDeclaration.repl.kts")
+    public void testAnnotationClassDeclaration_repl() {
+      run("annotationClassDeclaration.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnExpression.repl.kts")
+    public void testAnnotationOnExpression_repl() {
+      run("annotationOnExpression.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnLocalClass.repl.kts")
+    public void testAnnotationOnLocalClass_repl() {
+      run("annotationOnLocalClass.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnMemberFunction.repl.kts")
+    public void testAnnotationOnMemberFunction_repl() {
+      run("annotationOnMemberFunction.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnMemberProperty.repl.kts")
+    public void testAnnotationOnMemberProperty_repl() {
+      run("annotationOnMemberProperty.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnNestedClass.repl.kts")
+    public void testAnnotationOnNestedClass_repl() {
+      run("annotationOnNestedClass.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnPrimaryConstructor.repl.kts")
+    public void testAnnotationOnPrimaryConstructor_repl() {
+      run("annotationOnPrimaryConstructor.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnSecondaryConstructor.repl.kts")
+    public void testAnnotationOnSecondaryConstructor_repl() {
+      run("annotationOnSecondaryConstructor.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnTopLevelClass.repl.kts")
+    public void testAnnotationOnTopLevelClass_repl() {
+      run("annotationOnTopLevelClass.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnTopLevelFunction.repl.kts")
+    public void testAnnotationOnTopLevelFunction_repl() {
+      run("annotationOnTopLevelFunction.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnTopLevelProperty.repl.kts")
+    public void testAnnotationOnTopLevelProperty_repl() {
+      run("annotationOnTopLevelProperty.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnTypeAlias.repl.kts")
+    public void testAnnotationOnTypeAlias_repl() {
+      run("annotationOnTypeAlias.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationOnTypeInWhereClause.repl.kts")
+    public void testAnnotationOnTypeInWhereClause_repl() {
+      run("annotationOnTypeInWhereClause.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationWithEnumFromBody.repl.kts")
+    public void testAnnotationWithEnumFromBody_repl() {
+      run("annotationWithEnumFromBody.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationWithMixedArguments.repl.kts")
+    public void testAnnotationWithMixedArguments_repl() {
+      run("annotationWithMixedArguments.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("annotationWithTypeArgument.repl.kts")
+    public void testAnnotationWithTypeArgument_repl() {
+      run("annotationWithTypeArgument.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("customAccessors.repl.kts")
+    public void testCustomAccessors_repl() {
+      run("customAccessors.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationMemberFunction.repl.kts")
+    public void testDanglingAnnotationMemberFunction_repl() {
+      run("danglingAnnotationMemberFunction.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevelFunction.repl.kts")
+    public void testDanglingAnnotationTopLevelFunction_repl() {
+      run("danglingAnnotationTopLevelFunction.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("deeplyNestedMemberProperty.repl.kts")
+    public void testDeeplyNestedMemberProperty_repl() {
+      run("deeplyNestedMemberProperty.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("deeplyNestedMember.repl.kts")
+    public void testDeeplyNestedMember_repl() {
+      run("deeplyNestedMember.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("delegatedProperty.repl.kts")
+    public void testDelegatedProperty_repl() {
+      run("delegatedProperty.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("destructuringEntry.repl.kts")
+    public void testDestructuringEntry_repl() {
+      run("destructuringEntry.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("destructuring.repl.kts")
+    public void testDestructuring_repl() {
+      run("destructuring.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("evalWithDelegatedProperty.repl.kts")
+    public void testEvalWithDelegatedProperty_repl() {
+      run("evalWithDelegatedProperty.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("eval.repl.kts")
+    public void testEval_repl() {
+      run("eval.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("memberFunction.repl.kts")
+    public void testMemberFunction_repl() {
+      run("memberFunction.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("memberProperty.repl.kts")
+    public void testMemberProperty_repl() {
+      run("memberProperty.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("nestedClass.repl.kts")
+    public void testNestedClass_repl() {
+      run("nestedClass.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructor.repl.kts")
+    public void testPrimaryConstructor_repl() {
+      run("primaryConstructor.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("replWithResult.repl.kts")
+    public void testReplWithResult_repl() {
+      run("replWithResult.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructor.repl.kts")
+    public void testSecondaryConstructor_repl() {
+      run("secondaryConstructor.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelClass.repl.kts")
+    public void testTopLevelClass_repl() {
+      run("topLevelClass.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelConstRepl.repl.kts")
+    public void testTopLevelConstRepl_repl() {
+      run("topLevelConstRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunctionWithPackage.repl.kts")
+    public void testTopLevelFunctionWithPackage_repl() {
+      run("topLevelFunctionWithPackage.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunction.repl.kts")
+    public void testTopLevelFunction_repl() {
+      run("topLevelFunction.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelProperty.repl.kts")
+    public void testTopLevelProperty_repl() {
+      run("topLevelProperty.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("typeAlias.repl.kts")
+    public void testTypeAlias_repl() {
+      run("typeAlias.repl.kts");
     }
   }
 

@@ -1,0 +1,35 @@
+KT element: KtConstantExpression
+FIR element: FirLiteralExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(2)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] topLevelAccessorContent.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelAccessorContent.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelAccessorContent_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] TopLevelAccessorContent_repl.constructor(): R|TopLevelAccessorContent_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol TopLevelAccessorContent_repl, ReplSnippetTopLevelDeclaration=true] class Bar : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|TopLevelAccessorContent_repl.Bar| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val x: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelAccessorContent_repl] get(): <implicit>
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val y: R|kotlin/Int|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelAccessorContent_repl] get(): R|kotlin/Int| {
+                    ^ Int(2)
+                }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }

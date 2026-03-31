@@ -1,0 +1,15 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelPropertyRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-topLevelPropertyRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object TopLevelPropertyRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] TopLevelPropertyRepl_repl.constructor(): R|TopLevelPropertyRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl property initializer: /TopLevelPropertyRepl_repl.topLevelProp> = Int(42)
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val topLevelProp: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }

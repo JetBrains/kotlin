@@ -36,6 +36,7 @@ private object OriginalReplSnippet : FirDeclarationDataKey()
 private object ScriptTopLevelDeclaration : FirDeclarationDataKey()
 private object ReplSnippetTopLevelDeclaration : FirDeclarationDataKey()
 private object ReplPropertyCopy : FirDeclarationDataKey()
+private object ReplPropertyCopyFlag : FirDeclarationDataKey()
 private object HasBackingFieldKey : FirDeclarationDataKey()
 private object IsDeserializedPropertyFromAnnotation : FirDeclarationDataKey()
 private object IsDelegatedProperty : FirDeclarationDataKey()
@@ -75,10 +76,22 @@ val FirBasedSymbol<*>.isReplSnippetDeclaration: Boolean?
  * This means we cannot **actually** resolve the member property of this delegate expression.
  * But if we resolve a disposable copy of the property instead, we can replace the delegate expression
  * and resolve the member property accessors "again" when appropriate.
+ *
+ * **Note**: all copies are marked as [isCopiedDelegatedProperty]
+ *
+ * @see isCopiedDelegatedProperty
  */
 @FirImplementationDetail
 var FirFunction.replSnippetDelegatedPropertyCopies: MutableMap<FirPropertySymbol, FirProperty>?
         by FirDeclarationDataRegistry.data(ReplPropertyCopy)
+
+/**
+ * All copies from [replSnippetDelegatedPropertyCopies] have this flag
+ *
+ * @see replSnippetDelegatedPropertyCopies
+ */
+@FirImplementationDetail
+var FirProperty.isCopiedDelegatedProperty: Boolean? by FirDeclarationDataRegistry.data(ReplPropertyCopyFlag)
 
 /**
  * This is an implementation detail attribute to provide proper [hasBackingField]

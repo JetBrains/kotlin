@@ -1,0 +1,37 @@
+KT element: KtBlockExpression
+FIR element: FirBlockImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+ {
+    this@R|/Statement_repl|.R|/Statement_repl.bar|(Int(3))
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] statement.repl.kts
+    REPL_SNIPPET: [ResolvedTo(ANNOTATION_ARGUMENTS)] <snippet-statement.repl.kts>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object Statement_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] Statement_repl.constructor(): R|Statement_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /Statement_repl.foo
+                <repl declaration reference>: /Statement_repl.bar
+                this@R|/Statement_repl|.R|/Statement_repl.foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    this@R|/Statement_repl|.R|/Statement_repl.bar|(Int(3))
+                }
+                )
+                <repl property initializer: /Statement_repl.prop> = this@R|/Statement_repl|.R|/Statement_repl.bar|(Int(4))
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun bar([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/String| {
+                ^bar <strcat>(String(str#), R|<local>/i|)
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val prop: R|kotlin/String| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Statement_repl] get(): R|kotlin/String|
+
+        }

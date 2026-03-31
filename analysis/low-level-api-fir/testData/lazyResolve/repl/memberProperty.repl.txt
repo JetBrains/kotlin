@@ -1,0 +1,309 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] val memberProp: Int = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Int
+
+            }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] val memberProp: Int = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Int
+
+            }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val memberProp: Int = LAZY_EXPRESSION
+                    public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] get(): Int
+
+            }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(COMPANION_GENERATION)] val memberProp: Int = LAZY_EXPRESSION
+                    public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] get(): Int
+
+            }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(SUPER_TYPES)] val memberProp: Int = LAZY_EXPRESSION
+                    public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] get(): Int
+
+            }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(TYPES)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(TYPES)] val memberProp: R|kotlin/Int| = LAZY_EXPRESSION
+                    public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] val memberProp: R|kotlin/Int| = LAZY_EXPRESSION
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val memberProp: R|kotlin/Int| = LAZY_EXPRESSION
+                    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(CONTRACTS)] val memberProp: R|kotlin/Int| = LAZY_EXPRESSION
+                    public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val memberProp: R|kotlin/Int| = LAZY_EXPRESSION
+                    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(CONSTANT_EVALUATION)] val memberProp: R|kotlin/Int| = LAZY_EXPRESSION
+                    public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val memberProp: R|kotlin/Int| = LAZY_EXPRESSION
+                    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(STATUS)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] val memberProp: R|kotlin/Int| = Int(42)
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] memberProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-memberProperty.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object MemberProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] MemberProperty_repl.constructor(): R|MemberProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /MemberProperty_repl.MyClass
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol MemberProperty_repl, ReplSnippetTopLevelDeclaration=true] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MemberProperty_repl.MyClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] val memberProp: R|kotlin/Int| = Int(42)
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+            }
+
+        }

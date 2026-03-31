@@ -1,0 +1,645 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] [ReplPropertyCopy={/PropertyWithImplicitTypeRepl_repl.propertyToResolve=/PropertyWithImplicitTypeRepl_repl.propertyToResolve}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: String): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : ReadWriteProperty<Any?, @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit> { LAZY_BLOCK }
+                @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] [ReplPropertyCopy={/PropertyWithImplicitTypeRepl_repl.propertyToResolve=/PropertyWithImplicitTypeRepl_repl.propertyToResolve}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: String): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : ReadWriteProperty<Any?, @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit> { LAZY_BLOCK }
+                @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplPropertyCopy={/PropertyWithImplicitTypeRepl_repl.propertyToResolve=/PropertyWithImplicitTypeRepl_repl.propertyToResolve}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: String): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : ReadWriteProperty<Any?, @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplSnippetTopLevelDeclaration=true] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit> { LAZY_BLOCK }
+                @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(COMPANION_GENERATION)] [ReplPropertyCopy={/PropertyWithImplicitTypeRepl_repl.propertyToResolve=/PropertyWithImplicitTypeRepl_repl.propertyToResolve}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: String): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : ReadWriteProperty<Any?, @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] [ReplSnippetTopLevelDeclaration=true] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(COMPANION_GENERATION)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit> { LAZY_BLOCK }
+                @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(COMPANION_GENERATION)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(SUPER_TYPES)] [ReplPropertyCopy={/PropertyWithImplicitTypeRepl_repl.propertyToResolve=/PropertyWithImplicitTypeRepl_repl.propertyToResolve}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: String): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : ReadWriteProperty<Any?, @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] [ReplSnippetTopLevelDeclaration=true] var <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] F : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) String>>> [ResolvedTo(SUPER_TYPES)] @RECEIVER:Anno[Unresolved](LAZY_EXPRESSION) F.propertyToResolve: <implicit>by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit> { LAZY_BLOCK }
+                @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(SUPER_TYPES)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(TYPES)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(TYPES)] [ReplPropertyCopy={/PropertyWithImplicitTypeRepl_repl.propertyToResolve=/PropertyWithImplicitTypeRepl_repl.propertyToResolve}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: String): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : ReadWriteProperty<Any?, @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ReplSnippetTopLevelDeclaration=true] var <@R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] F : R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/String>>|> [ResolvedTo(TYPES)] @RECEIVER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit> { LAZY_BLOCK }
+                @PROPERTY_SETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(TYPES)] @SETTER_PARAMETER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [ReplPropertyCopy={/PropertyWithImplicitTypeRepl_repl.propertyToResolve=/PropertyWithImplicitTypeRepl_repl.propertyToResolve}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: String): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public final const [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : ReadWriteProperty<Any?, @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] var <@R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] F : R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/String>>|> [ResolvedTo(STATUS)] @RECEIVER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit> { LAZY_BLOCK }
+                @PROPERTY_SETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplPropertyCopy={/PropertyWithImplicitTypeRepl_repl.propertyToResolve=/PropertyWithImplicitTypeRepl_repl.propertyToResolve}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: String): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public final const [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : ReadWriteProperty<Any?, @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplSnippetTopLevelDeclaration=true] var <@R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] F : R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/String>>|> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @RECEIVER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit> { LAZY_BLOCK }
+                @PROPERTY_SETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(CONTRACTS)] [ReplPropertyCopy={/PropertyWithImplicitTypeRepl_repl.propertyToResolve=/PropertyWithImplicitTypeRepl_repl.propertyToResolve}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: String): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+            }
+
+            public final const [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit>
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : ReadWriteProperty<Any?, @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): <implicit> { LAZY_BLOCK }
+
+                public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] var <@R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] F : R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/String>>|> [ResolvedTo(CONTRACTS)] @RECEIVER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: <implicit>by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): <implicit> { LAZY_BLOCK }
+                @PROPERTY_SETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType], ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Anno
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.prop
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Delegate
+                <repl property delegate: /PropertyWithImplicitTypeRepl_repl.propertyToResolve> = R|/PropertyWithImplicitTypeRepl_repl.Delegate.Delegate|()
+            }
+
+            @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: R|kotlin/String|): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            }
+
+            public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val prop: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, @R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>>| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+
+                public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType]] fun getValue([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+                    ^getValue this@R|/PropertyWithImplicitTypeRepl_repl.Delegate|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.explicitType|()
+                }
+
+                public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType], ReplSnippetTopLevelDeclaration=true] var <@R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/String>>|> [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @RECEIVER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.getValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|)
+                }
+                @PROPERTY_SETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) <set-?>: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.setValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, R|<local>/<set-?>|)
+                }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType], ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Anno
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.prop
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Delegate
+                <repl property delegate: /PropertyWithImplicitTypeRepl_repl.propertyToResolve> = R|/PropertyWithImplicitTypeRepl_repl.Delegate.Delegate|()
+            }
+
+            @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: R|kotlin/String|): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            }
+
+            public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val prop: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, @R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>>| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+
+                public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType]] fun getValue([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+                    ^getValue this@R|/PropertyWithImplicitTypeRepl_repl.Delegate|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.explicitType|()
+                }
+
+                public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType], ReplSnippetTopLevelDeclaration=true] var <@R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] F : R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/String>>|> [ResolvedTo(CONSTANT_EVALUATION)] @RECEIVER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.getValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|)
+                }
+                @PROPERTY_SETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(CONSTANT_EVALUATION)] @SETTER_PARAMETER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](LAZY_EXPRESSION) <set-?>: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.setValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, R|<local>/<set-?>|)
+                }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType], ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Anno
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.prop
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Delegate
+                <repl property delegate: /PropertyWithImplicitTypeRepl_repl.propertyToResolve> = R|/PropertyWithImplicitTypeRepl_repl.Delegate.Delegate|()
+            }
+
+            @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: R|kotlin/String|): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            }
+
+            public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val prop: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, @R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>>| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| { LAZY_BLOCK }
+
+                public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType]] fun getValue([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| {
+                    ^getValue this@R|/PropertyWithImplicitTypeRepl_repl.Delegate|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.explicitType|()
+                }
+
+                public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(property ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(property 0)]) field:@PROPERTY_DELEGATE_FIELD:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(delegate ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(delegate 0)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ReplSnippetTopLevelDeclaration=true] var <@R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(type param ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(type param 0)]) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(bound ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(bound 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(nested bound ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(nested bound 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(nested nested bound ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(nested nested bound 0)])  kotlin/String>>|> [ResolvedTo(ANNOTATION_ARGUMENTS)] @RECEIVER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(receiver ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(receiver 0)]) R|F|.propertyToResolve: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(get ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(get 0)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.getValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|)
+                }
+                @PROPERTY_SETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(set ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(set 0)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(setparam ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(setparam 0)]) <set-?>: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|): R|kotlin/Unit| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.setValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, R|<local>/<set-?>|)
+                }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(STATUS)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType], ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Anno
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.prop
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Delegate
+                <repl property delegate: /PropertyWithImplicitTypeRepl_repl.propertyToResolve> = R|/PropertyWithImplicitTypeRepl_repl.Delegate.Delegate|()
+            }
+
+            @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: R|kotlin/String|): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            }
+
+            public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val prop: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, @R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>>| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    LAZY_super<<implicit>>
+                }
+
+                public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| { LAZY_BLOCK }
+
+                public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /PropertyWithImplicitTypeRepl_repl.Delegate.explicitType]] fun getValue([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| {
+                    ^getValue this@R|/PropertyWithImplicitTypeRepl_repl.Delegate|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.explicitType|()
+                }
+
+                public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+            @PROPERTY:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(property ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(property 0)]) field:@PROPERTY_DELEGATE_FIELD:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(delegate ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(delegate 0)]) public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] var <@R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(type param ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(type param 0)]) [ResolvedTo(BODY_RESOLVE)] F : R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(bound ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(bound 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(nested bound ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(nested bound 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(nested nested bound ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(nested nested bound 0)])  kotlin/String>>|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(receiver ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(receiver 0)]) R|F|.propertyToResolve: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(get ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(get 0)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.getValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|)
+                }
+                @PROPERTY_SETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(set ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(set 0)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(setparam ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(setparam 0)]) <set-?>: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|): R|kotlin/Unit| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.setValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, R|<local>/<set-?>|)
+                }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-propertyWithImplicitTypeRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object PropertyWithImplicitTypeRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] PropertyWithImplicitTypeRepl_repl.constructor(): R|PropertyWithImplicitTypeRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplPropertyCopy={}] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Anno
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.prop
+                <repl declaration reference>: /PropertyWithImplicitTypeRepl_repl.Delegate
+                <repl property delegate: /PropertyWithImplicitTypeRepl_repl.propertyToResolve> = R|/PropertyWithImplicitTypeRepl_repl.Delegate.Delegate|()
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/PropertyWithImplicitTypeRepl_repl.Anno.position] position: R|kotlin/String|): R|PropertyWithImplicitTypeRepl_repl.Anno| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            }
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0), ReplSnippetTopLevelDeclaration=true] val prop: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol PropertyWithImplicitTypeRepl_repl, ReplSnippetTopLevelDeclaration=true] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, @R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(super type ref ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(super type ref 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(nested super type ref ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(nested super type ref 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(nested nested super type ref ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(nested nested super type ref 0)])  kotlin/Int>>>| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Delegate] constructor(): R|PropertyWithImplicitTypeRepl_repl.Delegate| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| {
+                    ^explicitType Int(1)
+                }
+
+                public open override operator [ResolvedTo(BODY_RESOLVE)] fun getValue([ResolvedTo(BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| {
+                    ^getValue this@R|/PropertyWithImplicitTypeRepl_repl.Delegate|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.explicitType|()
+                }
+
+                public open override operator [ResolvedTo(BODY_RESOLVE)] fun setValue([ResolvedTo(BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(BODY_RESOLVE)] value: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(setValue type ref ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(setValue type ref 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(setValue nested type ref ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(setValue nested type ref 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(setValue nested nested type ref ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(setValue nested nested type ref 0)])  kotlin/Int>>|): R|kotlin/Unit| {
+                }
+
+            }
+
+            @PROPERTY:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(property ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(property 0)]) field:@PROPERTY_DELEGATE_FIELD:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(delegate ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(delegate 0)]) public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] var <@R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(type param ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(type param 0)]) [ResolvedTo(BODY_RESOLVE)] F : R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(bound ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(bound 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(nested bound ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(nested bound 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(nested nested bound ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(nested nested bound 0)])  kotlin/String>>|> [ResolvedTo(BODY_RESOLVE)] @RECEIVER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(receiver ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(receiver 0)]) R|F|.propertyToResolve: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|by REPL_EXPRESSION_REF
+                @PROPERTY_GETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(get ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(get 0)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] get(): R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.getValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|)
+                }
+                @PROPERTY_SETTER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(set ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(set 0)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyWithImplicitTypeRepl_repl] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|PropertyWithImplicitTypeRepl_repl.Anno|[Types](position = <strcat>(String(setparam ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(setparam 0)]) <set-?>: R|@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|PropertyWithImplicitTypeRepl_repl.Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/PropertyWithImplicitTypeRepl_repl|.R|/PropertyWithImplicitTypeRepl_repl.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|): R|kotlin/Unit| {
+                    ^ this@R|/PropertyWithImplicitTypeRepl_repl|.D|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|.R|/PropertyWithImplicitTypeRepl_repl.Delegate.setValue|(this@R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, ::R|/PropertyWithImplicitTypeRepl_repl.propertyToResolve|, R|<local>/<set-?>|)
+                }
+
+        }

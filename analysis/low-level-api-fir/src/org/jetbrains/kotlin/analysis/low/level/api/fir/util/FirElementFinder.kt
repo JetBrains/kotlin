@@ -121,10 +121,7 @@ internal class FirElementFinder : FirSessionComponent {
                 }
             }
 
-            val nonClassPrefix = firFile.declarations
-                .singleOrNull()
-                ?.takeIf(FirDeclaration::isScriptOrReplSnippet)
-                ?.let(FirFileStructureNode::mappingName)
+            val nonClassPrefix = firFile.scriptOrReplSnippet?.let(FirFileStructureNode::mappingName)
 
             val pathSegments = listOfNotNull(nonClassPrefix) + containerClassId?.relativeClassName?.pathSegments().orEmpty()
             val resultPath = ArrayList<FirDeclaration>(pathSegments.size + 1)
@@ -151,9 +148,6 @@ internal class FirElementFinder : FirSessionComponent {
         FirFileStructureNode.build(firFile)
     }
 }
-
-private val FirDeclaration.isScriptOrReplSnippet: Boolean
-    get() = this is FirScript || this is FirReplSnippet
 
 private val FirSession.firElementFinder: FirElementFinder by FirSession.sessionComponentAccessor()
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -445,5 +446,19 @@ public class OutOfContentRootWholeFileResolvePhaseTestGenerated extends Abstract
   @TestMetadata("withoutName.kt")
   public void testWithoutName() {
     run("withoutName.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/fileStructure/repl")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Repl {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/fileStructure/repl/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInRepl() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/fileStructure/repl"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
   }
 }

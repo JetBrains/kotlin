@@ -78,6 +78,25 @@ fun main(args: Array<String>) {
                 }
             }
 
+            run {
+                fun TestGroup.TestClass.replDiagnosticsInit() {
+                    model(
+                        "diagnostics/repl",
+                        pattern = TestGeneratorUtil.KTS,
+                        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                    )
+                }
+
+                testClass<AbstractLLReplDiagnosticsTest> {
+                    replDiagnosticsInit()
+                }
+
+                testClass<AbstractLLReversedReplDiagnosticsTest> {
+                    replDiagnosticsInit()
+                }
+            }
+
+
             this.run {
                 fun TestGroup.TestClass.scriptCustomDefBackBoxInit() {
                     model(

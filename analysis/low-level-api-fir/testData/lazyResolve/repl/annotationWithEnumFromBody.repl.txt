@@ -1,0 +1,603 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: String = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) b: MyLevel = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: String = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): String
+
+                @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: MyLevel = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): MyLevel
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: String = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) b: MyLevel = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: String = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): String
+
+                @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: MyLevel = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): MyLevel
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: String = LAZY_EXPRESSION, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) b: MyLevel = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: String = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): String
+
+                @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: MyLevel = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): MyLevel
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: String = LAZY_EXPRESSION, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) b: MyLevel = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: String = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): String
+
+                @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: MyLevel = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): MyLevel
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: String = LAZY_EXPRESSION, [ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) b: MyLevel = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: String = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): String
+
+                @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: MyLevel = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): MyLevel
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(TYPES)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public? [ResolvedTo(TYPES)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(TYPES)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: String = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): String
+
+                @WithEnumFromBody[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: MyLevel = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithEnumFromBody] get(): MyLevel
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
+
+                @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
+
+                @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
+
+                @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
+
+                @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
+
+                @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR| [evaluated = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR|]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b] @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.WARNING| [evaluated = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.WARNING|]) b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = LAZY_EXPRESSION): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
+
+                @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR| [evaluated = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR|]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a, EvaluatedValue=String()] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b, EvaluatedValue=Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR|] @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.WARNING| [evaluated = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.WARNING|]) b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
+
+                @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        LAZY_super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>
+                    }
+
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithEnumFromBody.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-annotationWithEnumFromBody.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object AnnotationWithEnumFromBody_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] AnnotationWithEnumFromBody_repl.constructor(): R|AnnotationWithEnumFromBody_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /AnnotationWithEnumFromBody_repl.WithEnumFromBody
+            }
+
+            @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR| [evaluated = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR|]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl, ReplSnippetTopLevelDeclaration=true] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.a, EvaluatedValue=String()] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithEnumFromBody_repl.WithEnumFromBody.b, EvaluatedValue=Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR|] @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.WARNING| [evaluated = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.WARNING|]) b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.ERROR|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
+
+                @R|AnnotationWithEnumFromBody_repl.WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.WARNING| [evaluated = Q|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|.R|/AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel.WARNING|]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val b: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| = R|<local>/b|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] get(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+
+                public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithEnumFromBody_repl] enum class MyLevel : R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel] constructor(): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                        super<R|kotlin/Enum<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|>()
+                    }
+
+                    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel] enum entry WARNING: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel] enum entry ERROR: R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel|
+                    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel] fun values(): R|kotlin/Array<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>| {
+                    }
+
+                    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel| {
+                    }
+
+                    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+                        public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<AnnotationWithEnumFromBody_repl.WithEnumFromBody.MyLevel>|
+
+                }
+
+            }
+
+        }

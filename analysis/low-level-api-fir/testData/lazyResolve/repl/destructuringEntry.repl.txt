@@ -1,0 +1,271 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(COMPANION_GENERATION)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(COMPANION_GENERATION)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(SUPER_TYPES)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(SUPER_TYPES)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(TYPES)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(TYPES)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(TYPES)] get(): <implicit>
+
+            public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
+
+            public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(CONTRACTS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(CONTRACTS)] get(): <implicit>
+
+            public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(0).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(1))
+                <repl property initializer: /DestructuringEntry_repl.aaa> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+                <repl property initializer: /DestructuringEntry_repl.b> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(0).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(1))
+                <repl property initializer: /DestructuringEntry_repl.aaa> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+                <repl property initializer: /DestructuringEntry_repl.b> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+            }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(0).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(1))
+                <repl property initializer: /DestructuringEntry_repl.aaa> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+                <repl property initializer: /DestructuringEntry_repl.b> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(0).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(1))
+                <repl property initializer: /DestructuringEntry_repl.aaa> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+                <repl property initializer: /DestructuringEntry_repl.b> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(0).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(1))
+                <repl property initializer: /DestructuringEntry_repl.aaa> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+                <repl property initializer: /DestructuringEntry_repl.b> = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val aaa: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }

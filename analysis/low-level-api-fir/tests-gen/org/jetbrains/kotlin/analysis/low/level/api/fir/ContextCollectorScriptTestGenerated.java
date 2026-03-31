@@ -99,6 +99,74 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/repl")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Repl {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/repl/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInRepl() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/repl"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("destructuringEntry.repl.kts")
+    public void testDestructuringEntry_repl() {
+      run("destructuringEntry.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("destructuringInitializer.repl.kts")
+    public void testDestructuringInitializer_repl() {
+      run("destructuringInitializer.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("resultPropertyExpression.repl.kts")
+    public void testResultPropertyExpression_repl() {
+      run("resultPropertyExpression.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("resultPropertyReference.repl.kts")
+    public void testResultPropertyReference_repl() {
+      run("resultPropertyReference.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("statement.repl.kts")
+    public void testStatement_repl() {
+      run("statement.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelAccessorContent.repl.kts")
+    public void testTopLevelAccessorContent_repl() {
+      run("topLevelAccessorContent.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunctionContent.repl.kts")
+    public void testTopLevelFunctionContent_repl() {
+      run("topLevelFunctionContent.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelFunction.repl.kts")
+    public void testTopLevelFunction_repl() {
+      run("topLevelFunction.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelInitializerContent.repl.kts")
+    public void testTopLevelInitializerContent_repl() {
+      run("topLevelInitializerContent.repl.kts");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/scripts")
   @TestDataPath("$PROJECT_ROOT")
   public class Scripts {

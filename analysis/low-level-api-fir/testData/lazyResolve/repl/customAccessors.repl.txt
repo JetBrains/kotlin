@@ -1,0 +1,283 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] var variable: <implicit>
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit> { LAZY_BLOCK }
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] var variable: <implicit>
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit> { LAZY_BLOCK }
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplSnippetTopLevelDeclaration=true] var variable: <implicit>
+                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit> { LAZY_BLOCK }
+                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(COMPANION_GENERATION)] [ReplSnippetTopLevelDeclaration=true] var variable: <implicit>
+                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit> { LAZY_BLOCK }
+                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(COMPANION_GENERATION)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(SUPER_TYPES)] [ReplSnippetTopLevelDeclaration=true] var variable: <implicit>
+                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit> { LAZY_BLOCK }
+                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(SUPER_TYPES)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(TYPES)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(TYPES)] [ReplSnippetTopLevelDeclaration=true] var variable: <implicit>
+                public? [ResolvedTo(TYPES)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit> { LAZY_BLOCK }
+                public? [ResolvedTo(TYPES)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(TYPES)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(STATUS)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] var variable: <implicit>
+                public [ResolvedTo(STATUS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit> { LAZY_BLOCK }
+                public [ResolvedTo(STATUS)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(STATUS)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplSnippetTopLevelDeclaration=true] var variable: <implicit>
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit> { LAZY_BLOCK }
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(STATUS)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] var variable: <implicit>
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit> { LAZY_BLOCK }
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(STATUS)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] var variable: R|kotlin/Int|
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=CustomAccessors_repl] get(): R|kotlin/Int| {
+                    ^ Int(1)
+                }
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(STATUS)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ReplSnippetTopLevelDeclaration=true] var variable: R|kotlin/Int|
+                public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=CustomAccessors_repl] get(): R|kotlin/Int| {
+                    ^ Int(1)
+                }
+                public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(STATUS)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ReplSnippetTopLevelDeclaration=true] var variable: R|kotlin/Int|
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=CustomAccessors_repl] get(): R|kotlin/Int| {
+                    ^ Int(1)
+                }
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(STATUS)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] var variable: R|kotlin/Int|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CustomAccessors_repl] get(): R|kotlin/Int| {
+                    ^ Int(1)
+                }
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val another: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(STATUS)] [ContainingClassKey=CustomAccessors_repl] get(): <implicit>
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] customAccessors.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-customAccessors.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object CustomAccessors_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] CustomAccessors_repl.constructor(): R|CustomAccessors_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /CustomAccessors_repl.variable
+                <repl property initializer: /CustomAccessors_repl.another> = Int(2)
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] var variable: R|kotlin/Int|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CustomAccessors_repl] get(): R|kotlin/Int| {
+                    ^ Int(1)
+                }
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CustomAccessors_repl] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val another: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CustomAccessors_repl] get(): R|kotlin/Int|
+
+        }

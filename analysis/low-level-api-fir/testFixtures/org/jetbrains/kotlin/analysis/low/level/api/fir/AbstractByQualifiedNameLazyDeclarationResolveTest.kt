@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,14 +30,19 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
 
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val psiFile = mainFile ?: mainModule.psiFiles.first()
-        val classId = testServices.moduleStructure.allDirectives.singleValue(Directives.CLASS_ID).let(ClassId::fromString)
+        val allDirectives = testServices.moduleStructure.allDirectives
+        val classId = allDirectives.singleValue(Directives.CLASS_ID).let(ClassId::fromString)
         val resolutionFacade = LLResolutionFacadeService.getInstance(psiFile.project).getResolutionFacade(mainModule.ktModule)
-        val classDeclaration = findRegularClass(classId, mainModule.ktModule, resolutionFacade).findPsi(mainModule.ktModule.contentScope) as KtClassOrObject
-        val file = classDeclaration.containingFile as KtFile
+        val classDeclaration = findRegularClass(
+            classId = classId,
+            module = mainModule.ktModule,
+            resolutionFacade = resolutionFacade,
+        ).findPsi(mainModule.ktModule.contentScope) as KtClassOrObject
 
+        val file = classDeclaration.containingFile as KtFile
         doLazyResolveTest(file, testServices, outputRenderingMode) { firSession ->
             val regularClass = findRegularClass(classId, mainModule.ktModule, firSession)
-            val declarationToResolve = chooseMemberDeclarationIfNeeded(regularClass, testServices.moduleStructure, firSession)
+            val declarationToResolve = chooseMemberDeclarationIfNeeded(regularClass, allDirectives, firSession)
             declarationToResolve.fir to fun(phase: FirResolvePhase) {
                 declarationToResolve.lazyResolveToPhase(phase)
             }

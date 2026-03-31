@@ -1,0 +1,23 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] classInitializerRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-classInitializerRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object ClassInitializerRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] ClassInitializerRepl_repl.constructor(): R|ClassInitializerRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /ClassInitializerRepl_repl.WithInit
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class WithInit : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|ClassInitializerRepl_repl.WithInit| {
+                    super<R|kotlin/Any|>()
+                }
+
+                [ResolvedTo(BODY_RESOLVE)] init {
+                    [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = Int(1)
+                }
+
+            }
+
+        }

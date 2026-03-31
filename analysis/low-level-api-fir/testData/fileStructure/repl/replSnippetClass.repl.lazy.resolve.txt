@@ -1,0 +1,19 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] replSnippetClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-replSnippetClass.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object ReplSnippetClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] ReplSnippetClass_repl.constructor(): R|ReplSnippetClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /ReplSnippetClass_repl.scriptFun
+                <repl property initializer: /ReplSnippetClass_repl.f> = Int(1).R|kotlin/Int.plus|(Int(2))
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun scriptFun(): R|kotlin/Unit| {
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val f: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }

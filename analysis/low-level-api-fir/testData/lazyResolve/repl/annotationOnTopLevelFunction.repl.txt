@@ -1,0 +1,199 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(TYPES)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-annotationOnTopLevelFunction.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object AnnotationOnTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] AnnotationOnTopLevelFunction_repl.constructor(): R|AnnotationOnTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /AnnotationOnTopLevelFunction_repl.resolveMe
+            }
+
+            @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
+            }
+
+        }

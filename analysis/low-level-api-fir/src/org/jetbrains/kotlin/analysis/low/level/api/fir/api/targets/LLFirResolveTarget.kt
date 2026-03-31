@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -66,6 +66,7 @@ internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
             when (val declaration = pathIterator.next()) {
                 is FirRegularClass -> visitor.withRegularClass(declaration) { goToTarget(pathIterator, visitor) }
                 is FirScript -> visitor.withScript(declaration) { goToTarget(pathIterator, visitor) }
+                is FirReplSnippet -> visitor.withReplSnippet(declaration) { goToTarget(pathIterator, visitor) }
                 is FirFile -> visitor.withFile(declaration) { goToTarget(pathIterator, visitor) }
                 else -> errorWithFirSpecificEntries(
                     "Unexpected declaration in path: ${declaration::class.simpleName}",

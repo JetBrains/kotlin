@@ -64,6 +64,11 @@ open class PsiRawFirBuilder(
         target.bind(function)
     }
 
+    protected open fun <T : FirDeclaration, R : FirBasedSymbol<T>> replSnippetDeclarationSymbol(declaration: T): R {
+        @Suppress("UNCHECKED_CAST")
+        return declaration.symbol as R
+    }
+
     var mode: BodyBuildingMode = bodyBuildingMode
         private set
 
@@ -1633,7 +1638,7 @@ open class PsiRawFirBuilder(
                         // Constant properties are just properties
                         buildReplDeclarationReference {
                             source = element.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
-                            symbol = element.symbol
+                            symbol = replSnippetDeclarationSymbol(element)
                         }
                     }
                     statementDelegate != null -> {
@@ -1644,7 +1649,7 @@ open class PsiRawFirBuilder(
 
                         buildReplPropertyDelegate {
                             source = statementDelegate.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
-                            propertySymbol = element.symbol
+                            propertySymbol = replSnippetDeclarationSymbol(element)
                             delegate = statementDelegate
                         }
                     }
@@ -1656,14 +1661,14 @@ open class PsiRawFirBuilder(
 
                         buildReplPropertyInitializer {
                             source = statementInitializer.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
-                            propertySymbol = element.symbol
+                            propertySymbol = replSnippetDeclarationSymbol(element)
                             initializer = statementInitializer
                         }
                     }
                     else -> {
                         buildReplDeclarationReference {
                             source = element.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
-                            symbol = element.symbol
+                            symbol = replSnippetDeclarationSymbol(element)
                         }
                     }
                 }
@@ -1675,7 +1680,7 @@ open class PsiRawFirBuilder(
                 -> {
                 buildReplDeclarationReference {
                     source = element.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
-                    symbol = element.symbol
+                    symbol = replSnippetDeclarationSymbol(element)
                 }
             }
 
@@ -1729,6 +1734,9 @@ open class PsiRawFirBuilder(
                                 ownerRegularOrAnonymousObjectSymbol = containingDeclarationSymbol,
                                 context,
                             )
+
+                            @OptIn(FirImplementationDetail::class)
+                            firPropertyCopy.isCopiedDelegatedProperty = true
                             copiedDelegatedProperties[firProperty.symbol] = firPropertyCopy
                         }
 

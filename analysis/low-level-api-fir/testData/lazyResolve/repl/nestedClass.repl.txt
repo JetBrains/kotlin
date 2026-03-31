@@ -1,0 +1,365 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(TYPES)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(CONTRACTS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                }
+
+            }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] nestedClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-nestedClass.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object NestedClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] NestedClass_repl.constructor(): R|NestedClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /NestedClass_repl.Outer
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor(): R|NestedClass_repl.Outer| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol NestedClass_repl] class Nested : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|NestedClass_repl.Outer.Nested| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }

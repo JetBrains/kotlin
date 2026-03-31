@@ -1,0 +1,267 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(TYPES)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONTRACTS)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(STATUS)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelClass.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-topLevelClass.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object TopLevelClass_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] TopLevelClass_repl.constructor(): R|TopLevelClass_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /TopLevelClass_repl.TopLevelClass
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol TopLevelClass_repl, ReplSnippetTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass_repl.TopLevelClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }

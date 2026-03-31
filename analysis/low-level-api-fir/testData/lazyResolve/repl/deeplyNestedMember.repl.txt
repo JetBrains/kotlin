@@ -1,0 +1,395 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public? final? [ResolvedTo(RAW_FIR)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public? final? [ResolvedTo(RAW_FIR)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public? final? [ResolvedTo(COMPANION_GENERATION)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public? final? [ResolvedTo(SUPER_TYPES)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(TYPES)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public? final? [ResolvedTo(TYPES)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(STATUS)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public final [ResolvedTo(STATUS)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(STATUS)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(STATUS)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public final [ResolvedTo(CONTRACTS)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(STATUS)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(STATUS)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public final [ResolvedTo(CONSTANT_EVALUATION)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(STATUS)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                }
+
+            }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(STATUS)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        LAZY_super<R|kotlin/Any|>
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun deepFun(): R|kotlin/Unit| {
+                    }
+
+                }
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] deeplyNestedMember.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-deeplyNestedMember.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object DeeplyNestedMember_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] DeeplyNestedMember_repl.constructor(): R|DeeplyNestedMember_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /DeeplyNestedMember_repl.Outer
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl, ReplSnippetTopLevelDeclaration=true] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor(): R|DeeplyNestedMember_repl.Outer| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol DeeplyNestedMember_repl] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Middle] constructor(): R|DeeplyNestedMember_repl.Outer.Middle| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun deepFun(): R|kotlin/Unit| {
+                    }
+
+                }
+
+            }
+
+        }

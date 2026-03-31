@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -81,6 +81,11 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
         }
     }
 
+    @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
+    override fun withContainingReplSnippet(firReplSnippet: FirReplSnippet, action: () -> Unit) {
+        transformer.withReplSnippetScope(firReplSnippet, action)
+    }
+
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
             is FirFunction -> resolve(target, TypeStateKeepers.FUNCTION)
@@ -90,6 +95,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
             is FirFile,
             is FirTypeAlias,
             is FirScript,
+            is FirReplSnippet,
             is FirRegularClass,
             is FirAnonymousInitializer,
                 -> rawResolve(target)
@@ -115,6 +121,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
             }
 
             is FirScript -> resolveScriptTypes(target)
+            is FirReplSnippet -> resolveReplSnippetTypes(target)
             is FirField if (target.origin == FirDeclarationOrigin.Synthetic.DelegateField) -> {
                 // delegated field should be resolved in the same context as super types
                 resolveOutsideClassBody(target, transformer::transformDelegateField)
@@ -156,6 +163,11 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
         }
 
         target.accept(transformer, null)
+    }
+
+    private fun resolveReplSnippetTypes(target: FirReplSnippet) {
+        target.transformAnnotations(transformer, null)
+        target.transformReceivers(transformer, null)
     }
 
     private fun resolveScriptTypes(firScript: FirScript) {

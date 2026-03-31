@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
@@ -83,6 +82,12 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitContinueExpression(continueExpression: FirContinueExpression, data: Nothing?) {
         visitJump(continueExpression)
+    }
+
+    override fun visitReplSnippet(replSnippet: FirReplSnippet, data: Nothing?) {
+        withAnnotationContainer(replSnippet) {
+            visitWithDeclaration(replSnippet)
+        }
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {

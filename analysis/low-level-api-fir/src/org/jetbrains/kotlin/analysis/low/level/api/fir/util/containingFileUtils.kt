@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,7 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
     return when (this) {
         is FirFile -> this
         is FirScript -> provider.getFirScriptContainerFile(symbol)
+        is FirReplSnippet -> provider.getFirReplSnippetContainerFile(symbol)
         is FirTypeParameter -> containingDeclarationSymbol.fir.getContainingFile()
         is FirPropertyAccessor -> propertySymbol.fir.getContainingFile()
         is FirValueParameter -> containingDeclarationSymbol.fir.getContainingFile()

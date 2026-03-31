@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.fir.builder.buildDestructuringVariable
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirMultiDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -41,7 +43,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     baseScopeProvider: FirScopeProvider,
     private val originalDeclaration: FirDeclaration,
     private val declarationToBuild: KtElement,
-    private val functionsToRebind: Set<FirFunction>,
+    private val declarationsToRebind: List<FirDeclaration>,
 ) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
     companion object {
         fun buildWithFunctionSymbolRebind(
@@ -51,9 +53,13 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             rootNonLocalDeclaration: KtAnnotated,
         ): FirDeclaration {
             val functionsToRebind = when (val originalDeclaration = designation.target) {
-                is FirFunction -> setOf(originalDeclaration)
-                is FirProperty -> setOfNotNull(originalDeclaration.getter, originalDeclaration.setter)
-                else -> emptySet()
+                is FirFunction -> listOf(originalDeclaration)
+                is FirProperty -> listOfNotNull(originalDeclaration.getter, originalDeclaration.setter)
+                is FirReplSnippet -> originalDeclaration.snippetClass.let { snippetClass ->
+                    snippetClass.declarations.filter { it.isReplSnippetDeclaration == true } + snippetClass
+                }
+
+                else -> emptyList()
             }
 
             return build(session, scopeProvider, designation, rootNonLocalDeclaration, functionsToRebind)
@@ -64,7 +70,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             scopeProvider: FirScopeProvider,
             designation: FirDesignation,
             rootNonLocalDeclaration: KtElement,
-            functionsToRebind: Set<FirFunction>,
+            declarationsToRebind: List<FirDeclaration>,
         ): FirDeclaration {
             check(rootNonLocalDeclaration is KtDeclaration || rootNonLocalDeclaration is KtCodeFragment)
 
@@ -73,7 +79,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 baseScopeProvider = scopeProvider,
                 originalDeclaration = designation.target as FirDeclaration,
                 declarationToBuild = rootNonLocalDeclaration,
-                functionsToRebind = functionsToRebind,
+                declarationsToRebind = declarationsToRebind,
             )
 
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
@@ -85,26 +91,39 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     }
 
     override fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) {
-        super.bindFunctionTarget(target, computeRebindTarget(function) ?: function)
+        super.bindFunctionTarget(target, computeRebindTarget(function) as? FirFunction ?: function)
+    }
+
+    override fun <T : FirDeclaration, R : FirBasedSymbol<T>> replSnippetDeclarationSymbol(declaration: T): R {
+        val target = (computeRebindTarget(declaration) ?: declaration)
+        requireWithAttachment(
+            declaration.javaClass == target.javaClass,
+            { "Expected ${declaration.javaClass.simpleName} but got ${target.javaClass.simpleName}" },
+        ) {
+            withFirEntry("declaration", declaration)
+            withFirEntry("target", target)
+        }
+
+        return super.replSnippetDeclarationSymbol(target)
     }
 
     /**
-     * @return [FirFunction] if another function should be used instead of [function] for [FirFunctionTarget]
+     * @return [FirFunction] if another function should be used instead of [declaration] for [FirFunctionTarget]
      *
      * @see bindFunctionTarget
-     * @see functionsToRebind
+     * @see declarationsToRebind
      */
-    private fun computeRebindTarget(function: FirFunction): FirFunction? {
-        if (functionsToRebind.isNullOrEmpty()) return null
-        val realPsi = function.realPsi
+    private fun computeRebindTarget(declaration: FirDeclaration): FirDeclaration? {
+        if (declarationsToRebind.isEmpty()) return null
+        val realPsi = declaration.realPsi
         if (realPsi != null) {
-            return functionsToRebind.firstOrNull { it.realPsi == realPsi }
+            return declarationsToRebind.firstOrNull { it.realPsi == realPsi }
         }
 
-        val accessor = function as? FirPropertyAccessor ?: return null
+        val accessor = declaration as? FirPropertyAccessor ?: return null
         val accessorPsi = accessor.psi ?: return null
 
-        return functionsToRebind.firstOrNull { it is FirPropertyAccessor && it.isGetter == accessor.isGetter && it.psi == accessorPsi }
+        return declarationsToRebind.firstOrNull { it is FirPropertyAccessor && it.isGetter == accessor.isGetter && it.psi == accessorPsi }
     }
 
     override fun addCapturedTypeParameters(

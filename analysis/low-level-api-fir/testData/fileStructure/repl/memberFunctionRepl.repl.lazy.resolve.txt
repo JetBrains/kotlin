@@ -1,0 +1,22 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] memberFunctionRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-memberFunctionRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object MemberFunctionRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] MemberFunctionRepl_repl.constructor(): R|MemberFunctionRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /MemberFunctionRepl_repl.MyClass
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|MemberFunctionRepl_repl.MyClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun memberFun(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }

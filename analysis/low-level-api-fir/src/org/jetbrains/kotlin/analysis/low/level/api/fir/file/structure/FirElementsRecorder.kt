@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.Duplicate
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.toFirOperationOrNull
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
@@ -62,6 +63,40 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         if (existingFir == null) {
             cache[psi] = fir
         }
+    }
+
+    override fun visitReplExpressionReference(
+        replExpressionReference: FirReplExpressionReference,
+        data: MutableMap<KtElement, FirElement>
+    ) {
+        // Treat moved initializers/delegates as a part of the original property
+        cacheElement(replExpressionReference, data)
+        replExpressionReference.expressionRef.value.accept(this, data)
+    }
+
+    /** @see visitReplExpressionReference */
+    override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: MutableMap<KtElement, FirElement>) {
+        // Ignore moved delegates since they should be treated as part of the original property
+    }
+
+    /** @see visitReplExpressionReference */
+    override fun visitReplPropertyInitializer(
+        replPropertyInitializer: FirReplPropertyInitializer,
+        data: MutableMap<KtElement, FirElement>
+    ) {
+        // Ignore moved initializers since they should be treated as part of the original property
+        // The only exception is result property initializer since it belongs to the snippet and cannot be obtained directly
+        if (replPropertyInitializer.propertySymbol.fir.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+            replPropertyInitializer.acceptChildren(this, data)
+        }
+    }
+
+    /** @see visitReplExpressionReference */
+    override fun visitReplDeclarationReference(
+        replDeclarationReference: FirReplDeclarationReference,
+        data: MutableMap<KtElement, FirElement>
+    ) {
+        // Ignore moved references since they useless
     }
 
     override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
@@ -195,6 +230,10 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         // KtConstructorDelegationCall. In this case, the source in FIR has this fake source kind.
                     KtFakeSourceElementKind.ImplicitConstructor,
                     KtFakeSourceElementKind.DanglingModifierList,
+
+                        // Repl snippets move property initializers/delegates, so a reference in the original place is marked as a fake one.
+                        // To "move" them back in the recorder, we have to allow such fake sources and hide the moved ones.
+                    KtFakeSourceElementKind.ReplEvalFunction,
                         -> Unit
 
                     else if (

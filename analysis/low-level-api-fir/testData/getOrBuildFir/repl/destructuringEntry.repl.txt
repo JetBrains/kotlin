@@ -1,0 +1,49 @@
+KT element: KtDestructuringDeclarationEntry
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val y: R|kotlin/String| = REPL_EXPRESSION_REF
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-destructuringEntry.repl.kts>
+        public final [ResolvedTo(STATUS)] object DestructuringEntry_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] DestructuringEntry_repl.constructor(): R|DestructuringEntry_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /DestructuringEntry_repl.MyPair
+                [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|DestructuringEntry_repl.MyPair| = R|/DestructuringEntry_repl.MyPair.MyPair|(Int(1), String(2))
+                <repl property initializer: /DestructuringEntry_repl.x> = R|<local>/<destruct>|.R|/DestructuringEntry_repl.MyPair.component1|()
+                <repl property initializer: /DestructuringEntry_repl.y> = R|<local>/<destruct>|.R|/DestructuringEntry_repl.MyPair.component2|()
+            }
+
+            public final data [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol DestructuringEntry_repl, ReplSnippetTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/DestructuringEntry_repl.MyPair.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/DestructuringEntry_repl.MyPair.y] y: R|kotlin/String|): R|DestructuringEntry_repl.MyPair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/DestructuringEntry_repl.MyPair.component1, IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/DestructuringEntry_repl.MyPair.component2, IsFromPrimaryConstructor=true] val y: R|kotlin/String| = R|<local>/y|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/String|
+
+                public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+                public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/String|
+
+                public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] x: R|kotlin/Int| = this@R|/DestructuringEntry_repl.MyPair|.R|/DestructuringEntry_repl.MyPair.x|, [ResolvedTo(STATUS)] y: R|kotlin/String| = this@R|/DestructuringEntry_repl.MyPair|.R|/DestructuringEntry_repl.MyPair.y|): R|DestructuringEntry_repl.MyPair|
+
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val x: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val y: R|kotlin/String| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+        }

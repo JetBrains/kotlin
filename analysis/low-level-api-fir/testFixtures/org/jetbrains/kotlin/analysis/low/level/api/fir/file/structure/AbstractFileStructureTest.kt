@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.services.TestServices
+import kotlin.io.path.extension
 
 /**
  * The test visualizes the [FileStructure] structure in human-readable form
@@ -72,7 +72,7 @@ abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
             })
         }
 
-        TestDataAssertions.assertEqualsToFile(testDataPath, text)
+        assertEqualsToTestOutputFile(text, extension = testDataPath.extension)
 
         if (anchorElements.isNotEmpty()) {
             error(

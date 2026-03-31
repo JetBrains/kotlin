@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
  * to duplicate symbols because FIR files (from which the symbols are taken) are unique in the session, but we would still cache a symbol in
  * the wrong symbol provider.
  */
+@OptIn(KtExperimentalApi::class)
 internal class LLKotlinSourceSymbolProvider private constructor(
     session: LLFirSession,
     private val moduleComponents: LLFirModuleResolveComponents,
@@ -185,10 +186,17 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeSymbol<*>? {
         require(context == null || context.isPhysical)
-        val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
+        val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId)
+        if (ktClass != null && ktClass.getClassId() == null) return null
+        val declaration = ktClass ?: run {
+            if (!classId.isNestedClass) {
+                declarationProvider.findFilesForScript(classId.asSingleFqName()).find(KtScript::isReplSnippet)
+            } else {
+                null
+            }
+        } ?: return null
 
-        if (ktClass.getClassId() == null) return null
-        return findClassLikeSymbol(classId, ktClass) { FirElementFinder.findClassifierWithClassId(it, classId) }
+        return findClassLikeSymbol(classId, declaration) { FirElementFinder.findClassifierWithClassId(it, classId) }
     }
 
     private fun computeClassLikeSymbolByPsi(declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
@@ -202,7 +210,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     private inline fun findClassLikeSymbol(
         classId: ClassId,
-        declaration: KtClassLikeDeclaration,
+        declaration: KtNamedDeclaration,
         findFirElement: (FirFile) -> FirClassLikeDeclaration?,
     ): FirClassLikeSymbol<*> {
         val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(declaration.containingKtFile)

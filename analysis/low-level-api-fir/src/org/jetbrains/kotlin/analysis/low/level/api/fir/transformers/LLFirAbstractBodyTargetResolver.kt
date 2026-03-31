@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,6 +46,14 @@ internal sealed class LLFirAbstractBodyTargetResolver(
         transformer.declarationsTransformer?.withScript(firScript) {
             action()
             firScript
+        }
+    }
+
+    @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
+    override fun withContainingReplSnippet(firReplSnippet: FirReplSnippet, action: () -> Unit) {
+        transformer.declarationsTransformer?.withReplSnippet(firReplSnippet) {
+            action()
+            firReplSnippet
         }
     }
 

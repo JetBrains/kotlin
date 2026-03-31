@@ -1,0 +1,15 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelFunctionWithPackageRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-topLevelFunctionWithPackageRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object TopLevelFunctionWithPackageRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] foo/bar/TopLevelFunctionWithPackageRepl_repl.constructor(): R|foo/bar/TopLevelFunctionWithPackageRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: foo/bar/TopLevelFunctionWithPackageRepl_repl.topLevel
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun topLevel(): R|kotlin/Unit| {
+            }
+
+        }

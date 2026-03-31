@@ -1,0 +1,365 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] x: Int, [ResolvedTo(RAW_FIR)] y: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] x: Int, [ResolvedTo(RAW_FIR)] y: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] x: Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] y: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(COMPANION_GENERATION)] x: Int, [ResolvedTo(COMPANION_GENERATION)] y: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+                @Suppress[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(SUPER_TYPES)] x: Int, [ResolvedTo(SUPER_TYPES)] y: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(TYPES)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(TYPES)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: Int): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithConstructor] get(): Int
+
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(TYPES)] x: R|kotlin/Int|, [ResolvedTo(TYPES)] y: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|, [ResolvedTo(STATUS)] y: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] y: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONTRACTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(CONTRACTS)] x: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] y: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] x: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] y: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+                @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(CONSTANT_EVALUATION)] x: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] y: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+                @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] y: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>
+                }
+
+            }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+                @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>(R|<local>/x|)
+                }
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnSecondaryConstructor.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-annotationOnSecondaryConstructor.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object AnnotationOnSecondaryConstructor_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] AnnotationOnSecondaryConstructor_repl.constructor(): R|AnnotationOnSecondaryConstructor_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /AnnotationOnSecondaryConstructor_repl.WithConstructor
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnSecondaryConstructor_repl, ReplSnippetTopLevelDeclaration=true] class WithConstructor : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationOnSecondaryConstructor_repl.WithConstructor.x] x: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructor] get(): R|kotlin/Int|
+
+                @R|kotlin/Suppress|[Types](names = vararg(String(UNUSED)) [evaluated = vararg(String(UNUSED))]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructor] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Int|): R|AnnotationOnSecondaryConstructor_repl.WithConstructor| {
+                    this<R|AnnotationOnSecondaryConstructor_repl.WithConstructor|>(R|<local>/x|)
+                }
+
+            }
+
+        }

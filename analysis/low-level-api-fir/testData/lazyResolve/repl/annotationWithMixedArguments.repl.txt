@@ -1,0 +1,818 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(TYPES)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @R|AnnotationWithMixedArguments_repl.Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @R|AnnotationWithMixedArguments_repl.Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @R|AnnotationWithMixedArguments_repl.Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @R|AnnotationWithMixedArguments_repl.Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @R|AnnotationWithMixedArguments_repl.Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: EnumClass): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
+
+            }
+
+            @R|AnnotationWithMixedArguments_repl.Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: R|AnnotationWithMixedArguments_repl.AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: R|AnnotationWithMixedArguments_repl.EnumClass|): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnnotationWithMixedArguments_repl.AnotherAnnotation| = R|<local>/ann|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation|
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|AnnotationWithMixedArguments_repl.EnumClass| = R|<local>/entry|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnnotationWithMixedArguments_repl.EnumClass|
+
+            }
+
+            @R|AnnotationWithMixedArguments_repl.Anno|[Types](str = String(123) [evaluated = String(123)], ann = R|/AnnotationWithMixedArguments_repl.AnotherAnnotation.AnotherAnnotation|() [evaluated = R|/AnnotationWithMixedArguments_repl.AnotherAnnotation.AnotherAnnotation|()], c = <getClass>(Q|AnnotationWithMixedArguments_repl.AnotherAnnotation|) [evaluated = <getClass>(Q|AnnotationWithMixedArguments_repl.AnotherAnnotation|)], entry = Q|AnnotationWithMixedArguments_repl.EnumClass|.R|/AnnotationWithMixedArguments_repl.EnumClass.Second| [evaluated = Q|AnnotationWithMixedArguments_repl.EnumClass|.R|/AnnotationWithMixedArguments_repl.EnumClass.Second|]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    LAZY_super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>
+                }
+
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: R|AnnotationWithMixedArguments_repl.AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: R|AnnotationWithMixedArguments_repl.EnumClass|): R|AnnotationWithMixedArguments_repl.Anno| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnnotationWithMixedArguments_repl.AnotherAnnotation| = R|<local>/ann|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation|
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|AnnotationWithMixedArguments_repl.EnumClass| = R|<local>/entry|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnnotationWithMixedArguments_repl.EnumClass|
+
+            }
+
+            @R|AnnotationWithMixedArguments_repl.Anno|[Types](str = String(123) [evaluated = String(123)], ann = R|/AnnotationWithMixedArguments_repl.AnotherAnnotation.AnotherAnnotation|() [evaluated = R|/AnnotationWithMixedArguments_repl.AnotherAnnotation.AnotherAnnotation|()], c = <getClass>(Q|AnnotationWithMixedArguments_repl.AnotherAnnotation|) [evaluated = <getClass>(Q|AnnotationWithMixedArguments_repl.AnotherAnnotation|)], entry = Q|AnnotationWithMixedArguments_repl.EnumClass|.R|/AnnotationWithMixedArguments_repl.EnumClass.Second| [evaluated = Q|AnnotationWithMixedArguments_repl.EnumClass|.R|/AnnotationWithMixedArguments_repl.EnumClass.Second|]) public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithMixedArguments.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-annotationWithMixedArguments.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object AnnotationWithMixedArguments_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] AnnotationWithMixedArguments_repl.constructor(): R|AnnotationWithMixedArguments_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /AnnotationWithMixedArguments_repl.AnotherAnnotation
+                <repl declaration reference>: /AnnotationWithMixedArguments_repl.EnumClass
+                <repl declaration reference>: /AnnotationWithMixedArguments_repl.Anno
+                <repl declaration reference>: /AnnotationWithMixedArguments_repl.foo
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>| {
+                private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] constructor(): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                    super<R|kotlin/Enum<AnnotationWithMixedArguments_repl.EnumClass>|>()
+                }
+
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] enum entry First: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] enum entry Second: R|AnnotationWithMixedArguments_repl.EnumClass|
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<AnnotationWithMixedArguments_repl.EnumClass>| {
+                }
+
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|AnnotationWithMixedArguments_repl.EnumClass| {
+                }
+
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithMixedArguments_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.str] str: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.ann] ann: R|AnnotationWithMixedArguments_repl.AnotherAnnotation|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithMixedArguments_repl.Anno.entry] entry: R|AnnotationWithMixedArguments_repl.EnumClass|): R|AnnotationWithMixedArguments_repl.Anno| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val ann: R|AnnotationWithMixedArguments_repl.AnotherAnnotation| = R|<local>/ann|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|AnnotationWithMixedArguments_repl.AnotherAnnotation|
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val entry: R|AnnotationWithMixedArguments_repl.EnumClass| = R|<local>/entry|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|AnnotationWithMixedArguments_repl.EnumClass|
+
+            }
+
+            @R|AnnotationWithMixedArguments_repl.Anno|[Types](str = String(123) [evaluated = String(123)], ann = R|/AnnotationWithMixedArguments_repl.AnotherAnnotation.AnotherAnnotation|() [evaluated = R|/AnnotationWithMixedArguments_repl.AnotherAnnotation.AnotherAnnotation|()], c = <getClass>(Q|AnnotationWithMixedArguments_repl.AnotherAnnotation|) [evaluated = <getClass>(Q|AnnotationWithMixedArguments_repl.AnotherAnnotation|)], entry = Q|AnnotationWithMixedArguments_repl.EnumClass|.R|/AnnotationWithMixedArguments_repl.EnumClass.Second| [evaluated = Q|AnnotationWithMixedArguments_repl.EnumClass|.R|/AnnotationWithMixedArguments_repl.EnumClass.Second|]) public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
+            }
+
+        }

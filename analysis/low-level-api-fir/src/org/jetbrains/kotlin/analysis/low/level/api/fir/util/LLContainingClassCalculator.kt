@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrScript
 
 @OptIn(KtExperimentalApi::class)
 internal object LLContainingClassCalculator {
@@ -67,7 +68,7 @@ internal object LLContainingClassCalculator {
             DefaultAccessor,
             DelegatedPropertyAccessor,
             PropertyFromParameter,
-                -> computeContainingClass(symbol, (source.psi as? KtDeclaration)?.containingClassOrObject)
+                -> computeContainingClass(symbol, (source.psi as? KtDeclaration)?.containingClassOrScript)
 
             DataClassGeneratedMembers -> {
                 val containingClass = when (val psi = source.psi) {
@@ -99,13 +100,13 @@ internal object LLContainingClassCalculator {
 
             is KtRealSourceElementKind -> when (symbol) {
                 is FirCallableSymbol<*>, is FirClassLikeSymbol<*> -> when (val selfCallable = source.psi) {
-                    is KtCallableDeclaration, is KtEnumEntry, is KtClassLikeDeclaration -> {
-                        computeContainingClass(symbol, selfCallable.containingClassOrObject)
+                    is KtCallableDeclaration, is KtEnumEntry, is KtClassLikeDeclaration, is KtScriptInitializer -> {
+                        computeContainingClass(symbol, selfCallable.containingClassOrScript)
                     }
 
                     is KtPropertyAccessor -> {
                         val containingProperty = selfCallable.property
-                        computeContainingClass(symbol, containingProperty.containingClassOrObject)
+                        computeContainingClass(symbol, containingProperty.containingClassOrScript)
                     }
 
                     else -> null

@@ -1,0 +1,77 @@
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] replWithResult.repl.kts
+    REPL_SNIPPET: [ResolvedTo(ANNOTATION_ARGUMENTS)] <snippet-replWithResult.repl.kts>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object ReplWithResult_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] ReplWithResult_repl.constructor(): R|ReplWithResult_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                R|kotlin/io/println|()
+                <repl property initializer: /$$result> = when () {
+                    Boolean(true) ->  {
+                        Int(1)
+                    }
+                    else ->  {
+                        String(str)
+                    }
+                }
+
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val $$result: R|kotlin/Any| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Any|
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] replWithResult.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-replWithResult.repl.kts>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object ReplWithResult_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] ReplWithResult_repl.constructor(): R|ReplWithResult_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                R|kotlin/io/println|()
+                <repl property initializer: /$$result> = when () {
+                    Boolean(true) ->  {
+                        Int(1)
+                    }
+                    else ->  {
+                        String(str)
+                    }
+                }
+
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val $$result: R|kotlin/Any| = REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Any|
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] replWithResult.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-replWithResult.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object ReplWithResult_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] ReplWithResult_repl.constructor(): R|ReplWithResult_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                R|kotlin/io/println|()
+                <repl property initializer: /$$result> = when () {
+                    Boolean(true) ->  {
+                        Int(1)
+                    }
+                    else ->  {
+                        String(str)
+                    }
+                }
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val $$result: R|kotlin/Any| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any|
+
+        }

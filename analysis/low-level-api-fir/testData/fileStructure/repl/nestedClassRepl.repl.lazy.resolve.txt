@@ -1,0 +1,26 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] nestedClassRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-nestedClassRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object NestedClassRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] NestedClassRepl_repl.constructor(): R|NestedClassRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /NestedClassRepl_repl.Outer
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|NestedClassRepl_repl.Outer| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|NestedClassRepl_repl.Outer.Nested| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }

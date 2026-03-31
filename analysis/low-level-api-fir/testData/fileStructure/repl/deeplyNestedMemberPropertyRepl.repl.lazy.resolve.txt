@@ -1,0 +1,29 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] deeplyNestedMemberPropertyRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-deeplyNestedMemberPropertyRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object DeeplyNestedMemberPropertyRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] DeeplyNestedMemberPropertyRepl_repl.constructor(): R|DeeplyNestedMemberPropertyRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /DeeplyNestedMemberPropertyRepl_repl.Outer
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class Outer : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|DeeplyNestedMemberPropertyRepl_repl.Outer| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] class Middle : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|DeeplyNestedMemberPropertyRepl_repl.Outer.Middle| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] val deepProp: R|kotlin/Int| = Int(42)
+                        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+                }
+
+            }
+
+        }

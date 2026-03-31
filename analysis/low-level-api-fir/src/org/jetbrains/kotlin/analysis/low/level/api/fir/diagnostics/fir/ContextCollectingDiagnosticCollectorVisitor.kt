@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.ContextByDesignationColle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassIdOrNull
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -79,7 +78,7 @@ internal object PersistenceContextCollector {
             is FirCallableDeclaration -> declaration.symbol.isLocalForLazyResolutionPurposes
             is FirDanglingModifierList -> declaration.containingClass()?.toSymbol(sessionHolder.session)?.isLocal == true
             is FirAnonymousInitializer -> declaration.getContainingClassSymbol()?.isLocal == true
-            is FirScript, is FirCodeFragment -> false
+            is FirScript, is FirCodeFragment, is FirReplSnippet -> false
             else -> errorWithAttachment("Unsupported declaration ${declaration::class}") {
                 withFirEntry("declaration", declaration)
             }

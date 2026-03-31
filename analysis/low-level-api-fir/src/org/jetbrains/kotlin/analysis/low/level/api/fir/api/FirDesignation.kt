@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.replExpressionReference
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
@@ -101,6 +103,14 @@ class FirDesignation(
 
     val scriptOrNull: FirScript? get() = path.getOrNull(0) as? FirScript ?: path.getOrNull(1) as? FirScript ?: target as? FirScript
 
+    val replSnippet: FirReplSnippet
+        get() = replSnippetOrNull ?: errorWithAttachment("Repl snippet is not found") {
+            withFirDesignationEntry("designation", this@FirDesignation)
+        }
+
+    val replSnippetOrNull: FirReplSnippet?
+        get() = path.getOrNull(0) as? FirReplSnippet ?: path.getOrNull(1) as? FirReplSnippet ?: target as? FirReplSnippet
+
     override fun toString(): String = path.plus(target).joinToString(separator = " -> ") {
         it::class.simpleName ?: it.toString()
     }
@@ -129,7 +139,6 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
     return when (target) {
         is FirSyntheticProperty,
         is FirSyntheticPropertyAccessor,
-        is FirReplSnippet,
         is FirAnonymousFunction,
         is FirErrorFunction,
         is FirAnonymousObject,
@@ -178,7 +187,7 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
         }
 
         is FirFile -> FirDesignation(target)
-        is FirScript, is FirCodeFragment -> {
+        is FirScript, is FirCodeFragment, is FirReplSnippet -> {
             collectDesignationPathWithContainingClass(providedFile, target, containingClassId = null)
         }
     }
@@ -209,8 +218,8 @@ private fun collectDesignationPathWithContainingClass(
 
     val fallbackClassPath = containingClassId?.let { collectDesignationPathWithContainingClassFallback(target, it) }.orEmpty()
     val fallbackFile = providedFile ?: fallbackClassPath.lastOrNull()?.getContainingFile() ?: file
-    val fallbackScript = fallbackFile?.declarations?.singleOrNull() as? FirScript
-    val fallbackPath = listOfNotNull(fallbackFile, fallbackScript) + fallbackClassPath
+    val fallbackScriptOrReplSnippet = fallbackFile?.scriptOrReplSnippet
+    val fallbackPath = listOfNotNull(fallbackFile, fallbackScriptOrReplSnippet) + fallbackClassPath
     val patchedPath = patchDesignationPathIfNeeded(target, fallbackPath)
     return FirDesignation(patchedPath, target)
 }
@@ -398,6 +407,10 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
 
     val contextModule = targetModule.contextModule
     val contextResolutionFacade = contextModule.getResolutionFacade(contextModule.project)
+    val targetIsPartOfReplSnippet = target is FirReplSnippet ||
+            target is FirRegularClass && target.origin == FirDeclarationOrigin.Synthetic.ReplContainerClass ||
+            target is FirNamedFunction && target.origin == FirDeclarationOrigin.Synthetic.ReplEvalFunction ||
+            target is FirProperty && target.replExpressionReference != null
 
     return buildList {
         for (targetPathDeclaration in targetPath) {
@@ -408,13 +421,27 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
 
             val originalPathPsi = targetPathPsi.unwrapCopy(targetPsiFile) ?: return null
             val originalPathDeclaration = when (originalPathPsi) {
-                is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolutionFacade)?.fir
-                is KtScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolutionFacade)?.fir
-                is KtFile -> originalPathPsi.getOrBuildFirFile(contextResolutionFacade)
+                is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolutionFacade)
+
+                // Repl snippet consists of a few unsplittable parts, so it cannot be patched partially in such cases
+                is KtScript if targetIsPartOfReplSnippet -> targetPathDeclaration.symbol
+                is KtScript -> when (targetPathDeclaration) {
+                    is FirScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolutionFacade)
+                    else -> {
+                        val replSnippet = originalPathPsi.resolveToFirSymbolOfTypeSafe<FirReplSnippetSymbol>(contextResolutionFacade)
+                        if (targetPathDeclaration is FirReplSnippet) {
+                            replSnippet
+                        } else {
+                            replSnippet?.snippetClassSymbol
+                        }
+                    }
+                }
+
+                is KtFile -> originalPathPsi.getOrBuildFirFile(contextResolutionFacade).symbol
                 else -> null
             } ?: return null
 
-            add(originalPathDeclaration)
+            add(originalPathDeclaration.fir)
         }
     }
 }

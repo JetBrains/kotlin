@@ -1,0 +1,81 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] mix.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-mix.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object Mix_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] foo/bar/Mix_repl.constructor(): R|foo/bar/Mix_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: foo/bar/Mix_repl.Builder
+                <repl declaration reference>: foo/bar/Mix_repl.build
+                <repl declaration reference>: foo/bar/Mix_repl.build2
+                this@R|foo/bar/Mix_repl|.R|foo/bar/Mix_repl.build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun [ResolvedTo(BODY_RESOLVE)] R|foo/bar/Mix_repl.Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    this@R|special/anonymous|.R|foo/bar/Mix_repl.Builder.version| = String(123)
+                    local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/A| {
+                            super<R|kotlin/Any|>()
+                        }
+
+                        public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|kotlin/Unit| {
+                        }
+
+                    }
+
+                    this@R|special/anonymous|.R|foo/bar/Mix_repl.Builder.execute|()
+                }
+                )
+                <repl property initializer: foo/bar/Mix_repl.builder> = this@R|foo/bar/Mix_repl|.R|foo/bar/Mix_repl.build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun [ResolvedTo(BODY_RESOLVE)] R|foo/bar/Mix_repl.Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    this@R|special/anonymous|.R|foo/bar/Mix_repl.Builder.version| = String(321)
+                }
+                )
+                this@R|foo/bar/Mix_repl|.R|foo/bar/Mix_repl.builder|.R|foo/bar/Mix_repl.Builder.version| = String()
+                <repl property initializer: foo/bar/$$result> = this@R|foo/bar/Mix_repl|.R|foo/bar/Mix_repl.builder|.R|foo/bar/Mix_repl.Builder.execute|()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class Builder : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|foo/bar/Mix_repl.Builder| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] var version: R|kotlin/String| = String()
+                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+                    public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit|
+
+                [ResolvedTo(BODY_RESOLVE)] init {
+                    [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = Int(1)
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun execute(): R|kotlin/Unit| {
+                    <Unresolved name: println>#(this@R|foo/bar/Mix_repl.Builder|.R|foo/bar/Mix_repl.Builder.version|)
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|foo/bar/Mix_repl.Builder.Nested| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun boo(): R|kotlin/Unit| {
+                    }
+
+                }
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun build([ResolvedTo(BODY_RESOLVE)] action: R|foo/bar/Mix_repl.Builder.() -> kotlin/Unit|): R|foo/bar/Mix_repl.Builder| {
+                ^build R|foo/bar/Mix_repl.Builder.Builder|().R|kotlin/apply|<R|foo/bar/Mix_repl.Builder|>(R|<local>/action|)
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun build2([ResolvedTo(BODY_RESOLVE)] action: R|foo/bar/Mix_repl.Builder.() -> kotlin/Unit|): R|foo/bar/Mix_repl.Builder| {
+                ^build2 R|foo/bar/Mix_repl.Builder.Builder|().R|kotlin/apply|<R|foo/bar/Mix_repl.Builder|>(R|<local>/action|)
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val builder: R|foo/bar/Mix_repl.Builder| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|foo/bar/Mix_repl.Builder|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
+
+        }

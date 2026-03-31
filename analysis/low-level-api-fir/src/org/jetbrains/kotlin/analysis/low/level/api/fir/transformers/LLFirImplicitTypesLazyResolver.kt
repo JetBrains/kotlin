@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -203,7 +203,16 @@ internal class LLFirImplicitBodyTargetResolver(
                 }
             }
 
-            is FirRegularClass, is FirTypeAlias, is FirFile, is FirCodeFragment, is FirAnonymousInitializer, is FirDanglingModifierList, is FirEnumEntry, is FirScript -> {
+            is FirRegularClass,
+            is FirTypeAlias,
+            is FirFile,
+            is FirCodeFragment,
+            is FirAnonymousInitializer,
+            is FirDanglingModifierList,
+            is FirEnumEntry,
+            is FirScript,
+            is FirReplSnippet,
+                -> {
                 // No implicit bodies here
             }
 

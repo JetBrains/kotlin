@@ -1,0 +1,340 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(TYPES)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @R|AnnotationWithTypeArgument_repl.Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @R|AnnotationWithTypeArgument_repl.Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @R|AnnotationWithTypeArgument_repl.Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @R|AnnotationWithTypeArgument_repl.Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @R|AnnotationWithTypeArgument_repl.Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: KClass<T>): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
+
+            }
+
+            @R|AnnotationWithTypeArgument_repl.Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: R|kotlin/reflect/KClass<T>|): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/reflect/KClass<T>| = R|<local>/value|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<T>|
+
+            }
+
+            @R|AnnotationWithTypeArgument_repl.Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|) [evaluated = <getClass>(Q|kotlin/Int|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(STATUS)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: R|kotlin/reflect/KClass<T>|): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/reflect/KClass<T>| = R|<local>/value|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<T>|
+
+            }
+
+            @R|AnnotationWithTypeArgument_repl.Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|) [evaluated = <getClass>(Q|kotlin/Int|)]) public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithTypeArgument.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-annotationWithTypeArgument.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object AnnotationWithTypeArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] AnnotationWithTypeArgument_repl.constructor(): R|AnnotationWithTypeArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /AnnotationWithTypeArgument_repl.Anno
+                <repl declaration reference>: /AnnotationWithTypeArgument_repl.resolveMe
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationWithTypeArgument_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Number|>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationWithTypeArgument_repl.Anno.value] value: R|kotlin/reflect/KClass<T>|): R|AnnotationWithTypeArgument_repl.Anno<T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/reflect/KClass<T>| = R|<local>/value|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<T>|
+
+            }
+
+            @R|AnnotationWithTypeArgument_repl.Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|) [evaluated = <getClass>(Q|kotlin/Int|)]) public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
+            }
+
+        }

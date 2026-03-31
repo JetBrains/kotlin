@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -61,6 +61,7 @@ internal sealed class FileStructureElement(
         fun recorderFor(fir: FirDeclaration): FirElementsRecorder = when (fir) {
             is FirFile -> RootStructureElement.Recorder(fir)
             is FirScript -> RootScriptStructureElement.Recorder(fir)
+            is FirReplSnippet -> RootReplSnippetStructureElement.Recorder(fir)
             is FirRegularClass -> ClassDeclarationStructureElement.Recorder(fir)
             else -> DeclarationStructureElement.Recorder
         }
@@ -271,6 +272,37 @@ internal class RootScriptStructureElement(
 internal val FirScript.declarationsToIgnore: Set<FirDeclaration>
     get() = parameters.plus(declarations).toSet()
 
+/**
+ * The [FirReplSnippet] itself and the generated [FirReplSnippet.snippetClass]
+ * with its generated members is a part of this [FileStructureElement].
+ *
+ * **Note**: moved initializers and delegates are not part of it.
+ * They are treated as a part of the original property.
+ */
+internal class RootReplSnippetStructureElement(
+    file: FirFile,
+    replSnippet: FirReplSnippet,
+    moduleComponents: LLFirModuleResolveComponents,
+) : FileStructureElement(
+    declaration = replSnippet,
+    diagnostics = FileStructureElementDiagnostics(
+        ReplSnippetDiagnosticRetriever(
+            declaration = replSnippet,
+            file = file,
+            moduleComponents = moduleComponents,
+        )
+    ),
+) {
+    class Recorder(replSnippet: FirReplSnippet) : FirElementContainerRecorder(
+        container = replSnippet,
+        declarationsToIgnore = replSnippet.declarationsToIgnore,
+    )
+}
+
+/** @see RootReplSnippetStructureElement */
+internal val FirReplSnippet.declarationsToIgnore: Set<FirDeclaration>
+    get() = snippetClass.declarationsToIgnore
+
 internal class ClassDeclarationStructureElement(
     file: FirFile,
     clazz: FirRegularClass,
@@ -316,9 +348,17 @@ internal abstract class FirElementContainerRecorder(
             true
         }
 
-        if (recordElement) {
+        if (!recordElement) {
+            return
+        }
+
+        if (element is FirRegularClass) {
+            // Classes might have ignored elements somewhere inside
+            super.visitElement(element, data)
+        } else {
             // A separate recorder is called here as we don't have to check
-            // conditions for nested elements – they should be recorded deeply
+            // conditions for nested elements – they should be recorded deeply.
+            // Technically, this is just an optimization
             element.accept(DeclarationStructureElement.Recorder, data)
         }
     }
@@ -340,6 +380,7 @@ internal val FirDeclaration.isPartOfClassStructureElement: Boolean
         KtFakeSourceElementKind.DataClassGeneratedMembers,
         KtFakeSourceElementKind.EnumGeneratedDeclaration,
         KtFakeSourceElementKind.ClassDelegationField,
+        KtFakeSourceElementKind.ReplEvalFunction,
             -> true
 
         else -> false

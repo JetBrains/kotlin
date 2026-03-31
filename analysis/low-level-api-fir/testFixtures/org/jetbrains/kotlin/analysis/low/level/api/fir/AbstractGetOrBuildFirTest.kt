@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
@@ -52,6 +53,10 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         fun findElement(qualifierIndex: Int?): KtElement? {
+            if (qualifierIndex == null && Directives.RESOLVE_SCRIPT in testServices.moduleStructure.allDirectives) {
+                return mainFile.script
+            }
+
             val qualifier = if (qualifierIndex != null) "$qualifierIndex" else ""
 
             val elements = mainModule.ktFiles
@@ -171,6 +176,8 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
 
     private object Directives : SimpleDirectivesContainer() {
         val SKIP_CONTAINMENT_CHECK by directive("Do not check that a found child can be accessed from its containing file tree")
+
+        val RESOLVE_SCRIPT by directive("Resolve script instead of selected element")
     }
 }
 

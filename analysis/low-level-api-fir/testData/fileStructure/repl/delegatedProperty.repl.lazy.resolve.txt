@@ -1,0 +1,20 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] delegatedProperty.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-delegatedProperty.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object DelegatedProperty_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] DelegatedProperty_repl.constructor(): R|DelegatedProperty_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl property delegate: /DelegatedProperty_repl.bar> = <Unresolved name: lazy>#(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                    ^ String(My number is: ).R|kotlin/String.plus|(Int(1)).R|kotlin/String.plus|(String(!))
+                }
+                )
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val bar: <ERROR TYPE REF: Unresolved name: getValue>by REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                    ^ this@R|/DelegatedProperty_repl|.D|/DelegatedProperty_repl.bar|.<Unresolved name: getValue>#(this@R|/DelegatedProperty_repl|, ::R|/DelegatedProperty_repl.bar|)
+                }
+
+        }

@@ -1,0 +1,14 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-typeAliasRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object TypeAliasRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] TypeAliasRepl_repl.constructor(): R|TypeAliasRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /TypeAliasRepl_repl.MyAlias
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] typealias MyAlias = R|kotlin/String|
+
+        }

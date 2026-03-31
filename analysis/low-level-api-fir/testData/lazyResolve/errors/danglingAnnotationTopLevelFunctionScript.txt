@@ -1,0 +1,34 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] danglingAnnotationTopLevelFunctionScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-danglingAnnotationTopLevelFunctionScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-danglingAnnotationTopLevelFunctionScript.kts>, ScriptTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
+            ERROR_EXPR(Strange annotated expression: ???)
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationTopLevelFunctionScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-danglingAnnotationTopLevelFunctionScript.kts>
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-danglingAnnotationTopLevelFunctionScript.kts>, ScriptTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
+            ERROR_EXPR(Strange annotated expression: ???)
+        }

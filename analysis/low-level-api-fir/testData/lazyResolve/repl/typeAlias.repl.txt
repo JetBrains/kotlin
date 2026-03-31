@@ -1,0 +1,197 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = String
+
+        }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(RAW_FIR)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = String
+
+        }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = String
+
+        }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(RAW_FIR)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(COMPANION_GENERATION)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = String
+
+        }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(SUPER_TYPES)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(SUPER_TYPES)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(TYPES)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(TYPES)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(STATUS)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(STATUS)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(STATUS)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(STATUS)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(STATUS)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(STATUS)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(STATUS)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAlias.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-typeAlias.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object TypeAlias_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] TypeAlias_repl.constructor(): R|TypeAlias_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /TypeAlias_repl.MyAlias
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] typealias MyAlias = R|kotlin/String|
+
+        }

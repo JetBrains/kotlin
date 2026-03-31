@@ -1945,6 +1945,20 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/repl")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Repl {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/repl/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInRepl() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/repl"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/types")
   @TestDataPath("$PROJECT_ROOT")
   public class Types {

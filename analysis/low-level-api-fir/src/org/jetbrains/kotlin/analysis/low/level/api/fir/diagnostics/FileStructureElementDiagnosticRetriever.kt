@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.Persisten
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.declarationsToIgnore
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.scriptOrReplSnippet
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
@@ -64,8 +65,8 @@ internal sealed class FileStructureElementDiagnosticRetriever(
         declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
         val declarationContainer = when (declaration) {
-            is FirFile -> declaration.declarations.singleOrNull() as? FirScript ?: declaration
-            is FirScript, is FirRegularClass -> declaration
+            is FirFile -> declaration.scriptOrReplSnippet ?: declaration
+            is FirScript, is FirRegularClass, is FirReplSnippet -> declaration
             else -> return
         }
 
@@ -179,6 +180,26 @@ internal class ScriptDiagnosticRetriever(
         components: DiagnosticCollectorComponents,
     ) : LLFirContainerDiagnosticVisitor(
         declarationsToIgnore = script.declarationsToIgnore,
+        context = context,
+        components = components,
+    )
+}
+
+internal class ReplSnippetDiagnosticRetriever(
+    declaration: FirReplSnippet,
+    file: FirFile,
+    moduleComponents: LLFirModuleResolveComponents,
+) : FileStructureElementDiagnosticRetriever(declaration, file, moduleComponents) {
+    override fun createVisitor(context: CheckerContextForProvider, components: DiagnosticCollectorComponents): LLFirDiagnosticVisitor {
+        return Visitor(declaration as FirReplSnippet, context, components)
+    }
+
+    private class Visitor(
+        replSnippet: FirReplSnippet,
+        context: CheckerContextForProvider,
+        components: DiagnosticCollectorComponents,
+    ) : LLFirContainerDiagnosticVisitor(
+        declarationsToIgnore = replSnippet.declarationsToIgnore,
         context = context,
         components = components,
     )

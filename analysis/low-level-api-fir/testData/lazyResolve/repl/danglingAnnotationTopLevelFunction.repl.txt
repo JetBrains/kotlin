@@ -1,0 +1,43 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] danglingAnnotationTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(ANNOTATION_ARGUMENTS)] <snippet-danglingAnnotationTopLevelFunction.repl.kts>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object DanglingAnnotationTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] DanglingAnnotationTopLevelFunction_repl.constructor(): R|DanglingAnnotationTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /DanglingAnnotationTopLevelFunction_repl.Ann
+                ERROR_EXPR(Strange annotated expression: ???)
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] [ContainingReplKey=FirReplSnippetSymbol DanglingAnnotationTopLevelFunction_repl, ReplSnippetTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|DanglingAnnotationTopLevelFunction_repl.Ann| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationTopLevelFunction.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-danglingAnnotationTopLevelFunction.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object DanglingAnnotationTopLevelFunction_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] DanglingAnnotationTopLevelFunction_repl.constructor(): R|DanglingAnnotationTopLevelFunction_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /DanglingAnnotationTopLevelFunction_repl.Ann
+                ERROR_EXPR(Strange annotated expression: ???)
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol DanglingAnnotationTopLevelFunction_repl, ReplSnippetTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|DanglingAnnotationTopLevelFunction_repl.Ann| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }

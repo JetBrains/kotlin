@@ -104,6 +104,13 @@ private class LLFirSuperTypeTargetResolver(
         }
     }
 
+    @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
+    override fun withContainingReplSnippet(firReplSnippet: FirReplSnippet, action: () -> Unit) {
+        supertypeResolver.withReplSnippet(firReplSnippet) {
+            action()
+        }
+    }
+
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
         when (target) {
             is FirRegularClass -> performResolve(

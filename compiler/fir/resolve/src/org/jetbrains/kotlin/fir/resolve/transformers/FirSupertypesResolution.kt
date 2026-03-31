@@ -203,7 +203,9 @@ open class FirSupertypeResolverVisitor(
 
     @PrivateForInline
     val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
-    private var replSnippet: FirReplSnippet? = null
+
+    @PrivateForInline
+    var replSnippet: FirReplSnippet? = null
 
     init {
         containingDeclarations.forEach {
@@ -307,6 +309,7 @@ open class FirSupertypeResolverVisitor(
         }
     }
 
+    @OptIn(PrivateForInline::class)
     private fun prepareScopes(classLikeDeclaration: FirClassLikeDeclaration, forStaticNestedClass: Boolean): PersistentList<FirScope> {
         val classId = classLikeDeclaration.symbol.classId
         val classModuleSession = classLikeDeclaration.moduleData.session
@@ -409,13 +412,20 @@ open class FirSupertypeResolverVisitor(
         }
     }
 
-    override fun visitReplSnippet(replSnippet: FirReplSnippet, data: Any?) {
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withReplSnippet(replSnippet: FirReplSnippet, body: () -> T): T {
         val original = this.replSnippet
         this.replSnippet = replSnippet
-        try {
-            visitDeclarationContent(replSnippet, data)
+        return try {
+            body()
         } finally {
             this.replSnippet = original
+        }
+    }
+
+    override fun visitReplSnippet(replSnippet: FirReplSnippet, data: Any?) {
+        withReplSnippet(replSnippet) {
+            visitDeclarationContent(replSnippet, data)
         }
     }
 
