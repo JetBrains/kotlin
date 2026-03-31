@@ -15,7 +15,7 @@ internal fun File.ensureExistsAndIsEmptyDirectory(): File {
     return this
 }
 
-fun getAbsoluteFile(localPath: String): File = ForTestCompileRuntime.transformTestDataPath(localPath).absoluteFile
+fun getAbsoluteFile(localPath: String): File = ForTestCompileRuntime.transformTestDataPath(localPath).canonicalFile
 
 internal fun computeGeneratedSourcesDir(testDataBaseDir: File, testDataFile: File, generatedSourcesBaseDir: File): File {
     assertTrue(testDataFile.startsWith(testDataBaseDir)) {
