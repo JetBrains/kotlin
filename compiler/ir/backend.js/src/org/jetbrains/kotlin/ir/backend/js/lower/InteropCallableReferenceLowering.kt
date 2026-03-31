@@ -17,12 +17,14 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.callableReferenceFactory
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -526,7 +528,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val lambdaDeclaration =
             createLambdaDeclaration(lambdaInfo.invokeFun, lambdaName, factoryFunction, lambdaInfo.superInvokeFun)
 
-        val statements = ArrayList<IrStatement>(4)
+        var statements = ArrayList<IrStatement>(4)
         val constructor = lambdaInfo.lambdaClass.declarations.firstNotNullOf { it as? IrConstructor }
 
         if (lambdaInfo.isSuspendLambda) {
@@ -652,13 +654,57 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 )
             }
 
-            statements.add(
-                JsIrBuilder.buildReturn(
-                    factoryFunction.symbol,
-                    JsIrBuilder.buildGetValue(tmpVar.symbol),
-                    context.irBuiltIns.nothingType
+            // Memoizing callable reference to a singleton top level declaration if possible.
+            if (functionReferenceReflectedName != null && factoryFunction.parameters.isEmpty()) {
+                val callableInstance = context.irFactory.buildField {
+                    name = Name.identifier("$functionReferenceReflectedName\$instance")
+                    type = functionExpression.type
+                    isStatic = true
+                    isFinal = true
+                    origin = JsStatementOrigins.FACTORY_ORIGIN
+                }.apply {
+                    callableReferenceFactory = factoryFunction
+                }
+
+                newDeclarations.add(callableInstance)
+                statements.add(
+                    JsIrBuilder.buildSetField(
+                        callableInstance.symbol,
+                        receiver = null,
+                        value = JsIrBuilder.buildGetValue(tmpVar.symbol),
+                        type = context.irBuiltIns.anyNType
+                    )
                 )
-            )
+
+                val ifElse = JsIrBuilder.run {
+                    buildIfElse(
+                        type = context.irBuiltIns.unitType,
+                        cond = buildCall(context.irBuiltIns.eqeqSymbol).apply {
+                            arguments[0] = buildGetField(callableInstance.symbol)
+                            arguments[1] = buildNull(context.irBuiltIns.nothingNType)
+                        },
+                        thenBranch = buildBlock(context.irBuiltIns.nothingType, statements)
+                    )
+                }
+                statements = ArrayList<IrStatement>(2).apply {
+                    add(ifElse)
+                    add(
+                        JsIrBuilder.buildReturn(
+                            factoryFunction.symbol,
+                            JsIrBuilder.buildGetField(callableInstance.symbol),
+                            context.irBuiltIns.nothingType
+                        )
+                    )
+                }
+            } else {
+                statements.add(
+                    JsIrBuilder.buildReturn(
+                        factoryFunction.symbol,
+                        JsIrBuilder.buildGetValue(tmpVar.symbol),
+                        context.irBuiltIns.nothingType
+                    )
+                )
+            }
         } else {
             statements.add(JsIrBuilder.buildReturn(factoryFunction.symbol, functionExpression, context.irBuiltIns.nothingType))
         }

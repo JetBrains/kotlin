@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.callableReferenceFactory
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -86,7 +87,12 @@ class DeduplicateCallableReferenceFactoriesLowering(private val context: JsIrBac
             }
 
             private fun IrDeclarationContainer.removeDuplicatingFactories() {
-                declarations.removeAll { it is IrSimpleFunction && it in duplicatingFactories }
+                declarations
+                    .removeAll {
+                        it.origin == JsStatementOrigins.FACTORY_ORIGIN &&
+                                (it is IrSimpleFunction && it in duplicatingFactories ||
+                                        it is IrField && it.callableReferenceFactory in duplicatingFactories)
+                    }
             }
         }
         irModule.transformChildrenVoid(callRewriter)

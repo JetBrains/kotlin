@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -111,3 +110,8 @@ var IrSimpleFunction.originalCallableReferenceClass: IrClass? by irAttribute(cop
  * For anonymous classes representing callable references contains it's preceding [IrRichFunctionReference] node.
  */
 var IrClass.originalCallableReference: IrRichFunctionReference? by irAttribute(copyByDefault = false)
+
+/**
+ * For variable that represents memoizable callable reference instance contain reference to a relevant [IrSimpleFunction] factory.
+ */
+var IrField.callableReferenceFactory: IrSimpleFunction? by irAttribute(copyByDefault = false)
