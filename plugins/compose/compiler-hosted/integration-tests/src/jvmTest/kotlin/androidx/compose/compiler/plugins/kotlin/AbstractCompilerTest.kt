@@ -39,7 +39,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
 import java.net.URLClassLoader
-import kotlin.reflect.KClass
 
 @RunWith(Parameterized::class)
 abstract class AbstractCompilerTest(val useFir: Boolean) {
@@ -241,7 +240,6 @@ object Classpath {
     fun composeFoundationTextJar() = jarFor<androidx.compose.foundation.text.KeyboardActions>()
     fun composeFoundationLayoutJar() = jarFor<androidx.compose.foundation.layout.RowScope>()
 
-    @Suppress("UNCHECKED_CAST")
-    inline fun <reified T> jarFor() = File(PathUtil.getJarPathForClass((T::class as KClass<T & Any>).java))
+    inline fun <reified T : Any> jarFor() = File(PathUtil.getJarPathForClass(T::class.java))
     fun jarFor(className: String) = File(PathUtil.getJarPathForClass(Class.forName(className)))
 }
