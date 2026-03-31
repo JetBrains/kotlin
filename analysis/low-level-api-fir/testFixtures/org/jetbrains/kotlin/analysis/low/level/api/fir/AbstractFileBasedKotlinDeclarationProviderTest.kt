@@ -71,6 +71,18 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
                 processClassLikeDeclaration(typeAlias)
             }
 
+            override fun visitScript(script: KtScript) {
+                super.visitScript(script)
+
+                assertContains(provider.findFilesForScript(script.fqName), script)
+
+                @OptIn(KtExperimentalApi::class)
+                val replSnippetClassId = script.replSnippetClassId ?: return
+                val shortName = replSnippetClassId.shortClassName
+
+                assertContains(provider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(replSnippetClassId.packageFqName), shortName)
+            }
+
             private fun processClassLikeDeclaration(declaration: KtClassLikeDeclaration) {
                 val classId = declaration.getClassId() ?: return
                 val shortName = classId.shortClassName

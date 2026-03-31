@@ -547,6 +547,16 @@ val KtDeclaration.containingScript: KtScript?
     }
 
 /**
+ * The containing class or script for a declaration.
+ *
+ * @see containingClassOrObject
+ * @see containingScript
+ */
+@KtExperimentalApi
+val KtDeclaration.containingClassOrScript: KtNamedDeclaration?
+    get() = containingClassOrObject ?: containingScript
+
+/**
  * The containing script for the block expression.
  *
  * @see KtDeclaration.containingScript

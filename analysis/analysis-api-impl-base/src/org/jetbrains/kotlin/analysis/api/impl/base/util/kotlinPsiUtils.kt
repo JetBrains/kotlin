@@ -1,23 +1,15 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.util
 
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrScript
 
 @KaImplementationDetail
 val KtCallableDeclaration.callableId: CallableId?
@@ -42,12 +34,20 @@ val KtEnumEntry.callableId: CallableId?
 val KtProperty.callableId: CallableId?
     get() = if (isLocal) null else callableIdForName(nameAsSafeName)
 
+@OptIn(KtExperimentalApi::class)
 @KaImplementationDetail
 fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
-    val containingClassOrObject = containingClassOrObject
-    if (containingClassOrObject != null) {
-        return containingClassOrObject.getClassId()?.let { classId ->
+    when (val containingDeclaration = containingClassOrScript) {
+        null -> {}
+
+        // Class not null -> the declaration must inherit its ClassId. Explicitly skip local classes
+        is KtClassOrObject -> return containingDeclaration.getClassId()?.let { classId ->
             CallableId(classId = classId, callableName = callableName)
+        }
+
+        // Script not null -> the declaration inherits its ClassId only in case of REPL, top-level otherwise
+        is KtScript -> containingDeclaration.replSnippetClassId?.let { classId ->
+            return CallableId(classId = classId, callableName = callableName)
         }
     }
 

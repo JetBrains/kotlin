@@ -46,6 +46,12 @@ public class SourceLikeFileBasedKotlinDeclarationProviderTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("repl.repl.kts")
+  public void testRepl_repl() {
+    run("repl.repl.kts");
+  }
+
+  @Test
   @TestMetadata("sameNames.kt")
   public void testSameNames() {
     run("sameNames.kt");

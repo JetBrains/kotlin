@@ -8,6 +8,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.Key
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
@@ -47,6 +48,17 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
 
         return containingKtFile.packageFqName.child(fileBasedName)
     }
+
+    /**
+     * The [ClassId] of the class that represents this script if it [isReplSnippet].
+     */
+    @KtExperimentalApi
+    val replSnippetClassId: ClassId?
+        get() = if (isReplSnippet) {
+            ClassId.topLevel(fqName)
+        } else {
+            null
+        }
 
     override fun getName(): String = fqName.shortName().asString()
 
