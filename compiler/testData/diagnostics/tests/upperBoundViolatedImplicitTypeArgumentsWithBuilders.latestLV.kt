@@ -29,7 +29,7 @@ fun <T, B> T.removeTraitIfPresent(/*...*/): T
 }
 
 fun test1(shape: OperationShape) {
-    shape.<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>removeTraitIfPresent<!>()
+    shape.<!UPPER_BOUND_VIOLATED!>removeTraitIfPresent<!>()
 }
 
 fun test2(shape: OperationShape) {
@@ -55,7 +55,7 @@ fun <B : AbstractShapeBuilder<B, S>, S : Shape> shapeToBuilder(shape: S): B =
 abstract class SimpleShape : Shape()
 
 fun testA(target: SimpleShape) {
-    val builder: AbstractShapeBuilder<*, *> = <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>shapeToBuilder<!>(target)
+    val builder: AbstractShapeBuilder<*, *> = <!UPPER_BOUND_VIOLATED!>shapeToBuilder<!>(target)
 }
 
 fun testB(target: SimpleShape) {

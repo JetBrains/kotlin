@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 class NumColl<T : Collection<Number>>
 typealias NumList<T2> = NumColl<List<T2>>
 typealias AliasOfNumList<A3> = NumList<A3>

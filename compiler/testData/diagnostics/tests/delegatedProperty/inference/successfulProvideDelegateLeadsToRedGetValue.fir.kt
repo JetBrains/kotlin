@@ -1,7 +1,8 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-61077
 
-val test: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> <!UPPER_BOUND_VIOLATED!>materializeDelegate()<!>
+val test: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>materializeDelegate()<!>
 
 fun <T: CharSequence> materializeDelegate(): Box<T> = TODO()
 
