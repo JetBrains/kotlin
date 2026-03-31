@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation3
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation4
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
+import org.jetbrains.kotlin.diagnostics.Severity.INFO
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -1113,8 +1114,9 @@ object FirErrors : KtDiagnosticsContainer() {
     val VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Static Initialization
-    val POSSIBLE_DEADLOCK: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("POSSIBLE_DEADLOCK", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val UNINITIALIZED_ACCESS: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("UNINITIALIZED_ACCESS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val DEPENDENCY_GRAPH_INFO: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("DEPENDENCY_GRAPH_INFO", INFO, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val POSSIBLE_DEADLOCK: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> = KtDiagnosticFactory1("POSSIBLE_DEADLOCK", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val UNINITIALIZED_ACCESS: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("UNINITIALIZED_ACCESS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val UNINITIALIZED_PROPERTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNINITIALIZED_PROPERTY", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages

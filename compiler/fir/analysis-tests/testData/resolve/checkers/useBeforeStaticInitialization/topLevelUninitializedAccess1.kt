@@ -1,7 +1,8 @@
+
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 val a = 5
-val b = A.b
+<!UNINITIALIZED_PROPERTY!>val b = <!UNINITIALIZED_ACCESS!>A.b<!><!>
 
 object A {
     val b = a

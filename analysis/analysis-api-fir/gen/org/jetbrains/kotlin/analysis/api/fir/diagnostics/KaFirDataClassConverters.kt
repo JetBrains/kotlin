@@ -3174,6 +3174,13 @@ private fun KaDiagnosticConverterBuilder.addConversions71() {
             token,
         )
     }
+    add(FirErrors.DEPENDENCY_GRAPH_INFO) { firDiagnostic ->
+        DependencyGraphInfoImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION) { firDiagnostic ->
         RedundantRepeatableAnnotationImpl(
             firDiagnostic.a,
@@ -5678,6 +5685,13 @@ private fun KaDiagnosticConverterBuilder.addConversions127() {
             token,
         )
     }
+    add(FirErrors.UNINITIALIZED_ACCESS) { firDiagnostic ->
+        UninitializedAccessImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions128() {
@@ -6998,6 +7012,15 @@ private fun KaDiagnosticConverterBuilder.addConversions160() {
             token,
         )
     }
+    add(FirErrors.POSSIBLE_DEADLOCK) { firDiagnostic ->
+        PossibleDeadlockImpl(
+            firDiagnostic.a.map { firBasedSymbol ->
+                firSymbolBuilder.buildSymbol(firBasedSymbol)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions161() {
@@ -7707,6 +7730,12 @@ private fun KaDiagnosticConverterBuilder.addConversions176() {
     }
     add(FirErrors.EXPECT_ACTUAL_OPT_IN_ANNOTATION) { firDiagnostic ->
         ExpectActualOptInAnnotationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNINITIALIZED_PROPERTY) { firDiagnostic ->
+        UninitializedPropertyImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

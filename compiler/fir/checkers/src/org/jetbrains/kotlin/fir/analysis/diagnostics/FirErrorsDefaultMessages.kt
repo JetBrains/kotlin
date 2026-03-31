@@ -240,6 +240,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_USES_EXT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_NOT_TO_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPENDENCY_GRAPH_INFO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM
@@ -928,6 +929,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_T
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.renderReadable
@@ -3883,7 +3885,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             POSSIBLE_DEADLOCK,
             "Possible deadlock: the initialization of this declaration depends on ''{0}'' which may incur a deadlock when these entities are initialized on different threads at the same time.",
-            SYMBOL,
+            Renderer { args: List<FirBasedSymbol<*>> ->
+                if (args.isNotEmpty()) args.joinToString(transform = SYMBOL::render) else ""
+            }
         )
         map.put(
             UNINITIALIZED_ACCESS,
@@ -3892,7 +3896,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNINITIALIZED_PROPERTY,
-            "Uninitialized property: depending on the order of initialization of the enclosing entity, the property may be accessed uninitialized.",
+            "Uninitialized property: depending on the order of initialization of the enclosing entity, the property may become uninitialized.",
+        )
+        map.put(
+            DEPENDENCY_GRAPH_INFO,
+            "''{0}''",
+            STRING
         )
     }
 }

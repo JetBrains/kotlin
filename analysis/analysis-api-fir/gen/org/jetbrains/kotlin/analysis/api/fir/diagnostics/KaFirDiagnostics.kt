@@ -4688,14 +4688,19 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = VersionOverloadsTooComplexExpression::class
     }
 
+    interface DependencyGraphInfo : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DependencyGraphInfo::class
+        val renderedGraph: String
+    }
+
     interface PossibleDeadlock : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = PossibleDeadlock::class
-        val dependency: KaSymbol
+        val dependencies: List<KaSymbol>
     }
 
     interface UninitializedAccess : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UninitializedAccess::class
-        val accessedProperty: KaVariableSymbol
+        val accessedDeclaration: KaSymbol
     }
 
     interface UninitializedProperty : KaFirDiagnostic<PsiElement> {

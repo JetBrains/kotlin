@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -2376,11 +2377,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val STATIC_INITIALIZATION by object : DiagnosticGroup("Static Initialization") {
+        val DEPENDENCY_GRAPH_INFO by diagnosticDelegateProvider<PsiElement>(Severity.INFO, PositioningStrategy.DEFAULT) {
+            parameter<String>("renderedGraph")
+        }
         val POSSIBLE_DEADLOCK by warning<PsiElement> {
-            parameter<FirBasedSymbol<*>>("dependency")
+            parameter<List<FirBasedSymbol<*>>>("dependencies")
         }
         val UNINITIALIZED_ACCESS by warning<PsiElement> {
-            parameter<FirPropertySymbol>("accessedProperty")
+            parameter<FirBasedSymbol<*>>("accessedDeclaration")
         }
         val UNINITIALIZED_PROPERTY by warning<PsiElement>()
     }

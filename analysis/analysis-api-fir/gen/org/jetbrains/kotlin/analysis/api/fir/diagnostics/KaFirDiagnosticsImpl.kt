@@ -5629,14 +5629,20 @@ internal class VersionOverloadsTooComplexExpressionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VersionOverloadsTooComplexExpression
 
+internal class DependencyGraphInfoImpl(
+    override val renderedGraph: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DependencyGraphInfo
+
 internal class PossibleDeadlockImpl(
-    override val dependency: KaSymbol,
+    override val dependencies: List<KaSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossibleDeadlock
 
 internal class UninitializedAccessImpl(
-    override val accessedProperty: KaVariableSymbol,
+    override val accessedDeclaration: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UninitializedAccess
