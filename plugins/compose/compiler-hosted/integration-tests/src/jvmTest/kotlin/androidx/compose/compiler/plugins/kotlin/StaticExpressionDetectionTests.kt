@@ -46,7 +46,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     @Test
     fun testConstValReferencesAreStatic() = assertStatic(
         expression = "Constant",
-        extraSrc = """
+        sameFileExtraSrc = """
             const val Constant = "Hello world!"
         """
     )
@@ -54,7 +54,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     @Test
     fun testComputedValReferencesAreNotStatic() = assertUncertain(
         expression = "computedProperty",
-        extraSrc = """
+        sameFileExtraSrc = """
             val computedProperty get() = 42
         """
     )
@@ -62,7 +62,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     @Test
     fun testVarReferencesAreNotStatic() = assertUncertain(
         expression = "mutableProperty",
-        extraSrc = """
+        sameFileExtraSrc = """
             var mutableProperty = 42
         """
     )
@@ -70,7 +70,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     @Test
     fun testObjectReferencesInTheSameFileAsTheObjectDeclarationAreStatic() = assertStatic(
         expression = "Singleton",
-        extraSrc = """
+        sameFileExtraSrc = """
             object Singleton
         """
     )
@@ -78,7 +78,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     @Test
     fun testStableFunctionCallsWithStaticParametersAreStatic() = assertStatic(
         expression = "stableFunction(42)",
-        extraSrc = """
+        sameFileExtraSrc = """
             import androidx.compose.runtime.Stable
 
             @Stable
@@ -99,7 +99,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     @Test
     fun testMapOfWithStaticParametersIsStatic() = assertStatic(
         expression = "mapOf(pair)",
-        extraSrc = """
+        sameFileExtraSrc = """
             val pair = "answerToUltimateQuestion" to 42
         """
     )
@@ -117,7 +117,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     @Test
     fun testEnumReferencesAreStatic() = assertStatic(
         expression = "Foo.Bar",
-        extraSrc = """
+        sameFileExtraSrc = """
             enum class Foo {
                 Bar,
                 Bam
@@ -230,7 +230,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         // same file that the property is defined in.
         assertStatic(
             expression = "x",
-            extraSrc = "val x = 123"
+            sameFileExtraSrc = "val x = 123"
         )
 
         // A call to a default getter of a read-only property is not static if the call is made in a
@@ -259,13 +259,15 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     private fun assertStatic(
         expression: String,
         @Language("kotlin")
-        extraSrc: String = "",
+        sameFileExtraSrc: String = "",
+        otherFileExtraSrc: String = "",
         includeUiImports: Boolean = false,
     ) {
         assertParameterChangeBitsForExpression(
             message = "Expression `$expression` did not compile with the correct %changed flags",
             expression = expression,
-            extraSrc = extraSrc,
+            sameFileExtraSrc = sameFileExtraSrc,
+            otherFileExtraSrc = otherFileExtraSrc,
             expectedEncodedChangedParameter = ChangedParameterEncoding.Static,
             includeUiImports = includeUiImports
         )
@@ -274,13 +276,15 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     private fun assertUncertain(
         expression: String,
         @Language("kotlin")
-        extraSrc: String = "",
+        sameFileExtraSrc: String = "",
+        otherFileExtraSrc: String = "",
         includeUiImports: Boolean = false,
     ) {
         assertParameterChangeBitsForExpression(
             message = "Expression `$expression` did not compile with the correct %changed flags",
             expression = expression,
-            extraSrc = extraSrc,
+            sameFileExtraSrc = sameFileExtraSrc,
+            otherFileExtraSrc = otherFileExtraSrc,
             expectedEncodedChangedParameter = ChangedParameterEncoding.Uncertain,
             includeUiImports = includeUiImports
         )
@@ -291,16 +295,17 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         expression: String,
         expectedEncodedChangedParameter: ChangedParameterEncoding,
         @Language("kotlin")
-        extraSrc: String = "",
+        sameFileExtraSrc: String = "",
+        otherFileExtraSrc: String = "",
         includeUiImports: Boolean = false,
     ) {
         @Language("kotlin")
-        val source = """
+        val testSource = """
             import androidx.compose.runtime.Composable
             ${if (includeUiImports) uiFoundationImports else ""}
             import kotlin.coroutines.EmptyCoroutineContext
 
-            $extraSrc
+            $sameFileExtraSrc
 
             @Composable fun Receiver(value: Any?) {}
 
@@ -310,7 +315,8 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         """.trimIndent()
 
         val files = listOf(
-            SourceFile("Test.kt", source),
+            SourceFile("Other.kt", otherFileExtraSrc),
+            SourceFile("Test.kt", testSource),
         )
         val irModule = compileToIr(
             files,
