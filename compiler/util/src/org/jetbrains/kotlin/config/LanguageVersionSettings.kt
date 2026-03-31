@@ -528,7 +528,7 @@ enum class LanguageFeature(
 
     // Disabled for an indefinite time as we've moved it forward a version twice already, and
     // it's probably better to go the other way around, and only enable it once we're ready.
-    ForbidParenthesizedLhsInAssignments(null, enabledInProgressiveMode = true, "KT-70507"),
+    ForbidParenthesizedLhsInAssignments(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-70507"),
 
     DirectJavaActualization(sinceVersion = null, "KT-67202"),
 
