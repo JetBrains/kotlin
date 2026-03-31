@@ -2487,6 +2487,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("upperBoundViolatedImplicitTypeArgumentsWithBuilders.kt")
+    public void testUpperBoundViolatedImplicitTypeArgumentsWithBuilders() {
+      runTest("compiler/testData/diagnostics/tests/upperBoundViolatedImplicitTypeArgumentsWithBuilders.kt");
+    }
+
+    @Test
     @TestMetadata("ValAndFunOverrideCompatibilityClash.kt")
     public void testValAndFunOverrideCompatibilityClash() {
       runTest("compiler/testData/diagnostics/tests/ValAndFunOverrideCompatibilityClash.kt");
