@@ -44,7 +44,7 @@ KtDestructuringDeclarationEntry(191,197): 'second'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -63,7 +63,7 @@ KtDestructuringDeclarationEntry(227,232): 'first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -82,7 +82,7 @@ KtDestructuringDeclarationEntry(261,274): 'first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -286,7 +286,7 @@ KtDestructuringDeclarationEntry(526,536): 'aa = first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -313,7 +313,7 @@ KtDestructuringDeclarationEntry(565,583): 'aa: String = first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -465,7 +465,7 @@ KtDestructuringDeclarationEntry(728,733): 'first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -476,7 +476,7 @@ KtDestructuringDeclarationEntry(735,741): 'second'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -505,7 +505,7 @@ KtDestructuringDeclarationEntry(763,768): 'first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -534,7 +534,7 @@ KtDestructuringDeclarationEntry(789,802): 'first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -701,7 +701,7 @@ KtDestructuringDeclarationEntry(930,940): 'aa = first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -738,7 +738,7 @@ KtDestructuringDeclarationEntry(961,979): 'aa: String = first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -887,7 +887,7 @@ KtDestructuringDeclarationEntry(1110,1115): 'first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -898,7 +898,7 @@ KtDestructuringDeclarationEntry(1117,1123): 'second'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -925,7 +925,7 @@ KtDestructuringDeclarationEntry(1142,1147): 'first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -952,7 +952,7 @@ KtDestructuringDeclarationEntry(1165,1178): 'first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -1111,7 +1111,7 @@ KtDestructuringDeclarationEntry(1294,1304): 'aa = first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -1146,7 +1146,7 @@ KtDestructuringDeclarationEntry(1322,1340): 'aa: String = first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:

@@ -965,7 +965,7 @@ class FirCallResolver(
                             else -> ConeUnresolvedNameError(
                                 name,
                                 operatorToken,
-                                explicitReceiver?.takeIf { it !is FirResolvedQualifier }?.resolvedType,
+                                explicitReceiver?.takeIf { it !is FirResolvedQualifier }?.resolvedType.takeIf { it is ConeClassLikeType },
                                 )
                         }
                     }
