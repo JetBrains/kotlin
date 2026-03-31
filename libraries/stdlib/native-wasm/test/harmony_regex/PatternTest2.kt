@@ -888,40 +888,62 @@ class PatternTest2 {
 
     @Test fun testAnchors() {
         // Test ^, default and MULTILINE
-        // TODO
+        assertTrue(Regex("^foo").containsMatchIn("foo\nbar"))
+        assertFalse(Regex("^bar").containsMatchIn("foo\nbar"))
+        assertTrue(Regex("^foo", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
+        assertTrue(Regex("^bar", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
 
         // Test $, default and MULTILINE
-        // TODO
+        assertTrue(Regex("bar$").containsMatchIn("foo\nbar"))
+        assertFalse(Regex("foo$").containsMatchIn("foo\nbar"))
+        assertTrue(Regex("foo$", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
+        assertTrue(Regex("bar$", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
 
         // Test \b (word boundary)
-        // TODO
+        assertTrue(Regex("\\bcat\\b").containsMatchIn("a cat!"))
+        assertFalse(Regex("\\bcat\\b").containsMatchIn("concatenate"))
 
         // Test \B (not a word boundary)
-        // TODO
+        assertTrue(Regex("c\\Bat").containsMatchIn("category"))
+        assertTrue(Regex("c\\Bat").containsMatchIn("cat"))
+        assertFalse(Regex("c\\Bat").containsMatchIn("c-at"))
+        assertTrue(Regex("\\B").matches(""))
 
         // Test \A (beginning of string)
-        // TODO
+        assertTrue(Regex("\\Afoo").containsMatchIn("foo\nbar"))
+        assertFalse(Regex("\\Abar").containsMatchIn("foo\nbar"))
+        assertFalse(Regex("\\Abar", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
+        assertTrue(Regex("\\A").matches(""))
 
         // Test \Z (end of string)
-        // TODO
+        assertFalse(Regex("foo\\Z").matches("foo\n"))
+        assertFalse(Regex("foo\\Z", RegexOption.MULTILINE).matches("foo\n"))
+        assertTrue(Regex("foo\\Z").matches("foo"))
+        assertTrue(Regex("\\Z").matches(""))
 
         // Test \z (end of string)
-        // TODO
+        assertFalse(Regex("foo\\z").matches("foo\n"))
+        assertTrue(Regex("foo\\z").matches("foo"))
+        assertTrue(Regex("\\z").matches(""))
 
         // Test \G
-        // TODO
+        assertFindAll(Regex("\\G[0-9]{2}"), "123456 78", listOf("12", "34", "56"))
 
         // Test positive lookahead using (?=...)
-        // TODO
+        assertFindAll(Regex("\\w+(?==)"), "LC_ALL=C LANG", listOf("LC_ALL"))
+        assertFalse(Regex("\\w+(?==)").containsMatchIn("LC_ALL"))
 
         // Test negative lookahead using (?!...)
-        // TODO
+        assertFindAll(Regex("\\w+(?!=)"), "LC_ALL=C LANG", listOf("LC_AL", "C", "LANG"))
+        assertFalse(Regex("\\w+(?!=)").containsMatchIn("=("))
 
         // Test positive lookbehind using (?<=...)
-        // TODO
+        assertFindAll(Regex("(?<=#)\\w+"), "a #tag and #topic", listOf("tag", "topic"))
+        assertFalse(Regex("(?<=#)\\w+").containsMatchIn("not sharp enough"))
 
         // Test negative lookbehind using (?<!...)
-        // TODO
+        assertFindAll(Regex("(?<!#)\\b\\w+\\b"), "a #tag and plain", listOf("a", "and", "plain"))
+        assertFalse(Regex("(?<!#)\\b\\w+\\b").containsMatchIn("#too #sharp"))
     }
 
     @Test fun testMisc() {
