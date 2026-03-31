@@ -553,7 +553,12 @@ class PatternTest2 {
         assertTrue(regex.matches("<*xx\t00;^zz 11;"))
 
         // Test x|y pattern
-        // TODO
+        regex = Regex("(?:[a-z]|[0-9])+")
+        assertTrue(regex.matches("a"))
+        assertTrue(regex.matches("0"))
+        assertTrue(regex.matches("a24"))
+        assertFalse(regex.matches("A"))
+        assertFalse(regex.matches("A24"))
     }
 
     @Test fun testPOSIXGroups() {
