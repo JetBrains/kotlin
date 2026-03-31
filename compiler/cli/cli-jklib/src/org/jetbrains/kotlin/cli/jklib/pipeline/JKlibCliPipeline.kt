@@ -13,11 +13,22 @@ import org.jetbrains.kotlin.cli.pipeline.PipelineContext
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.util.PerformanceManager
 
-class JKlibCliPipeline(override val defaultPerformanceManager: PerformanceManager) : AbstractCliPipeline<K2JKlibCompilerArguments>() {
-    override fun createCompoundPhase(arguments: K2JKlibCompilerArguments): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JKlibCompilerArguments>, *> {
-        return JKlibConfigurationPhase then
-                JKlibFrontendPipelinePhase then
-                JKlibFir2IrPipelinePhase then
-                JKlibKlibSerializationPhase
+class JKlibCliPipeline(
+    override val defaultPerformanceManager: PerformanceManager,
+) : AbstractCliPipeline<K2JKlibCompilerArguments>() {
+    override fun createCompoundPhase(
+        arguments: K2JKlibCompilerArguments,
+    ): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JKlibCompilerArguments>, *> {
+        val phases =
+            JKlibConfigurationPhase then
+                    JKlibFrontendPipelinePhase then
+                    JKlibFir2IrPipelinePhase then
+                    JKlibKlibSerializationPhase
+
+        return if (arguments.compileIr) {
+            phases then JKlibIrCompilationPhase()
+        } else {
+            phases
+        }
     }
 }

@@ -238,7 +238,10 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
         val firFiles = outputs.flatMap { it.fir }
         checkKotlinPackageUsageForLightTree(configuration, firFiles)
 
-        return JKlibFrontendPipelineArtifact(AllModulesFrontendOutput(outputs), configuration)
+        return JKlibFrontendPipelineArtifact(
+            AllModulesFrontendOutput(outputs), configuration, projectEnvironment,
+            rootDisposable,
+        )
     }
 }
 
@@ -260,15 +263,21 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
             irGenerationExtensions,
         )
 
-        return JKlibFir2IrPipelineArtifact(fir2IrResult, configuration, firResult)
+        return JKlibFir2IrPipelineArtifact(
+            fir2IrResult,
+            configuration,
+            input.frontendOutput,
+            input.projectEnvironment,
+            input.rootDisposable,
+        )
     }
 }
 
-object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, JKlibExitArtifact>(
+object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, JKlibSerializationArtifact>(
     name = "JKlibKlibSerializationPhase",
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: JKlibFir2IrPipelineArtifact): JKlibExitArtifact {
+    override fun executePhase(input: JKlibFir2IrPipelineArtifact): JKlibSerializationArtifact {
         val fir2IrResult = input.result
         val configuration = input.configuration
         val diagnosticsReporter = configuration.diagnosticsCollector
@@ -314,14 +323,12 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
         }.writeTo(destination.absolutePath)
 
 
-        return JKlibExitArtifact(ExitCode.OK, configuration)
+        return JKlibSerializationArtifact(
+            destination.absolutePath,
+            configuration,
+            input.projectEnvironment,
+            input.rootDisposable,
+        )
     }
 }
 
-class JKlibExitArtifact(override val exitCode: ExitCode, override val configuration: CompilerConfiguration) :
-    PipelineArtifactWithExitCode() {
-    @CliPipelineInternals(OPT_IN_MESSAGE)
-    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): PipelineArtifact {
-        return JKlibExitArtifact(exitCode, newConfiguration)
-    }
-}
