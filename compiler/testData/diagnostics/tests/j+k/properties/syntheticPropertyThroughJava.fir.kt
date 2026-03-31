@@ -13,10 +13,10 @@ public class Intermediate extends Base {
 }
 
 // FILE: main.kt
-class Final(val i: Intermediate) : Intermediate(i.<!FUNCTION_CALL_EXPECTED!>foo<!>)
+class Final(val i: Intermediate) : Intermediate(i.<!INVISIBLE_REFERENCE!>foo<!>)
 
 fun test(x: Final) {
-    x.<!FUNCTION_CALL_EXPECTED!>foo<!>
+    x.<!INVISIBLE_REFERENCE!>foo<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, primaryConstructor,

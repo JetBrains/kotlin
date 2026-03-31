@@ -1,5 +1,6 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // ISSUE: KT-63067
 // FILE: KotlinFile.kt
 open class KotlinClass {
