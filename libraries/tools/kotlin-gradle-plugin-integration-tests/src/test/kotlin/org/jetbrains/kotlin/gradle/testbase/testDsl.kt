@@ -757,7 +757,7 @@ private fun collectGradleJvmOptions(
 }
 
 private fun MutableList<String>.addJacocoAgentIfEnabled() {
-    val testCoverageEnabled = System.getProperty("kgp.jacoco.enabled").toString().toBoolean()
+    val testCoverageEnabled = System.getProperty("kgp.jacoco.enabled").toBoolean()
     if (!testCoverageEnabled) return
 
     val jacocoRuntimeJar = System.getProperty("jacocoRuntimeJar") ?: return
