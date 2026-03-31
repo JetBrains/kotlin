@@ -727,56 +727,14 @@ class PatternTest2 {
         assertFalse(regex.matches("\u0085"), "\\p{Cntrl}+ should not match non-ASCII control characters")
     }
 
-    @Test fun testUnicodeCategories() {
-        // Test Unicode categories using \p and \P
-        // One letter codes: L, M, N, P, S, Z, C
-        // Two letter codes: Lu, Nd, Sc, Sm, ...
-        // See java.lang.Character and Unicode standard for complete list
-
+    // Regression test for KT-80603
+    @Test fun testNumberCategory() {
         val regex = Regex("\\p{IsN}+")
         assertEquals(listOf("٧٨٩", "०", "๙", "Ⅴ", "Ⅹ", "ⅻ", "123", "½", "¼", "¾", "²", "³", "456"),
             regex.findAll("٧٨٩ ० ๙ Ⅴ Ⅹ ⅻ 123 ½ ¼ ¾ x² + y³ 中文 العربية456")
                 .map(MatchResult::value)
                 .toList()
         )
-
-        // TODO
-        // Test \p{L}
-
-        // ... etc
-
-        // Test two letter codes:
-        // From unicode.org:
-        // Lu
-        // Ll
-        // Lt
-        // Lm
-        // Lo
-        // Mn
-        // Mc
-        // Me
-        // Nd
-        // Nl
-        // No
-        // Pc
-        // Pd
-        // Ps
-        // Pe
-        // Pi
-        // Pf
-        // Po
-        // Sm
-        // Sc
-        // Sk
-        // So
-        // Zs
-        // Zl
-        // Zp
-        // Cc
-        // Cf
-        // Cs
-        // Co
-        // Cn
     }
 
     @Test fun testUnicodeBlocks() {
@@ -1130,72 +1088,113 @@ class PatternTest2 {
         assertTrue(whiteSpace.matches(wsStr), "${unassigned}.matches(\"$wsStr\")")
     }
 
-    @Test fun testMajorCategory() {
-        val unicodeCodePointFmt = HexFormat {
-            number {
-                prefix = "\\u"
-                minLength = 4
-                removeLeadingZeros = true
+    @Test fun testGeneralCategory() {
+        val categoryToRegexes = unicodeCategoryTestData
+            .map(UnicodeCategorySample::generalCategory)
+            .toSet()
+            .associateWith(::categoryPatternVariants)
+
+        for (sample in unicodeCategoryTestData) {
+            for (regex in categoryToRegexes[sample.generalCategory]!!) {
+                assertTrue(
+                    regex.matches(sample.value),
+                    "$regex should match \"${sample.value}\" (${sample.value.formatFirstCodePoint()}) from ${sample.generalCategory}"
+                )
             }
-        }
 
-        fun String.formatFirstCodePoint(): String = codePointAt(0).toHexString(unicodeCodePointFmt)
-
-        // Refer to https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt
-        val characterToCategory = mapOf(
-            // Lu, Ll, Lt, Lm, Lo
-            "a" to "L", // Ll
-            "\u02b6" to "L", // Lm (ʶ)
-            "\u01bb" to "L", // Lo (ƻ)
-            "\u01c5" to "L", // Lt (ǅ)
-            "A" to "L", // Lu,
-            // Mn, Me, Mc
-            "\u0334" to "M", // Mn ̴
-            "\u0488" to "M", // Me (҈)
-            "\u0f7f" to "M", // Mc (ཿ)
-            // Nd, No, Nl
-            "0" to "N", // Nd
-            "\u16ef" to "N", // Nl (ᛯ)
-            "\u00be" to "N", // No (¾),
-            // Zl, Zp, Zs
-            "\u2028" to "Z", // Zl
-            "\u2029" to "Z", // Zp
-            " " to "Z", // Zs
-            // Pc, Pd, Pe, Pf, Pi, Po, Ps
-            "_" to "P", // Pc
-            "-" to "P", // Pd
-            "}" to "P", // Pe
-            "\u00bb" to "P", // Pf (»)
-            "\u00ab" to "P", // Pi («)
-            "@" to "P", // Po
-            "{" to "P", // Ps
-            // Sc, Sk, Sm, So
-            "$" to "S", // Sc
-            "^" to "S", // Sk
-            "+" to "S", // Sm
-            "\u00b0" to "S", // So (°)
-            // CC, Cf, Co, Cs, Cn
-            "\r" to "C", // Cc
-            "\u00ad" to "C", // Cf
-            "\ue000" to "C", // Cp
-            "\ud800" to "C", // Cs
-            "\u0378" to "C", // Cn
-        )
-
-        val categoryToRegex = characterToCategory.values.toSet().associateWith { Regex("\\p{Is$it}") }
-
-        for ([charSample, category] in characterToCategory) {
-            val regex = categoryToRegex[category]!!
-            // Check that a character is matched by a regex corresponding to its major category
-            assertTrue(regex.matches(charSample), "$regex should match \"$charSample\" (${charSample.formatFirstCodePoint()})")
-
-            // Check that regexes for all other categories won't match it
-            for ([otherCategory, regex] in categoryToRegex) {
-                if (otherCategory == category) continue
-                assertFalse(regex.matches(charSample), "$regex should not match \"$charSample\" (${charSample.formatFirstCodePoint()})")
+            for ((otherCategory, otherRegexes) in categoryToRegexes) {
+                if (otherCategory == sample.generalCategory) continue
+                for (otherRegex in otherRegexes) {
+                    assertFalse(
+                        otherRegex.matches(sample.value),
+                        "$otherRegex should not match \"${sample.value}\" (${sample.value.formatFirstCodePoint()}) from ${sample.generalCategory}"
+                    )
+                }
             }
         }
     }
+
+    @Test fun testMajorCategory() {
+        val categoryToRegexes = unicodeCategoryTestData
+            .map(UnicodeCategorySample::majorCategory)
+            .toSet()
+            .associateWith(::categoryPatternVariants)
+
+        for (sample in unicodeCategoryTestData) {
+            for (regex in categoryToRegexes[sample.majorCategory]!!) {
+                assertTrue(regex.matches(sample.value), "$regex should match \"${sample.value}\" (${sample.value.formatFirstCodePoint()})")
+            }
+
+            // Check that regexes for all other categories won't match it
+            for ((otherCategory, otherRegexes) in categoryToRegexes) {
+                if (otherCategory == sample.majorCategory) continue
+                for (otherRegex in otherRegexes) {
+                    assertFalse(
+                        otherRegex.matches(sample.value),
+                        "$otherRegex should not match \"${sample.value}\" (${sample.value.formatFirstCodePoint()})"
+                    )
+                }
+            }
+        }
+    }
+
+    private fun String.formatFirstCodePoint(): String = codePointAt(0).toHexString(unicodeCodePointFmt)
+
+    private fun categoryPatternVariants(category: String): List<Regex> = listOf(
+        Regex("\\p{$category}"),
+        Regex("\\p{Is$category}")
+    )
+
+    private val unicodeCodePointFmt = HexFormat {
+        number {
+            prefix = "\\u"
+            minLength = 4
+            removeLeadingZeros = true
+        }
+    }
+
+    private data class UnicodeCategorySample(val value: String, val majorCategory: String, val generalCategory: String)
+
+    // Refer to https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt
+    private val unicodeCategoryTestData = listOf(
+        // Lu, Ll, Lt, Lm, Lo
+        UnicodeCategorySample("a", "L", "Ll"),
+        UnicodeCategorySample("\u02b6", "L", "Lm"), // ʶ
+        UnicodeCategorySample("\u01bb", "L", "Lo"), // ƻ
+        UnicodeCategorySample("\u01c5", "L", "Lt"), // ǅ
+        UnicodeCategorySample("A", "L", "Lu"),
+        // Mn, Me, Mc
+        UnicodeCategorySample("\u0334", "M", "Mn"), // ̴
+        UnicodeCategorySample("\u0488", "M", "Me"), // ҈
+        UnicodeCategorySample("\u0f7f", "M", "Mc"), // ཿ
+        // Nd, No, Nl
+        UnicodeCategorySample("0", "N", "Nd"),
+        UnicodeCategorySample("\u16ef", "N", "Nl"), // ᛯ
+        UnicodeCategorySample("\u00be", "N", "No"), // ¾
+        // Zl, Zp, Zs
+        UnicodeCategorySample("\u2028", "Z", "Zl"),
+        UnicodeCategorySample("\u2029", "Z", "Zp"),
+        UnicodeCategorySample(" ", "Z", "Zs"),
+        // Pc, Pd, Pe, Pf, Pi, Po, Ps
+        UnicodeCategorySample("_", "P", "Pc"),
+        UnicodeCategorySample("-", "P", "Pd"),
+        UnicodeCategorySample("}", "P", "Pe"),
+        UnicodeCategorySample("\u00bb", "P", "Pf"), // »
+        UnicodeCategorySample("\u00ab", "P", "Pi"), // «
+        UnicodeCategorySample("@", "P", "Po"),
+        UnicodeCategorySample("{", "P", "Ps"),
+        // Sc, Sk, Sm, So
+        UnicodeCategorySample("$", "S", "Sc"),
+        UnicodeCategorySample("^", "S", "Sk"),
+        UnicodeCategorySample("+", "S", "Sm"),
+        UnicodeCategorySample("\u00b0", "S", "So"), // °
+        // Cc, Cf, Co, Cs, Cn
+        UnicodeCategorySample("\r", "C", "Cc"),
+        UnicodeCategorySample("\u00ad", "C", "Cf"),
+        UnicodeCategorySample("\ue000", "C", "Co"),
+        UnicodeCategorySample("\ud800", "C", "Cs"),
+        UnicodeCategorySample("\u0378", "C", "Cn"),
+    )
 
     private class UBInfo(var low: Int, var high: Int, var name: String)
 
