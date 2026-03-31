@@ -40,12 +40,12 @@ public class SwiftExportInIdeTestGenerated extends AbstractSymbolToSirTest {
   }
 
   private void run(String fileName) {
-    runTest("native/swift/swift-export-ide/testData/" + fileName);
+    runTest("testData/" + fileName);
   }
 
   @Test
   public void testAllFilesPresentInTestData() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-ide/testData"), Pattern.compile("^(.+)\\.kt$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData"), Pattern.compile("^(.+)\\.kt$"), null, false);
   }
 
   @Test

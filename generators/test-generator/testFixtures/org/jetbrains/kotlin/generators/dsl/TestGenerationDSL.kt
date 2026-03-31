@@ -29,6 +29,7 @@ class TestGroupSuite(val testInfraRevision: TestInfraRevision, val defaultSkipTe
         testsRoot: String,
         testDataRoot: String,
         testRunnerMethodName: String = MethodGenerator.DEFAULT_RUN_TEST_METHOD_NAME,
+        testWorkingDir: String? = null,
         init: TestGroup.() -> Unit
     ) {
         testGroups += TestGroup(
@@ -37,6 +38,7 @@ class TestGroupSuite(val testInfraRevision: TestInfraRevision, val defaultSkipTe
             testRunnerMethodName,
             testInfraRevision,
             defaultSkipTestAllFilesCheck,
+            testWorkingDir,
         ).apply(init)
     }
 }
@@ -47,6 +49,7 @@ class TestGroup(
     val testRunnerMethodName: String,
     val testInfraRevision: TestInfraRevision,
     val defaultSkipTestAllFilesCheck: Boolean,
+    private val testWorkingDir: String? = null,
 ) {
     val testClasses: List<TestClass>
         field: MutableList<TestClass> = mutableListOf()
@@ -144,7 +147,8 @@ class TestGroup(
                     testInfraRevision, File(testDataRoot), rootFile, recursive, excludeParentDirs,
                     compiledPattern, compiledExcludedPattern, testMethod, className,
                     targetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
-                    extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck
+                    extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck,
+                    workingDir = this@TestGroup.testWorkingDir?.let { File(it) },
                 )
             )
         }

@@ -87,4 +87,4 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
     }
 }
 
-private val testDataDir = File("native/swift/swift-export-standalone-integration-tests/external/testData/execution")
+private val testDataDir = File("testData/execution")

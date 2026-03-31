@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         // Codegen box tests.
-        testGroup(testsRoot, "compiler/testData/codegen") {
+        testGroup(testsRoot, "compiler/testData/codegen", testWorkingDir = "native/native.tests/codegen-box") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
                 annotations = listOf(

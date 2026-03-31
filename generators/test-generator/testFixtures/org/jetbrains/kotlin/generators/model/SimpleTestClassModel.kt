@@ -47,11 +47,15 @@ class SimpleTestClassModel(
     override val tags: List<String>,
     private val additionalMethods: Collection<MethodModel<*>>,
     val skipTestAllFilesCheck: Boolean,
+    val workingDir: File? = null,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
 
     val allExcludedDirs: Set<String> = (excludeDirs + excludeDirsRecursively).toSet()
+
+    val embeddedRootFile: File
+        get() = if (workingDir != null) rootFile.relativeTo(workingDir) else rootFile
 
     override val innerTestClasses: Collection<TestClassModel> by lazy {
         if (!rootFile.isDirectory || !recursive) {
@@ -80,6 +84,7 @@ class SimpleTestClassModel(
                 extractTagsFromDirectory(file),
                 additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass },
                 skipTestAllFilesCheck,
+                workingDir = workingDir,
             )
         }.sortedWith(BY_NAME)
     }
@@ -111,7 +116,7 @@ class SimpleTestClassModel(
         buildList {
             when (testInfraRevision) {
                 TestInfraRevision.LegacyJUnit4 -> add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName))
-                TestInfraRevision.StandardJUnit5 -> add(RunTestWithDirectoryPrefixMethodModel(rootFile.getFilePath()))
+                TestInfraRevision.StandardJUnit5 -> add(RunTestWithDirectoryPrefixMethodModel(embeddedRootFile.getFilePath()))
             }
             if (!skipTestAllFilesCheck) {
                 add(TestAllFilesPresentMethodModel(this@SimpleTestClassModel))

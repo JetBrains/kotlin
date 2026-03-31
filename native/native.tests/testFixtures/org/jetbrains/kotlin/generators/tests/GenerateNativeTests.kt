@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         // Former konan local tests
-        testGroup(testsRoot, "native/native.tests/testData/codegen") {
+        testGroup(testsRoot, "native/native.tests/testData/codegen", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
                 annotations = listOf(
@@ -45,7 +45,7 @@ fun main(args: Array<String>) {
         }
 
         // Samples (how to utilize the abilities of new test infrastructure).
-        testGroup(testsRoot, "native/native.tests/testData") {
+        testGroup(testsRoot, "native/native.tests/testData", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirInfrastructureTestGenerated",
                 annotations = listOf(
@@ -59,7 +59,7 @@ fun main(args: Array<String>) {
         }
 
         // Partial linkage tests.
-        testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
+        testGroup(testsRoot, "compiler/testData/klib/partial-linkage", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativePartialLinkageTest>(
                 suiteTestClassName = "NativePartialLinkageTestGenerated",
             ) {
@@ -68,7 +68,7 @@ fun main(args: Array<String>) {
         }
 
         // CInterop tests.
-        testGroup(testsRoot, "native/native.tests/testData/CInterop") {
+        testGroup(testsRoot, "native/native.tests/testData/CInterop", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeCInteropFModulesTest>(
                 suiteTestClassName = "CInteropFModulesTestGenerated",
             ) {
@@ -106,7 +106,7 @@ fun main(args: Array<String>) {
         }
 
         // ObjCExport tests.
-        testGroup(testsRoot, "native/native.tests/testData/ObjCExport") {
+        testGroup(testsRoot, "native/native.tests/testData/ObjCExport", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeObjCExportTest>(
                 suiteTestClassName = "FirObjCExportTestGenerated",
             ) {
@@ -115,7 +115,7 @@ fun main(args: Array<String>) {
         }
 
         // LLDB integration tests.
-        testGroup(testsRoot, "native/native.tests/testData/lldb") {
+        testGroup(testsRoot, "native/native.tests/testData/lldb", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "NativeLldbTestGenerated",
                 annotations = listOf(
@@ -129,7 +129,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(testsRoot, "compiler/testData/debug/stepping") {
+        testGroup(testsRoot, "compiler/testData/debug/stepping", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "NativeSteppingTestGenerated",
                 annotations = listOf(
@@ -144,7 +144,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(testsRoot, "compiler/testData/debug/stepping") {
+        testGroup(testsRoot, "compiler/testData/debug/stepping", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "NativeSteppingWithInlinedFunInKlibGenerated",
                 annotations = listOf(
@@ -160,7 +160,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(testsRoot, "compiler/testData/klib/dump-abi/cinterop") {
+        testGroup(testsRoot, "compiler/testData/klib/dump-abi/cinterop", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
                 suiteTestClassName = "FirNativeCInteropLibraryAbiReaderTest",
             ) {
@@ -169,7 +169,7 @@ fun main(args: Array<String>) {
         }
 
         // Plain executable tests
-        testGroup(testsRoot, "native/native.tests/testData/standalone") {
+        testGroup(testsRoot, "native/native.tests/testData/standalone", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirNativeStandaloneTestGenerated",
                 annotations = listOf(
@@ -195,7 +195,7 @@ fun main(args: Array<String>) {
             "Dynamic" to binaryLibraryKind("DYNAMIC"),
         )
         // C Export
-        testGroup(testsRoot, "native/native.tests/testData/CExport") {
+        testGroup(testsRoot, "native/native.tests/testData/CExport", testWorkingDir = "native/native.tests") {
             val cinterfaceModes = mapOf(
                 "InterfaceV1" to cinterfaceMode("V1"),
                 "InterfaceNone" to cinterfaceMode("NONE")
@@ -221,7 +221,7 @@ fun main(args: Array<String>) {
             }
         }
         // GC tests
-        testGroup(testsRoot, "native/native.tests/testData/gc") {
+        testGroup(testsRoot, "native/native.tests/testData/gc", testWorkingDir = "native/native.tests") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirNativeGCTestGenerated",
                 annotations = listOf(

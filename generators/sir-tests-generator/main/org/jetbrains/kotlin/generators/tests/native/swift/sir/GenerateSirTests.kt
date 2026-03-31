@@ -25,7 +25,8 @@ fun main() {
     generateTestGroupSuiteWithJUnit5 {
         testGroup(
             "native/swift/swift-export-standalone-integration-tests/simple/tests-gen/",
-            "native/swift/swift-export-standalone-integration-tests/simple/testData/generation"
+            "native/swift/swift-export-standalone-integration-tests/simple/testData/generation",
+            testWorkingDir = "native/swift/swift-export-standalone-integration-tests/simple",
         ) {
             testClass<AbstractSwiftExportWithResultValidationTest>(
                 suiteTestClassName = "SwiftExportWithResultValidationTest",
@@ -38,7 +39,8 @@ fun main() {
         }
         testGroup(
             "native/swift/swift-export-standalone-integration-tests/simple/tests-gen/",
-            "native/swift/swift-export-standalone-integration-tests/simple/testData/generation"
+            "native/swift/swift-export-standalone-integration-tests/simple/testData/generation",
+            testWorkingDir = "native/swift/swift-export-standalone-integration-tests/simple",
         ) {
             testClass<AbstractSwiftExportWithBinaryCompilationTest>(
                 suiteTestClassName = "SwiftExportWithBinaryCompilationTest",
@@ -51,7 +53,8 @@ fun main() {
         }
         testGroup(
             "native/swift/swift-export-standalone-integration-tests/simple/tests-gen/",
-            "native/swift/swift-export-standalone-integration-tests/simple/testData/execution"
+            "native/swift/swift-export-standalone-integration-tests/simple/testData/execution",
+            testWorkingDir = "native/swift/swift-export-standalone-integration-tests/simple",
         ) {
             testClass<AbstractSwiftExportExecutionTest>(
                 suiteTestClassName = "SwiftExportExecutionTestGenerated",
@@ -64,7 +67,8 @@ fun main() {
         }
         testGroup(
             "native/swift/swift-export-standalone-integration-tests/coroutines/tests-gen/",
-            "native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation"
+            "native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation",
+            testWorkingDir = "native/swift/swift-export-standalone-integration-tests/coroutines",
         ) {
             testClass<AbstractSwiftExportWithResultValidationTest>(
                 suiteTestClassName = "SwiftExportCoroutinesWithResultValidationTest",
@@ -78,7 +82,8 @@ fun main() {
         }
         testGroup(
             "native/swift/swift-export-standalone-integration-tests/coroutines/tests-gen/",
-            "native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation"
+            "native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation",
+            testWorkingDir = "native/swift/swift-export-standalone-integration-tests/coroutines",
         ) {
             testClass<AbstractSwiftExportWithBinaryCompilationTest>(
                 suiteTestClassName = "SwiftExportCoroutinesWithBinaryCompilationTest",
@@ -92,7 +97,8 @@ fun main() {
         }
         testGroup(
             "native/swift/swift-export-standalone-integration-tests/coroutines/tests-gen/",
-            "native/swift/swift-export-standalone-integration-tests/coroutines/testData/execution"
+            "native/swift/swift-export-standalone-integration-tests/coroutines/testData/execution",
+            testWorkingDir = "native/swift/swift-export-standalone-integration-tests/coroutines",
         ) {
             testClass<AbstractSwiftExportExecutionTest>(
                 suiteTestClassName = "SwiftExportCoroutinesExecutionTestGenerated",
@@ -107,7 +113,8 @@ fun main() {
         // Swift Export IDE
         testGroup(
             "native/swift/swift-export-ide/tests-gen/",
-            "native/swift/swift-export-ide/testData"
+            "native/swift/swift-export-ide/testData",
+            testWorkingDir = "native/swift/swift-export-ide",
         ) {
             testClass<AbstractSymbolToSirTest>(
                 suiteTestClassName = "SwiftExportInIdeTestGenerated",

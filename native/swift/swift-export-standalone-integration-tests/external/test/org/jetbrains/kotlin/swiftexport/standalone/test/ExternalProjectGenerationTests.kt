@@ -72,4 +72,4 @@ class ExternalProjectGenerationTests : AbstractSwiftExportWithBinaryCompilationT
 
 }
 
-private val testDataDir = File("native/swift/swift-export-standalone-integration-tests/external/testData/generation")
+private val testDataDir = File("testData/generation")
