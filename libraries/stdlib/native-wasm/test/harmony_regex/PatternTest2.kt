@@ -950,7 +950,13 @@ class PatternTest2 {
         var regex: Regex
 
         // Test (?>...)
-        // TODO
+        regex = Regex("(?>a*)bb")
+        assertFalse(regex.matches("aaabc"))
+        assertTrue(regex.matches("aaabb"))
+        assertTrue(regex.matches("bb"))
+        regex = Regex("(?>a*)abb")
+        // Note that a regular RE, like (a*)abb would match it
+        assertFalse(regex.matches("aaabb"))
 
         // Test (?onflags-offflags)
         // Valid flags are i,m,d,s,u,x
