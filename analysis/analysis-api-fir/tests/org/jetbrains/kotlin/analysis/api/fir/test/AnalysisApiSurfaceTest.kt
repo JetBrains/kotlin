@@ -133,7 +133,7 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("analysis/analys
 
                 val actualText = classSymbol.combinedMemberScope.callables
                     .toList()
-                    .mapNotNull { it.callableId?.toString() }
+                     .mapNotNull { it.callableId?.toString() }
                     .sorted()
 
                 assertEquals(expectedMemberCallableIds.toList(), actualText)
@@ -144,8 +144,6 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("analysis/analys
                 "kotlin/Any.equals",
                 "kotlin/Any.hashCode",
                 "kotlin/Any.toString",
-                "org/example/Foo.companionBlockFunction",
-                "org/example/Foo.companionBlockProperty",
                 "org/example/Foo.ordinaryFunction",
                 "org/example/Foo.ordinaryProperty",
             )
@@ -189,12 +187,12 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("analysis/analys
             val expectedResolutionResult = listOf(
                 "foo.ordinaryProperty: org/example/Foo.ordinaryProperty",
                 "foo.ordinaryFunction(): org/example/Foo.ordinaryFunction",
-                "foo.companionBlockProperty: org/example/Foo.companionBlockProperty",
-                "foo.companionBlockFunction(): org/example/Foo.companionBlockFunction",
+                "foo.companionBlockProperty: null",
+                "foo.companionBlockFunction(): null",
                 "Foo.companionBlockProperty: null",
                 "Foo.companionBlockFunction(): null",
-                "String.empty: org/example/empty",
-                "String.fromNumber(9001): org/example/fromNumber",
+                "String.empty: null",
+                "String.fromNumber(9001): null",
                 "Direction.values(): org/example/Direction.values",
                 "Direction.entries: org/example/Direction.entries",
                 "Direction.valueOf(\"SOUTH\"): org/example/Direction.valueOf",

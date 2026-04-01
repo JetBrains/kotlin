@@ -57,14 +57,14 @@ fun createDeclarationsStubs(
     propertyProtos: List<ProtoBuf.Property>,
 ) {
     for (propertyProto in propertyProtos) {
-        if (mustNotBeWrittenToStubs(propertyProto.flags)) {
+        if (mustNotBeWrittenToStubs(propertyProto.flags) || Flags.IS_STATIC_PROPERTY.get(propertyProto.flags)) {
             continue
         }
 
         PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
     }
     for (functionProto in functionProtos) {
-        if (mustNotBeWrittenToStubs(functionProto.flags)) {
+        if (mustNotBeWrittenToStubs(functionProto.flags) || Flags.IS_STATIC_FUNCTION.get(functionProto.flags)) {
             continue
         }
 
