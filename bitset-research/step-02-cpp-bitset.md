@@ -2,7 +2,13 @@
 
 ## Резюме
 
-Проведён детальный анализ двух C++ реализаций BitSet: `std::bitset<N>` (стандартная библиотека) и `boost::dynamic_bitset<Block, Allocator>`. Они представляют два фундаментально разных подхода к размеру: compile-time фиксированный (`std::bitset`) vs runtime динамический (`boost::dynamic_bitset`). Обе реализации мутабельные, не реализуют стандартные интерфейсы контейнеров и не предоставляют итераторов. `boost::dynamic_bitset` расширяет API `std::bitset` значительно: добавляет динамическое управление размером (`resize`, `push_back`, `append`, `clear`, `reserve`, `capacity`), set-теоретические операции (`is_subset_of`, `is_proper_subset_of`, `intersects`), set difference (`operator-`), полное упорядочение (`<`, `<=`, `>`, `>=`), навигацию по set-битам (`find_first`, `find_next`), range-версии `set`/`reset`/`flip`, и блочный ввод-вывод (`to_block_range`, `from_block_range`). `std::bitset` компенсирует простотой и constexpr-поддержкой (с C++23).
+Проведён детальный анализ двух C++ реализаций BitSet: `std::bitset<N>` (стандартная библиотека) и `boost::dynamic_bitset<Block, AllocatorOrContainer>`. Они представляют два фундаментально разных подхода к размеру: compile-time фиксированный (`std::bitset`) vs runtime динамический (`boost::dynamic_bitset`). `std::bitset` не реализует стандартные интерфейсы контейнеров и не предоставляет итераторов. `boost::dynamic_bitset` формально не моделирует `Container`, однако начиная с Boost 1.90.0 (декабрь 2025) предоставляет итераторы (`begin`/`end`/`rbegin`/`rend`), пригодные для C++20 ranges (но не удовлетворяющие `LegacyForwardIterator` из-за proxy `reference`). `boost::dynamic_bitset` расширяет API `std::bitset` значительно: добавляет динамическое управление размером (`resize`, `push_back`, `pop_back`, `push_front`, `pop_front` (Boost 1.90.0+), `append`, `clear`, `reserve`, `capacity`), set-теоретические операции (`is_subset_of`, `is_proper_subset_of`, `intersects`), set difference (`operator-`), полное упорядочение (`<`, `<=`, `>`, `>=`), навигацию по set-битам (`find_first(pos)`, `find_next`) и clear-битам (`find_first_off`, `find_next_off` — Boost 1.90.0+), range-версии `set`/`reset`/`flip`, и блочный ввод-вывод (`to_block_range`, `from_block_range`). `std::bitset` компенсирует простотой и более сильной constexpr-историей (частичной с C++11, полной с C++23), хотя начиная с Boost 1.90.0 `dynamic_bitset` тоже поддерживает `constexpr` при компиляции в режиме C++20+.
+
+> **NB:** Утверждения о Boost 1.90.0+ верифицированы по актуальной official reference-документации Boost (обновлена к марту 2026). Подробности об эволюции документации — в примечании о провенансе в §2.
+
+**Входные данные:** [`step-01-kotlin-implementations.md`](step-01-kotlin-implementations.md) (Java `BitSet` как baseline для сравнения).
+
+**См. также:** [`step-02-cross-language.md`](step-02-cross-language.md) (зонтичный кросс-языковой обзор, в который входит данный артефакт).
 
 ---
 
@@ -31,12 +37,11 @@ class bitset;
 
 | Сигнатура | Описание | Стандарт |
 |---|---|---|
-| `constexpr bitset()` | Все биты инициализируются нулями | C++98 (constexpr с C++23) |
-| `constexpr bitset(unsigned long val)` | Инициализация из `unsigned long`; биты выше `min(N, digits)` обнуляются | C++98 (constexpr с C++23) |
-| `constexpr bitset(unsigned long long val)` | Инициализация из `unsigned long long` | C++11 (constexpr с C++23) |
-| `explicit constexpr bitset(const std::string& s, size_t pos = 0, size_t count = npos, char zero = '0', char one = '1')` | Инициализация из строки символов `'0'`/`'1'` | C++98 (constexpr с C++23) |
-| `explicit constexpr bitset(const char* s, size_t count = npos, char zero = '0', char one = '1')` | Инициализация из C-строки | C++98 (constexpr с C++23) |
-| `explicit constexpr bitset(std::string_view s, size_t pos = 0, size_t count = npos, char zero = '0', char one = '1')` | Инициализация из `string_view` | C++26 |
+| `constexpr bitset()` | Все биты инициализируются нулями | C++98 (constexpr с C++11) |
+| `constexpr bitset(unsigned long long val)` | Инициализация из `unsigned long long`; биты выше `min(N, digits)` обнуляются. До C++11 параметр имел тип `unsigned long` | C++11 (constexpr с C++11) |
+| `template<class charT, ...> explicit constexpr bitset(const basic_string<charT, ...>& s, typename basic_string<charT, ...>::size_type pos = 0, typename basic_string<charT, ...>::size_type n = basic_string<charT, ...>::npos, charT zero = charT('0'), charT one = charT('1'))` | Инициализация из строки символов `zero`/`one`; параметризована по `charT`. Типы `size_type`/`npos` принадлежат `basic_string`, а не `bitset` | C++98 (constexpr с C++23) |
+| `template<class charT> explicit constexpr bitset(const charT* s, typename basic_string_view<charT>::size_type n = basic_string_view<charT>::npos, charT zero = charT('0'), charT one = charT('1'))` | Инициализация из C-строки; параметризована по `charT`. Тип `n` заимствован из `basic_string_view<charT>` | C++11 (constexpr с C++23) |
+| `template<class charT, ...> explicit constexpr bitset(basic_string_view<charT, ...> s, typename basic_string_view<charT, ...>::size_type pos = 0, typename basic_string_view<charT, ...>::size_type n = basic_string_view<charT, ...>::npos, charT zero = charT('0'), charT one = charT('1'))` | Инициализация из `basic_string_view`; параметризована по `charT`. Типы `size_type`/`npos` принадлежат `basic_string_view`, а не `bitset` | C++26 |
 
 ### 1.4 Доступ к элементам
 
@@ -86,8 +91,8 @@ class bitset;
 
 | Сигнатура | Описание | Стандарт |
 |---|---|---|
-| `constexpr bool operator==(const bitset& other) const` | Равенство | C++98 (семантика обновлена в C++20) |
-| `constexpr bool operator!=(const bitset& other) const` | Неравенство | C++98 (удалён в C++20, генерируется автоматически) |
+| `constexpr bool operator==(const bitset& other) const` | Равенство | C++98 (noexcept с C++11, constexpr с C++23) |
+| `constexpr bool operator!=(const bitset& other) const` | Неравенство | C++98 (удалён в C++20, синтезируется из `operator==`) |
 
 **Примечание:** `std::bitset` не поддерживает операторы `<`, `<=`, `>`, `>=` — нет упорядочения.
 
@@ -106,8 +111,8 @@ class bitset;
 | `template<size_t N> bitset<N> operator&(const bitset<N>& lhs, const bitset<N>& rhs)` | Побитовое AND |
 | `template<size_t N> bitset<N> operator\|(const bitset<N>& lhs, const bitset<N>& rhs)` | Побитовое OR |
 | `template<size_t N> bitset<N> operator^(const bitset<N>& lhs, const bitset<N>& rhs)` | Побитовое XOR |
-| `template<...> ostream& operator<<(ostream& os, const bitset<N>& x)` | Потоковый вывод |
-| `template<...> istream& operator>>(istream& is, bitset<N>& x)` | Потоковый ввод |
+| `template<class charT, class traits, size_t N> basic_ostream<charT, traits>& operator<<(basic_ostream<charT, traits>& os, const bitset<N>& x)` | Потоковый вывод; параметризован по `charT`/`traits` |
+| `template<class charT, class traits, size_t N> basic_istream<charT, traits>& operator>>(basic_istream<charT, traits>& is, bitset<N>& x)` | Потоковый ввод; параметризован по `charT`/`traits` |
 
 ### 1.11 Специализация `std::hash` (C++11)
 
@@ -122,11 +127,18 @@ struct std::hash<std::bitset<N>>;
 
 ```cpp
 class reference {
-    constexpr reference& operator=(bool x);          // Присвоение из bool
-    constexpr reference& operator=(const reference&); // Присвоение из другой ссылки
-    constexpr operator bool() const;                  // Конвертация в bool
-    constexpr bool operator~() const;                 // Инвертированное значение
-    constexpr reference& flip();                      // Инвертировать бит на месте
+    constexpr reference(const reference&) = default;             // Копирующий конструктор
+    constexpr ~reference();                                      // Деструктор
+    constexpr reference& operator=(bool x) noexcept;             // Присвоение из bool
+    constexpr reference& operator=(const reference&) noexcept;   // Присвоение из другой ссылки
+    constexpr const reference& operator=(bool x) const noexcept; // Присвоение через const ref (C++26)
+    constexpr bool operator~() const noexcept;                   // Инвертированное значение
+    constexpr operator bool() const noexcept;                    // Конвертация в bool
+    constexpr reference& flip() noexcept;                        // Инвертировать бит на месте
+
+    friend constexpr void swap(reference x, reference y) noexcept; // Обмен двух bit-ссылок
+    friend constexpr void swap(reference x, bool& y) noexcept;    // Обмен bit-ссылки и bool
+    friend constexpr void swap(bool& x, reference y) noexcept;    // Обмен bool и bit-ссылки
 };
 ```
 
@@ -139,10 +151,14 @@ class reference {
 
 ---
 
-## 2. `boost::dynamic_bitset<Block, Allocator>`
+## 2. `boost::dynamic_bitset<Block, AllocatorOrContainer>`
 
 **Заголовочный файл:** `boost/dynamic_bitset.hpp` (forward declaration в `boost/dynamic_bitset_fwd.hpp`)
 **Авторы:** Jeremy Siek, Gennaro Prota, Ahmed Charles, и др.
+
+> **Примечание о версии:** Анализ был изначально проведён по документации Boost до версии 1.90. В Boost 1.90.0 (декабрь 2025) внесены существенные изменения в `dynamic_bitset`: переименование второго шаблонного параметра `Allocator` → `AllocatorOrContainer` (допускает не только аллокатор, но и контейнероподобный тип как storage backend), добавление полного набора итераторов (`begin`/`end`/`cbegin`/`cend`/`rbegin`/`rend`/`crbegin`/`crend`), навигации по clear-битам (`find_first_off`/`find_next_off`), а также `constexpr`-поддержка при компиляции в режиме C++20+. Ниже приведён обновлённый API surface.
+>
+> **Провенанс:** На момент первоначального анализа (до марта 2026) информация о Boost 1.90.0+ была основана преимущественно на исходном коде и changelog, поскольку опубликованная official reference-документация ещё не отражала новый API surface. По состоянию на март 2026 официальная reference-страница `boost::dynamic_bitset` на boost.org обновлена и теперь документирует `AllocatorOrContainer`, итераторы (`begin`/`end`/`cbegin`/`cend`/`rbegin`/`rend`/`crbegin`/`crend`), `push_front`/`pop_front`, `find_first_off`/`find_next_off` и обновлённую сигнатуру `find_first(pos)`. Утверждения, помеченные «Boost 1.90.0+» в данном артефакте, воспроизводимы по актуальной official reference.
 
 ### 2.1 Объявление
 
@@ -150,7 +166,7 @@ class reference {
 namespace boost {
 
 template <typename Block = unsigned long,
-          typename Allocator = std::allocator<Block>>
+          typename AllocatorOrContainer = std::allocator<Block>>
 class dynamic_bitset;
 
 }
@@ -161,25 +177,30 @@ class dynamic_bitset;
 | Параметр | Описание | Значение по умолчанию |
 |---|---|---|
 | `Block` | Unsigned integer тип для хранения бит. Определяет гранулярность внутреннего хранилища | `unsigned long` |
-| `Allocator` | Аллокатор для внутреннего управления памятью | `std::allocator<Block>` |
+| `AllocatorOrContainer` | Аллокатор для управления памятью **или** контейнероподобный тип, предоставляющий storage backend (Boost 1.90.0+). До Boost 1.90 параметр назывался `Allocator` и допускал только аллокатор | `std::allocator<Block>` |
 
-**Требование:** `Block` должен быть беззнаковым целым типом. `Allocator` должен удовлетворять требованиям стандартного аллокатора.
+**Требование:** `Block` должен быть беззнаковым целым типом. `AllocatorOrContainer` должен удовлетворять либо требованиям стандартного аллокатора, либо (начиная с Boost 1.90.0) быть контейнероподобным типом с как минимум bidirectional iterators.
 
 ### 2.2 Моделируемые концепты
 
-`Assignable`, `DefaultConstructible`, `EqualityComparable`, `LessThanComparable`.
+`DefaultConstructible`, `CopyConstructible`, `CopyAssignable`, `MoveConstructible`, `MoveAssignable`, `EqualityComparable`, `LessThanComparable`.
 
-Явно **не** моделирует `Container` — по причине proxy-типа `reference`, который не удовлетворяет требованиям ForwardIterator (аналогичная проблема с `std::vector<bool>`).
+Формально **не** моделирует `Container`. До Boost 1.90.0 причиной было отсутствие итераторов из-за proxy-типа `reference` (аналогичная проблема с `std::vector<bool>`). Начиная с Boost 1.90.0 добавлены итераторы (`begin`/`end`/`cbegin`/`cend`/`rbegin`/`rend`/`crbegin`/`crend`), пригодные для C++20 ranges, однако они **не удовлетворяют требованиям `LegacyForwardIterator`** (из-за proxy `reference`). Формальное соответствие концепту `Container` по-прежнему не заявлено в документации.
 
 ### 2.3 Вложенные типы
 
 | Тип | Описание |
 |---|---|
 | `block_type` | Синоним `Block` |
-| `allocator_type` | Синоним `Allocator` |
+| `allocator_type` | Тип аллокатора, извлечённый из `AllocatorOrContainer` через `detail::dynamic_bitset_impl::allocator_type_extractor`. Если `AllocatorOrContainer` — аллокатор, совпадает с ним; если контейнер — извлекается из контейнера |
+| `serialize_impl` | Helper type для optional zero-copy serialization support |
 | `size_type` | Unsigned integer тип для представления размера |
 | `reference` | Proxy-класс для неконстантного доступа к биту |
 | `const_reference` | `bool` |
+| `iterator` | Iterator type для обхода бит (Boost 1.90.0+) |
+| `const_iterator` | Const iterator type (Boost 1.90.0+) |
+| `reverse_iterator` | Reverse iterator type (Boost 1.90.0+) |
+| `const_reverse_iterator` | Const reverse iterator type (Boost 1.90.0+) |
 
 ### 2.4 Статические данные
 
@@ -211,10 +232,13 @@ class reference {
 | Сигнатура | Описание |
 |---|---|
 | `dynamic_bitset()` | Пустой bitset размера 0, аллокатор по умолчанию |
-| `explicit dynamic_bitset(const Allocator& alloc)` | Пустой bitset размера 0 с указанным аллокатором |
-| `explicit dynamic_bitset(size_type num_bits, unsigned long value = 0, const Allocator& alloc = Allocator())` | Bitset из `num_bits` бит; первые `min(num_bits, digits_of_ulong)` бит инициализируются из `value`, остальные — нулями |
-| `template<typename CharT, typename Traits, typename Alloc> explicit dynamic_bitset(const basic_string<CharT, Traits, Alloc>& s, size_type pos = 0, size_type n = npos, const Allocator& alloc = Allocator())` | Инициализация из строки символов `'0'`/`'1'`; высший символ соответствует младшему биту (как в `std::bitset`) |
-| `template<typename BlockInputIterator> dynamic_bitset(BlockInputIterator first, BlockInputIterator last, const Allocator& alloc = Allocator())` | Инициализация из диапазона блоков; блок 0 — биты `[0, bits_per_block)`, блок 1 — `[bits_per_block, 2*bits_per_block)`, и т.д. |
+| `explicit dynamic_bitset(const allocator_type& alloc)` | Пустой bitset размера 0 с указанным аллокатором |
+| `explicit dynamic_bitset(size_type num_bits, unsigned long value = 0, const allocator_type& alloc = allocator_type())` | Bitset из `num_bits` бит; первые `min(num_bits, digits_of_ulong)` бит инициализируются из `value`, остальные — нулями |
+| `template<typename CharT, typename Traits, typename Alloc> explicit dynamic_bitset(const basic_string<CharT, Traits, Alloc>& s, typename basic_string<CharT, Traits, Alloc>::size_type pos = 0)` | Инициализация из строки символов `'0'`/`'1'` начиная с позиции `pos`; отдельный overload, выделенный с Boost 1.90.0 после добавления `num_bits` в полную версию (до 1.90 покрывался единственным overload-ом с defaults) |
+| `template<typename CharT, typename Traits, typename Alloc> explicit dynamic_bitset(const basic_string<CharT, Traits, Alloc>& s, typename basic_string<CharT, Traits, Alloc>::size_type pos, typename basic_string<CharT, Traits, Alloc>::size_type n, size_type num_bits = npos, const allocator_type& alloc = allocator_type())` | Инициализация из подстроки `s[pos, pos+n)` символов `'0'`/`'1'`; последний (правый) символ строки соответствует биту 0, строковое представление идёт MSB-first (как в `std::bitset`; пример: `dynamic_bitset<>(string("1101"))` создаёт 4-битный bitset со значением 13; **не** `dynamic_bitset(13ul)` — integer ctor принимает `num_bits` первым аргументом, эквивалент: `dynamic_bitset<>(4, 13ul)`). Параметр `num_bits` (Boost 1.90.0+) ограничивает количество результирующих бит |
+| `template<typename CharT> explicit dynamic_bitset(const CharT* s, size_t n = size_t(-1), size_type num_bits = npos, const allocator_type& alloc = allocator_type())` | Инициализация из C-строки символов `'0'`/`'1'` (Boost 1.90.0+) |
+| `template<typename CharT, typename Traits> explicit dynamic_bitset(basic_string_view<CharT, Traits> sv, size_type num_bits = npos, const allocator_type& alloc = allocator_type())` | Инициализация из `string_view` (Boost 1.90.0+, требует C++17) |
+| `template<typename BlockInputIterator> dynamic_bitset(BlockInputIterator first, BlockInputIterator last, const allocator_type& alloc = allocator_type())` | Инициализация из диапазона блоков; блок 0 — биты `[0, bits_per_block)`, блок 1 — `[bits_per_block, 2*bits_per_block)`, и т.д. |
 | `dynamic_bitset(const dynamic_bitset& b)` | Копирующий конструктор |
 | `dynamic_bitset(dynamic_bitset&& b)` | Перемещающий конструктор (Boost 1.56+) |
 
@@ -235,6 +259,8 @@ class reference {
 | `void clear()` | Размер становится 0 |
 | `void push_back(bool bit)` | Добавить бит в позицию MSB; увеличивает `size()` на 1 |
 | `void pop_back()` | Удалить MSB; уменьшает `size()` на 1. Предусловие: `!empty()` |
+| `void push_front(bool bit)` | Добавить бит в позицию LSB (бит 0); все существующие биты сдвигаются на 1 к MSB; увеличивает `size()` на 1 (Boost 1.90.0+) |
+| `void pop_front()` | Удалить LSB (бит 0); все оставшиеся биты сдвигаются на 1 к LSB; уменьшает `size()` на 1. Предусловие: `!empty()` (Boost 1.90.0+) |
 | `void append(Block block)` | Добавить целый блок бит к MSB-концу; увеличивает `size()` на `bits_per_block` |
 | `template<typename BlockInputIterator> void append(BlockInputIterator first, BlockInputIterator last)` | Добавить диапазон блоков |
 
@@ -306,32 +332,63 @@ class reference {
 | `bool is_proper_subset_of(const dynamic_bitset& a) const` | `true` если `is_subset_of(a) && count() < a.count()`. Требует `size() == a.size()` |
 | `bool intersects(const dynamic_bitset& a) const` | `true` если существует бит, установленный в обоих bitset. Требует `size() == a.size()` |
 
-### 2.15 Навигация по set-битам
+### 2.15 Навигация по set- и clear-битам
 
 | Сигнатура | Описание |
 |---|---|
-| `size_type find_first() const` | Индекс младшего set-бита, или `npos` если нет set-битов |
+| `size_type find_first(size_type pos = 0) const` | Индекс младшего set-бита начиная с позиции `pos`, или `npos` если нет set-битов. До Boost 1.90.0 — без параметра `pos` |
 | `size_type find_next(size_type pos) const` | Индекс следующего set-бита строго после `pos`, или `npos` |
+| `size_type find_first_off(size_type pos = 0) const` | Индекс младшего clear-бита начиная с `pos`, или `npos` (Boost 1.90.0+) |
+| `size_type find_next_off(size_type pos) const` | Индекс следующего clear-бита строго после `pos`, или `npos` (Boost 1.90.0+) |
 
-Паттерн итерации:
+Паттерн итерации по set-битам:
 ```cpp
 for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_next(i)) {
-    // process bit i
+    // process set bit i
 }
 ```
 
-### 2.16 Сравнение
+Паттерн итерации по clear-битам (Boost 1.90.0+):
+```cpp
+for (auto i = b.find_first_off(); i != boost::dynamic_bitset<>::npos; i = b.find_next_off(i)) {
+    // process clear bit i
+}
+```
+
+### 2.16 Итераторы (Boost 1.90.0+)
+
+Начиная с Boost 1.90.0 `dynamic_bitset` предоставляет итераторы, пригодные для C++20 ranges (но **не** удовлетворяющие `LegacyForwardIterator` из-за proxy `reference`):
 
 | Сигнатура | Описание |
 |---|---|
-| `bool operator==(const dynamic_bitset& rhs) const` | Побитовое равенство; `true` только если `size() == rhs.size()` и все биты совпадают |
-| `bool operator!=(const dynamic_bitset& rhs) const` | Неравенство |
-| `bool operator<(const dynamic_bitset& rhs) const` | Лексикографический порядок |
-| `bool operator<=(const dynamic_bitset& rhs) const` | `<=` по лексикографическому порядку |
-| `bool operator>(const dynamic_bitset& rhs) const` | `>` по лексикографическому порядку |
-| `bool operator>=(const dynamic_bitset& rhs) const` | `>=` по лексикографическому порядку |
+| `iterator begin()` | Итератор на первый бит |
+| `iterator end()` | Итератор за последний бит |
+| `const_iterator begin() const` | Const-итератор на первый бит |
+| `const_iterator end() const` | Const-итератор за последний бит |
+| `const_iterator cbegin() const` | Const-итератор на первый бит (явный) |
+| `const_iterator cend() const` | Const-итератор за последний бит (явный) |
+| `reverse_iterator rbegin()` | Обратный итератор на последний бит |
+| `reverse_iterator rend()` | Обратный итератор перед первым битом |
+| `const_reverse_iterator rbegin() const` | Const обратный итератор |
+| `const_reverse_iterator rend() const` | Const обратный итератор |
+| `const_reverse_iterator crbegin() const` | Const обратный итератор (явный) |
+| `const_reverse_iterator crend() const` | Const обратный итератор (явный) |
 
-### 2.17 Конвертация
+Это позволяет использовать range-based for:
+```cpp
+for (auto bit : b) {
+    // bit -- значение бита (bool-like proxy)
+}
+```
+
+### 2.17 Сравнение
+
+Comparison operators определены как free/friend functions (не member methods); полные сигнатуры — в §2.19. Семантика:
+
+- `==` — побитовое равенство; `true` только если `size()` совпадают и все биты равны.
+- `<`, `<=`, `>`, `>=` — лексикографический порядок.
+
+### 2.18 Конвертация
 
 | Сигнатура | Описание |
 |---|---|
@@ -339,7 +396,7 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 
 **Примечание:** `to_ullong()` отсутствует в `boost::dynamic_bitset` (в отличие от `std::bitset`).
 
-### 2.18 Не-членские функции
+### 2.19 Не-членские функции
 
 #### Побитовые операторы
 
@@ -350,13 +407,26 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 | `dynamic_bitset operator^(const dynamic_bitset& a, const dynamic_bitset& b)` | Побитовое XOR. Требует `a.size() == b.size()` |
 | `dynamic_bitset operator-(const dynamic_bitset& a, const dynamic_bitset& b)` | Set difference. Требует `a.size() == b.size()` |
 
+#### Сравнение
+
+| Сигнатура | Описание |
+|---|---|
+| `bool operator==(const dynamic_bitset& a, const dynamic_bitset& b)` | Побитовое равенство; `true` только если `a.size() == b.size()` и все биты совпадают |
+| `bool operator!=(const dynamic_bitset& a, const dynamic_bitset& b)` | Неравенство |
+| `bool operator<(const dynamic_bitset& a, const dynamic_bitset& b)` | Лексикографический порядок |
+| `bool operator<=(const dynamic_bitset& a, const dynamic_bitset& b)` | `<=` по лексикографическому порядку |
+| `bool operator>(const dynamic_bitset& a, const dynamic_bitset& b)` | `>` по лексикографическому порядку |
+| `bool operator>=(const dynamic_bitset& a, const dynamic_bitset& b)` | `>=` по лексикографическому порядку |
+
 #### Сериализация и interop
 
 | Сигнатура | Описание |
 |---|---|
-| `template<...> void to_string(const dynamic_bitset& b, basic_string<CharT, Alloc>& s)` | Конвертация в строку `'0'`/`'1'` (не-членская для гибкости шаблонных параметров) |
+| `template<...> void to_string(const dynamic_bitset& b, basic_string<CharT, Alloc>& s)` | Конвертация в строку `'0'`/`'1'` (MSB-first, обратно конструктору из строки; не-членская для гибкости шаблонных параметров) |
 | `template<...> void to_block_range(const dynamic_bitset& b, BlockOutputIterator result)` | Запись бит в итератор блоков (block 0 = биты `[0, bits_per_block)`) |
 | `template<...> void from_block_range(BlockIterator first, BlockIterator last, dynamic_bitset& b)` | Чтение блоков в bitset |
+
+> **Примечание:** помимо функций выше, `dynamic_bitset` документирует nested type `serialize_impl` (§2.3) — helper для optional zero-copy serialization support через Boost.Serialization (подключается отдельным header).
 
 #### Потоковый ввод-вывод
 
@@ -364,6 +434,17 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 |---|---|
 | `template<...> basic_ostream& operator<<(basic_ostream& os, const dynamic_bitset& b)` | Потоковый вывод (MSB first); учитывает locale |
 | `template<...> basic_istream& operator>>(basic_istream& is, dynamic_bitset& b)` | Потоковый ввод; динамически расширяет bitset по мере чтения символов |
+
+#### Boost.Serialization
+
+`boost::dynamic_bitset` поддерживает сериализацию через Boost.Serialization framework при подключении отдельного заголовка `boost/dynamic_bitset/serialization.hpp`. Это optional Boost-specific механизм (не стандартный C++), аналогичный feature-gated `serde` в Rust. Предоставляет `serialize()` функцию для использования с `boost::archive` типами. Не является аналогом Java `Serializable` — требует явного включения зависимости и отдельного header.
+
+#### Хэширование и utility
+
+| Сигнатура | Описание |
+|---|---|
+| `template<...> void swap(dynamic_bitset<...>& a, dynamic_bitset<...>& b)` | Free swap (ADL-accessible); делегирует в `a.swap(b)` |
+| `template<...> size_t hash_value(dynamic_bitset<...> const& a)` | `boost::hash_value` — documented entry point для `boost::hash` / `boost::unordered_*` / ADL-хэширования. Отличается от `std::hash<dynamic_bitset>` (стандартная специализация, включена по умолчанию, отключается через `BOOST_DYNAMIC_BITSET_NO_STD_HASH`) |
 
 ---
 
@@ -376,12 +457,13 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 | **Конструкторы** | | | |
 | Default | `bitset()` | `dynamic_bitset()` | std: N бит (все 0); boost: 0 бит |
 | From integer | `bitset(unsigned long long)` | `dynamic_bitset(size_type, unsigned long)` | boost требует указать size |
-| From string | `bitset(string, pos, count, zero, one)` | `dynamic_bitset(string, pos, n, alloc)` | Оба поддерживают `'0'`/`'1'` |
-| From string_view | `bitset(string_view)` (C++26) | -- | Только std |
+| From string | `bitset(basic_string<charT>, pos, n, zero, one)` | `dynamic_bitset(basic_string<charT>, pos, n, num_bits, alloc)` | Оба параметризованы по `charT`; boost 1.90.0+ добавляет `num_bits` |
+| From C-string | `bitset(const charT*)` | `dynamic_bitset(const CharT*, n, num_bits, alloc)` | Оба параметризованы по символьному типу; boost: Boost 1.90.0+ |
+| From string_view | `bitset(basic_string_view<charT>)` (C++26) | `dynamic_bitset(basic_string_view<charT>, num_bits, alloc)` | std: C++26; boost: Boost 1.90.0+ (C++17) |
 | From block range | -- | `dynamic_bitset(first, last)` | Только boost |
 | Copy | Implicit | `dynamic_bitset(const dynamic_bitset&)` | |
 | Move | Implicit | `dynamic_bitset(dynamic_bitset&&)` | boost: Boost 1.56+ |
-| With allocator | -- | `dynamic_bitset(const Allocator&)` | Только boost |
+| With allocator | -- | `dynamic_bitset(const allocator_type&)` | Только boost |
 | **Управление размером** | | | |
 | `resize` | -- | `resize(num_bits, value)` | |
 | `clear` | -- | `clear()` | Размер → 0 |
@@ -435,6 +517,13 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 | **Навигация по set-битам** | | | |
 | `find_first` | -- | Да | Возвращает `npos` если нет |
 | `find_next` | -- | Да | Возвращает `npos` если нет |
+| **Навигация по clear-битам** | | | |
+| `find_first_off` | -- | Да (Boost 1.90.0+) | Возвращает `npos` если нет |
+| `find_next_off` | -- | Да (Boost 1.90.0+) | Возвращает `npos` если нет |
+| **Итераторы** | | | |
+| `begin`/`end` | -- | Да (Boost 1.90.0+) | C++20 ranges (не LegacyForwardIterator) |
+| `rbegin`/`rend` | -- | Да (Boost 1.90.0+) | Reverse + const |
+| `cbegin`/`cend`/`crbegin`/`crend` | -- | Да (Boost 1.90.0+) | Const-only |
 | **Сравнение** | | | |
 | `==`, `!=` | Да | Да | |
 | `<`, `<=`, `>`, `>=` | -- | Да | Лексикографический порядок |
@@ -448,9 +537,11 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 | `operator<<` (stream) | Да | Да | |
 | `operator>>` (stream) | Да | Да (динамически расширяет) | |
 | **Прочее** | | | |
-| `swap` | -- | `swap(dynamic_bitset&)` | |
+| `swap` (member) | -- | `swap(dynamic_bitset&)` | |
+| `swap` (free) | -- | `swap(a, b)` | ADL-accessible |
 | `get_allocator` | -- | Да | |
-| `std::hash` | Да (C++11) | -- | |
+| `std::hash` | Да (C++11) | Да (по умолчанию; отключается через `BOOST_DYNAMIC_BITSET_NO_STD_HASH`) | |
+| `boost::hash_value` | -- | Да | Для `boost::hash`/`boost::unordered_*` |
 
 ### 3.2 Анализ по осям сравнения
 
@@ -474,7 +565,7 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 | Управление ёмкостью | Нет (фиксировано) | `reserve`, `capacity`, `shrink_to_fit` — аналогично `std::vector` |
 | `empty()` | Нет (не имеет смысла при N > 0) | Да — `size() == 0` |
 
-Ключевое отличие: `std::bitset<N>` — это value type полностью на стеке (для разумных N), а `boost::dynamic_bitset` управляет heap-allocated хранилищем через аллокатор.
+Ключевое отличие: `std::bitset<N>` — это тип с фиксированным inline storage внутри объекта (без отдельной heap-аллокации для хранения бит; размещение самого объекта определяется storage duration переменной — automatic, static, member или dynamic через `new`), а `boost::dynamic_bitset` управляет heap-allocated хранилищем через аллокатор.
 
 `boost::dynamic_bitset` **не** поддерживает автоматический рост при записи за пределы текущего размера (в отличие от `java.util.BitSet`). Попытка `set(pos)` при `pos >= size()` — нарушение предусловия (assert).
 
@@ -482,24 +573,25 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 
 | Аспект | `std::bitset<N>` | `boost::dynamic_bitset` |
 |---|---|---|
-| Container | Нет | Нет (явно отвергнуто в документации) |
-| Iterable | Нет | Нет |
-| ForwardIterator | Нет | Нет |
-| Причина | Не рассматривался как контейнер в стандарте | Proxy `reference` не удовлетворяет ForwardIterator (та же проблема, что у `vector<bool>`) |
+| Container | Нет | Нет (формально не заявлено) |
+| Iterable (итераторы) | Нет | Да (Boost 1.90.0+) — `begin()`/`end()`, range-based for |
+| LegacyForwardIterator | Нет | **Нет** (proxy `reference`; C++20 ranges support — да, Boost 1.90.0+) |
+| Причина отсутствия Container | Не рассматривался как контейнер в стандарте | Proxy `reference` не удовлетворяет `LegacyForwardIterator`. С Boost 1.90.0 добавлены итераторы, пригодные для C++20 ranges, но формальный Container по-прежнему не заявлен |
 
-Документация `boost::dynamic_bitset` явно объясняет решение не реализовывать Container: proxy-тип `reference` нарушает требования ForwardIterator, что ведёт к subtle bugs при использовании со стандартными алгоритмами (как у `std::vector<bool>`). Авторы предпочли честное API вместо ложного соответствия концепту Container.
+`boost::dynamic_bitset` формально не моделирует `Container`: proxy-тип `reference` не удовлетворяет требованиям `LegacyForwardIterator` (аналогично `std::vector<bool>`). Начиная с Boost 1.90.0 добавлены итераторы (`iterator`, `const_iterator`, `reverse_iterator`, `const_reverse_iterator`), пригодные для C++20 ranges, но ограничение `LegacyForwardIterator` сохраняется, и формальное соответствие концепту `Container` по-прежнему не заявлено.
 
 #### 3.2.4 Поддержка итерации
 
 | Аспект | `std::bitset<N>` | `boost::dynamic_bitset` |
 |---|---|---|
-| Итераторы begin/end | Нет | Нет |
-| Range-based for | Нет | Нет |
-| Итерация по set-битам | Только вручную: `for (i = 0; i < N; ++i) if (bs.test(i)) ...` | `find_first()` + `find_next(pos)` |
-| Итерация по всем битам | Ручной цикл по индексам | Ручной цикл по индексам |
-| Итерация по clear-битам | Только вручную | Только вручную |
+| Итераторы begin/end | Нет | Да (Boost 1.90.0+) |
+| Range-based for | Нет | Да (Boost 1.90.0+) |
+| Обратная итерация (rbegin/rend) | Нет | Да (Boost 1.90.0+) |
+| Итерация по set-битам | Только вручную: `for (i = 0; i < N; ++i) if (bs.test(i)) ...` | `find_first()` + `find_next(pos)` (пропускает блоки нулей) |
+| Итерация по всем битам | Ручной цикл по индексам | Ручной цикл по индексам или итераторы `begin`/`end` (Boost 1.90.0+) |
+| Итерация по clear-битам | Только вручную | `find_first_off()` + `find_next_off(pos)` (Boost 1.90.0+) |
 
-`boost::dynamic_bitset` предоставляет эффективный механизм итерации по set-битам через `find_first()`/`find_next()`, который может пропускать целые блоки нулей. В `std::bitset` такого механизма нет — приходится проверять каждый бит по отдельности.
+`boost::dynamic_bitset` предоставляет эффективный механизм итерации по set-битам через `find_first()`/`find_next()`, который может пропускать целые блоки нулей. Начиная с Boost 1.90.0 добавлены аналогичные `find_first_off()`/`find_next_off()` для clear-битов. Также в Boost 1.90.0 добавлены итераторы (`begin`/`end`/`rbegin`/`rend`), пригодные для C++20 ranges и range-based for (но не удовлетворяющие `LegacyForwardIterator`) — они обходят **все битовые позиции** последовательно (от LSB к MSB), возвращая bool/proxy для каждого бита, а не только для set-битов. В `std::bitset` таких механизмов нет — приходится проверять каждый бит по отдельности.
 
 #### 3.2.5 Операторы и синтаксический сахар
 
@@ -531,14 +623,16 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 | Аспект | `std::bitset<N>` | `boost::dynamic_bitset` |
 |---|---|---|
 | В строку | `to_string()` (member, шаблонный) | `to_string(b, s)` (non-member) |
-| Из строки | Конструктор из `string`/`string_view` | Конструктор из `basic_string` |
+| Из строки | Конструктор из `string`/`string_view` | Конструктор из `basic_string`, `const CharT*`, `basic_string_view` (Boost 1.90.0+) |
 | В unsigned long | `to_ulong()` | `to_ulong()` |
 | В unsigned long long | `to_ullong()` (C++11) | -- |
 | В блоки | -- | `to_block_range(b, output_iter)` |
 | Из блоков | -- | Конструктор из `BlockInputIterator` + `from_block_range()` |
 | В byte[] | -- | -- (через `to_block_range` с `Block = uint8_t`) |
-| `std::hash` | Да (C++11) | Нет |
+| `std::hash` | Да (C++11) | Да (по умолчанию; отключается через `BOOST_DYNAMIC_BITSET_NO_STD_HASH`) |
+| `boost::hash_value` | -- | Да — documented entry point для `boost::hash`/`boost::unordered_*` |
 | Stream I/O | Да | Да |
+| Boost.Serialization | -- | Да (optional, отд. header `boost/dynamic_bitset/serialization.hpp`) |
 
 Ключевое отличие: `boost::dynamic_bitset` предоставляет block-level interop (`to_block_range`/`from_block_range`) для эффективной сериализации и interop с другими представлениями. Это позволяет конвертировать bitset в/из `vector<Block>`, файла и т.д. без посимвольной обработки.
 
@@ -568,11 +662,11 @@ for (auto i = b.find_first(); i != boost::dynamic_bitset<>::npos; i = b.find_nex
 
 ### 4.2 Ограничения C++ дизайна
 
-1. **Нет итераторов/range-based for** — осознанное решение из-за proxy reference, но усложняет код. Kotlin может решить эту проблему через `Iterable<Int>` или `Sequence<Int>`, возвращающий индексы set-битов.
+1. **Нет итераторов/range-based for в `std::bitset`** — `std::bitset` по-прежнему не предоставляет итераторов. `boost::dynamic_bitset` частично решил эту проблему в Boost 1.90.0, добавив `begin`/`end`/`rbegin`/`rend` (пригодные для C++20 ranges, но не удовлетворяющие `LegacyForwardIterator`). Kotlin может решить аналогично через `Iterable<Int>` или `Sequence<Int>`, возвращающий индексы set-битов.
 
 2. **Нет auto-grow** — `boost::dynamic_bitset` требует явного `resize` перед записью за пределы текущего размера. Java `BitSet` растёт автоматически. Для Kotlin нужно решить: явный resize vs auto-grow.
 
-3. **Нет `nextClearBit`/`previousSetBit`** — `boost::dynamic_bitset` предоставляет только `find_first`/`find_next` для set-битов. Java BitSet предоставляет четыре навигационных метода.
+3. **Нет `previousSetBit`/`previousClearBit`** — `boost::dynamic_bitset` предоставляет `find_first`/`find_next` для set-битов и (с Boost 1.90.0) `find_first_off`/`find_next_off` для clear-битов, но не поддерживает обратную навигацию через find-подобные функции (хотя reverse iterators позволяют обратный обход). Java BitSet предоставляет четыре навигационных метода, включая `previousSetBit` и `previousClearBit`.
 
 4. **Нет `get(from, to)` для извлечения sub-bitset** — доступно в Java BitSet, отсутствует в обоих C++ реализациях.
 

@@ -1,6 +1,16 @@
 # Scala BitSet — Cross-Language API Analysis
 
-**Source:** Scala 2.13.x standard library (`scala.collection.BitSet`, `scala.collection.immutable.BitSet`, `scala.collection.mutable.BitSet`)
+## Резюме
+
+Scala BitSet — единственная среди рассмотренных реализаций, предоставляющая полноценный immutable/mutable split через два класса с общим трейтом `collection.BitSet`, полностью интегрированных в иерархию коллекций Scala (`SortedSet[Int]`). Immutable-вариант имеет small-set оптимизации (`BitSet1` для ≤64 бит, `BitSet2` для ≤128 бит без аллокации массива). Мутабельный вариант поддерживает in-place операции с auto-grow. Оба варианта моделируют BitSet как множество целых чисел (`Set[Int]`), а не как вектор бит.
+
+**Входные данные:** [`step-01-kotlin-implementations.md`](step-01-kotlin-implementations.md) (Java `BitSet` как baseline для сравнения).
+
+**См. также:** [`step-02-cross-language.md`](step-02-cross-language.md) (зонтичный кросс-языковой обзор, в который входит данный артефакт).
+
+---
+
+**Source:** Scala 2.13.18 standard library, git tag `v2.13.18` (`scala.collection.BitSet`, `scala.collection.immutable.BitSet`, `scala.collection.mutable.BitSet`). Implementation details below reflect this specific release; public API surface is stable across 2.13.x.
 
 ---
 
@@ -76,7 +86,7 @@ trait BitSetOps[+C <: BitSet with BitSetOps[C]]
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
-| `empty` | `val empty: BitSet` | Returns `BitSet1(0L)` -- singleton empty |
+| `empty` | `final val empty: BitSet` | The empty set |
 | `newBuilder` | `def newBuilder: Builder[Int, BitSet]` | Uses `mutable.BitSet.newBuilder` internally, converts result |
 | `fromSpecific` | `def fromSpecific(it: IterableOnce[Int]): BitSet` | Reuses if already immutable BitSet; otherwise builds |
 | `fromBitMask` | `def fromBitMask(elems: Array[Long]): BitSet` | Creates from array of longs, **copies** the array |
@@ -100,7 +110,7 @@ trait BitSetOps[+C <: BitSet with BitSetOps[C]]
 |-------------|-------------|
 | `new BitSet()` | Empty, default initial capacity |
 | `new BitSet(initSize: Int)` | Pre-allocate for `initSize` bits |
-| `new BitSet(elems: Array[Long])` | From raw word array (package-private) |
+| `new BitSet(elems: Array[Long])` | **Public** primary constructor из raw word array. Поле `elems` — `protected[collection] final var`, но сам конструктор публичен. Создаёт aliasing: переданный массив становится внутренним хранилищем (zero-copy) |
 
 ---
 
@@ -165,7 +175,7 @@ trait BitSetOps[+C <: BitSet with BitSetOps[C]]
 | `collect[B]` | `def collect[B](...)(implicit ev: Ordering[B]): SortedSet[B]` | Returns `SortedSet[B]` |
 | `filter` | inherited | Returns BitSet via `filterImpl` (optimized word-by-word) |
 | `filterNot` | inherited | Returns BitSet via `filterImpl` |
-| `zip` | `def zip[B](...)(implicit ev: Ordering[(Int, B)]): SortedSet[(Int, B)]` | Cannot return BitSet (element type changes) |
+| `zip` | `def zip[B](...)(implicit ev: Ordering[(Int, B)]): SortedSet[(Int, B)]` | `SortedSetOps` overload; general `IterableOps` overload returns `Set[(Int, B)]`. Cannot return BitSet (element type changes) |
 
 ---
 
@@ -187,6 +197,8 @@ The immutable variant returns a **new BitSet** for every modification.
 | `removedAll` | `--` | `def removedAll(that: IterableOnce[Int]): BitSet` | Remove all elements from `that` |
 
 ### Internal Implementation Classes
+
+> **API status:** `BitSet1`, `BitSet2`, `BitSetN` are listed as **Deprecated Type Members** in official Scala 2.13 API docs: "Implementation classes of BitSet should not be accessed directly." Descriptions below reflect observed 2.13.18 source behavior, not public API guarantees.
 
 | Class | Storage | Bits Covered | Notes |
 |-------|---------|--------------|-------|
@@ -218,7 +230,7 @@ The mutable variant modifies **in place** and returns `this` for chaining.
 | `add` | -- | `def add(elem: Int): Boolean` | Add if absent; returns `true` if added (inherited from `mutable.SetOps`) |
 | `remove` | -- | `def remove(elem: Int): Boolean` | Remove if present; returns `true` if was present |
 | `update` | -- | `def update(elem: Int, included: Boolean): Unit` | `set(5) = true` adds, `set(5) = false` removes |
-| `clear` | -- | `def clear(): Unit` | Zeros out all words (retains array size) |
+| `clear` | -- | `def clear(): Unit` | Removes all elements (from `Clearable` contract) |
 
 ### Bulk Mutation Operations
 
@@ -243,7 +255,8 @@ The mutable variant modifies **in place** and returns `this` for chaining.
 |--------|-----------|-------------|
 | `clone` | `override def clone(): BitSet` | Deep copy via `Arrays.copyOf` |
 | `toImmutable` | `def toImmutable: immutable.BitSet` | Convert to immutable via `immutable.BitSet.fromBitMask(elems)` |
-| `ensureCapacity` | `protected final def ensureCapacity(idx: Int): Unit` | Doubles array size as needed; max `MaxSize` = `Int.MaxValue / 64 + 1` |
+
+> **Implementation note:** `ensureCapacity(idx: Int): Unit` — `protected final def`, не часть публичного API. Вызывается внутренне из `addOne`, `|=`, `^=` и других мутирующих операций для увеличения массива. Удваивает размер массива по мере необходимости; максимум `MaxSize = Int.MaxValue / 64 + 1`. Не является механизмом пользовательского управления capacity (в отличие от `reserve`/`capacity` в Rust bitvec или `reserveCapacity` в Swift).
 
 ---
 
@@ -284,10 +297,10 @@ Because BitSet implements `Set[Int]`, it inherits the **entire** Scala collectio
 | `to` | `def to[C](factory: Factory[Int, C]): C` | Generic conversion |
 | `grouped` | `def grouped(size: Int): Iterator[C]` | |
 | `sliding` | `def sliding(size: Int, step: Int): Iterator[C]` | |
-| `zip` | `def zip[B](that: IterableOnce[B]): SortedSet[(Int, B)]` | |
-| `zipWithIndex` | `def zipWithIndex: SortedSet[(Int, Int)]` | |
+| `zip` | `def zip[B](that: IterableOnce[B]): Set[(Int, B)]` | Inherited from `IterableOps`; `SortedSetOps` overload `zip[B](that)(implicit Ordering[(Int, B)]): SortedSet[(Int, B)]` also available |
+| `zipWithIndex` | `def zipWithIndex: Set[(Int, Int)]` | Inherited from `IterableOps` |
 | `corresponds` | `def corresponds[B](that: IterableOnce[B])(p: (Int, B) => Boolean): Boolean` | |
-| `knownSize` | `def knownSize: Int` | Potentially O(n) since it calls `size` |
+| `knownSize` | `def knownSize: Int` | Inherited default; returns `-1` |
 | `sizeIs` | `def sizeIs: SizeCompareOps` | Lazy size comparison |
 
 ### From `SetOps`
@@ -311,7 +324,7 @@ Because BitSet implements `Set[Int]`, it inherits the **entire** Scala collectio
 | `iteratorFrom(start: Int)` | Iterator from `start` upward |
 | `firstKey` | Same as `head` (smallest element) |
 | `lastKey` | Same as `last` (largest element) |
-| `range(from, until)` | Subrange view via `rangeImpl` |
+| `range(from, until)` | Subrange as new BitSet via `rangeImpl` (not a lazy `view`) |
 | `from(elem)` | Elements >= `elem` |
 | `until(elem)` | Elements < `elem` |
 | `rangeTo(to)` | Elements <= `to` |
@@ -366,14 +379,14 @@ if (bs(3)) println("contains 3")
 
 ### Storage Layout
 
-Both variants use `Array[Long]` as the backing store, where each `Long` word holds 64 bits.
+Immutable-вариант хранит биты через deprecated internal classes (см. §4): `BitSet1` и `BitSet2` используют inline `Long`-поля (без аллокации массива); `BitSetN` — `Array[Long]`. Mutable-вариант всегда использует `Array[Long]`. Каждое `Long`-слово хранит 64 бита.
 
 | Property | Immutable | Mutable |
 |----------|-----------|---------|
 | Backing storage | `Long` field(s) or `Array[Long]` | `var elems: Array[Long]` |
 | Growth strategy | N/A (new object per operation) | Doubles array size; max `MaxSize = Int.MaxValue / 64 + 1` |
-| Shrinking | Automatic: result uses smallest class (`BitSet1`/`2`/`N`) | Never shrinks; `clear()` zeros but keeps array |
-| Small-set optimization | `BitSet1` (1 Long, no array), `BitSet2` (2 Longs, no array) | No; always `Array[Long]` (minimum 1 element) |
+| Shrinking | Automatic: result uses smallest class (`BitSet1`/`2`/`N`) | No public shrinking API. *Impl. note:* current source retains array on `clear()`; not a documented guarantee |
+| Small-set optimization | Via deprecated internal classes (§4): `BitSet1` (1 Long, no array), `BitSet2` (2 Longs, no array) | No; always `Array[Long]` (minimum 1 element) |
 | Element constraint | `require(elem >= 0)` | `require(elem >= 0)` |
 | Max element | Limited by memory/`Int.MaxValue` | Limited by `MaxSize * 64` |
 
@@ -391,15 +404,15 @@ MaxSize   = Int.MaxValue / 64 + 1  // max number of words (~33.5 million)
 
 | Feature | Mechanism |
 |---------|-----------|
-| Java Serialization | Both implement `Serializable` with custom `SerializationProxy` |
-| Serialization format | Writes `nwords: Int` followed by each `Long` word |
+| Java Serialization | Both implement `Serializable`; both use internal `writeReplace()` for custom serialization path |
 | `toBitMask` | Export to `Array[Long]` (always copies) |
-| `fromBitMask` | Import from `Array[Long]` (copies array) |
-| `fromBitMaskNoCopy` | Import from `Array[Long]` (zero-copy; caller must not mutate) |
+| `fromBitMask` | Companion-object factory на `immutable.BitSet` и `mutable.BitSet`: import из `Array[Long]` (copies array). Одноимённый метод в трейте `BitSetOps` — `protected[collection]`, не часть публичного API |
+| `fromBitMaskNoCopy` | Companion-object factory на `immutable.BitSet` и `mutable.BitSet`: import из `Array[Long]` (zero-copy; caller must not mutate). Одноимённый метод в трейте `BitSetOps` — `protected[collection]` |
+| `new mutable.BitSet(Array[Long])` | Публичный конструктор mutable-варианта: zero-copy aliasing переданного массива |
 | `toImmutable` | Mutable-only: `def toImmutable: immutable.BitSet` |
 | Collection conversions | `toList`, `toSet`, `toArray`, `toVector`, `to(factory)`, etc. (all inherited) |
 | Java stream interop | `stepper` provides `IntStepper with EfficientSplit` for parallel streams |
-| String representation | `BitSet(1, 3, 5)` (inherited `toString` from `Iterable`) |
+| String representation | `BitSet(1, 3, 5)` (inherited `toString` from `Iterable`; observed format in 2.13.18, not a documented stable API guarantee) |
 
 ---
 
@@ -456,12 +469,15 @@ val pairs = for {
 
 ### Pattern 5: Optimized Type-Preserving Operations
 
-When `map(f: Int => Int)` is called, the result is a `BitSet`. When `map[B](f: Int => B)` would change the element type, the result is a `SortedSet[B]`. This is enforced via implicit `Ordering[B]` requirements with custom error messages:
+When `map(f: Int => Int)` is called, the result is a `BitSet`. When `map[B](f: Int => B)` would change the element type, the result is a `SortedSet[B]`, provided an implicit `Ordering[B]` is available (standard types like `String`, `Int`, etc. have built-in orderings). For custom types without an `Ordering`, the compiler reports an error suggesting `.unsorted`:
 
 ```scala
 BitSet(1, 2, 3).map(_ * 2)           // BitSet(2, 4, 6)
 BitSet(1, 2, 3).map(_.toString)      // SortedSet("1", "2", "3")
-BitSet(1, 2, 3).map(_ => "x")        // Error: No implicit Ordering[String]...
+BitSet(1, 2, 3).map(_ => "x")        // SortedSet("x") — String has implicit Ordering
+
+case class Blob(x: Int)
+BitSet(1, 2, 3).map(Blob(_))         // Error: No implicit Ordering[Blob]
                                       // suggestion: upcast with .unsorted first
 ```
 
@@ -485,7 +501,7 @@ BitSet(1, 2, 3).map(_ => "x")        // Error: No implicit Ordering[String]...
 |--------|------------|
 | Sizing | Dynamic in both variants |
 | Growth | Mutable: doubles array; Immutable: allocates exactly-sized result |
-| Shrinking | Immutable: automatic (picks smallest class); Mutable: never shrinks |
+| Shrinking | Immutable: automatic (picks smallest class); Mutable: no public shrinking API |
 | Small-set optimization | Immutable: `BitSet1` (no array), `BitSet2` (no array); Mutable: none |
 | Maximum | ~2.1 billion bits (`MaxSize * 64`) |
 
@@ -529,12 +545,12 @@ BitSet(1, 2, 3).map(_ => "x")        // Error: No implicit Ordering[String]...
 | Aspect | Assessment |
 |--------|------------|
 | Raw export | `toBitMask: Array[Long]` |
-| Raw import | `fromBitMask(Array[Long])`, `fromBitMaskNoCopy(Array[Long])` |
-| Java serialization | Custom `SerializationProxy` (writes word count + longs) |
+| Raw import | Companion-object factories: `immutable.BitSet.fromBitMask(Array[Long])`, `immutable.BitSet.fromBitMaskNoCopy(Array[Long])`, `mutable.BitSet.fromBitMask(Array[Long])`, `mutable.BitSet.fromBitMaskNoCopy(Array[Long])`; mutable: также публичный конструктор `new BitSet(Array[Long])` (zero-copy aliasing). NB: одноимённые методы в трейте `BitSetOps` — `protected[collection]`, не часть публичного API |
+| Java serialization | `Serializable`; uses internal `writeReplace()` for custom serialization path |
 | Collection conversion | All standard: `toList`, `toSet`, `toArray`, `toVector`, `to(Factory)` |
 | Cross-variant | `mutable.BitSet.toImmutable: immutable.BitSet` |
 | Java stream interop | `stepper` for `IntStream` / parallel streams |
-| String | `"BitSet(1, 3, 5)"` (standard Iterable toString) |
+| String | `"BitSet(1, 3, 5)"` (standard Iterable toString; observed format, not a documented stable API guarantee) |
 
 ---
 
@@ -550,7 +566,7 @@ BitSet(1, 2, 3).map(_ => "x")        // Error: No implicit Ordering[String]...
 | Intersection | `& other` returns new | `&= other` modifies in place; `& other` returns new |
 | Difference | `&~ other` returns new | `&~= other` modifies in place; `&~ other` returns new |
 | Sym. diff | `^ other` returns new | `^= other` modifies in place; `^ other` returns new |
-| Clear | N/A (use `empty`) | `clear()` -- zeros array, retains capacity |
+| Clear | N/A (use `empty`) | `clear()` -- removes all elements (from `Clearable`) |
 | Clone | N/A (immutable, sharing is safe) | `clone(): BitSet` -- deep copy |
 | Small-set opt. | `BitSet1`, `BitSet2` | None |
 | Convert to other | `toBitMask` then `mutable.BitSet.fromBitMask` | `toImmutable: immutable.BitSet` |

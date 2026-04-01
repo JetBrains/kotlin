@@ -1,8 +1,18 @@
 # Swift `BitSet` — Cross-Language API Surface Analysis
 
+## Резюме
+
+Swift `BitSet` из пакета swift-collections — value type (struct) с copy-on-write семантикой, реализующий протокол `SetAlgebra`. Моделирует множество неотрицательных целых чисел (`Int`), а не вектор бит (для этого в пакете есть отдельный `BitArray`). Уникальные решения: `BitSet.Counted` — обёртка с кешированным popcount для O(1) `count`/`isEmpty`; 56 методов set algebra с 4 overloads каждый; `Sendable` для безопасной передачи между isolation domains.
+
+**Входные данные:** [`step-01-kotlin-implementations.md`](step-01-kotlin-implementations.md) (Java `BitSet` как baseline для сравнения).
+
+**См. также:** [`step-02-cross-language.md`](step-02-cross-language.md) (зонтичный кросс-языковой обзор, в который входит данный артефакт).
+
+---
+
 **Source:** [apple/swift-collections](https://github.com/apple/swift-collections) package, `Sources/BitCollections/BitSet/` directory
-**Package version:** swift-collections (latest `main` as of 2026-03-30)
-**License:** Apache 2.0 with Runtime Library Exception
+**Package version:** swift-collections `1.3.0` (analysis baseline; released September 2025)
+**License:** Apache-2.0 WITH Swift-exception
 **Status:** Stable, part of Apple's official swift-collections package (NOT part of the Swift standard library)
 
 ---
@@ -17,7 +27,7 @@ public struct BitSet {
 
 - **Value type** (struct), not a class.
 - Internal storage is `[_Word]` where `_Word` wraps `UInt` (platform word size).
-- Conforms to `Sendable` (safe for concurrent use by value).
+- Conforms to `Sendable` (safe to transfer between isolation domains as a value type).
 
 ### Conceptual Model
 
@@ -39,21 +49,21 @@ This is the most architecturally significant aspect of Swift's BitSet design.
 | `Sequence` | Yes | Iterates over set members (Int values) in ascending order. |
 | `Collection` | Yes | Random-access-like, but O(d) index advancement. |
 | `BidirectionalCollection` | Yes | Forward and backward iteration over members. |
-| `Equatable` | Yes | Compares underlying storage directly. |
-| `Hashable` | Yes | Hashes the storage array. |
+| `Equatable` | Yes | Value equality. |
+| `Hashable` | Yes | `hash(into:)` conformance. |
 | `Codable` | Yes | Encodes as unkeyed container of `UInt64` values. Guarded by `#if !$Embedded`. |
 | `ExpressibleByArrayLiteral` | Yes | `let bits: BitSet = [1, 2, 3]` |
 | `CustomStringConvertible` | Yes | Array-like description: `[1, 2, 3]`. Guarded by `#if !$Embedded`. |
 | `CustomDebugStringConvertible` | Yes | Same as `description`. Guarded by `#if !$Embedded`. |
 | `CustomReflectable` | Yes | Mirror with `.set` display style. Guarded by `#if !$Embedded`. |
-| `Sendable` | Yes | Value type, safe for concurrency. |
-| `_SortedCollection` | Yes | Internal protocol. Provides O(1) `sorted()`, `min()`, `max()`. |
-| `_UniqueCollection` | Yes | Internal protocol. Elements are unique. |
+| `Sendable` | Yes | Value type; safe to transfer between isolation domains. Not equivalent to built-in synchronization for shared mutable state. |
+
+> **Internal protocols:** `BitSet` also conforms to `_SortedCollection` and `_UniqueCollection`. These are underscored protocols in swift-collections whose declarations may change between releases. They provide optimized implementations for `sorted()` (returns self), `min()` (O(min)), `max()` (O(1)). The methods themselves are publicly accessible and separately documented at the `BitSet` level (see §10); the equivalent results are also achievable through the public `first`/`last` properties of `BidirectionalCollection`.
 
 **Notable absences:**
 - NOT `RandomAccessCollection` — index advancement is O(d) where d is the distance between members.
 - NOT `RangeReplaceableCollection` — that role belongs to `BitArray`.
-- NOT `MutableCollection` — mutations go through `insert`/`remove`/set algebra, not subscript assignment.
+- NOT `MutableCollection` — the collection `subscript(position:)` by `Index` is read-only; mutation is performed via `SetAlgebra` methods and the separate membership-based `subscript(member:)` (see §8).
 
 ---
 
@@ -94,27 +104,28 @@ extension BitSet {
 | `SetAlgebra` | Full mirror of BitSet's SetAlgebra operations |
 | `Sequence` | Same iterator as BitSet |
 | `BidirectionalCollection` | Same as BitSet |
-| `Equatable` | Short-circuits on count before comparing bits |
-| `Hashable` | Same hash as underlying BitSet |
+| `Equatable` | Value equality |
+| `Hashable` | Hashable conformance |
 | `Codable` | Same encoding as BitSet |
 | `ExpressibleByArrayLiteral` | Same as BitSet |
 | `CustomStringConvertible` | Same as BitSet |
 | `CustomDebugStringConvertible` | Same as BitSet |
 | `CustomReflectable` | Same as BitSet |
 | `Sendable` | Value type |
-| `_SortedCollection` | O(1) sorted/min/max |
-| `_UniqueCollection` | Elements unique |
+
+> **Internal protocols:** `BitSet.Counted` also conforms to `_SortedCollection` and `_UniqueCollection` (see note in §2 above).
 
 **Conversion between BitSet and BitSet.Counted:**
 ```swift
 // BitSet -> BitSet.Counted
-let counted = bits.counted  // property, O(max) first time
+let counted = bits.counted  // creates Counted wrapper; O(max) to compute initial popcount
 
 // BitSet.Counted -> BitSet
-let uncounted = counted.uncounted  // property, O(1)
+let raw = counted.uncounted  // property, O(1); result is a plain BitSet without count tracking
 
-// In-place mutation via uncounted
-counted.uncounted.formUnion(other)  // auto-recounts
+// Mutation via Counted's own SetAlgebra surface (count stays in sync)
+var mutableCounted = bits.counted
+mutableCounted.formUnion(other)  // cached count is updated by Counted's mutating methods
 ```
 
 ### 3.3. `BitSet.Iterator`
@@ -155,7 +166,7 @@ public struct Iterator: IteratorProtocol {
 | `count` | `Int` | O(max) | Number of set bits (popcount over all words). **O(1) in `Counted` variant.** |
 | `startIndex` | `Index` | O(min) | Position of the first member. |
 | `endIndex` | `Index` | O(1) | Past-the-end position. |
-| `underestimatedCount` | `Int` | O(max) | Returns exact `count` (since it's known to be exact). |
+| `underestimatedCount` | `Int` | — | Inherited from `Collection`; public contract guarantees only a lower bound. Observed implementation returns exact `count` (not a documented API guarantee). |
 | `first` | `Int?` | O(min) | Smallest member (from Collection). |
 | `last` | `Int?` | O(1) | Largest member (from BidirectionalCollection). |
 | `counted` | `BitSet.Counted` | O(max) | Wrapped version that tracks count. |
@@ -174,9 +185,10 @@ public struct Iterator: IteratorProtocol {
 | `update(with:)` | `(Int) -> Int?` | `Int?` | O(1) amortized | Insert unconditionally. Returns old value if was present. |
 | `remove(_:)` | `(Int) -> Int?` | `Int?` | O(1) amortized | Remove a member. Returns the value if it was present, nil otherwise. |
 | `remove(at:)` | `(Index) -> Int` | `Int` | O(1) amortized | Remove the element at a specific index. |
-| `filter(_:)` | `((Int) throws -> Bool) rethrows -> BitSet` | `BitSet` | O(n) | Returns a new BitSet with only elements satisfying the predicate. |
 
 **Note on amortized O(1):** Insert/remove are O(1) when the set is uniquely referenced and the value fits within existing capacity. Otherwise O(max(newValue, currentMax)) for CoW copy or growth.
+
+**Note on `update(with:)` return value:** In the analysis baseline (`1.3.0`), the return value of `update(with:)` diverges from the `SetAlgebra` specification described above. An open [PR #538](https://github.com/apple/swift-collections/pull/538) proposes a fix.
 
 ---
 
@@ -257,19 +269,22 @@ bits[member: 5].toggle() // toggle membership
 | `distance(from:to:)` | `(Index, Index) -> Int` | O(d) | Number of members between two indices. |
 | `index(_:offsetBy:)` | `(Index, Int) -> Index` | O(d) | Offset an index by a number of positions. |
 | `index(_:offsetBy:limitedBy:)` | `(Index, Int, Index) -> Index?` | O(d) | Offset with limit. |
+| `index(of:)` | `(Int) -> Index?` | O(1) | Returns the index of a given member value, or nil if not present. Lookup by element value, not navigation by opaque Index offset. |
 | `makeIterator()` | `() -> Iterator` | O(1) | Get an iterator. |
 
 ---
 
 ## 10. Sorted Collection APIs
 
-BitSet elements are **always in ascending sorted order** (inherent to the bitmap representation).
+BitSet elements are **always in ascending sorted order** (inherent to the bitmap representation). Efficient access to the smallest and largest members is available through the public `first` (O(min)) and `last` (O(1)) properties of `BidirectionalCollection`.
 
 | Method | Signature | Complexity | Description |
 |---|---|---|---|
-| `sorted()` | `() -> BitSet` | O(1) | Returns self (already sorted). |
-| `min()` | `() -> Int?` | O(1) | Returns `first` — the smallest member. |
-| `max()` | `() -> Int?` | O(1) | Returns `last` — the largest member. |
+| `sorted()` | `() -> BitSet` | O(1) | Returns self (already sorted). Separately documented in published package docs at the `BitSet` level. |
+| `min()` | `() -> Int?` | O(min) | Returns the smallest member. Optimized override of `Sequence.min()` that avoids full iteration. |
+| `max()` | `() -> Int?` | O(1) | Returns the largest member. Optimized override of `Sequence.max()` that avoids full iteration. |
+
+> **Implementation provenance:** The optimized implementations of `sorted()`, `min()`, and `max()` are provided through the internal `_SortedCollection` protocol conformance (underscored, may change between releases). However, these methods are publicly accessible and separately documented at the `BitSet` level in published package documentation. The equivalent results are also achievable through the public `first` (O(min)) and `last` (O(1)) properties of `BidirectionalCollection`.
 
 ---
 
@@ -284,18 +299,26 @@ BitSet elements are **always in ascending sorted order** (inherent to the bitmap
 
 ---
 
-## 12. Random Generation
+## 12. Random Element Access
 
-| Method | Signature | Description |
-|---|---|---|
-| `BitSet.random(upTo:)` | `static (Int) -> BitSet` | Random set with members in `0..<limit`. |
-| `BitSet.random(upTo:using:)` | `static (Int, inout RNG) -> BitSet` | Random set with custom RNG. |
+The released `1.3.0` source includes a dedicated `BitSet+Random.swift` file, and the package documentation provides separate pages for `BitSet.randomElement(using:)` and `BitSet.shuffled()`. This indicates that random-related APIs are at minimum separately documented at the `BitSet` level, rather than being purely invisible inherited `Collection` defaults.
+
+| Method | Signature | Source | Description |
+|---|---|---|---|
+| `randomElement()` | `() -> Int?` | `Collection` | Returns a random member, or `nil` if empty. |
+| `randomElement(using:)` | `(inout some RandomNumberGenerator) -> Int?` | Separately documented for `BitSet` | Returns a random member using a custom RNG. |
+| `shuffled()` | `() -> [Int]` | Separately documented for `BitSet` | Returns members in shuffled order. |
+| `shuffled(using:)` | `(inout some RandomNumberGenerator) -> [Int]` | Separately documented for `BitSet` | Returns members in shuffled order using a custom RNG. |
+
+> **Note:** The existence of `BitSet+Random.swift` in released source suggests these may be specialized implementations rather than plain inherited defaults, but without inspecting the file contents, it is not confirmed whether they provide optimized behavior or simply re-export the `Collection` defaults. The public documentation treats them as part of `BitSet`'s own API surface.
 
 ---
 
 ## 13. Codable Encoding
 
 Encoded as an **unkeyed container of `UInt64` values** — NOT `UInt` (platform word size), but explicitly `UInt64` for cross-platform stability. This means serialized data is portable across 32-bit and 64-bit platforms.
+
+> **Note:** `Codable` conformance is guarded by `#if !$Embedded` — unavailable in embedded Swift builds. This aligns with the same conditional guard on `CustomStringConvertible`, `CustomDebugStringConvertible`, and `CustomReflectable` (§2).
 
 ```swift
 // Encoding: unkeyed container of UInt64 values
@@ -320,14 +343,14 @@ The swift-collections package includes a separate `BitArray` type alongside `Bit
 |---|---|---|
 | **Conceptual model** | Set of nonnegative integers | Dense array of Bool values |
 | **Element type** | `Int` (set member values) | `Bool` |
-| **Size** | Dynamic, grows to fit largest member | Fixed/explicit count |
+| **Size** | Dynamic, grows to fit largest member | Dynamic, explicit `count` / resizable |
 | **Length semantics** | No concept of "length" — only members | Has explicit `count` |
 | **Trailing zeros** | Trimmed from storage | Preserved (count tracked) |
 | **Primary protocols** | `SetAlgebra`, `Collection` | `MutableCollection`, `RandomAccessCollection`, `RangeReplaceableCollection` |
 | **Subscript** | `[member: n]` -> Bool (set membership) | `[n]` -> Bool (array element) |
 | **Mutation** | `insert`/`remove` | Subscript assignment `bits[i] = true` |
 | **Iteration** | Over member indices (Int) | Over boolean values (Bool) |
-| **Bitwise ops** | Set algebra methods | Bitwise operators available via `BitwiseOperations` |
+| **Bitwise ops** | Set algebra methods | Limited same-size bitwise operators (`&`, `|`, `^`, `~`) |
 
 **Key design insight:** Swift explicitly separates the "set of integers" use case (BitSet) from the "vector of booleans" use case (BitArray), giving each its own type with appropriate semantics and protocol conformances.
 
@@ -353,7 +376,7 @@ let set2 = BitSet(array)       // lossy: discards array length
 ### 16.2. Size Model
 
 - **Dynamic/unbounded.** Storage grows automatically to accommodate the largest member.
-- Storage shrinks after removals via `_shrink()` (trims trailing empty words).
+- Observed current implementation detail: storage may shrink after removals (internal `_shrink()` trims trailing empty words); not a documented public API guarantee (`_shrink()` is an underscored internal helper per swift-collections' API stability policy).
 - No fixed-size variant.
 - Pre-allocation via `reserveCapacity(_:)`.
 
@@ -378,13 +401,13 @@ let set2 = BitSet(array)       // lossy: discards array length
 - **From raw words:** `init(words: some Sequence<UInt>)` — interop with platform-native word arrays.
 - **From BinaryInteger:** `init(bitPattern: some BinaryInteger)` — any integer type.
 - **From/to BitArray:** bidirectional (lossy in one direction).
-- **No direct conversion to/from `[Int]`** — but `Array(bitSet)` works via `Collection` conformance.
+- **No dedicated `toIntArray()`/`fromIntArray()` pair** — input supported via `init(_ elements: some Sequence<Int>)` (accepts `[Int]` directly); output via `Array(bitSet)` through `Collection` conformance.
 - **No conversion to/from byte arrays** explicitly (unlike Java's `BitSet.toByteArray()`/`valueOf(byte[])`).
 
-### 16.6. Thread Safety
+### 16.6. Concurrency Interop
 
-- `Sendable` conformance — safe to send across concurrency boundaries as a value type.
-- No locking needed — independent copies via CoW.
+- `Sendable` conformance — safe to transfer between isolation domains as a value type.
+- Independent copies via CoW mean each copy can be used independently without synchronization, but `Sendable` does not provide built-in synchronization for shared mutable access to the same instance.
 
 ---
 

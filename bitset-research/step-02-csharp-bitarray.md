@@ -2,7 +2,11 @@
 
 ## Резюме
 
-`BitArray` -- мутабельная коллекция фиксированного размера с явным resize через settable `Length`. Класс `sealed`, реализует `ICollection`, `IEnumerable`, `ICloneable`. Внутреннее представление -- `int[]` (32-битные слова). Итерация через `GetEnumerator()` возвращает **bool-значения** (не индексы set-битов), что принципиально отличается от Java `BitSet.stream()`. Bulk-операции (`And`, `Or`, `Xor`, `Not`) работают in-place и возвращают `this` для chaining, но **требуют одинаковых длин** (`ArgumentException` при несовпадении) -- существенное ограничение по сравнению с Java. В .NET Core 2.0+ добавлены `LeftShift`/`RightShift`, в .NET 8 -- `HasAllSet`/`HasAnySet`, в .NET 11 (preview) -- `PopCount`. Нет `AndNot`, `Intersects`, навигации по битам (`nextSetBit`/`previousSetBit`), factory methods (`valueOf`), `stream()` индексов.
+`BitArray` -- мутабельная коллекция фиксированного размера с явным resize через settable `Length`. Класс `sealed`, реализует `ICollection`, `IEnumerable`, `ICloneable`. Внутреннее представление -- `byte[]` с .NET 10 (до .NET 10 — `int[]`; выравнен по `sizeof(int)`; bulk-операции (And/Or/Xor/Not) векторизованы через `Vector512`/`Vector256`/`Vector128` поверх `byte[]`, remainder path — через `MemoryMarshal.Cast<byte, int>`). Итерация через `GetEnumerator()` возвращает **bool-значения** (не индексы set-битов), что принципиально отличается от Java `BitSet.stream()`. Bulk-операции (`And`, `Or`, `Xor`, `Not`) работают in-place и возвращают `this` для chaining; бинарные операции (`And`, `Or`, `Xor`) **требуют одинаковых длин** (`ArgumentException` при несовпадении) -- существенное ограничение по сравнению с Java; `Not()` — unary, аргументов не принимает и просто инвертирует текущий bit array. В .NET Core 2.0+ добавлены `LeftShift`/`RightShift`, в .NET 8 -- `HasAllSet`/`HasAnySet`, в .NET 10 -- `PopCount`; на уровне runtime в .NET 10 также добавлен `CollectionsMarshal.AsBytes(BitArray)` (zero-copy `Span<byte>` над байтами, необходимыми для текущего `Length`; неиспользованная capacity не экспонируется). Нет `AndNot`, `Intersects`, навигации по битам (`nextSetBit`/`previousSetBit`), factory methods (`valueOf`), `stream()` индексов.
+
+**Входные данные:** [`step-01-kotlin-implementations.md`](step-01-kotlin-implementations.md) (Java `BitSet` как baseline для сравнения).
+
+**См. также:** [`step-02-cross-language.md`](step-02-cross-language.md) (зонтичный кросс-языковой обзор, в который входит данный артефакт).
 
 ---
 
@@ -21,13 +25,15 @@ public sealed class BitArray : ICloneable, System.Collections.ICollection
 
 | Интерфейс | Что предоставляет | Примечания |
 |---|---|---|
-| `ICollection` | `Count`, `IsSynchronized`, `SyncRoot`, `CopyTo(Array, int)` | Non-generic; `Count` -- read-only через интерфейс |
+| `ICollection` | `Count`, `IsSynchronized`, `SyncRoot`, `CopyTo(Array, int)` | Non-generic; `BitArray` предоставляет эти четыре члена как обычные public properties/methods. Microsoft Learn дополнительно показывает интерфейсные страницы/карточки для этих же членов — это документационная проекция `ICollection`, а не отдельные explicit interface implementations |
 | `IEnumerable` | `GetEnumerator()` | Non-generic; включает поддержку `foreach` и LINQ (через `Cast<bool>()`) |
-| `ICloneable` | `Clone()` | Shallow copy (но внутренний `int[]` копируется, т.е. фактически deep copy для данных) |
+| `ICloneable` | `Clone()` | Shallow copy (но внутренний `byte[]` копируется, т.е. фактически deep copy для данных) |
 
 **Не реализует:** `ICollection<T>`, `IEnumerable<T>`, `IList`, `ISet`, `IReadOnlyCollection<T>`.
 
-> **Замечание:** `IEnumerable` (non-generic) требует boxing при итерации через `foreach` без `Cast<bool>()`. Для использования LINQ необходим вызов `.Cast<bool>()`, что добавляет аллокации.
+> **Документированная неясность вокруг `IList`:** несмотря на то что сигнатура класса не включает `IList` (и .NET runtime source не содержит его реализации), страница `BitArray.IsReadOnly` на Microsoft Learn утверждает, что свойство существует потому что его требует `System.Collections.IList`. Это расхождение — inconsistency в документации Microsoft Learn, а не свидетельство скрытой реализации `IList`.
+
+> **Замечание:** `IEnumerable` (non-generic) означает, что `GetEnumerator()` возвращает `IEnumerator` с `object`-typed `Current`. В актуальном runtime boxing overhead минимален — `BitArrayEnumeratorSimple` кэширует singleton-ы `s_boxedTrue`/`s_boxedFalse`, избегая per-element аллокаций. Ключевая проблема — отсутствие `IEnumerable<bool>`: unboxing path при `foreach` и необходимость `.Cast<bool>()` с adapter layer для LINQ.
 
 ---
 
@@ -46,7 +52,7 @@ public sealed class BitArray : ICloneable, System.Collections.ICollection
 
 | Аспект | Java `BitSet` | C# `BitArray` |
 |---|---|---|
-| Пустой конструктор | `BitSet()` -- ёмкость 64, длина 0 | Нет -- **обязательно указывать длину** |
+| Пустой конструктор | `BitSet()` -- создаёт пустой bit set; начальная ёмкость не специфицирована публичным API (OpenJDK использует 64, но `size()` документирован как implementation-dependent) | Нет -- **обязательно указывать длину** |
 | Ёмкость vs длина | Аргумент `nbits` -- ёмкость (hint) | Аргумент `length` -- точный размер |
 | Из `long[]` | `BitSet.valueOf(long[])` | Нет прямого аналога (`int[]` -- 32 бита) |
 | Из `LongBuffer` | `BitSet.valueOf(LongBuffer)` | Нет |
@@ -75,7 +81,7 @@ public sealed class BitArray : ICloneable, System.Collections.ICollection
 
 | Свойство | Settable? | Источник |
 |---|---|---|
-| `Count` | Нет (read-only, через `ICollection`) | `ICollection.Count` |
+| `Count` | Нет (read-only) | Public read-only property `BitArray`; Microsoft Learn также показывает интерфейсную карточку `ICollection.Count` (та же property, документационная проекция) |
 | `Length` | **Да** (get/set) | Собственное свойство `BitArray` |
 
 **Поведение при установке `Length`:**
@@ -86,16 +92,17 @@ public sealed class BitArray : ICloneable, System.Collections.ICollection
 | `Length = N` где `N < текущего` | **Усечение**; биты с индексами >= N удаляются безвозвратно |
 | `Length = N` где `N < 0` | `ArgumentOutOfRangeException` |
 
-> **Сравнение с Java:** `java.util.BitSet` не имеет аналога settable `Length`. Размер растёт автоматически при `set()` и не уменьшается. В Java есть три отдельных понятия: `size()` (ёмкость), `length()` (logical size = max set bit + 1), `cardinality()` (popcount). В C# `Length`/`Count` -- это **фиксированный размер массива**, не зависящий от содержимого.
+> **Сравнение с Java:** `java.util.BitSet` не имеет аналога settable `Length`. В Java есть три размерных понятия и предикат: `size()` (implementation-dependent ёмкость; Oracle оговаривает «may change with implementation»), `length()` (logical size = max set bit + 1; уменьшается при очистке старших битов), `cardinality()` (popcount), `isEmpty()` (прямой предикат «нет set-битов»). Ёмкость (`size()`) растёт автоматически при `set()` и обычно не уменьшается, но логический размер (`length()`) отражает фактическое содержимое. В C# `Length`/`Count` -- это **фиксированный размер массива**, не зависящий от содержимого.
 
 ### Семантика размера: Java vs C#
 
 | Понятие | Java `BitSet` | C# `BitArray` |
 |---|---|---|
-| Ёмкость (внутренняя) | `size()` (кратна 64) | Скрыта (кратна 32, т.к. `int[]`) |
+| Ёмкость (внутренняя) | `size()` (implementation-dependent; в OpenJDK кратна 64) | Скрыта (`byte[]`, выравнен по `sizeof(int)` = 32 бита) |
 | Логический размер | `length()` (max set bit + 1) | **Нет аналога** |
 | Фиксированный размер | Нет | `Length` / `Count` |
-| Количество set-битов | `cardinality()` | **`HasAnySet()`/`HasAllSet()`** (с .NET 8); **`PopCount()`** (с .NET 11) |
+| Количество set-битов | `cardinality()` | **`PopCount()`** (с .NET 10) |
+| Any/All предикаты | `isEmpty()` (any/none); прямого аналога all() нет | **`HasAnySet()`/`HasAllSet()`** (с .NET 8; возвращают `bool`) |
 
 ---
 
@@ -164,15 +171,15 @@ bits[5] = true;         // == bits.Set(5, true)
 |---|---|---|---|
 | `bool HasAllSet()` | `bool` | `true`, если все биты == `true` (или BitArray пуст) | .NET 8 |
 | `bool HasAnySet()` | `bool` | `true`, если хотя бы один бит == `true` | .NET 8 |
-| `int PopCount()` | `int` | Количество установленных битов (cardinality) | .NET 11 (preview) |
+| `int PopCount()` | `int` | Количество установленных битов (cardinality) | .NET 10 |
 
-> **Замечание:** `HasAllSet()` возвращает `true` для пустого BitArray (Length == 0) -- аналогично "for-all" квантору над пустым множеством. `PopCount()` -- прямой аналог Java `BitSet.cardinality()`, но добавлен только в .NET 11.
+> **Замечание:** `HasAllSet()` возвращает `true` для пустого BitArray (Length == 0) -- аналогично "for-all" квантору над пустым множеством. `PopCount()` -- прямой аналог Java `BitSet.cardinality()`, но добавлен только в .NET 10.
 
 ### 4.5. Копирование и клонирование
 
 | Сигнатура | Возвращает | Описание |
 |---|---|---|
-| `object Clone()` | `object` | Shallow copy. Фактически deep copy данных, т.к. внутренний `int[]` копируется |
+| `object Clone()` | `object` | Shallow copy. Фактически deep copy данных, т.к. внутренний `byte[]` копируется |
 | `void CopyTo(Array array, int index)` | `void` | Копирует данные в целевой массив, начиная с `index` |
 
 **`CopyTo` поддерживает три типа целевых массивов:**
@@ -184,19 +191,19 @@ bits[5] = true;         // == bits.Set(5, true)
 | `byte[]` | Биты упакованы по 8 в каждый `byte` |
 | Другие типы | `ArgumentException: "Only supported array types for CopyTo on BitArrays are Boolean[], Int32[] and Byte[]."` |
 
-> **Сравнение с Java:** Java `BitSet` имеет `toByteArray()` и `toLongArray()` -- возвращают новый массив. C# `BitArray.CopyTo()` копирует в предоставленный массив, не создавая нового. Нет прямого `ToByteArray()` / `ToIntArray()` -- нужно создать массив и вызвать `CopyTo`.
+> **Сравнение с Java:** Java `BitSet` имеет `toByteArray()` и `toLongArray()` -- возвращают новый массив. C# `BitArray.CopyTo()` копирует в предоставленный массив, не создавая нового. Прямого `ToByteArray()` / `ToIntArray()` нет, однако с .NET 10 доступен `CollectionsMarshal.AsBytes(BitArray)` — zero-copy `Span<byte>` над байтами, необходимыми для текущего `Length` (в последнем байте возможны padding bits; неиспользованная capacity не экспонируется; нельзя менять `Length` пока span используется).
 
 ### 4.6. Итерация
 
 | Сигнатура | Возвращает | Описание |
 |---|---|---|
-| `IEnumerator GetEnumerator()` | `IEnumerator` | Non-generic enumerator; `Current` содержит **boxed `bool`** |
+| `IEnumerator GetEnumerator()` | `IEnumerator` | Non-generic enumerator; `Current` — `object`-typed (runtime кэширует singleton-ы `s_boxedTrue`/`s_boxedFalse`, избегая per-element аллокаций) |
 
 **Ключевая характеристика:** `GetEnumerator()` итерирует **все биты по порядку**, возвращая **`bool` значения** (`true`/`false`). Это _не_ итерация по индексам установленных битов.
 
 ```csharp
 // Итерация возвращает bool-значения для КАЖДОГО бита
-foreach (bool bit in myBitArray)  // Требует Cast<bool>() для strict typing
+foreach (bool bit in myBitArray)  // Работает напрямую; Cast<bool>() нужен только для generic LINQ-цепочек (.Where(), .Select() и т.д.)
 {
     Console.Write(bit ? "1" : "0");
 }
@@ -224,14 +231,20 @@ foreach (bool bit in myBitArray)  // Требует Cast<bool>() для strict t
 
 > **Принципиальное отличие от Java:** `BitArray` **не переопределяет** `Equals`, `GetHashCode`, `ToString`. Java `BitSet` реализует value-based equality, content-based hashCode и `toString()` в формате `{0, 2, 5}`. Это делает C# `BitArray` непригодным для использования в качестве ключа в словарях/хэш-множествах.
 
-### 4.8. Explicit interface implementations
+### 4.8. Interface contract mapping
 
-| Сигнатура | Описание |
+`BitArray` реализует контракт `ICollection` через обычные public members:
+
+| Контракт `ICollection` | Public member `BitArray` |
 |---|---|
-| `ICollection.CopyTo(Array, int)` | Явная реализация `ICollection.CopyTo` |
-| `ICollection.Count` | Явная реализация `ICollection.Count` |
-| `ICollection.IsSynchronized` | Явная реализация `ICollection.IsSynchronized` |
-| `ICollection.SyncRoot` | Явная реализация `ICollection.SyncRoot` |
+| `Count` | Public property `Count` (read-only) |
+| `CopyTo(Array, int)` | Public method `CopyTo(Array array, int index)` |
+| `IsSynchronized` | Public property `IsSynchronized` (всегда `false`) |
+| `SyncRoot` | Public property `SyncRoot` |
+
+Все четыре члена доступны напрямую через ссылку `BitArray`, без необходимости приведения к `ICollection`. Microsoft Learn дополнительно показывает отдельные интерфейсные карточки для этих же членов (e.g. `ICollection.CopyTo`, `ICollection.Count`), но в .NET runtime source (.NET 10) это обычные public members, а не explicit interface implementations — документационные карточки являются проекцией `ICollection`, а не свидетельством отдельного API-слоя.
+
+> **Runtime-нюанс:** в implementation source (.NET 10) присутствует explicit `ISerializable.GetObjectData` и приватный десериализующий конструктор `BitArray(SerializationInfo, StreamingContext)` для обратной совместимости со старыми сериализованными данными. Оба исключены из reference assembly и не являются частью публичного API surface (подробнее — §7.6).
 
 ### 4.9. Extension methods (через IEnumerable)
 
@@ -244,7 +257,7 @@ foreach (bool bit in myBitArray)  // Требует Cast<bool>() для strict t
 | `AsParallel()` | Параллельная итерация |
 | `AsQueryable()` | Конвертация в `IQueryable` |
 
-> **Замечание:** Т.к. `BitArray` реализует non-generic `IEnumerable`, LINQ-методы вроде `.Where()`, `.Select()`, `.Count()` требуют предварительного вызова `.Cast<bool>()`, что добавляет boxing/unboxing overhead.
+> **Замечание:** Т.к. `BitArray` реализует non-generic `IEnumerable`, LINQ-методы вроде `.Where()`, `.Select()`, `.Count()` требуют предварительного вызова `.Cast<bool>()`, что добавляет adapter layer и unboxing path (per-element boxing аллокаций нет — runtime кэширует singleton-ы).
 
 ---
 
@@ -253,7 +266,7 @@ foreach (bool bit in myBitArray)  // Требует Cast<bool>() для strict t
 - Статические (`static`) члены -- thread-safe.
 - Экземплярные члены -- **не thread-safe**.
 - Synchronized wrapper **не предоставляется** (в отличие от `ArrayList.Synchronized()`).
-- Итерация intrinsically не thread-safe; модификация во время итерации -> `InvalidOperationException`.
+- Итерация intrinsically не thread-safe; модификация коллекции во время итерации инвалидирует enumerator — публичный контракт не гарантирует конкретный тип исключения (поведение описано как undefined), в текущей реализации это обычно `InvalidOperationException` (implementation detail).
 - Для обеспечения thread safety документация рекомендует внешнюю блокировку через `SyncRoot`.
 
 ---
@@ -266,13 +279,13 @@ foreach (bool bit in myBitArray)  // Требует Cast<bool>() для strict t
 | **Мутабельность** | Мутабельный | Мутабельный |
 | **Immutable вариант** | Нет | Нет |
 | **Размер** | Динамический (auto-grow) | Фиксированный (explicit resize через `Length`) |
-| **Внутреннее представление** | `long[]` (64 бита) | `int[]` (32 бита) |
+| **Внутреннее представление** | `long[]` (64 бита) | `byte[]` с .NET 10 (до .NET 10 — `int[]`; выравнен по 32 бита; публичный interop через `int[]`) |
 | **Интерфейсы** | `Cloneable, Serializable` | `ICollection, IEnumerable, ICloneable` |
 | **Итерация: set-битов** | `stream()` -> `IntStream` | **Нет** |
 | **Итерация: всех значений** | Нет | `GetEnumerator()` -> `bool` |
 | **Навигация** | `nextSetBit`, `nextClearBit`, `previousSetBit`, `previousClearBit` | **Нет** |
-| **Cardinality** | `cardinality()` | `PopCount()` (с .NET 11) |
-| **isEmpty** | `isEmpty()` | Через `HasAnySet()` (с .NET 8) или итерацию |
+| **Cardinality** | `cardinality()` | `PopCount()` (с .NET 10) |
+| **isEmpty** | `isEmpty()` (нет set-битов) | `!HasAnySet()` (с .NET 8) или `PopCount() == 0` (.NET 10); коллекционная пустота: `Length == 0` / `Count == 0` |
 | **Indexer** | Нет (`get(i)`, `set(i, v)`) | `this[int]` (`bits[i]`) |
 | **Range operations** | `set(from, to)`, `clear(from, to)`, `flip(from, to)`, `get(from, to)` | **Нет** |
 | **Shift** | Нет | `LeftShift(n)`, `RightShift(n)` (с .NET Core 2.0) |
@@ -281,10 +294,10 @@ foreach (bool bit in myBitArray)  // Требует Cast<bool>() для strict t
 | **Size mismatch** | Допустим | `ArgumentException` |
 | **Bulk return type** | `void` | `BitArray` (= `this`, chaining) |
 | **Factory methods** | `valueOf(long[])`, `valueOf(byte[])`, `valueOf(LongBuffer)`, `valueOf(ByteBuffer)` | Нет (только конструкторы) |
-| **Конвертация** | `toByteArray()`, `toLongArray()` | `CopyTo(bool[]/int[]/byte[], offset)` |
+| **Конвертация** | `toByteArray()`, `toLongArray()` | `CopyTo(Array, int)` — единый метод, runtime dispatch по типу целевого массива (`bool[]`/`int[]`/`byte[]`); `CollectionsMarshal.AsBytes(BitArray)` → zero-copy `Span<byte>` над байтами текущего `Length` (.NET 10) |
 | **Equals/HashCode** | Value-based (content) | **Reference-based (identity)** |
 | **ToString** | `{0, 2, 5}` (индексы set-битов) | `"System.Collections.BitArray"` (тип) |
-| **Serializable** | Да (`Serializable`) | Нет (не `[Serializable]` в .NET Core+) |
+| **Serializable** | Да (`Serializable`) | `[Serializable]` атрибут сохранён, но `BinaryFormatter` deprecated (.NET 5+), disabled for most project types (.NET 8), removed (.NET 9: APIs throw `PlatformNotSupportedException`). `ISerializable` **не** реализуется в публичном API (в .NET 10+ есть в исходниках как implementation detail для обратной совместимости, но исключён из reference assembly) |
 | **Thread safety** | Не thread-safe | Не thread-safe |
 
 ---
@@ -316,15 +329,14 @@ foreach (bool bit in myBitArray)  // Требует Cast<bool>() для strict t
 - `Count` для размера.
 
 Однако:
-- Non-generic интерфейсы -> boxing при итерации.
+- Non-generic интерфейсы -> object-typed enumeration с unboxing path (per-element boxing аллокаций нет — runtime кэширует singleton-ы; ключевая проблема — отсутствие `IEnumerable<bool>`).
 - Нет `ICollection<bool>` -> нет `Add`, `Remove`, `Contains`.
-- Нет `IEnumerable<bool>` -> LINQ только через `Cast<>()`.
 - Нет `IList<bool>` -> нет `IndexOf`, `Insert`.
 - Нет `ISet<int>` -> не может представлять множество целых чисел.
 
 ### 7.4. Итерация
 
-`GetEnumerator()` возвращает `IEnumerator` (non-generic). `Current` -- boxed `object`, содержащий `bool`.
+`GetEnumerator()` возвращает `IEnumerator` (non-generic). `Current` — `object`-typed; runtime переиспользует кэшированные singleton-ы `s_boxedTrue`/`s_boxedFalse`, избегая per-element boxing аллокаций.
 
 **Итерация идёт по всем битам**, включая `false`. Элемент -- **bool-значение**, не индекс.
 
@@ -362,16 +374,38 @@ bitSet.stream().forEach(index -> ...);
 | `BitArray` | `BitArray(BitArray)` |
 | `long[]` | **Нет** |
 
-**Выходные конвертации (`CopyTo`):**
+**Выходные конвертации — единый метод `CopyTo(Array, int)` с runtime dispatch:**
 
-| Цель | Метод |
+Не отдельные typed overload-ы, а один метод `CopyTo(Array array, int index)` с проверкой типа целевого массива в runtime:
+
+| Целевой тип | Семантика |
 |---|---|
-| `bool[]` | `CopyTo(boolArray, offset)` |
-| `int[]` | `CopyTo(intArray, offset)` |
-| `byte[]` | `CopyTo(byteArray, offset)` |
-| `long[]` | **Нет** |
+| `bool[]` | Каждый бит → один `bool` элемент |
+| `int[]` | Биты упакованы по 32 в каждый `int` |
+| `byte[]` | Биты упакованы по 8 в каждый `byte` |
+| `long[]` | **Не поддерживается** |
 
-> **Замечание:** отсутствие `long[]` interop связано с использованием `int[]` в качестве внутреннего представления (32-битные слова vs 64-битные в Java).
+> **Замечание:** внутреннее представление — `byte[]` (с .NET 10; до .NET 10 — `int[]`), но публичный interop (`BitArray(int[])`, `CopyTo` → `int[]`) использует `int[]`. Отсутствие `long[]` interop — историческое ограничение.
+
+**Zero-copy byte-level view (.NET 10):**
+
+| Сигнатура | Возвращает | Описание |
+|---|---|---|
+| `CollectionsMarshal.AsBytes(BitArray)` | `Span<byte>` | Zero-copy view над байтами текущего `Length` (не над всем backing `byte[]`; неиспользованная capacity не экспонируется) |
+
+- `CollectionsMarshal` — статический helper из `System.Runtime.InteropServices`, не метод самого `BitArray`.
+- Длина возвращаемого `Span<byte>` = минимальное число байт для текущего `Length`; байты неиспользованной capacity не включены. В последнем байте возможны padding bits.
+- Изменение `Length` во время использования span не допускается (invalidation).
+- Это первый zero-copy механизм доступа к внутренним данным `BitArray` — до .NET 10 единственным способом был copy-based `CopyTo`.
+
+**Binary serialization:**
+
+| Слой | Поведение |
+|---|---|
+| Публичный API surface (reference assembly) | `[Serializable]` атрибут сохранён; `ISerializable` **не** экспонируется |
+| Runtime source (.NET 10) | Explicit `ISerializable.GetObjectData` + приватный десериализующий конструктор `BitArray(SerializationInfo, StreamingContext)` — сериализуют/десериализуют payload через `int[]` для обратной совместимости со старыми `BinaryFormatter`-данными |
+
+> **Контекст:** `BinaryFormatter` deprecated (.NET 5+), disabled for most project types (.NET 8), APIs throw `PlatformNotSupportedException` (.NET 9). Runtime-`ISerializable` path в .NET 10 не делает `BitArray` рекомендуемым сериализационным типом — это исключительно compatibility behavior для десериализации ранее сохранённых данных. Для нового кода рекомендуется ручной export через `CopyTo` или `CollectionsMarshal.AsBytes`.
 
 ---
 
@@ -382,7 +416,7 @@ bitSet.stream().forEach(index -> ...);
 | .NET Framework 1.0 | Core API: Get, Set, SetAll, And, Or, Xor, Not, Clone, CopyTo, GetEnumerator, Length, Count, Item[] | Первоначальный дизайн |
 | .NET Core 2.0 / .NET Standard 2.1 | `LeftShift(int)`, `RightShift(int)` | Shift-операции, in-place, возвращают `this` |
 | .NET 8 | `HasAllSet()`, `HasAnySet()` | Быстрые проверки наличия/отсутствия set-битов |
-| .NET 11 (preview) | `PopCount()` | Аналог `cardinality()` из Java |
+| .NET 10 | `PopCount()`, переход `int[] → byte[]`, `CollectionsMarshal.AsBytes(BitArray)`, runtime `ISerializable` | `PopCount()` — аналог `cardinality()` из Java. Внутреннее представление изменено с `int[]` на `byte[]`; одновременно добавлен `CollectionsMarshal.AsBytes(BitArray)` — zero-copy `Span<byte>` view над байтами текущего `Length` (не вся capacity). В runtime source добавлена explicit реализация `ISerializable` (не в reference assembly) для обратной совместимости со старыми `BinaryFormatter`-данными |
 
 > **Тенденция:** API постепенно расширяется, но очень медленно. За 25 лет добавлено лишь 5 новых методов. Базовые пробелы (range operations, navigation, value equality) не адресованы.
 
@@ -402,12 +436,12 @@ public struct BitVector32 : IEquatable<BitVector32>
 
 | Аспект | `BitArray` | `BitVector32` |
 |---|---|---|
-| Тип | `sealed class` (reference) | `struct` (value) |
-| Размещение | Куча (heap) | Стек (stack) |
+| Тип | `sealed class` (reference type) | `struct` (value type) |
+| Размещение | Всегда в managed heap | В типичных unboxed сценариях без отдельной heap-аллокации (но не `ref struct` — boxing возможен) |
 | Размер | Произвольный | **Ровно 32 бита** |
 | Интерфейсы | `ICollection, IEnumerable, ICloneable` | `IEquatable<BitVector32>` |
 | Использование | Общего назначения | Bit flags и packed integers |
-| Производительность | Аллокация + GC | Без аллокаций |
+| Производительность | Аллокация + GC | Lightweight value type (32 бита inline) |
 | Итерация | `GetEnumerator()` | Нет |
 
 ### Конструкторы
@@ -427,7 +461,7 @@ public struct BitVector32 : IEquatable<BitVector32>
 
 ### Режимы работы
 
-`BitVector32` может использоваться **в одном из двух режимов** (не одновременно):
+`BitVector32` поддерживает **два способа адресации** — bit flags (по маскам) и sections (packed integers). Microsoft предупреждает, что mask-based и section-based доступ не следует смешивать на одном layout, но section-based layout допускает `CreateSection(maxValue: 1)` для кодирования булевых флагов наряду с целочисленными секциями:
 
 **Режим 1 -- Bit flags (маски):**
 ```csharp
@@ -471,7 +505,7 @@ public readonly struct Section : IEquatable<Section>
 
 ### Вывод по BitVector32
 
-`BitVector32` -- специализированная структура для performance-critical кода, работающего ровно с 32 битами. Не является альтернативой `BitArray` для общих задач, скорее дополняет его для сценариев, где известно, что битов <= 32, и нужна zero-allocation семантика. Двухрежимная работа (bit flags / packed integers) -- уникальная особенность, не встречающаяся в BitSet-API других языков.
+`BitVector32` -- специализированный value type для performance-critical кода, работающего ровно с 32 битами. Не является альтернативой `BitArray` для общих задач, скорее дополняет его для сценариев, где известно, что битов <= 32. Как обычный `struct` (не `ref struct`), `BitVector32` в типичных unboxed сценариях обходится без отдельной heap-аллокации, но не имеет гарантии stack-only размещения. Два способа адресации (bit flags по маскам / packed integers по секциям; смешивать оба на одном layout не рекомендуется, но section-based layout поддерживает `Section(maxValue: 1)` для булевых значений наряду с целочисленными) -- уникальная особенность, не встречающаяся в BitSet-API других языков.
 
 ---
 
@@ -493,13 +527,13 @@ public readonly struct Section : IEquatable<Section>
 3. **Нет навигации по битам** -- отсутствие `nextSetBit`/`previousSetBit` -- один из крупнейших пробелов.
 4. **Нет range operations** -- нет `set(from, to)`, `clear(from, to)`, `flip(from, to)`.
 5. **Нет `AndNot`** -- частая операция (set difference).
-6. **Нет `Intersects`** -- нужно вручную проверять через `And` + `HasAnySet`.
+6. **Нет `Intersects`** — проверка пересечения требует временной копии: `new BitArray(a).And(b).HasAnySet()`, т.к. `And()` модифицирует `this` in-place. Это дополнительная аллокация и копирование, плюс сохраняется требование равенства длин.
 7. **Нет iteration by set-bit indices** -- `GetEnumerator` возвращает `bool`-значения, не индексы. Для sparse BitArray -- неприемлемая производительность.
 8. **Strict size matching для bulk ops** -- `ArgumentException` при разных длинах. Java допускает разные размеры и это удобнее.
-9. **Non-generic `IEnumerable`** -- boxing overhead при итерации.
-10. **`int[]` вместо `long[]`** -- на 64-битных платформах менее эффективно.
-11. **Нет serialization support** в .NET Core+.
-12. **Чрезвычайно медленная эволюция API** -- за 25 лет добавлено 5 методов. `PopCount()` (аналог `cardinality()`) появился только в .NET 11.
+9. **Non-generic `IEnumerable`** -- object-typed enumeration с unboxing path; отсутствие `IEnumerable<bool>` — design-level проблема (per-element boxing аллокаций нет благодаря кэшированным singleton-ам в runtime).
+10. **`byte[]` внутреннее хранилище** -- storage `byte[]` (с .NET 10; до .NET 10 — `int[]`), выровнен по `sizeof(int)`. Bulk-операции (And/Or/Xor/Not) векторизованы: основной path использует `Vector512`/`Vector256`/`Vector128` поверх `byte[]`, remainder/shift paths — `int`-span через `MemoryMarshal.Cast<byte, int>`. Java `BitSet` использует `long[]`, что упрощает scalar fallback на 64-битных платформах, но при наличии векторизации разница в storage granularity менее значима.
+11. **Serialization ограничена** — `[Serializable]` атрибут сохранён, но `ISerializable` не является частью публичного API. `BinaryFormatter` deprecated (.NET 5+), disabled for most project types (.NET 8), removed (.NET 9) — практически недоступна на современных версиях .NET.
+12. **Чрезвычайно медленная эволюция API** -- за 25 лет добавлено 5 методов. `PopCount()` (аналог `cardinality()`) появился только в .NET 10.
 
 ### Открытые вопросы
 
