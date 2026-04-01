@@ -926,17 +926,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
     }
 
     compilerArgument {
-        name = "Xuse-inline-scopes-numbers"
-        description = "Use inline scopes numbers for inline marker variables.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_0_0,
-            removedVersion = KotlinReleaseVersion.v2_4_0
-        )
-    }
-
-    compilerArgument {
         name = "Xdo-not-use-inline-scopes-numbers"
         description = "Do not use inline scope markers for inline marker variables.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

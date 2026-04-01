@@ -26,6 +26,8 @@ where advanced options include:
   -Xdefault-script-extension=<script filename extension>
                              Compile expressions and unrecognized scripts passed with the -script argument as scripts with the given filename extension.
   -Xdisable-standard-script  Disable standard Kotlin scripting support.
+  -Xdo-not-use-inline-scopes-numbers
+                             Do not use inline scope markers for inline marker variables.
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode.
   -Xenhance-type-parameter-types-to-def-not-null
                              Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').
