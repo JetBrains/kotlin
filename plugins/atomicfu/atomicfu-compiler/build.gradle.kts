@@ -211,6 +211,8 @@ projectTests {
         // Kotlin test infra uses reflection to access JDK internals.
         // With JDK 11, some JVM args are required to silence the warnings caused by that:
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
+
+        inputs.files(atomicfuNativeKlib).withPathSensitivity(PathSensitivity.RELATIVE)
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateAtomicfuTestsKt", doNotSetFixturesSourceSetDependency = true) {
