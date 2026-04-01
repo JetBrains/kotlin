@@ -405,6 +405,15 @@ internal constructor(
     internal val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel> = objectFactory
         .propertyWithConvention(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
+    @get:Internal
+    internal abstract val projectRootDir: Property<File>
+
+    @get:Internal
+    internal abstract val projectDir: Property<File>
+
+    @get:Internal
+    internal abstract val projectBuildDir: Property<File>
+
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
@@ -478,6 +487,12 @@ internal constructor(
                 args.konanDataDir = it
             }
             args.separateKmpCompilationScheme = separateKmpCompilation.get()
+
+            args.relativePathBases = arrayOf(
+                projectBuildDir.get().absolutePath,
+                projectDir.get().absolutePath,
+                projectRootDir.get().absolutePath,
+            )
         }
 
         pluginClasspath { args ->

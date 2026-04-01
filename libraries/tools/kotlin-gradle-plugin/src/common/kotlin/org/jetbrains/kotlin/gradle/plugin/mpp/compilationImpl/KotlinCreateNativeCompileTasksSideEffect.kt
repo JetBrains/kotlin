@@ -84,6 +84,10 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         // for metadata tasks we should always provide unpackaged klib
         task.produceUnpackagedKlib.set(isMetadataCompilation || project.kotlinPropertiesProvider.useNonPackedKlibs)
         task.separateKmpCompilation.convention(project.kotlinPropertiesProvider.separateKmpCompilation)
+
+        task.projectRootDir.value(project.rootDir).disallowChanges()
+        task.projectDir.value(project.projectDir).disallowChanges()
+        task.projectBuildDir.value(project.layout.buildDirectory.map { it.asFile }).disallowChanges()
     }
 
     (compilation as? KotlinNativeCompilation)?.let { nativeCompilation ->

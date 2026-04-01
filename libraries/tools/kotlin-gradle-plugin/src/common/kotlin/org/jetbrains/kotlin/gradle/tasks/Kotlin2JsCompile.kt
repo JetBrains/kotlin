@@ -140,6 +140,15 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
+    @get:Internal
+    internal abstract val projectRootDir: Property<File>
+
+    @get:Internal
+    internal abstract val projectDir: Property<File>
+
+    @get:Internal
+    internal abstract val projectBuildDir: Property<File>
+
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
@@ -190,6 +199,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
             args.freeArgs = executionTimeFreeCompilerArgs ?: enhancedFreeCompilerArgs.get().toList()
 
             args.separateKmpCompilationScheme = separateKmpCompilation.get()
+
+            args.relativePathBases = arrayOf(
+                projectBuildDir.get().absolutePath,
+                projectDir.get().absolutePath,
+                projectRootDir.get().absolutePath,
+            )
         }
 
         pluginClasspath { args ->

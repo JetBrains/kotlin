@@ -56,6 +56,10 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                 )
             }
             task.runViaBuildToolsApi.value(false).disallowChanges()
+
+            task.projectRootDir.value(project.rootDir).disallowChanges()
+            task.projectBuildDir.value(project.layout.buildDirectory.map{ it.asFile }).disallowChanges()
+            task.projectDir.value(project.projectDir).disallowChanges()
         }
     }
 
