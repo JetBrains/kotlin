@@ -3,10 +3,15 @@
 GRAAL_HOME=$1
 REACHABILITY_METADATA=$2
 
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+NI_CONFIG_DIR="$SCRIPT_DIR/current-config"
 NATIVE_IMAGE_BIN=$GRAAL_HOME/bin/native-image
 
 echo 'Starting native image build of the compiler'
 echo "native-image path: $NATIVE_IMAGE_BIN"
+
+echo '0. Splitting reachability metadata into separate config files'
+"$SCRIPT_DIR/splitMetadata.sh" "$REACHABILITY_METADATA" "$NI_CONFIG_DIR"
 
 echo '1. Building kotlin compiler embeddable'
 ./gradlew -q :kotlin-compiler-embeddable:embeddable
