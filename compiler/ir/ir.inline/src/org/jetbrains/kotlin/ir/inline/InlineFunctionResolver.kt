@@ -36,7 +36,9 @@ enum class InlineMode {
     ALL_INLINE_FUNCTIONS,
 }
 
-abstract class InlineFunctionResolver {
+abstract class InlineFunctionResolver(
+    protected val inlineMode: InlineMode
+) {
     /**
      * Find (resolve) the suitable [IrFunction] for inlining given [symbol] from the [IrMemberAccessExpression] node.
      * Return the resolved function or null if it cannot be inlined.
@@ -57,8 +59,8 @@ abstract class InlineFunctionResolver {
 
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
-    protected val inlineMode: InlineMode,
-) : InlineFunctionResolver() {
+    inlineMode: InlineMode,
+) : InlineFunctionResolver(inlineMode) {
     override fun findSuitableFunctionToInline(symbol: IrFunctionSymbol): IrFunction? {
         if (!symbol.isBound) return null
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
