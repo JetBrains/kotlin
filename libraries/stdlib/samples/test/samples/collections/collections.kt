@@ -307,11 +307,11 @@ class Collections {
 
             list.remove('d')
 
-            val invertedInsertionPoint = list.binarySearch('d')
-            val actualInsertionPoint = invertedInsertionPoint.inv() // same as -(invertedInsertionPoint + 1)
-            assertPrints(actualInsertionPoint, "3")
+            val invertedInsertionIndex = list.binarySearch('d')
+            val actualInsertionIndex = invertedInsertionIndex.inv() // same as -(invertedInsertionIndex + 1)
+            assertPrints(actualInsertionIndex, "3")
 
-            list.add(actualInsertionPoint, 'd')
+            list.add(actualInsertionIndex, 'd')
             assertPrints(list, "[a, b, c, d, e]")
         }
 
