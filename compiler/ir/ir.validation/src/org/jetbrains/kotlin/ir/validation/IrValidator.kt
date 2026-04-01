@@ -11,12 +11,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -27,6 +22,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.*
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.context.ContextUpdater
 import org.jetbrains.kotlin.ir.validation.checkers.context.ParentChainUpdater
+import org.jetbrains.kotlin.ir.validation.checkers.context.TypeParameterScopeUpdater
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -78,6 +74,9 @@ private class IrFileValidator(
     private val symbolCheckers: List<IrSymbolChecker> = config.checkers.filterIsInstance<IrSymbolChecker>()
     private val typeCheckers: List<IrTypeChecker> = config.checkers.filterIsInstance<IrTypeChecker>()
 
+    // Cache for `visitTypeRecursively`
+    private val typeParameterScopeUpdater = contextUpdaters.filterIsInstance<TypeParameterScopeUpdater>().firstOrNull()
+
     private val checkersPerElementCache = hashMapOf<Class<out IrElement>, List<IrElementChecker<*>>>()
 
     private fun getCheckersFor(type: Class<out IrElement>) = checkersPerElementCache.computeIfAbsent(type) {
@@ -96,6 +95,14 @@ private class IrFileValidator(
             @Suppress("UNCHECKED_CAST")
             (checker as IrElementChecker<IrElement>).check(element, context)
         }
+    }
+
+    override fun visitTypeRecursively(container: IrElement, type: IrType) {
+        typeParameterScopeUpdater?.let { updater ->
+            updater.runInNewContext(context, container) {
+                super.visitTypeRecursively(container, type)
+            }
+        } ?: super.visitTypeRecursively(container, type)
     }
 
     override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
