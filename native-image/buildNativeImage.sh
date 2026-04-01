@@ -13,8 +13,9 @@ echo '1. Building kotlin compiler embeddable'
 
 EMBEDDABLE_JAR=$(find prepare/compiler-embeddable -name 'kotlin-compiler-embeddable-2.4.255-SNAPSHOT.jar')
 STDLIB_JAR=$(find libraries/ -name 'kotlin-stdlib-2.4.255-SNAPSHOT.jar')
+REFLECT_JAR=$(find libraries/ -name 'kotlin-reflect-2.4.255-SNAPSHOT.jar')
 
-CLASSPATH=$EMBEDDABLE_JAR:$STDLIB_JAR
+CLASSPATH=$EMBEDDABLE_JAR:$STDLIB_JAR:$REFLECT_JAR
 echo "Class path: $CLASSPATH"
 
 echo '2. Building native image of kotlin compiler embeddable'
