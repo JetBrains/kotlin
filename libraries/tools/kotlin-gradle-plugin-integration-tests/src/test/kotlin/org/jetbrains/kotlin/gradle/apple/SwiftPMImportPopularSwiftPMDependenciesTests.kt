@@ -1105,7 +1105,9 @@ private fun TestProject.testKotlinLinkage() {
 
 private fun TestProject.copyLockFileIntoIosProject() {
     projectPath.resolve("Package.resolved").copyTo(
-        projectPath.resolve("iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved")
+        projectPath.resolve("iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved").also {
+            it.parent.createDirectories()
+        }
     )
 }
 
