@@ -22,6 +22,7 @@ org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.Appl
 org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.ApplicableAsExtensionCallable
 org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.ApplicableAsFunctionalVariableCall
 org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.NonApplicable
+org.jetbrains.kotlin.analysis.api.components.KaFileAnnotationProvider
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener
 org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider

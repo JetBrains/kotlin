@@ -1,0 +1,82 @@
+lib/MyFileAnnotationSource; fileAnnotations: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+lib/MyFileAnnotationBinary; fileAnnotations: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+lib/MyFileAnnotationRuntime; fileAnnotations: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+/test(): kotlin.Unit; fileAnnotations: [
+  lib/MyFileAnnotationSource(value = "source")
+    psi: KtAnnotationEntry
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: KtAnnotationEntry
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: KtAnnotationEntry
+]
+
+val a: lib.A?; fileAnnotations: [
+]
+
+lib/A; fileAnnotations: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+val b: {lib.B?=} lib.A?; fileAnnotations: [
+]
+
+lib/B; fileAnnotations: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+lib/foo(x: kotlin.Int): kotlin.Int; fileAnnotations: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+lib/foo(x: kotlin.Int): kotlin.Int; fileAnnotations: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+val bar: kotlin.Int; fileAnnotations: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+<constructor>(): lib.A; fileAnnotations: [
+]
+
+<constructor>(): lib.A; fileAnnotations: [
+]
+
+lib/A.method(<dispatch receiver>: lib.A): kotlin.Unit; fileAnnotations: [
+]
+
+lib/A.method(<dispatch receiver>: lib.A): kotlin.Unit; fileAnnotations: [
+]
