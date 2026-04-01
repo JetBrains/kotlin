@@ -2581,6 +2581,13 @@ internal class ReifiedTypeForbiddenSubstitutionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReifiedTypeForbiddenSubstitution
 
+internal class ReifiedTypeUnsafeSubstitutionImpl(
+    override val type: KaType,
+    override val erasedType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReifiedTypeUnsafeSubstitution
+
 internal class DefinitelyNonNullableAsReifiedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

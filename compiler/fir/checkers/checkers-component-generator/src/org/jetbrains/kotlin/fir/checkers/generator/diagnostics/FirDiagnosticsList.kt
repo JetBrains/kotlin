@@ -1033,6 +1033,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REIFIED_TYPE_FORBIDDEN_SUBSTITUTION by error<PsiElement> {
             parameter<ConeKotlinType>("type")
         }
+        val REIFIED_TYPE_UNSAFE_SUBSTITUTION by warning<PsiElement> {
+            parameter<ConeKotlinType>("type")
+            parameter<ConeKotlinType>("erasedType")
+        }
         val DEFINITELY_NON_NULLABLE_AS_REIFIED by error<PsiElement>()
         val TYPE_INTERSECTION_AS_REIFIED by deprecationError<PsiElement>(LanguageFeature.ProhibitIntersectionReifiedTypeParameter) {
             parameter<FirTypeParameterSymbol>("typeParameter")
