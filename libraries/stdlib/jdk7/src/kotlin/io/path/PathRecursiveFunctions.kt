@@ -210,7 +210,7 @@ public fun Path.copyToRecursively(
         // a directory in a destination filesystem is by taking all its segments individually
         // and iteratively resolving a file path starting from the `target`.
         val destination = if (source.fileSystem === target.fileSystem) {
-            relativePath.fold(target) { acc, segment -> acc.resolve(segment) }
+            target.resolve(relativePath)
         } else if (relativePath.nameCount > 0) {
             val firstName = relativePath.getName(0).name
             val trailingNames = Array(relativePath.nameCount - 1) {
