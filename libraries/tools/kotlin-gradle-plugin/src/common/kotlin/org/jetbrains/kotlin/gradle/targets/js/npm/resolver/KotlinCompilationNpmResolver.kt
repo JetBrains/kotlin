@@ -21,6 +21,7 @@ import org.gradle.util.Path
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
@@ -32,13 +33,11 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.createConsumable
-import org.jetbrains.kotlin.gradle.utils.createResolvable
-import org.jetbrains.kotlin.gradle.utils.currentBuild
-import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
+import org.jetbrains.kotlin.gradle.utils.*
 import java.io.Serializable
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNpmResolutionManager as wasmKotlinNpmResolutionManager
@@ -131,6 +130,15 @@ class KotlinCompilationNpmResolver(
                 publicPackageJsonConfiguration.name,
                 publicPackageJsonTaskHolder.map { it.packageJsonFile },
             )
+        }
+
+        if (compilation.wasmTarget != null) {
+            project.registerTask<KotlinImportMapGenerateTask>(compilation.disambiguateName("importMap")) {
+                it.npmRootDir.set(nodeJsRoot.rootPackageDirectory)
+                it.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
+                it.packageJson.fileProvider(packageJsonTaskHolder.flatMap { it.packageJson })
+                it.importMapFile.set(npmProject.dir.map { it.file("importmap.json") })
+            }
         }
     }
 
