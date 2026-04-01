@@ -1793,9 +1793,9 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                 }
 
                 @Composable fun Test(a: A) {
-                    <!COMPOSABLE_PROPERTY_REFERENCE!>a::bar<!>
-                    <!COMPOSABLE_PROPERTY_REFERENCE!>::globalProp<!>
-                    ::prop
+                    println(<!COMPOSABLE_PROPERTY_REFERENCE!>a::bar<!>) // use it to avoid UNUSED warning
+                    println(<!COMPOSABLE_PROPERTY_REFERENCE!>::globalProp<!>) // use it to avoid UNUSED warning
+                    println(::prop) // use it to avoid UNUSED warning
                 }
             """
         )
