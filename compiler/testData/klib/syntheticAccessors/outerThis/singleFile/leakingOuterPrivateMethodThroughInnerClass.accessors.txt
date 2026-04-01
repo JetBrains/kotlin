@@ -16,5 +16,5 @@ public class Outer
         /* TARGET use-site */ $this.privateMethod()
     /* TARGET declaration */ <this>: Outer
 public fun box(): String
-    /* TARGET use-site */ <this>
-    /* TARGET use-site */ <this>.privateMethod()
+    /* ACCESSOR use-site */ this.<outer-this-0>()
+    /* TARGET use-site */ this.<outer-this-0>().privateMethod()

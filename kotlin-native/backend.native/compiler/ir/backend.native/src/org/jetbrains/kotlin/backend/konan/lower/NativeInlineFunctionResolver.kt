@@ -69,9 +69,8 @@ internal class NativeInlineFunctionResolver(
 
         ArrayConstructorLowering(context).lower(function)
 
-        NativePrivateFunctionInlining(generationState).lower(function)
-
         OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
+        NativePrivateFunctionInlining(generationState).lower(function)
         SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
     }
 }

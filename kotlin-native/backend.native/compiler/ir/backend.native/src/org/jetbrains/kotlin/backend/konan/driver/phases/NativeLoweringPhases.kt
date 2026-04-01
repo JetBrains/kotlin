@@ -361,7 +361,6 @@ private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
 private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringPhase(
         ::OuterThisInInlineFunctionsSpecialAccessorLowering,
         name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
-        prerequisite = setOf(inlineOnlyPrivateFunctionsPhase)
 )
 
 private val syntheticAccessorGenerationPhase = createFileLoweringPhase(
@@ -609,8 +608,8 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
         sharedVariablesPhase,
         extractLocalClassesFromInlineBodies,
         arrayConstructorPhase,
-        inlineOnlyPrivateFunctionsPhase,
         outerThisSpecialAccessorInInlineFunctionsPhase,
+        inlineOnlyPrivateFunctionsPhase,
         syntheticAccessorGenerationPhase,
 )
 

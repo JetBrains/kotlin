@@ -23,9 +23,9 @@ public class Outer
         /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
     /* TARGET declaration */ <this>: Outer
 public fun box(): String
-    /* TARGET use-site */ <this>
-    /* TARGET use-site */ <this>.<get-privateVar>()
-    /* TARGET use-site */ <this>
-    /* TARGET use-site */ <this>.<set-privateVar>(<set-?> = value)
-    /* TARGET use-site */ <this>
-    /* TARGET use-site */ <this>.<get-privateVar>()
+    /* ACCESSOR use-site */ this.<outer-this-0>()
+    /* TARGET use-site */ this.<outer-this-0>().<get-privateVar>()
+    /* ACCESSOR use-site */ this.<outer-this-0>()
+    /* TARGET use-site */ this.<outer-this-0>().<set-privateVar>(<set-?> = value)
+    /* ACCESSOR use-site */ this.<outer-this-0>()
+    /* TARGET use-site */ this.<outer-this-0>().<get-privateVar>()

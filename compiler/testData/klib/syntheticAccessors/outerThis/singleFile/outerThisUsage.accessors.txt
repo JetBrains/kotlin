@@ -65,32 +65,32 @@ public class Outer
     /* TARGET declaration */ <this>: Outer
 public fun box(): String
     val usesPublicPropertyOfOuterInInnerL1: String
-        /* TARGET use-site */ <this>
+        /* ACCESSOR use-site */ this.<outer-this-0>()
     val usesPrivatePropertyOfOuterInInnerL1: String
-        /* TARGET use-site */ <this>
-        /* TARGET use-site */ <this>.<get-privatePropertyOfOuter>()
+        /* ACCESSOR use-site */ this.<outer-this-0>()
+        /* TARGET use-site */ this.<outer-this-0>().<get-privatePropertyOfOuter>()
     val usesPublicFunctionOfOuterInInnerL1: String
-        /* TARGET use-site */ <this>
+        /* ACCESSOR use-site */ this.<outer-this-0>()
     val usesPrivateFunctionOfOuterInInnerL1: String
-        /* TARGET use-site */ <this>
-        /* TARGET use-site */ <this>.privateFunctionOfOuter()
+        /* ACCESSOR use-site */ this.<outer-this-0>()
+        /* TARGET use-site */ this.<outer-this-0>().privateFunctionOfOuter()
     val usesPublicPropertyOfOuterInInnerL2: String
-        /* TARGET use-site */ <this>
+        /* ACCESSOR use-site */ this.<outer-this-1>()
     val usesPrivatePropertyOfOuterInInnerL2: String
-        /* TARGET use-site */ <this>
-        /* TARGET use-site */ <this>.<get-privatePropertyOfOuter>()
+        /* ACCESSOR use-site */ this.<outer-this-1>()
+        /* TARGET use-site */ this.<outer-this-1>().<get-privatePropertyOfOuter>()
     val usesPublicFunctionOfOuterInInnerL2: String
-        /* TARGET use-site */ <this>
+        /* ACCESSOR use-site */ this.<outer-this-1>()
     val usesPrivateFunctionOfOuterInInnerL2: String
-        /* TARGET use-site */ <this>
-        /* TARGET use-site */ <this>.privateFunctionOfOuter()
+        /* ACCESSOR use-site */ this.<outer-this-1>()
+        /* TARGET use-site */ this.<outer-this-1>().privateFunctionOfOuter()
     val usesPublicPropertyOfInnerL1InInnerL2: String
-        /* TARGET use-site */ <this>
+        /* ACCESSOR use-site */ this.<outer-this-0>()
     val usesPrivatePropertyOfInnerL1InInnerL2: String
-        /* TARGET use-site */ <this>
-        /* TARGET use-site */ <this>.<get-privatePropertyOfInnerL1>()
+        /* ACCESSOR use-site */ this.<outer-this-0>()
+        /* TARGET use-site */ this.<outer-this-0>().<get-privatePropertyOfInnerL1>()
     val usesPublicFunctionOfInnerL1InInnerL2: String
-        /* TARGET use-site */ <this>
+        /* ACCESSOR use-site */ this.<outer-this-0>()
     val usesPrivateFunctionOfInnerL1InInnerL2: String
-        /* TARGET use-site */ <this>
-        /* TARGET use-site */ <this>.privateFunctionOfInnerL1()
+        /* ACCESSOR use-site */ this.<outer-this-0>()
+        /* TARGET use-site */ this.<outer-this-0>().privateFunctionOfInnerL1()

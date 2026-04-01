@@ -88,9 +88,9 @@ fun loweringsOfTheFirstPhase(
             this += ::createSharedVariablesLoweringPhase
             this += ::LocalClassesInInlineLambdasLowering
             this += ::ArrayConstructorLowering
+            this += ::OuterThisInInlineFunctionsSpecialAccessorLowering
             this += ::PreSerializationPrivateFunctionInlining
             this += ::InlineDeclarationCheckerLowering
-            this += ::OuterThisInInlineFunctionsSpecialAccessorLowering
             this += ::createSyntheticAccessorGeneration
             this += ::createValidateIrAfterInliningOnlyPrivateFunctions
             this += ::createInlineAllFunctionsPhase

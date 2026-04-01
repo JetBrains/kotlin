@@ -19,5 +19,5 @@ public class A
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: A
 public fun box(): String
-    /* TARGET use-site */ <this>
-    /* TARGET use-site */ <this>.Inner(s = s)
+    /* ACCESSOR use-site */ this.<outer-this-0>()
+    /* TARGET use-site */ this.<outer-this-0>().Inner(s = s)

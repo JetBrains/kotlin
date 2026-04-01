@@ -142,8 +142,8 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::createSharedVariablesLoweringPhase,
     ::LocalClassesInInlineLambdasLowering,
     ::ArrayConstructorLowering,
-    ::JsPrivateFunctionInlining,
     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+    ::JsPrivateFunctionInlining,
     ::createSyntheticAccessorGenerationPhase,
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
