@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
 import org.gradle.api.Task
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
-internal interface SubTargetConfigurator<BuildTask : Task, RunTask : Task> {
+@InternalKotlinGradlePluginApi
+interface SubTargetConfigurator<BuildTask : Task, RunTask : Task> {
 
     fun setupBuild(compilation: KotlinJsIrCompilation)
 

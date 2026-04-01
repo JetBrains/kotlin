@@ -86,8 +86,6 @@ constructor(
         test.testFramework = CommonKotlinWasmTestFramework(
             test,
             name,
-            target.project.objects,
-            target.project.providers,
         ).apply {
             executable.set(envSpec.executable)
             argsProperty.set(this@KotlinCommonSubTarget.testArgs)

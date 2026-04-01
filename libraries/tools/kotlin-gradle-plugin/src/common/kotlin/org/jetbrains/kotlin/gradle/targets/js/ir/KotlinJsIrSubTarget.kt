@@ -9,6 +9,7 @@ import org.gradle.api.*
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
@@ -50,7 +51,8 @@ abstract class KotlinJsIrSubTarget(
 
     internal val taskGroupName = "Kotlin $disambiguationClassifier"
 
-    internal val subTargetConfigurators: DomainObjectSet<SubTargetConfigurator<*, *>> =
+    @InternalKotlinGradlePluginApi
+    val subTargetConfigurators: DomainObjectSet<SubTargetConfigurator<*, *>> =
         project.objects.domainObjectSet<SubTargetConfigurator<*, *>>()
 
     @ExperimentalDistributionDsl
@@ -61,7 +63,8 @@ abstract class KotlinJsIrSubTarget(
             }
     }
 
-    internal fun configure() {
+    @InternalKotlinGradlePluginApi
+    fun configure() {
         target.compilations.configureEach { compilation ->
             compilation.compileTaskProvider.configure { task ->
                 task.compilerOptions {

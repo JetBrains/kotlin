@@ -9,6 +9,7 @@ import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -32,6 +33,7 @@ import java.nio.file.Path
  * Returns the created sub-target representing this runtime so it can be further
  * customized if needed.
  */
+@OptIn(InternalKotlinGradlePluginApi::class)
 @ExperimentalWasmDsl
 fun KotlinWasmWasiTargetDsl.runtime(
     name: String,

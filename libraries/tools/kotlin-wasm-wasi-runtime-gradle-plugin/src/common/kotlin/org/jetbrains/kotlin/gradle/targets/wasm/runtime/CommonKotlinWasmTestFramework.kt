@@ -9,7 +9,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.createTestExecutionSpecDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.capitalizeDefaultLocale
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
@@ -26,8 +24,6 @@ import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 internal class CommonKotlinWasmTestFramework(
     kotlinJsTest: KotlinJsTest,
     private val name: String,
-    private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
 ) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasm${name.capitalizeDefaultLocale()}"
 
