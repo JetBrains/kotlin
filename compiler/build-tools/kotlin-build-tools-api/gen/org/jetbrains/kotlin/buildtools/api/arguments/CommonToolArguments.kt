@@ -21,28 +21,12 @@ public interface CommonToolArguments {
   public fun toArgumentStrings(): List<String>
 
   /**
-   * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
-   *
-   * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
-   *
-   * @param arguments a list of arguments for the Kotlin CLI compiler
-   */
-  @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
-  public fun applyArgumentStrings(arguments: List<String>)
-
-  /**
    * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
    *
    * @return the previously set value for an option
    * @throws IllegalStateException if the option was not set and has no default value
    */
   public operator fun <V> `get`(key: CommonToolArgument<V>): V
-
-  /**
-   * Set the [value] for option specified by [key], overriding any previous value for that option.
-   */
-  @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
-  public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V)
 
   /**
    * Check if an option specified by [key] has a value set.

@@ -229,14 +229,15 @@ internal class BtaApiGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
         }
-        function("set") {
-            maybeAddMutabilityDeprecationAnnotation(deprecateSet)
-            addKdoc(KDOC_OPTIONS_SET)
-            addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
-            val typeParameter = TypeVariableName("V")
-            addTypeVariable(typeParameter)
-            addParameter("key", parameter.parameterizedBy(typeParameter))
-            addParameter("value", typeParameter)
+        if (!deprecateSet) {
+            function("set") {
+                addKdoc(KDOC_OPTIONS_SET)
+                addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
+                val typeParameter = TypeVariableName("V")
+                addTypeVariable(typeParameter)
+                addParameter("key", parameter.parameterizedBy(typeParameter))
+                addParameter("value", typeParameter)
+            }
         }
 
         withDeprecationCycle(
@@ -326,20 +327,21 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
 }
 
 private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(deprecated: Boolean = false) {
-    function("applyArgumentStrings") {
-        maybeAddMutabilityDeprecationAnnotation(deprecated)
-        addKdoc(
+    if (!deprecated) {
+        function("applyArgumentStrings") {
+            addKdoc(
             """
             Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
             
             @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
             """.trimIndent()
         )
-        addParameter(
-            ParameterSpec.builder("arguments", listTypeNameOf<String>())
-                .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
-        )
-        this.addModifiers(KModifier.ABSTRACT)
+            addParameter(
+                ParameterSpec.builder("arguments", listTypeNameOf<String>())
+                    .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
+            )
+            this.addModifiers(KModifier.ABSTRACT)
+        }
     }
 }
 

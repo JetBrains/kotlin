@@ -88,15 +88,6 @@ public sealed interface ExecutionPolicy {
          */
         public operator fun <V> get(key: Option<V>): V
 
-        /**
-         * Set the [value] for option specified by [key], overriding any previous value for that option.
-         */
-        @Deprecated(
-            "WithDaemon will become immutable in an upcoming release. " +
-                    "Use `KotlinToolchains.daemonExecutionPolicyBuilder` to create a mutable builder instead."
-        )
-        public operator fun <V> set(key: Option<V>, value: V)
-
         public companion object {
             /**
              * A list of JVM arguments to pass to the Kotlin daemon.

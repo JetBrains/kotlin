@@ -59,48 +59,6 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         assertEquals(JvmTarget.JVM_17, operation3.compilerArguments[JvmCompilerArguments.JVM_TARGET])
     }
 
-    @DisplayName("Test all APIs using legacy non-builders")
-    @DefaultStrategyAgnosticCompilationTest
-    fun testAllApisUsingLegacyNonBuilders(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
-        val sources = listOf(workingDirectory.resolve("a.kt").also { it.writeText("class A") })
-        val destination = workingDirectory.resolve("classes")
-
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(sources, destination)
-        jvmOperation.compilerArguments[JvmCompilerArguments.MODULE_NAME] = "a"
-        jvmOperation.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17
-        jvmOperation.compilerArguments[NO_REFLECT] = true
-        jvmOperation.compilerArguments[NO_STDLIB] = true
-        jvmOperation.compilerArguments[CLASSPATH] =
-            listOf(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath())
-        val icOptions = jvmOperation.createSnapshotBasedIcOptions()
-        icOptions[JvmSnapshotBasedIncrementalCompilationOptions.ROOT_PROJECT_DIR] = workingDirectory
-        icOptions[JvmSnapshotBasedIncrementalCompilationOptions.FORCE_RECOMPILATION] = true
-        val icConfig = JvmSnapshotBasedIncrementalCompilationConfiguration(
-            workingDirectory.resolve("ic-cache"),
-            SourcesChanges.Unknown,
-            emptyList(),
-            workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
-            icOptions
-        )
-
-        jvmOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = icConfig
-        val executionMode = toolchain.createDaemonExecutionPolicy()
-        executionMode[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 1000L
-
-        val snapshotOperation = toolchain.jvm.createClasspathSnapshottingOperation(
-            KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath()
-        )
-        snapshotOperation[JvmClasspathSnapshottingOperation.GRANULARITY] = ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
-        snapshotOperation[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES] = false
-        snapshotOperation[BuildOperation.METRICS_COLLECTOR] = null
-
-        toolchain.createBuildSession().use {
-            it.executeOperation(jvmOperation, executionMode)
-            it.executeOperation(snapshotOperation)
-        }
-    }
-
     @DisplayName("Modifying WithDaemon builder after build does not affect the built policy")
     @BtaVersionsOnlyCompilationTest
     fun testWithDaemonBuilderImmutability(toolchain: KotlinToolchains) {

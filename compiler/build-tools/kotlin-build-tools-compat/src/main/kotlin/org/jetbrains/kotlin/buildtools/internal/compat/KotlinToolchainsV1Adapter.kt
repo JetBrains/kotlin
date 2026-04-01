@@ -37,30 +37,11 @@ public class KotlinToolchainsV1Adapter(
 ) : KotlinToolchains {
     private val jvm: JvmPlatformToolchain by lazy {
         object : JvmPlatformToolchain {
-            @Deprecated(
-                "Use jvmCompilationOperationBuilder instead",
-                replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
-            )
-            override fun createJvmCompilationOperation(
-                sources: List<Path>,
-                destinationDirectory: Path,
-            ): JvmCompilationOperation {
-                return JvmCompilationOperationV1Adapter(compilationService, sources, destinationDirectory, JvmCompilerArgumentsImpl())
-            }
-
             override fun jvmCompilationOperationBuilder(
                 sources: List<Path>,
                 destinationDirectory: Path,
             ): JvmCompilationOperation.Builder {
                 return JvmCompilationOperationV1Adapter(compilationService, sources, destinationDirectory, JvmCompilerArgumentsImpl())
-            }
-
-            @Deprecated(
-                "Use `classpathSnapshottingOperationBuilder` instead",
-                replaceWith = ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)")
-            )
-            override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
-                return JvmClasspathSnapshottingOperationV1Adapter(compilationService, classpathEntry)
             }
 
             override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder {
@@ -118,14 +99,6 @@ public class KotlinToolchainsV1Adapter(
 
     override fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess {
         return ExecutionPolicyV1Adapter.InProcess(compilationService.makeCompilerExecutionStrategyConfiguration().useInProcessStrategy())
-    }
-
-    @Deprecated(
-        "Use daemonExecutionPolicyBuilder instead",
-        replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
-    )
-    override fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon {
-        return ExecutionPolicyV1Adapter.WithDaemon(compilationService)
     }
 
     override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder =
@@ -603,13 +576,12 @@ private abstract class BaseCompilationOperationImpl : BuildOperationImpl<Compila
 }
 
 @OptIn(ExperimentalAtomicApi::class)
-private abstract class BuildOperationImpl<R> : BuildOperation<R> {
+private abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder {
     protected abstract val options: Options
     private val executionStarted = AtomicBoolean(false)
 
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
 
-    @Deprecated("Build operations will become immutable in an upcoming release. Obtain an instance of a mutable builder for the operation from the appropriate `Toolchain` instead.")
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
         options[key] = value
     }

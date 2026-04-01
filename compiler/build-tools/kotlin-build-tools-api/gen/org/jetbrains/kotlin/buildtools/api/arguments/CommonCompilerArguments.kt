@@ -33,12 +33,6 @@ public interface CommonCompilerArguments : CommonToolArguments {
   public operator fun <V> `get`(key: CommonCompilerArgument<V>): V
 
   /**
-   * Set the [value] for option specified by [key], overriding any previous value for that option.
-   */
-  @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
-  public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V)
-
-  /**
    * Check if an option specified by [key] has a value set.
    *
    * Note: trying to read an option (by using [get]) that has not been set will result in an exception.

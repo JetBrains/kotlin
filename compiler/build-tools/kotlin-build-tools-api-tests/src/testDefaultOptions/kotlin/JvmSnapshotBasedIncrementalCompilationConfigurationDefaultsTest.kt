@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.jvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -28,7 +29,7 @@ class JvmSnapshotBasedIncrementalCompilationConfigurationDefaultsTest {
     @Test
     fun testDefaultOptionsOnLegacyObject() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        @Suppress("DEPRECATION") val icConfiguration = kotlinToolchains.jvm.createJvmCompilationOperation(emptyList(), Path("."))
+        @Suppress("DEPRECATION") val icConfiguration = kotlinToolchains.jvm.jvmCompilationOperation(emptyList(), Path("."))
             .createSnapshotBasedIcOptions()
         testDefaults(icConfiguration.toUnifiedAccessor())
     }

@@ -8,6 +8,8 @@
 package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompil
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import java.lang.reflect.InvocationTargetException
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -47,11 +50,15 @@ internal class KotlinWrapperPre2_3_20(
 
     private inner class WithDaemonWrapper(val baseExecutionPolicy: ExecutionPolicy.WithDaemon) :
         ExecutionPolicy.WithDaemon by baseExecutionPolicy, ExecutionPolicy.WithDaemon.Builder {
+        override fun <V> set(key: ExecutionPolicy.WithDaemon.Option<V>, value: V) {
+            baseExecutionPolicy.set(key, value)
+        }
+
         override fun build(): ExecutionPolicy.WithDaemon = deepCopy()
 
         override fun toBuilder(): ExecutionPolicy.WithDaemon.Builder = deepCopy()
 
-        private fun deepCopy() = WithDaemonWrapper(createDaemonExecutionPolicy()).also { newPolicy ->
+        private fun deepCopy(): WithDaemonWrapper = WithDaemonWrapper(base.createDaemonExecutionPolicy()).also { newPolicy ->
             ExecutionPolicy.WithDaemon::class.java.declaredFields.filter {
                 it.type.isAssignableFrom(
                     ExecutionPolicy.WithDaemon.Option::class.java
@@ -100,9 +107,6 @@ internal class KotlinWrapperPre2_3_20(
             "Use newJvmCompilationOperation instead",
             replaceWith = ReplaceWith("newJvmCompilationOperation(sources, destinationDirectory)")
         )
-        override fun createJvmCompilationOperation(sources: List<Path>, destinationDirectory: Path): JvmCompilationOperation {
-            return jvmCompilationOperationBuilder(sources, destinationDirectory)
-        }
 
         override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperationWrapper {
             return JvmClasspathSnapshottingOperationWrapper(base.createClasspathSnapshottingOperation(classpathEntry), this, classpathEntry)
@@ -112,10 +116,6 @@ internal class KotlinWrapperPre2_3_20(
             "Use classpathSnapshottingOperationBuilder instead",
             replaceWith = ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)")
         )
-        override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
-            return classpathSnapshottingOperationBuilder(classpathEntry)
-        }
-
 
         private inner class JvmClasspathSnapshottingOperationWrapper(
             private val base: JvmClasspathSnapshottingOperation,
@@ -125,6 +125,13 @@ internal class KotlinWrapperPre2_3_20(
             JvmClasspathSnapshottingOperation.Builder {
             override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder {
                 return copy()
+            }
+
+            override fun <V> set(
+                key: JvmClasspathSnapshottingOperation.Option<V>,
+                value: V,
+            ) {
+                base.set(key, value)
             }
 
             override fun build(): JvmClasspathSnapshottingOperation {
@@ -148,6 +155,10 @@ internal class KotlinWrapperPre2_3_20(
                         }
                     }
                 }
+
+            override fun <V> set(key: BuildOperation.Option<V>, value: V) {
+                base.set(key, value)
+            }
         }
 
         private inner class JvmCompilationOperationWrapper(
@@ -166,6 +177,10 @@ internal class KotlinWrapperPre2_3_20(
         ) : BaseCompilationOperationWrapper(base), JvmCompilationOperation by base, JvmCompilationOperation.Builder {
             override fun toBuilder(): JvmCompilationOperation.Builder {
                 return copy()
+            }
+
+            override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
+                base.set(key, value)
             }
 
             override fun build(): JvmCompilationOperation {
@@ -296,6 +311,10 @@ internal class KotlinWrapperPre2_3_20(
                 val oldOption = JvmCompilationOperation.Option<V>(key.id)
                 this[oldOption] = value
             }
+
+            override fun <V> set(key: BuildOperation.Option<V>, value: V) {
+                base[key] = value
+            }
         }
 
         private fun BuildOperationWrapper<*>.copyBuildOperationOptions(from: BuildOperation<*>) {
@@ -317,11 +336,127 @@ internal class KotlinWrapperPre2_3_20(
         private val argumentsFactory: () -> JvmCompilerArguments,
     ) :
         JvmCompilerArguments by baseCompilerArguments, JvmCompilerArguments.Builder {
+        override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) {
+            baseCompilerArguments.set(key, value)
+        }
+
         override fun build(): JvmCompilerArguments {
             return JvmCompilerArgumentsWrapper(
                 argumentsFactory().also { newArguments -> newArguments.applyArgumentStrings(toArgumentStrings()) },
                 argumentsFactory
             )
         }
+
+        override fun <V> set(
+            key: CommonCompilerArguments.CommonCompilerArgument<V>,
+            value: V,
+        ) {
+            baseCompilerArguments.set(key, value)
+        }
+
+        override fun <V> set(key: CommonToolArguments.CommonToolArgument<V>, value: V) {
+            baseCompilerArguments.set(key, value)
+        }
+
+        override fun applyArgumentStrings(arguments: List<String>) {
+            baseCompilerArguments.applyArgumentStrings(arguments)
+        }
+    }
+}
+
+private fun JvmCompilerArguments.applyArgumentStrings(toArgumentStrings: List<String>) {
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("applyArgumentStrings", List::class.java)
+            .invoke(this, toArgumentStrings)
+    }
+}
+
+private fun JvmPlatformToolchain.createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation =
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("createClasspathSnapshottingOperation", Path::class.java)
+            .invoke(this, classpathEntry) as JvmClasspathSnapshottingOperation
+    }
+
+private fun JvmPlatformToolchain.createJvmCompilationOperation(
+    sources: List<Path>,
+    destinationDirectory: Path,
+): JvmCompilationOperation = unwrapInvocationTargetException {
+    this::class.java.getMethod("createJvmCompilationOperation", List::class.java, Path::class.java).invoke(
+        this, sources, destinationDirectory
+    ) as JvmCompilationOperation
+}
+
+private fun KotlinToolchains.createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = unwrapInvocationTargetException {
+    this::class.java.getMethod("createDaemonExecutionPolicy").invoke(this) as ExecutionPolicy.WithDaemon
+}
+
+private fun <V> ExecutionPolicy.WithDaemon.set(key: ExecutionPolicy.WithDaemon.Option<V>, value: V) {
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("set", key::class.java, Any::class.java).invoke(this, key, value)
+    }
+}
+
+private fun <V> JvmClasspathSnapshottingOperation.set(
+    key: JvmClasspathSnapshottingOperation.Option<V>,
+    value: V,
+) {
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("set", key::class.java, Any::class.java).invoke(this, key, value)
+    }
+}
+
+
+private operator fun <V> BuildOperation<*>.set(
+    key: BuildOperation.Option<V>,
+    value: V,
+) {
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("set", key::class.java, Any::class.java).invoke(this, key, value)
+    }
+}
+
+private fun <V> JvmCompilationOperation.set(
+    key: JvmCompilationOperation.Option<V>,
+    value: V,
+) {
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("set", key::class.java, Any::class.java).invoke(this, key, value)
+    }
+}
+
+internal operator fun <V> JvmCompilerArguments.set(
+    key: JvmCompilerArguments.JvmCompilerArgument<V>,
+    value: V,
+) {
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("set", key::class.java, Any::class.java).invoke(this, key, value)
+    }
+}
+
+
+internal operator fun <V> CommonCompilerArguments.set(
+    key: CommonCompilerArguments.CommonCompilerArgument<V>,
+    value: V,
+) {
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("set", key::class.java, Any::class.java).invoke(this, key, value)
+    }
+}
+
+
+private fun <V> CommonToolArguments.set(
+    key: CommonToolArguments.CommonToolArgument<V>,
+    value: V,
+) {
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("set", key::class.java, Any::class.java).invoke(this, key, value)
+    }
+}
+
+internal inline fun <T> unwrapInvocationTargetException(action: () -> T): T {
+    return try {
+        action()
+    } catch (e: InvocationTargetException) {
+        throw e.cause ?: e
     }
 }

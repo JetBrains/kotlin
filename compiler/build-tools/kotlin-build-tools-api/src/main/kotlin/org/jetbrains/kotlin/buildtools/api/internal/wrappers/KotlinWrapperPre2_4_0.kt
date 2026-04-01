@@ -70,18 +70,6 @@ internal class KotlinWrapperPre2_4_0(
         override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder {
             throw UnsupportedOperationException("DiscoverScriptExtensionsOperation is available from Kotlin compiler version 2.4.0")
         }
-
-        @Deprecated(
-            "Use jvmCompilationOperationBuilder instead",
-            replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
-        )
-        override fun createJvmCompilationOperation(
-            sources: List<Path>,
-            destinationDirectory: Path,
-        ): JvmCompilationOperation =
-            JvmCompilationOperationWrapper(
-                base.createJvmCompilationOperation(sources, destinationDirectory)
-            )
     }
 
     private class JvmCompilationOperationWrapper(
@@ -176,13 +164,7 @@ internal class KotlinWrapperPre2_4_0(
 
         override fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V = interceptor[key]
 
-        @Deprecated("Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
-        override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) = interceptor.set(key, value)
-
         override fun <V> get(key: CommonCompilerArguments.CommonCompilerArgument<V>): V = interceptor[key]
-
-        @Deprecated("Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
-        override fun <V> set(key: CommonCompilerArguments.CommonCompilerArgument<V>, value: V) = interceptor.set(key, value)
     }
 
     internal class JvmCompilerArgumentsBuilderWrapper(

@@ -172,15 +172,6 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
     public operator fun <V> get(key: Option<V>): V
 
     /**
-     * Set the [value] for option specified by [key], overriding any previous value for that option.
-     */
-    @Deprecated(
-        "Build operations will become immutable in an upcoming release. " +
-                "Use `JvmPlatformToolchain.jvmCompilationOperationBuilder` to create a mutable builder instead."
-    )
-    public operator fun <V> set(key: Option<V>, value: V)
-
-    /**
      * Kotlin compiler configurable options for JVM platform.
      */
     public val compilerArguments: JvmCompilerArguments
@@ -212,7 +203,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
         /**
          * Configures usage of incremental compilation.
          *
-         * @see createSnapshotBasedIcOptions
+         * @see Builder.snapshotBasedIcConfigurationBuilder
          */
         @JvmField
         public val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> =

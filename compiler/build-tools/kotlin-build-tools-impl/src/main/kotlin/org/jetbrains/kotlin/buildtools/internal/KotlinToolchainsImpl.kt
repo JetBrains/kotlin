@@ -38,9 +38,10 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
 
     @Deprecated(
         "Use jvmCompilationOperationBuilder instead",
-        replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
+        replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)"),
+        level = DeprecationLevel.HIDDEN
     )
-    override fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
+    fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
 
     override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl()
 

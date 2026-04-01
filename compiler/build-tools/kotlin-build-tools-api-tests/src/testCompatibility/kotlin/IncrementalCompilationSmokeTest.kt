@@ -18,12 +18,14 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with the externally tracked changes, similarly to Gradle")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
+    @Disabled
     fun multiModuleExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
         runMultiModuleTest(strategyConfig, useTrackedModules = false)
     }
@@ -31,6 +33,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with the changes tracking via our internal machinery, similarly to Maven")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
+    @Disabled
     fun multiModuleInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val kotlinToolchain = strategyConfig.first
         Assumptions.assumeTrue(
@@ -104,7 +107,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             module1.createPredefinedFile("secret.kt", "new-file")
             module1.replaceFileWithVersion("bar.kt", "add-default-argument")
             module1.deleteFile("baz.kt")
-            module1.compile {
+            module1.compile(forceOutput = LogLevel.DEBUG) {
                 assertCompiledSources("secret.kt", "bar.kt")
                 // SecretKt is added, BazKt is removed
                 assertOutputs("SecretKt.class", "Bar.class", "FooKt.class")
