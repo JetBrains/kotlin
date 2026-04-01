@@ -10,12 +10,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 
 object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactory() {
     override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfigurator {
-        // This is a workaround for the transition time to not fix non-generated tests right away
-        val data = when (data.moduleKind) {
-            TestModuleKind.Source, TestModuleKind.ScriptSource -> data.copy(moduleKind = TestModuleKind.SourceLike)
-            else -> data
-        }
-
         requireSupported(data)
 
         val targetPlatform = data.targetPlatform.targetPlatform
@@ -57,7 +51,7 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
         data.analysisApiMode != AnalysisApiMode.Ide -> false
         else -> when (data.moduleKind) {
             TestModuleKind.SourceLike,
-                 -> true
+                -> true
 
             TestModuleKind.Source,
             TestModuleKind.ScriptSource,

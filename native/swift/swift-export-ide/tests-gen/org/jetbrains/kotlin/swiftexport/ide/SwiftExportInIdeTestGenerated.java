@@ -33,7 +33,7 @@ public class SwiftExportInIdeTestGenerated extends AbstractSymbolToSirTest {
     return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
         FrontendKind.Fir,
-        TestModuleKind.Source,
+        TestModuleKind.SourceLike,
         AnalysisSessionMode.Normal,
         AnalysisApiMode.Ide,
         TargetPlatformEnum.JVM
