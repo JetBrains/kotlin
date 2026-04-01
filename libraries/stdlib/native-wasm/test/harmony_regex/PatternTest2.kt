@@ -904,6 +904,128 @@ class PatternTest2 {
         assertFalse(Regex("(?<!#)\\b\\w+\\b").containsMatchIn("#too #sharp"))
     }
 
+    fun testRegexMatching(
+        pattern: String,
+        matchingStrings: List<String>,
+        nonMatchingStrings: List<String> = emptyList(),
+        vararg options: RegexOption
+    ) {
+        val regex = Regex(pattern, options.toSet())
+        matchingStrings.forEach {
+            assertTrue(regex.matches(it), "$regex did not match '$it'")
+        }
+        nonMatchingStrings.forEach {
+            assertFalse(regex.matches(it), "$regex should not match '$it'")
+        }
+    }
+
+    @Test fun testInlineIgnoreCaseFlag() {
+        testRegexMatching("(?i)abc", listOf("abc", "ABC", "aBc"))
+        testRegexMatching("a(?i)bc", listOf("aBC", "abc", "aBc"), listOf("Abc"))
+        testRegexMatching("(?i)(?-i)a", listOf("a"), listOf("A"))
+        testRegexMatching("(?-i)(?i)a", listOf("a", "A"))
+        testRegexMatching("a(?i)b(?-i)c", listOf("abc", "aBc"), listOf("Abc", "AbC", "abC"))
+        testRegexMatching("(?-i)abc", listOf("abc"), listOf("ABC"), RegexOption.IGNORE_CASE)
+        testRegexMatching("ab(?-i)c", listOf("abc", "ABc", "aBc"), listOf("ABC"), RegexOption.IGNORE_CASE)
+        testRegexMatching("a(?i:bc)d", listOf("aBCd", "abCd"), listOf("AbcD", "Abcd", "abcD"))
+        testRegexMatching("(?i)a(?-i:bc)d", listOf("AbcD", "abcD", "Abcd"), listOf("aBCd", "abCd", "aBcd"))
+        testRegexMatching("a(?-i:b)c", listOf("Abc", "abC"), listOf("aBc"), RegexOption.IGNORE_CASE)
+        testRegexMatching("(?i:(?-i:(?i:abc)))", listOf("aBc"))
+    }
+
+    @Test fun testInlineDotAllFlag() {
+        testRegexMatching("(?s)a.c", listOf("abc", "a\nc"))
+        testRegexMatching(".(?s).c", listOf("abc", "a\nc"), listOf("\nbc"))
+        testRegexMatching("(?s)(?-s).", listOf("a"), listOf("\n"))
+        testRegexMatching("(?-s)(?s).", listOf("a", "\n"))
+        testRegexMatching(".(?s).(?-s).", listOf("abc", "a\nc"), listOf("\n\n\n", "\nab", "ab\n"))
+        testRegexMatching("(?-s).", emptyList(), listOf("\n"), RegexOption.DOT_MATCHES_ALL)
+        testRegexMatching(".(?-s).", listOf("ab", "\na"), listOf("\n\n", "a\n"), RegexOption.DOT_MATCHES_ALL)
+        testRegexMatching(".(?s:.).", listOf("abc", "a\nb"), listOf("\n\n\n", "\nab", "ab\n"))
+        testRegexMatching("(?s).(?-s:.).", listOf("abc", "\n_\n", "\nab", "ab\n"), listOf("\n\n\n", "a\nb"))
+        testRegexMatching(".(?-s:.).", listOf("abc", "\n_\n", "\nab", "ab\n"), listOf("\n\n\n", "a\nb"), RegexOption.DOT_MATCHES_ALL)
+        testRegexMatching("(?s:(?-s:(?s:.)))", listOf("\n"))
+    }
+
+    @Test fun testInlineCommentsFlag() {
+        // TODO: Ignored: KT-85425
+        // testRegexMatching("(?x)#a b c\nd", listOf("d"), listOf("b c\nd"))
+        // testRegexMatching("(?x)(?-x)#a b c", listOf("#a b c"))
+        // testRegexMatching("(?-x:#a b c)", listOf("#a b c"), emptyList(), RegexOption.COMMENTS)
+        testRegexMatching("(?x)a b", listOf("ab"), listOf("a b"))
+        testRegexMatching("(?x)a b #comment\nc", listOf("abc"))
+        testRegexMatching("(?x)a b(?-x)c d", listOf("abc d"), listOf("a bc d", "abcd"))
+        testRegexMatching("(?-x)a b c", listOf("a b c"), listOf("abc"), RegexOption.COMMENTS)
+        testRegexMatching(" (?x:a b) ", listOf(" ab "), listOf(" a b "))
+        // TODO: Ignored: KT-85425
+        //testRegexMatching(" (?-x:a b) ", listOf("a b"), listOf("ab", " a b "), RegexOption.COMMENTS)
+        testRegexMatching("(?x:(?-x:(?x:a b c)))", listOf("abc"))
+    }
+
+    @Test fun testInlineMultilineFlag() {
+        Regex("(?m)^[a-z]$").let { regex ->
+            assertFindAll(regex, "a", listOf("a"))
+            assertFindAll(regex, "a\nb", listOf("a", "b"))
+            assertFindAll(regex, "a\nb\r\nc\rd", listOf("a", "b", "c", "d"))
+        }
+        Regex("(?m)(?-m)^[a-z]$").let { regex ->
+            assertTrue(regex.matches("a"))
+            assertFalse(regex.containsMatchIn("a\nb"))
+        }
+        Regex("(?-m)^[a-z]$", RegexOption.MULTILINE).let { regex ->
+            assertTrue(regex.matches("a"))
+            assertFalse(regex.containsMatchIn("a\nb"))
+        }
+        Regex("(?m)^a$\n(?-m)^b$").let { regex ->
+            assertFalse(regex.matches("a\nb"))
+        }
+        Regex("a\n(?m:^[a-z]+$)\nb").let { regex ->
+            assertTrue(regex.matches("a\nline\nb"))
+        }
+        Regex("(?m:(?-m:(?m:^[a-z]$)))").let { regex ->
+            assertFindAll(regex, "a\r\nb\nc", listOf("a", "b", "c"))
+        }
+    }
+
+    @Test fun testInlineUnixLinesFlag() {
+        testRegexMatching("(?d).", listOf("\r"), listOf("\n"))
+        testRegexMatching("(?-d).", emptyList(), listOf("\r", "\n"), RegexOption.UNIX_LINES)
+        testRegexMatching("(?s-d).", listOf("\n", "\r"))
+        testRegexMatching("(?-d).", listOf("\n", "\r"), emptyList(), RegexOption.DOT_MATCHES_ALL)
+        testRegexMatching("(?d)(?-d).", listOf("_"), listOf("\n", "\r"))
+
+        testRegexMatching(".(?d)..", listOf("_\r\r"), listOf("\r\r\r", "_\n\r"))
+        testRegexMatching(".(?-d)..", listOf("\r__"), listOf("\r\r\r"), RegexOption.UNIX_LINES)
+        testRegexMatching("(?d:(?-d:(?d:.)))", listOf("\r"), listOf("\n"))
+
+        listOf(Regex("(?d)^[a-z]$", RegexOption.MULTILINE), Regex("(?md)^[a-z]$")).forEach { regex ->
+            assertFindAll(regex, "a\nb\nc", listOf("a", "b", "c"))
+            assertFindAll(regex, "a\nb\r\nc", listOf("a", "c"))
+            assertFindAll(regex, "a\u0085b\u2028c\u2029d", emptyList())
+        }
+        listOf(Regex("(?-d)^[a-z]$", RegexOption.MULTILINE), Regex("(?m-d)^[a-z]$")).forEach { regex ->
+            assertFindAll(regex, "a\nb\nc", listOf("a", "b", "c"))
+            assertFindAll(regex, "a\nb\r\nc", listOf("a", "b", "c"))
+            assertFindAll(regex, "a\u0085b\u2028c\u2029d", listOf("a", "b", "c", "d"))
+        }
+    }
+
+    @Test fun testInlineUnicodeCaseFlag() {
+        // That's a gray area: we don't have an option, but somehow support the flag
+        assertFalse(Regex("þ").matches("Þ"))
+        assertTrue(Regex("(?i)þ").matches("Þ"))
+        assertTrue(Regex("(?iu)þ").matches("Þ"))
+        // TODO: Ignored: KT-51859
+        // assertFalse(Regex("(?i-u)þ").matches("Þ"))
+    }
+
+    @Test fun testInlineFlagsAreNonCapturingGroups() {
+        val regex = Regex("(?i:a)")
+        val match = regex.matchEntire("A")
+        assertNotNull(match)
+        assertEquals(1, match.groups.size)
+    }
+
     @Test fun testMisc() {
         var regex: Regex
 
@@ -915,13 +1037,6 @@ class PatternTest2 {
         regex = Regex("(?>a*)abb")
         // Note that a regular RE, like (a*)abb would match it
         assertFalse(regex.matches("aaabb"))
-
-        // Test (?onflags-offflags)
-        // Valid flags are i,m,d,s,u,x
-        // TODO
-
-        // Test (?onflags-offflags:...)
-        // TODO
 
         // Test \Q, \E
         regex = Regex("[a-z]+;\\Q[a-z]+;\\Q(foo.*);\\E[0-9]+")
