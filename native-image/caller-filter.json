@@ -1,0 +1,7 @@
+{ "rules": [
+  {"excludeClasses": "java.util.ServiceLoader"},
+  {"excludeClasses": "java.util.ServiceLoader$ProviderImpl"},
+  {"excludeClasses": "java.lang.invoke.MethodHandleImpl$1"},
+  {"excludeClasses": "java.util.concurrent.atomic.*"}
+]
+}
