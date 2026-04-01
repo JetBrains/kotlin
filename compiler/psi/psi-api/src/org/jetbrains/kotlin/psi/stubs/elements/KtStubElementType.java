@@ -51,6 +51,7 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
             }
             return (PsiT[]) Array.newInstance(psiClass, count);
         };
+        // TODO the same meme
         isExpression = KtExpression.class.isAssignableFrom(psiClass);
     }
 

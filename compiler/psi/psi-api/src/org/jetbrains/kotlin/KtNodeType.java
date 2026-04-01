@@ -25,35 +25,62 @@ import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtElementImpl;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 public class KtNodeType extends IElementType {
-    private final Constructor<? extends KtElement> myPsiFactory;
+    @FunctionalInterface
+    public interface PsiFactory {
+        KtElement create(ASTNode node);
+    }
+
+    private final PsiFactory myPsiFactory;
 
     public KtNodeType(@NotNull @NonNls String debugName, Class<? extends KtElement> psiClass) {
+        this(debugName, createFactory(psiClass));
+    }
+
+    public KtNodeType(@NotNull @NonNls String debugName, PsiFactory psiFactory) {
         super(debugName, KotlinLanguage.INSTANCE);
-        try {
-            myPsiFactory = psiClass != null ? psiClass.getConstructor(ASTNode.class) : null;
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Must have a constructor with ASTNode");
-        }
+        myPsiFactory = psiFactory;
     }
 
     public KtElement createPsi(ASTNode node) {
         assert node.getElementType() == this;
 
-        try {
-            if (myPsiFactory == null) {
-                return new KtElementImpl(node);
-            }
-            return myPsiFactory.newInstance(node);
-        } catch (Exception e) {
-            throw new RuntimeException("Error creating psi element for node", e);
+        if (myPsiFactory == null) {
+            return new KtElementImpl(node);
         }
+        return myPsiFactory.create(node);
+    }
+
+    private static PsiFactory createFactory(Class<? extends KtElement> psiClass) {
+        if (psiClass == null) {
+            return null;
+        }
+
+        Constructor<? extends KtElement> constructor;
+        try {
+            constructor = psiClass.getConstructor(ASTNode.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Must have a constructor with ASTNode", e);
+        }
+
+        return node -> {
+            try {
+                return constructor.newInstance(node);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException("Error creating psi element for node", e);
+            }
+        };
     }
 
     public static class KtLeftBoundNodeType extends KtNodeType {
         public KtLeftBoundNodeType(@NotNull @NonNls String debugName, Class<? extends KtElement> psiClass) {
             super(debugName, psiClass);
+        }
+
+        public KtLeftBoundNodeType(@NotNull @NonNls String debugName, PsiFactory psiFactory) {
+            super(debugName, psiFactory);
         }
 
         @Override

@@ -1,11 +1,17 @@
 public class org/jetbrains/kotlin/KtNodeType : com/intellij/psi/tree/IElementType {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/KtNodeType$PsiFactory;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
 	public fun createPsi (Lcom/intellij/lang/ASTNode;)Lorg/jetbrains/kotlin/psi/KtElement;
 }
 
 public class org/jetbrains/kotlin/KtNodeType$KtLeftBoundNodeType : org/jetbrains/kotlin/KtNodeType {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/KtNodeType$PsiFactory;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
 	public fun isLeftBound ()Z
+}
+
+public abstract interface class org/jetbrains/kotlin/KtNodeType$PsiFactory {
+	public abstract fun create (Lcom/intellij/lang/ASTNode;)Lorg/jetbrains/kotlin/psi/KtElement;
 }
 
 public abstract interface class org/jetbrains/kotlin/KtNodeTypes {
@@ -4265,4 +4271,3 @@ public final class org/jetbrains/kotlin/resolve/StatementFilterKt {
 	public static final fun filterStatements (Lorg/jetbrains/kotlin/resolve/StatementFilter;Lorg/jetbrains/kotlin/psi/KtBlockExpression;)Ljava/util/List;
 	public static final fun getLastStatementInABlock (Lorg/jetbrains/kotlin/resolve/StatementFilter;Lorg/jetbrains/kotlin/psi/KtBlockExpression;)Lorg/jetbrains/kotlin/psi/KtExpression;
 }
-

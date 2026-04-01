@@ -80,7 +80,11 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.valueParameterListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.valueParameterType
 org.jetbrains.kotlin.KtNodeType
 org.jetbrains.kotlin.KtNodeType.KtLeftBoundNodeType
+org.jetbrains.kotlin.KtNodeType.KtLeftBoundNodeType:constructor(String, KtNodeType.PsiFactory)
 org.jetbrains.kotlin.KtNodeType.KtLeftBoundNodeType:constructor(String, Class<? extends KtElement>)
+org.jetbrains.kotlin.KtNodeType.PsiFactory
+org.jetbrains.kotlin.KtNodeType.PsiFactory:create(ASTNode)
+org.jetbrains.kotlin.KtNodeType:constructor(String, KtNodeType.PsiFactory)
 org.jetbrains.kotlin.KtNodeType:constructor(String, Class<? extends KtElement>)
 org.jetbrains.kotlin.KtNodeType:createPsi(ASTNode)
 org.jetbrains.kotlin.KtNodeTypes

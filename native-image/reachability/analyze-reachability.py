@@ -16,7 +16,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "json_file",
         nargs="?",
-        default=Path(__file__).with_name("reachability-metadata-new.json"),
+        default=Path(__file__).with_name("reachability-metadata.json"),
         type=Path,
         help="Path to reachability metadata JSON.",
     )
