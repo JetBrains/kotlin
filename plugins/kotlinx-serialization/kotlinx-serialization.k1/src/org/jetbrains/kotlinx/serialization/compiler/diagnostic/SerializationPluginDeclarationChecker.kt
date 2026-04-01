@@ -57,7 +57,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (!isIde) {
             // In IDE, BindingTrace is recreated each time code is modified, effectively resulting in JAR manifest read every time user types
             // something, which may be very slow. So we perform this check only during CLI/Gradle compilation.
-            VersionReader.getVersionsForCurrentModuleFromTrace(descriptor.module, context.trace)?.let {
+            VersionReader.getVersionsForCurrentModuleFromTrace(descriptor.module)?.let {
                 checkMinKotlin(it, descriptor, context.trace)
                 checkMinRuntime(it, descriptor, context.trace)
             }

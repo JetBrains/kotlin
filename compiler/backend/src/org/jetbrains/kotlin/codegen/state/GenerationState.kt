@@ -79,7 +79,6 @@ class GenerationState(
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
-    val bindingTrace: BindingTrace = DelegatingBindingTrace(BindingContext.EMPTY, "trace in GenerationState")
     val localDelegatedProperties: MutableMap<Type, List<VariableDescriptorWithAccessors>> = mutableMapOf()
 
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext()

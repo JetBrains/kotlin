@@ -162,7 +162,7 @@ class SerializationJvmIrIntrinsicSupport(
     override fun referenceClassId(classId: ClassId): IrClassSymbol? = irPluginContext.finderForBuiltins().findClass(classId)
 
     private val currentVersion by lazy {
-        VersionReader.getVersionsForCurrentModuleFromTrace(module, jvmBackendContext.state.bindingTrace)
+        VersionReader.getVersionsForCurrentModuleFromTrace(module)
             ?.implementationVersion
     }
 
