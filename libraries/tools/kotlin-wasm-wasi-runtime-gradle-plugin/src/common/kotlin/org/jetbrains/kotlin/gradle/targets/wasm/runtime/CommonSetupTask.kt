@@ -46,12 +46,12 @@ internal abstract class CommonSetupTask @Inject constructor(
     abstract val archiveOperation: Property<ArchiveOperationsProvider>
 
     // fs is internal in KGP
-    @get:Inject
-    internal abstract val fs: FileSystemOperations
+//    @get:Inject
+//    internal abstract val fs: FileSystemOperations
 
     // archiveOperations is internal in KGP
-    @get:Inject
-    internal abstract val archiveOperations: ArchiveOperations
+//    @get:Inject
+//    internal abstract val archiveOperations: ArchiveOperations
 
     override fun extract(archive: File) {
         val archiveOperationValue: ArchiveOperationsProvider = archiveOperation.getOrElse { ao: ArchiveOperations, path: Path ->
