@@ -32,13 +32,6 @@
 			);
 			target = 20EF86E831B58EE3722E4CE5 /* iosApp */;
 		};
-		F82A25892F7C13980052BC15 /* Exceptions for "frameworkTarget" folder in "FrameworkTarget" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				frameworkTarget.h,
-			);
-			target = F82A257C2F7C13980052BC15 /* FrameworkTarget */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -55,12 +48,9 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
-		F82A257E2F7C13980052BC15 /* frameworkTarget */ = {
+		F82A257E2F7C13980052BC15 /* FrameworkTarget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				F82A25892F7C13980052BC15 /* Exceptions for "frameworkTarget" folder in "FrameworkTarget" target */,
-			);
-			path = frameworkTarget;
+			path = FrameworkTarget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -97,7 +87,7 @@
 			children = (
 				4FF81DBF3A32E3BFF66D191B /* Configuration */,
 				4A517554A312D5DF79FD9F8C /* iosApp */,
-				F82A257E2F7C13980052BC15 /* frameworkTarget */,
+				F82A257E2F7C13980052BC15 /* FrameworkTarget */,
 				97D48EC51C86117DA41B54E7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -153,12 +143,12 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				F82A257E2F7C13980052BC15 /* frameworkTarget */,
+				F82A257E2F7C13980052BC15 /* FrameworkTarget */,
 			);
 			name = FrameworkTarget;
 			packageProductDependencies = (
 			);
-			productName = frameworkTarget;
+			productName = FrameworkTarget;
 			productReference = F82A257D2F7C13980052BC15 /* FrameworkTarget.framework */;
 			productType = "com.apple.product-type.framework";
 		};
@@ -461,7 +451,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = foo.frameworkTarget;
+				PRODUCT_BUNDLE_IDENTIFIER = foo.FrameworkTarget;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -497,7 +487,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = foo.frameworkTarget;
+				PRODUCT_BUNDLE_IDENTIFIER = foo.FrameworkTarget;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
