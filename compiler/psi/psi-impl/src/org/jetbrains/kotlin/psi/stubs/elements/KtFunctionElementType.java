@@ -32,7 +32,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
     private static final String NAME = "kotlin.FUNCTION";
 
     public KtFunctionElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtNamedFunction.class, KotlinFunctionStub.class);
+        super(debugName, KtNamedFunction::new, KtNamedFunction::new, KtNamedFunction[]::new, false);
     }
 
     /**

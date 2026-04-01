@@ -10,14 +10,15 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtImportAlias
-import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinImportAliasStubImpl
 
 class KtImportAliasElementType(debugName: String) :
     KtStubElementType<KotlinImportAliasStubImpl, KtImportAlias>(
         debugName,
-        KtImportAlias::class.java,
-        KotlinImportAliasStub::class.java,
+        ::KtImportAlias,
+        ::KtImportAlias,
+        { arrayOfNulls<KtImportAlias>(it) },
+        false,
     ) {
 
     override fun createStub(psi: KtImportAlias, parentStub: StubElement<*>?): KotlinImportAliasStubImpl {

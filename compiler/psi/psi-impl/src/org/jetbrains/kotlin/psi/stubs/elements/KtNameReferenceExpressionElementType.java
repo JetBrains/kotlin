@@ -20,7 +20,7 @@ import java.io.IOException;
 public class KtNameReferenceExpressionElementType
         extends KtStubElementType<KotlinNameReferenceExpressionStubImpl, KtNameReferenceExpression> {
     public KtNameReferenceExpressionElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtNameReferenceExpression.class, KotlinNameReferenceExpressionStub.class);
+        super(debugName, KtNameReferenceExpression::new, KtNameReferenceExpression::new, KtNameReferenceExpression[]::new, true);
     }
 
     @NotNull

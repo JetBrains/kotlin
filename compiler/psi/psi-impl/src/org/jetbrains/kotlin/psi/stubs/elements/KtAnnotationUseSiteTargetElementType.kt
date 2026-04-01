@@ -11,14 +11,15 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
-import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationUseSiteTargetStubImpl
 
 class KtAnnotationUseSiteTargetElementType(debugName: String) :
     KtStubElementType<KotlinAnnotationUseSiteTargetStubImpl, KtAnnotationUseSiteTarget>(
         debugName,
-        KtAnnotationUseSiteTarget::class.java,
-        KotlinAnnotationUseSiteTargetStub::class.java,
+        ::KtAnnotationUseSiteTarget,
+        ::KtAnnotationUseSiteTarget,
+        { arrayOfNulls<KtAnnotationUseSiteTarget>(it) },
+        false,
     ) {
     override fun createStub(
         psi: KtAnnotationUseSiteTarget,

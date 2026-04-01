@@ -12,13 +12,14 @@ import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
-import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntryStubImpl
 
 internal object KtEnumEntryElementType : KtStubElementType<KotlinEnumEntryStubImpl, KtEnumEntry>(
     "ENUM_ENTRY",
-    KtEnumEntry::class.java,
-    KotlinClassStub::class.java,
+    ::KtEnumEntry,
+    ::KtEnumEntry,
+    { arrayOfNulls<KtEnumEntry>(it) },
+    false,
 ) {
     override fun createStub(psi: KtEnumEntry, parentStub: StubElement<*>): KotlinEnumEntryStubImpl {
         val fqName = psi.safeFqNameForLazyResolve()?.asString()

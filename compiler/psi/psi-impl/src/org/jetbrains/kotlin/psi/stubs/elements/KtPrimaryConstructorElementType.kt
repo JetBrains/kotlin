@@ -10,7 +10,6 @@ import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
@@ -18,9 +17,11 @@ import java.io.IOException
 
 class KtPrimaryConstructorElementType(@NonNls debugName: String) :
     KtStubElementType<KotlinPrimaryConstructorStubImpl, KtPrimaryConstructor>(
-        /* debugName = */ debugName,
-        /* psiClass = */ KtPrimaryConstructor::class.java,
-        /* stubClass = */ KotlinConstructorStub::class.java,
+        debugName,
+        ::KtPrimaryConstructor,
+        ::KtPrimaryConstructor,
+        { arrayOfNulls<KtPrimaryConstructor>(it) },
+        false,
     ) {
 
     override fun createStub(

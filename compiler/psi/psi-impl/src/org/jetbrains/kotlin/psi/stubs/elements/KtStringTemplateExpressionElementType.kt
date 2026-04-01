@@ -12,7 +12,13 @@ import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 
 class KtStringTemplateExpressionElementType(@NonNls debugName: String) :
-    KtPlaceHolderStubElementType<KtStringTemplateExpression>(debugName, KtStringTemplateExpression::class.java) {
+    KtPlaceHolderStubElementType<KtStringTemplateExpression>(
+        debugName,
+        { node -> KtStringTemplateExpression(node) },
+        { stub -> KtStringTemplateExpression(stub) },
+        { arrayOfNulls<KtStringTemplateExpression>(it) },
+        true,
+    ) {
 
     override fun shouldCreateStub(node: ASTNode): Boolean {
         @OptIn(KtImplementationDetail::class)

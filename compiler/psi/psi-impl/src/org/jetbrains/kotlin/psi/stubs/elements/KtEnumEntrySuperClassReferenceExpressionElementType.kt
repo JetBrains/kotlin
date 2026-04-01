@@ -11,14 +11,15 @@ import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression
-import org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntrySuperclassReferenceExpressionStubImpl
 
 class KtEnumEntrySuperClassReferenceExpressionElementType(@NonNls debugName: String) :
     KtStubElementType<KotlinEnumEntrySuperclassReferenceExpressionStubImpl, KtEnumEntrySuperclassReferenceExpression>(
         debugName,
-        KtEnumEntrySuperclassReferenceExpression::class.java,
-        KotlinEnumEntrySuperclassReferenceExpressionStub::class.java,
+        ::KtEnumEntrySuperclassReferenceExpression,
+        ::KtEnumEntrySuperclassReferenceExpression,
+        { arrayOfNulls<KtEnumEntrySuperclassReferenceExpression>(it) },
+        true,
     ) {
 
     override fun createStub(

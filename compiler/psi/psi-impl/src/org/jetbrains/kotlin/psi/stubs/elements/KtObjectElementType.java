@@ -27,7 +27,7 @@ import java.util.List;
 
 public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl, KtObjectDeclaration> {
     public KtObjectElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtObjectDeclaration.class, KotlinObjectStub.class);
+        super(debugName, KtObjectDeclaration::new, KtObjectDeclaration::new, KtObjectDeclaration[]::new, false);
     }
 
     /**

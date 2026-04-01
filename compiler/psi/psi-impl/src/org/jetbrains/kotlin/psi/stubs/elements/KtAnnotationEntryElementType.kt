@@ -11,7 +11,6 @@ import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub
 import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableMap
 import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableMap
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
@@ -20,8 +19,10 @@ import org.jetbrains.kotlin.psi.stubs.impl.serializeConstantValue
 
 internal object KtAnnotationEntryElementType : KtStubElementType<KotlinAnnotationEntryStubImpl, KtAnnotationEntry>(
     "ANNOTATION_ENTRY",
-    KtAnnotationEntry::class.java,
-    KotlinAnnotationEntryStub::class.java,
+    ::KtAnnotationEntry,
+    ::KtAnnotationEntry,
+    { arrayOfNulls<KtAnnotationEntry>(it) },
+    false,
 ) {
     override fun createStub(psi: KtAnnotationEntry, parentStub: StubElement<*>?): KotlinAnnotationEntryStubImpl {
         val shortName = psi.getShortName()

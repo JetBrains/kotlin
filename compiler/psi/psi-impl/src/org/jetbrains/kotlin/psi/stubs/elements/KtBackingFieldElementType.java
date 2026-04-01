@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class KtBackingFieldElementType extends KtStubElementType<KotlinBackingFieldStubImpl, KtBackingField> {
     public KtBackingFieldElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtBackingField.class, KotlinBackingFieldStub.class);
+        super(debugName, KtBackingField::new, KtBackingField::new, KtBackingField[]::new, false);
     }
 
     @NotNull

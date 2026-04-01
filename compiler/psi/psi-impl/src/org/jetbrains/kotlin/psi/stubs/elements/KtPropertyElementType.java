@@ -29,7 +29,7 @@ import java.io.IOException;
 
 public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubImpl, KtProperty> {
     public KtPropertyElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtProperty.class, KotlinPropertyStub.class);
+        super(debugName, KtProperty::new, KtProperty::new, KtProperty[]::new, false);
     }
 
     /**

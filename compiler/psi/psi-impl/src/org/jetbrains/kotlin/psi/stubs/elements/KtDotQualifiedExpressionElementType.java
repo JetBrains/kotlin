@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.stubs.StubUtils;
 
 public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElementType<KtDotQualifiedExpression> {
     public KtDotQualifiedExpressionElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtDotQualifiedExpression.class);
+        super(debugName, KtDotQualifiedExpression::new, KtDotQualifiedExpression::new, KtDotQualifiedExpression[]::new, true);
     }
 
     @Override

@@ -12,22 +12,19 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.ArrayFactory;
-import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtElementImplStub;
-import org.jetbrains.kotlin.psi.KtExpression;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
+import java.util.function.Function;
 
 public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT extends KtElementImplStub<?>> extends IStubElementType<StubT, PsiT> {
 
     @NotNull
-    private final Constructor<PsiT> byNodeConstructor;
+    private final Function<ASTNode, PsiT> psiFromAstFactory;
     @NotNull
-    private final Constructor<PsiT> byStubConstructor;
+    private final Function<StubT, PsiT> psiFromStubFactory;
     @NotNull
     private final PsiT[] emptyArray;
     @NotNull
@@ -35,35 +32,35 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
     private final boolean isExpression;
 
     @SuppressWarnings("unchecked")
-    public KtStubElementType(@NotNull @NonNls String debugName, @NotNull Class<PsiT> psiClass, @NotNull Class<?> stubClass) {
+    public KtStubElementType(
+            @NotNull @NonNls String debugName,
+            @NotNull Function<ASTNode, PsiT> psiFromAstFactory,
+            @NotNull Function<StubT, PsiT> psiFromStubFactory,
+            @NotNull ArrayFactory<PsiT> arrayFactory,
+            boolean isExpression
+    ) {
         super(debugName, KotlinLanguage.INSTANCE);
-        try {
-            byNodeConstructor = psiClass.getConstructor(ASTNode.class);
-            byStubConstructor = psiClass.getConstructor(stubClass);
-        }
-        catch (NoSuchMethodException e) {
-            throw new RuntimeException("Stub element type declaration for " + psiClass.getSimpleName() + " is missing required constructors",e);
-        }
-        emptyArray = (PsiT[]) Array.newInstance(psiClass, 0);
-        arrayFactory = count -> {
+        this.psiFromAstFactory = psiFromAstFactory;
+        this.psiFromStubFactory = psiFromStubFactory;
+        this.isExpression = isExpression;
+        emptyArray = arrayFactory.create(0);
+        this.arrayFactory = count -> {
             if (count == 0) {
                 return emptyArray;
             }
-            return (PsiT[]) Array.newInstance(psiClass, count);
+            return arrayFactory.create(count);
         };
-        // TODO the same meme
-        isExpression = KtExpression.class.isAssignableFrom(psiClass);
     }
 
     @NotNull
     public PsiT createPsiFromAst(@NotNull ASTNode node) {
-        return ReflectionUtil.createInstance(byNodeConstructor, node);
+        return psiFromAstFactory.apply(node);
     }
 
     @Override
     @NotNull
     public PsiT createPsi(@NotNull StubT stub) {
-        return ReflectionUtil.createInstance(byStubConstructor, stub);
+        return psiFromStubFactory.apply(stub);
     }
 
     @NotNull
