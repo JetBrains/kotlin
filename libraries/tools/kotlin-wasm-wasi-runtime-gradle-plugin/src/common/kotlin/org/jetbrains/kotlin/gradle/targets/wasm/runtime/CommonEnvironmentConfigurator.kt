@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
+import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.disambiguateCamelCased
 import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.getFile
 
 @ExperimentalWasmDsl

@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 /**
  * Instance which describes specific runtimes for JS and Wasm targets
@@ -50,7 +51,8 @@ abstract class EnvSpec<T : AbstractEnv> {
     /**
      * Full serializable cache-friendly entity without Gradle Provider API
      */
-    internal abstract val env: Provider<T>
+    @InternalKotlinGradlePluginApi
+    abstract val env: Provider<T>
 
     /**
      * Provider with full executable path

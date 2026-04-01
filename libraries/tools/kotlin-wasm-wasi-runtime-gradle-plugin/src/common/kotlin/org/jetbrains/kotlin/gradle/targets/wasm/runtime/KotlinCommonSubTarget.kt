@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.runtime
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.capitalizeDefaultLocale
 import javax.inject.Inject
 
+@OptIn(InternalKotlinGradlePluginApi::class)
 internal abstract class KotlinCommonSubTarget
 @Inject
 constructor(

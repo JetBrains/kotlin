@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ProcessForkOptions
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -46,26 +47,7 @@ internal class CommonKotlinWasmTestFramework(
 
     val argsProperty: Property<ArgsProvider> = kotlinJsTest.project.objects.property(ArgsProvider::class.java)
 
-    @Deprecated(
-        "Replaced with a new method that uses ProcessLaunchOptions instead of Gradle's ProcessForkOptions. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR
-    )
-    override fun createTestExecutionSpec(
-        task: KotlinJsTest,
-        forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>,
-        debug: Boolean,
-    ): TCServiceMessagesTestExecutionSpec =
-        // createTestExecutionSpecDeprecated is internal in KGP
-        createTestExecutionSpecDeprecated(
-            task = task,
-            forkOptions = forkOptions,
-            nodeJsArgs = nodeJsArgs,
-            debug = debug,
-            objects = objects,
-            providers = providers,
-        )
-
+    @OptIn(InternalKotlinGradlePluginApi::class)
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,

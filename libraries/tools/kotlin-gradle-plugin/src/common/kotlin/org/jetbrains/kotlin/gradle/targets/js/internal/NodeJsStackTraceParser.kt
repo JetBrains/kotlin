@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.testing.ParsedStackTrace
 import org.jetbrains.kotlin.gradle.utils.appendLine
 
@@ -37,7 +38,8 @@ internal data class NodeJsStackTraceElement(
     )
 }
 
-internal fun parseNodeJsStackTraceAsJvm(stackTrace: String): ParsedStackTrace =
+@InternalKotlinGradlePluginApi
+fun parseNodeJsStackTraceAsJvm(stackTrace: String): ParsedStackTrace =
     parseNodeJsStackTrace(stackTrace).toJvm()
 
 internal fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {

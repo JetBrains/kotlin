@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.internal.hash.FileHasher
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.UrlRepoConfigurationMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
@@ -40,20 +41,25 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
 
     private val shouldDownload: Provider<Boolean> = env.map { it.download }
 
+    @InternalKotlinGradlePluginApi
     @get:Inject
-    internal abstract val archiveOperations: ArchiveOperations
+    abstract val archiveOperations: ArchiveOperations
 
+    @InternalKotlinGradlePluginApi
     @get:Inject
-    internal abstract val fileHasher: FileHasher
+    abstract val fileHasher: FileHasher
 
+    @InternalKotlinGradlePluginApi
     @get:Inject
-    internal abstract val objects: ObjectFactory
+    abstract val objects: ObjectFactory
 
+    @InternalKotlinGradlePluginApi
     @get:Inject
-    internal abstract val fs: FileSystemOperations
+    abstract val fs: FileSystemOperations
 
+    @InternalKotlinGradlePluginApi
     @get:Input
-    internal val ivyDependencyProvider: Provider<String> = env.map { it.ivyDependency }
+    val ivyDependencyProvider: Provider<String> = env.map { it.ivyDependency }
 
     @get:Input
     @get:Optional
@@ -84,9 +90,10 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             it.disallowChanges()
         }
 
+    @InternalKotlinGradlePluginApi
     @Transient
     @get:Internal
-    internal var configuration: Provider<Configuration>? = null
+    var configuration: Provider<Configuration>? = null
 
     @get:Classpath
     @get:Optional

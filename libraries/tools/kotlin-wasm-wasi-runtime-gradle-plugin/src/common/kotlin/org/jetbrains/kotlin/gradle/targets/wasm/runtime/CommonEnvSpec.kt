@@ -6,10 +6,12 @@ package org.jetbrains.kotlin.gradle.targets.wasm.runtime
 
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.runtime.utils.getFile
 import java.nio.file.Path
 
+@OptIn(InternalKotlinGradlePluginApi::class)
 internal abstract class CommonEnvSpec(
     val name: String,
 ) : EnvSpec<CommonEnv>() {
