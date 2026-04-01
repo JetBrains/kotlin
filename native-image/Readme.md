@@ -1,14 +1,16 @@
 From repo root:
 ```
-./native-image/buildNativeImage.sh \
-    $GRAAL_HOME \
-    native-image/reachability/reachability-metadata-new.json \
-    native-image/reachability/reachability-metadata-cli.json
+./native-image/buildNativeImage.sh
 ```
 
-1. Splits the reachability metadata into separate json configs in `native-image/current-config`
-2. Builds kotlin-compiler-embeddable.jar
-3. Builds native image
+1. Builds dist
+2. Builds kotlin-compiler-embeddable
+3. Runs kotlin-compiler-embeddable on hello world to collect reachability-metadata
+4. Re-builds kotlin-compiler-embeddable with new reachability-medatata
+5. Builds native image
+
+Options:
+
 
 
 Collect reachability for command-line compiler
