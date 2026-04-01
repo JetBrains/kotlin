@@ -282,7 +282,7 @@ class Collections {
         fun binarySearchFindOrInsert() {
             /**
              * If the element is found, returns its index.
-             * Otherwise, inserts the element at the right position and returns its index.
+             * Otherwise, inserts the element at the correct position and returns its index.
              */
             fun findOrInsert(list: MutableList<Char>, element: Char): Int {
                 val index = list.binarySearch(element)
@@ -385,7 +385,6 @@ class Collections {
             val lst2 = mutableListOf('a',           'c', 'd', 'e')
             val lst3 = mutableListOf('a', 'b', 'c')
             val lst4 = mutableListOf(null, null, 'a', 'b', 'c')
-            val lst5 = mutableListOf('a', 'b', 'c')
 
             assertPrints(lst1.lowerBound('b'), "1")
             assertPrints(lst1.upperBound('b'), "3")

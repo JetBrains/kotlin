@@ -328,8 +328,8 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
  * otherwise, the inverted insertion index `(-insertion index - 1)`.
  * The insertion index is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of the list) still remains sorted.
- * Thus, if the returned index is `>= 0`, then the value is present at this index;
- * otherwise, the value could be inserted at `index.inv()` to maintain the sorted order.
+ * Thus, if the returned index is `>= 0`, then the element is present at this index;
+ * otherwise, the element could be inserted at `index.inv()` to maintain the sorted order.
  * @sample samples.collections.Collections.Lists.binarySearchFoundNotFound
  * @sample samples.collections.Collections.Lists.binarySearchFindOrInsert
  * @sample samples.collections.Collections.Lists.binarySearchOnComparable
@@ -359,17 +359,22 @@ public fun <T : Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int
 
 /**
  * Searches this list or its range for the provided [element] using the binary search algorithm.
- * The list is expected to be sorted into ascending order according to the specified [comparator],
- * otherwise the result is undefined.
+ * The list is expected to be sorted in ascending order according to the specified [comparator];
+ * otherwise, the result is undefined.
  *
  * If the list contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ *
+ * If you need to find the first or the last occurrence of an element,
+ * refer to the [binarySearch] with a custom comparison function.
  *
  * `null` value is considered to be less than any non-null value.
  *
  * @return the index of the element, if it is contained in the list within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the list (or the specified subrange of list) still remains sorted according to the specified [comparator].
+ * otherwise, the inverted insertion index `(-insertion index - 1)`.
+ * The insertion index is defined as the index at which the element should be inserted,
+ * so that the list (or the specified subrange of the list) still remains sorted according to the specified [comparator].
+ * Thus, if the returned index is `>= 0`, then the element is present at this index;
+ * otherwise, the element could be inserted at `index.inv()` to maintain the sorted order.
  * @sample samples.collections.Collections.Lists.binarySearchWithComparator
  */
 public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Int {
@@ -396,17 +401,22 @@ public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fr
 /**
  * Searches this list or its range for an element having the key returned by the specified [selector] function
  * equal to the provided [key] value using the binary search algorithm.
- * The list is expected to be sorted into ascending order according to the Comparable natural ordering of keys of its elements.
- * otherwise the result is undefined.
+ * The list is expected to be sorted into ascending order according to the Comparable natural ordering of keys of its elements;
+ * otherwise, the result is undefined.
  *
  * If the list contains multiple elements with the specified [key], there is no guarantee which one will be found.
+ *
+ * If you need to find the first or the last occurrence of an element,
+ * refer to the [binarySearch] with a custom comparison function.
  *
  * `null` value is considered to be less than any non-null value.
  *
  * @return the index of the element with the specified [key], if it is contained in the list within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the list (or the specified subrange of list) still remains sorted.
+ * otherwise, the inverted insertion index `(-insertion index - 1)`.
+ * The insertion index is defined as the index at which the element should be inserted,
+ * so that the list (or the specified subrange of the list) still remains sorted.
+ * Thus, if the returned index is `>= 0`, then the element is present at this index;
+ * otherwise, the element could be inserted at `index.inv()` to maintain the sorted order.
  * @sample samples.collections.Collections.Lists.binarySearchByKey
  */
 public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(
@@ -431,14 +441,19 @@ public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(
  *
  * If the list contains multiple elements for which [comparison] returns zero, there is no guarantee which one will be found.
  *
+ * If you need to find the first or the last occurrence of an element,
+ * use this [binarySearch] with a custom comparison function. See sample for an example.
+ *
  * @param comparison function that returns zero when called on the list element being searched.
  * On the elements coming before the target element, the function must return negative values;
  * on the elements coming after the target element, the function must return positive values.
  *
  * @return the index of the found element, if it is contained in the list within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
+ * otherwise, the inverted insertion index `(-insertion index - 1)`.
+ * The insertion index is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of list) still remains sorted.
+ * Thus, if the returned index is `>= 0`, then the element is present at this index;
+ * otherwise, the element could be inserted at `index.inv()` to maintain the sorted order.
  * @sample samples.collections.Collections.Lists.binarySearchWithComparisonFunction
  * @sample samples.collections.Collections.Lists.binarySearchWithComparisonFunctionLowerBoundUpperBound
  */
