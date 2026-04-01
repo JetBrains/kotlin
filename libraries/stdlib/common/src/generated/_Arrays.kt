@@ -4249,7 +4249,7 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(des
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstance
  */
-public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
+public inline fun <reified @kotlin.internal.WarnOnErased R> Array<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
     return filterIsInstanceTo(ArrayList<R>())
 }
 
@@ -4259,7 +4259,7 @@ public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal
  * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
  */
 @IgnorableReturnValue
-public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
+public inline fun <reified @kotlin.internal.WarnOnErased R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
     return destination
 }
