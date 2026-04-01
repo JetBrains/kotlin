@@ -9,8 +9,8 @@ internal inline fun internalFunO(): String
 internal inline fun internalFunK(): String
     /* ACCESSOR use-site */ access$privateFunK$tUsePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFunKt()
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateFunO$tUsePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFunKt()
-    /* ACCESSOR use-site */ access$privateFunK$tUsePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFunKt()
+    /* TARGET use-site */ privateFunO()
+    /* TARGET use-site */ privateFunK()
 /* ACCESSOR declaration */ internal fun access$privateFunO$tUsePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFunKt(x: Function0<String>, y: Function0<String>): String
     /* TARGET use-site */ privateFunO(x = x, y = y)
 /* ACCESSOR declaration */ internal fun access$privateFunK$tUsePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFunKt(x: Function0<String>, y: Function0<String>): String

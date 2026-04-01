@@ -7,7 +7,7 @@ internal suspend inline fun internalInline(): String
     /* ACCESSOR use-site */ access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt()
 public fun box(): String
     /* LOCAL declaration @0 */ local suspend fun <anonymous>(): String
-        /* ACCESSOR use-site */ access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt()
+        /* TARGET use-site */ privateSuspendMethod()
     /* INVOKE @0 */ local suspend fun <anonymous>(): String
 /* ACCESSOR declaration */ internal suspend fun access$privateSuspendMethod$tUsePrivateTopLevelSuspendFunKt(): String
     /* TARGET use-site */ privateSuspendMethod()

@@ -20,5 +20,5 @@ public class Outer<O : Any?>
     /* TARGET declaration */ <this>: Outer<O>
 public fun box(): String
     val result: String
-        /* ACCESSOR use-site */ access$<outer-this-1><Any?, Any?, Any?>($this = this)
-        /* ACCESSOR use-site */ access$<outer-this-0><Any?, Any?, Any?>($this = this)
+        /* TARGET use-site */ <this>
+        /* TARGET use-site */ <this>

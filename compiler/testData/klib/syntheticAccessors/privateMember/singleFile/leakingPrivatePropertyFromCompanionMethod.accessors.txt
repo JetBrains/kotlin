@@ -11,4 +11,4 @@ internal class UndoManager<R : Any?>
     /* ACCESSOR declaration */ internal /* static */ fun <R : Any?> access$<get-capacity>($this: UndoManager<R>): String
         /* TARGET use-site */ $this.<get-capacity>()
 public fun box(): String
-    /* ACCESSOR use-site */ access$<get-capacity><R>($this = value)
+    /* TARGET use-site */ value.<get-capacity>()

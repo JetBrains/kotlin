@@ -12,4 +12,4 @@ public class Outer
     /* ACCESSOR declaration */ public constructor(s: String, $constructor_marker: SyntheticConstructorMarker?)
         /* TARGET use-site */ Outer(s = s)
 public fun box(): String
-    /* ACCESSOR use-site */ Outer(s = s, $constructor_marker = null)
+    /* TARGET use-site */ Outer(s = s)

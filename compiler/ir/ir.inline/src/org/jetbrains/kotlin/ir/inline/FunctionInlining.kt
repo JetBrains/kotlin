@@ -45,7 +45,16 @@ abstract class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
+    private var currentFile: IrFile? = null
     private val fileEntriesStack = ArrayDeque<IrFileEntry>()
+
+    private inline fun <T> withCurrentFile(newFile: IrFile, block: (IrFile) -> T): T {
+        check(currentFile == null) { "Current file is already set: $currentFile, new file: $newFile" }
+        currentFile = newFile
+        val result = block(newFile)
+        currentFile = null
+        return result
+    }
 
     private inline fun <T> withFileEntry(newFileEntry: IrFileEntry, block: () -> T): T {
         fileEntriesStack.addLast(newFileEntry)
@@ -55,8 +64,10 @@ abstract class FunctionInlining(
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        withFileEntry(container.fileEntry) {
-            irBody.accept(this, container)
+        withCurrentFile(container.file) {
+            withFileEntry(it.fileEntry) {
+                irBody.accept(this, container)
+            }
         }
     }
 
@@ -81,10 +92,16 @@ abstract class FunctionInlining(
         if (expression is IrCall && PreSerializationSymbols.isTypeOfIntrinsic(expression.symbol)) {
             return expression
         }
-        val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression
+
+        val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(
+            expression,
+            expressionFile = currentFile,
+        ) ?: return expression
+
         if (actualCallee.body == null) {
             return expression
         }
+
         actualCallee.body?.transformChildren(this, actualCallee)
         actualCallee.parameters.forEachIndexed { index, param ->
             if (expression.arguments[index] == null) {

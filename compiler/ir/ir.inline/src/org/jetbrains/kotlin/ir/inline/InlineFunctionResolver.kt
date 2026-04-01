@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.inline.PreSerializationNonPrivateInlineFunctionResolver.Companion.EXCLUDED_FROM_FIRST_STAGE_INLINING_ANNOTATION_FQNAME
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -50,8 +52,23 @@ abstract class InlineFunctionResolver(
      */
     protected open fun preProcessFunctionToInline(function: IrFunction) {}
 
-    fun getFunctionDeclarationToInline(expression: IrMemberAccessExpression<IrFunctionSymbol>): IrFunction? {
+    /**
+     * @param expression the expression that is used to call the function to be inlined.
+     * @param expressionFile the file in which the expression is located.
+     */
+    fun getFunctionDeclarationToInline(
+        expression: IrMemberAccessExpression<IrFunctionSymbol>,
+        expressionFile: IrFile? = null,
+    ): IrFunction? {
         val function = findSuitableFunctionToInline(expression.symbol) ?: return null
+
+        if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS) {
+            checkNotNull(expressionFile) {
+                "'expressionFile' should not be null for ${InlineMode.PRIVATE_INLINE_FUNCTIONS::class.simpleName} inlining mode"
+            }
+            if (function.fileOrNull != expressionFile) return null
+        }
+
         preProcessFunctionToInline(function)
         return function
     }
@@ -65,13 +82,25 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
         if (!symbol.isBound) return null
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
         if (!realOwner.isInline) return null
-        val result = when {
+        return when {
             realOwner.isBuiltInSuspendCoroutineUninterceptedOrReturn() -> context.symbols.suspendCoroutineUninterceptedOrReturn.owner
             realOwner.symbol == context.symbols.coroutineContextGetter -> context.symbols.coroutineGetContext.owner
             else -> realOwner
         }
-        if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !result.isEffectivelyPrivate()) return null
-        return result
+    }
+}
+
+internal abstract class PreSerializationInlineFunctionResolver(
+    context: LoweringContext,
+    inlineMode: InlineMode,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode) {
+    override fun findSuitableFunctionToInline(symbol: IrFunctionSymbol): IrFunction? {
+        val function = super.findSuitableFunctionToInline(symbol) ?: return null
+
+        if (function.hasAnnotation(EXCLUDED_FROM_FIRST_STAGE_INLINING_ANNOTATION_FQNAME))
+            return null
+
+        return function
     }
 }
 
@@ -80,7 +109,7 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
  */
 internal class PreSerializationPrivateInlineFunctionResolver(
     context: LoweringContext,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
+) : PreSerializationInlineFunctionResolver(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
     override fun preProcessFunctionToInline(function: IrFunction) {
         check(function.body != null) { "Unexpected inline function without body: ${function.render()}" }
     }
@@ -89,7 +118,7 @@ internal class PreSerializationPrivateInlineFunctionResolver(
 internal class PreSerializationNonPrivateInlineFunctionResolver(
     context: PreSerializationLoweringContext,
     inlineCrossModuleFunctions: Boolean,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(
+) : PreSerializationInlineFunctionResolver(
     context,
     if (inlineCrossModuleFunctions) InlineMode.ALL_INLINE_FUNCTIONS else InlineMode.INTRA_MODULE_INLINE_FUNCTIONS
 ) {
@@ -101,8 +130,6 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
 
     override fun findSuitableFunctionToInline(symbol: IrFunctionSymbol): IrFunction? {
         val declarationMaybeFromOtherModule = super.findSuitableFunctionToInline(symbol) ?: return null
-        if (declarationMaybeFromOtherModule.hasAnnotation(EXCLUDED_FROM_FIRST_STAGE_INLINING_ANNOTATION_FQNAME))
-            return null
 
         if (declarationMaybeFromOtherModule.body != null || declarationMaybeFromOtherModule !is IrSimpleFunction) {
             return declarationMaybeFromOtherModule
@@ -113,6 +140,6 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
     }
 
     companion object {
-        private val EXCLUDED_FROM_FIRST_STAGE_INLINING_ANNOTATION_FQNAME = FqName("kotlin.internal.DoNotInlineOnFirstStage")
+        internal val EXCLUDED_FROM_FIRST_STAGE_INLINING_ANNOTATION_FQNAME = FqName("kotlin.internal.DoNotInlineOnFirstStage")
     }
 }

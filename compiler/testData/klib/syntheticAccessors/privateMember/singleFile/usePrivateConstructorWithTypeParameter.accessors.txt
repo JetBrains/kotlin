@@ -11,4 +11,4 @@ public class A<T : Any?>
     /* ACCESSOR declaration */ internal constructor(s: T, $constructor_marker: SyntheticConstructorMarker?)
         /* TARGET use-site */ A<T>(s = s)
 public fun box(): String
-    /* ACCESSOR use-site */ A<String>(s = s, $constructor_marker = null)
+    /* TARGET use-site */ A<String>(s = s)

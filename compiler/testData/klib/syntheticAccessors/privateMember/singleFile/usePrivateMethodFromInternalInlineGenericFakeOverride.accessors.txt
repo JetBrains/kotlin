@@ -9,4 +9,4 @@ public open class A<T : Any?>
     /* ACCESSOR declaration */ internal /* static */ fun <T : Any?, U : Any?> access$privateMethod($this: A<T>, o: T, k: U): String
         /* TARGET use-site */ $this.privateMethod<U>(o = o, k = k)
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateMethod<Any?, Any?>($this = this, o = o, k = k)
+    /* TARGET use-site */ this.privateMethod<Any?>(o = o, k = k)

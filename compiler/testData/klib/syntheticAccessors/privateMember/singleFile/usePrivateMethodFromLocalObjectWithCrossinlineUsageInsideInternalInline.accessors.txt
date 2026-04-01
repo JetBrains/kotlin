@@ -14,5 +14,5 @@ public class A
 public fun box(): String
     /* LOCAL declaration @2 */ local class <no name provided>
         /* LOCAL declaration @3 */ public fun run(): String
-            /* ACCESSOR use-site */ access$privateMethod($this = this)
+            /* TARGET use-site */ this.privateMethod()
     /* LOCAL use-site @3 */ <anonymous object>.run()

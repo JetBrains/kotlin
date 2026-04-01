@@ -14,11 +14,11 @@ internal class A
         /* ACCESSOR use-site */ access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt()
         /* ACCESSOR use-site */ access$greet$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(name = access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt())
 public fun box(): String
-    /* ACCESSOR use-site */ access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt()
-    /* ACCESSOR use-site */ access$greet$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(name = access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt())
-    /* ACCESSOR use-site */ access$<set-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(<set-?> = "Mary")
-    /* ACCESSOR use-site */ access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt()
-    /* ACCESSOR use-site */ access$greet$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(name = access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt())
+    /* TARGET use-site */ <get-name>()
+    /* TARGET use-site */ greet(name = <get-name>())
+    /* TARGET use-site */ <set-name>(<set-?> = "Mary")
+    /* TARGET use-site */ <get-name>()
+    /* TARGET use-site */ greet(name = <get-name>())
 /* ACCESSOR declaration */ internal fun access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(): String
     /* TARGET use-site */ <get-name>()
 /* ACCESSOR declaration */ internal fun access$<set-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(<set-?>: String)

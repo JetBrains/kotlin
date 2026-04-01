@@ -6,6 +6,6 @@
 internal inline fun internalFun(): String
     /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFunKt()
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateFun$tUsePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFunKt()
+    /* TARGET use-site */ privateFun()
 /* ACCESSOR declaration */ internal fun access$privateFun$tUsePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFunKt(x: Function0<String>, y: Function0<String>): String
     /* TARGET use-site */ privateFun(x = x, y = y)

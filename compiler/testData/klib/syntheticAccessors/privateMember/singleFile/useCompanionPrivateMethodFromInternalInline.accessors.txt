@@ -10,4 +10,4 @@ public class A
     internal inline fun internalInlineMethod(): String
         /* ACCESSOR use-site */ access$privateMethod($this = Companion)
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateMethod($this = Companion)
+    /* TARGET use-site */ Companion.privateMethod()

@@ -15,5 +15,5 @@ public fun box(): String
     val result: Long
         /* LOCAL declaration @2 */ local class <no name provided> : A
             /* LOCAL declaration @3 */ public constructor() /* primary */
-                /* ACCESSOR use-site */ A(x = this.<get-x>().toInt().plus(other = 1), $constructor_marker = null)
+                /* TARGET use-site */ A(x = this.<get-x>().toInt().plus(other = 1))
         /* LOCAL use-site @3 */ <no name provided>()

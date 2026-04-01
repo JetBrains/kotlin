@@ -21,6 +21,6 @@ public class A
     /* ACCESSOR declaration */ internal constructor(a: Char, $constructor_marker: SyntheticConstructorMarker?)
         /* TARGET use-site */ A(a = a)
 public fun box(): String
-    /* ACCESSOR use-site */ A(s = s, $constructor_marker = null)
-    /* ACCESSOR use-site */ A(a = ' ', $constructor_marker = null)
-    /* ACCESSOR use-site */ A(a = s, b = "", $constructor_marker = null)
+    /* TARGET use-site */ A(s = s)
+    /* TARGET use-site */ A(a = ' ')
+    /* TARGET use-site */ A(a = s, b = "")

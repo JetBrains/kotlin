@@ -13,11 +13,11 @@ internal inline fun internalInlineFun(): String
         /* ACCESSOR use-site */ access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
 public fun box(): String
     val tmp0: Array<out String>
-        /* ACCESSOR use-site */ access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
-        /* ACCESSOR use-site */ access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
+        /* TARGET use-site */ funO()
+        /* TARGET use-site */ funK()
     val tmp0: Array<out String>
-        /* ACCESSOR use-site */ access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
-        /* ACCESSOR use-site */ access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
+        /* TARGET use-site */ funO()
+        /* TARGET use-site */ funK()
 /* ACCESSOR declaration */ internal fun access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt(): String
     /* TARGET use-site */ funO()
 /* ACCESSOR declaration */ internal fun access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt(): String

@@ -18,7 +18,7 @@ public fun box(): String
         /* LOCAL declaration @4 */ local class <no name provided>
             /* LOCAL declaration @5 */ public val a: String
                 /* LOCAL declaration @6 */ private /* final field */ field a: String
-                    /* ACCESSOR use-site */ access$<get-ok>$tLeakingPrivateValThroughLocalObjectInInternalInlineFunWithAnnotationKt()
+                    /* TARGET use-site */ <get-ok>()
                 /* LOCAL declaration @7 */ public fun <get-a>(): String
                     /* LOCAL use-site @6 */ <this>.#a
     /* LOCAL use-site @7 */ obj.<get-a>()

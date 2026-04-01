@@ -14,10 +14,10 @@ internal inline fun internalInlineMethod(crossinline f: Function0<String>): Stri
 public fun box(): String
     /* LOCAL declaration @3 */ local class <no name provided>
         /* LOCAL declaration @4 */ private inline fun impl(): String
-            /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
+            /* TARGET use-site */ privateMethod()
         /* LOCAL declaration @5 */ public fun run(): String
             /* INLINED use-site @4 */ private inline fun impl(): String
-                /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
+                /* TARGET use-site */ privateMethod()
     /* LOCAL use-site @5 */ <anonymous object>.run()
 /* ACCESSOR declaration */ internal fun access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt(): String
     /* TARGET use-site */ privateMethod()

@@ -17,6 +17,6 @@ public class Outer
         internal inline fun customVarSetter(value: Int)
             /* ACCESSOR use-site */ access$<set-privateVar>($this = Companion, <set-?> = value)
 public fun box(): String
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)
-    /* ACCESSOR use-site */ access$<set-privateVar>($this = Companion, <set-?> = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)
+    /* TARGET use-site */ Companion.<get-privateVar>()
+    /* TARGET use-site */ Companion.<set-privateVar>(<set-?> = value)
+    /* TARGET use-site */ Companion.<get-privateVar>()

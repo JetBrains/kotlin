@@ -6,6 +6,6 @@
 internal inline fun bar(): String
     /* ACCESSOR use-site */ access$foo$tUsePrivateTopLevelFunWithVarargThroughInternalInlineFunKt(x = ["OK"])
 public fun box(): String
-    /* ACCESSOR use-site */ access$foo$tUsePrivateTopLevelFunWithVarargThroughInternalInlineFunKt(x = ["OK"])
+    /* TARGET use-site */ foo(x = ["OK"])
 /* ACCESSOR declaration */ internal fun access$foo$tUsePrivateTopLevelFunWithVarargThroughInternalInlineFunKt(vararg x: String, y: String): String
     /* TARGET use-site */ foo(x = x, y = y)

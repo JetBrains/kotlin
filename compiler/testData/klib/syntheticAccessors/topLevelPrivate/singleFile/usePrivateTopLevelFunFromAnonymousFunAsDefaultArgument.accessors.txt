@@ -9,6 +9,6 @@ internal inline fun internalInlineFun(ok: Function0<String>): String
             /* ACCESSOR use-site */ access$funOK$tUsePrivateTopLevelFunFromAnonymousFunAsDefaultArgumentKt()
         /* INVOKE @0 */ local fun <no name provided>(): String
 public fun box(): String
-    /* ACCESSOR use-site */ access$funOK$tUsePrivateTopLevelFunFromAnonymousFunAsDefaultArgumentKt()
+    /* TARGET use-site */ funOK()
 /* ACCESSOR declaration */ internal fun access$funOK$tUsePrivateTopLevelFunFromAnonymousFunAsDefaultArgumentKt(): String
     /* TARGET use-site */ funOK()

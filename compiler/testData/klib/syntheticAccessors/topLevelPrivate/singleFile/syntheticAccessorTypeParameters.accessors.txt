@@ -12,9 +12,9 @@ internal inline fun useBar(): String
 internal inline fun useBaz(): String
     /* ACCESSOR use-site */ access$baz$tSyntheticAccessorTypeParametersKt<String>(x = "", y = ["OK3", ""])
 public fun box(): String
-    /* ACCESSOR use-site */ access$foo$tSyntheticAccessorTypeParametersKt<String>(x = "OK1")
-    /* ACCESSOR use-site */ access$bar$tSyntheticAccessorTypeParametersKt<String>(x = "OK2")
-    /* ACCESSOR use-site */ access$baz$tSyntheticAccessorTypeParametersKt<String>(x = "", y = ["OK3", ""])
+    /* TARGET use-site */ foo<String>(x = "OK1")
+    /* TARGET use-site */ bar<String>(x = "OK2")
+    /* TARGET use-site */ baz<String>(x = "", y = ["OK3", ""])
 /* ACCESSOR declaration */ internal fun <T : Any?> access$foo$tSyntheticAccessorTypeParametersKt(x: T, y: Box<T>): T
     /* TARGET use-site */ foo<T>(x = x, y = y)
 /* ACCESSOR declaration */ internal fun <T : Any?> access$bar$tSyntheticAccessorTypeParametersKt(x: T, y: Box<T>): T

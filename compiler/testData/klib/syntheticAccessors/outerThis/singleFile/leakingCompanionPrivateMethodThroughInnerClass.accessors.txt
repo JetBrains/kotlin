@@ -11,4 +11,4 @@ public class Outer
         internal inline fun internalMethod(): String
             /* ACCESSOR use-site */ access$privateMethod($this = Companion)
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateMethod($this = Companion)
+    /* TARGET use-site */ Companion.privateMethod()

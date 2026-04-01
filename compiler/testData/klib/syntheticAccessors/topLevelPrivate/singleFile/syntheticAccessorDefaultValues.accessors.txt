@@ -6,6 +6,6 @@
 internal inline fun bar(): String
     /* ACCESSOR use-site */ access$foo$tSyntheticAccessorDefaultValuesKt()
 public fun box(): String
-    /* ACCESSOR use-site */ access$foo$tSyntheticAccessorDefaultValuesKt()
+    /* TARGET use-site */ foo()
 /* ACCESSOR declaration */ internal fun access$foo$tSyntheticAccessorDefaultValuesKt(x: String, y: String): String
     /* TARGET use-site */ foo(x = x, y = y)

@@ -6,6 +6,6 @@
 internal inline fun internalInlineFun(): String
     /* ACCESSOR use-site */ access$privateFun$tLeakingPrivateFunWithContextParameterThroughInternalInlineKt(scope = $this$with)
 public fun box(): String
-    /* ACCESSOR use-site */ access$privateFun$tLeakingPrivateFunWithContextParameterThroughInternalInlineKt(scope = $this$with)
+    /* TARGET use-site */ privateFun(/* scope = $this$with */)
 /* ACCESSOR declaration */ internal fun access$privateFun$tLeakingPrivateFunWithContextParameterThroughInternalInlineKt(scope: Scope): String
     /* TARGET use-site */ privateFun(/* scope = scope */)

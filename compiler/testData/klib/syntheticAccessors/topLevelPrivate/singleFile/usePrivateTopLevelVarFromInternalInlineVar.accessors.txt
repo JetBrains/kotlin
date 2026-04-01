@@ -11,9 +11,9 @@ internal var inlineVar: Int
     internal inline fun <set-inlineVar>(value: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt(<set-?> = value)
 public fun box(): String
-    /* ACCESSOR use-site */ access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt()
-    /* ACCESSOR use-site */ access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt(<set-?> = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt()
+    /* TARGET use-site */ <get-privateVar>()
+    /* TARGET use-site */ <set-privateVar>(<set-?> = value)
+    /* TARGET use-site */ <get-privateVar>()
 /* ACCESSOR declaration */ internal fun access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt(): Int
     /* TARGET use-site */ <get-privateVar>()
 /* ACCESSOR declaration */ internal fun access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt(<set-?>: Int)

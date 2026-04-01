@@ -37,15 +37,15 @@ internal inline fun initializeAndReadOK(): String
     /* LOCAL use-site @3 */ <anonymous object>.run()
     /* ACCESSOR use-site */ access$<get-o>$tUseLateinitIsInitializedFromInternalInlineKt()
 public fun box(): String
-    /* ACCESSOR use-site */ access$<get-o>$p$tUseLateinitIsInitializedFromInternalInlineKt()
-    /* ACCESSOR use-site */ access$<set-o>$tUseLateinitIsInitializedFromInternalInlineKt(<set-?> = "O")
-    /* ACCESSOR use-site */ access$<get-o>$p$tUseLateinitIsInitializedFromInternalInlineKt()
+    /* TARGET use-site */ #o
+    /* TARGET use-site */ <set-o>(<set-?> = "O")
+    /* TARGET use-site */ #o
     /* LOCAL declaration @4 */ local class <no name provided>
         /* LOCAL declaration @5 */ public fun run()
-            /* ACCESSOR use-site */ access$<get-k>$p$tUseLateinitIsInitializedFromInternalInlineKt()
-            /* ACCESSOR use-site */ access$<get-k>$p$tUseLateinitIsInitializedFromInternalInlineKt()
+            /* TARGET use-site */ #k
+            /* TARGET use-site */ #k
     /* LOCAL use-site @5 */ <anonymous object>.run()
-    /* ACCESSOR use-site */ access$<get-o>$tUseLateinitIsInitializedFromInternalInlineKt()
+    /* TARGET use-site */ <get-o>()
 /* ACCESSOR declaration */ internal fun access$<get-o>$tUseLateinitIsInitializedFromInternalInlineKt(): String
     /* TARGET use-site */ <get-o>()
 /* ACCESSOR declaration */ internal fun access$<set-o>$tUseLateinitIsInitializedFromInternalInlineKt(<set-?>: String)

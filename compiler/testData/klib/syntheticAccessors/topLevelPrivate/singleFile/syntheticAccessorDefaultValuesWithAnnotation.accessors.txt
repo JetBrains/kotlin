@@ -8,8 +8,8 @@ internal inline fun baz(): String
     /* ACCESSOR use-site */ access$foo$tSyntheticAccessorDefaultValuesWithAnnotationKt()
     /* ACCESSOR use-site */ access$bar$tSyntheticAccessorDefaultValuesWithAnnotationKt()
 public fun box(): String
-    /* ACCESSOR use-site */ access$foo$tSyntheticAccessorDefaultValuesWithAnnotationKt()
-    /* ACCESSOR use-site */ access$bar$tSyntheticAccessorDefaultValuesWithAnnotationKt()
+    /* TARGET use-site */ foo()
+    /* TARGET use-site */ bar()
 /* ACCESSOR declaration */ internal fun access$foo$tSyntheticAccessorDefaultValuesWithAnnotationKt(x: String, y: String): String
     /* TARGET use-site */ foo(x = x, y = y)
 /* ACCESSOR declaration */ internal fun access$bar$tSyntheticAccessorDefaultValuesWithAnnotationKt(x: String, y: String): String
