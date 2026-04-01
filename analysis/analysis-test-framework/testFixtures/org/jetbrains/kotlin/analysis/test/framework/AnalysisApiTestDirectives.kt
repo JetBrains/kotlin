@@ -80,6 +80,11 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
         description = "Marks the library module as an SDK.",
         applicability = DirectiveApplicability.Module,
     )
+
+    val ATTACH_LIBRARY_JAR by stringDirective(
+        description = "Adds a library JAR with the specified file name to the module's dependencies",
+        applicability = DirectiveApplicability.Module,
+    )
 }
 
 val TestModule.hasFallbackDependencies: Boolean
