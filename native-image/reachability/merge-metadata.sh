@@ -20,7 +20,8 @@ input_files = sys.argv[2:]
 
 def entry_key(entry):
     """Stable key for deduplication and sorting."""
-    t = entry.get("type", "")
+    # reflection/jni entries use "type", resource entries use "glob"
+    t = entry.get("type", entry.get("glob", ""))
     if isinstance(t, dict):
         return json.dumps(t, sort_keys=True)
     return t

@@ -29,6 +29,18 @@ REFLECT_JAR=$(find libraries/ -name 'kotlin-reflect-2.4.255-SNAPSHOT.jar')
 CLASSPATH=$EMBEDDABLE_JAR:$STDLIB_JAR:$REFLECT_JAR
 echo "Class path: $CLASSPATH"
 
+#echo '3.5 Run java to collect reachability metadata'
+#$GRAAL_HOME/bin/java \
+#  --add-opens java.base/java.lang=ALL-UNNAMED \
+#  --add-opens java.base/java.io=ALL-UNNAMED \
+#  --add-opens java.base/java.nio=ALL-UNNAMED \
+#  --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+#  --add-opens java.desktop/javax.swing=ALL-UNNAMED \
+#  -agentlib:native-image-agent=config-output-dir=/Users/Azat.Abdullin/IdeaProjects/kotlin/native-image/reachability/ \
+#  -cp $CLASSPATH \
+#  org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+
+
 echo '4. Building native image of kotlin compiler embeddable'
 $NATIVE_IMAGE_BIN \
   --add-opens java.base/java.lang=ALL-UNNAMED \
