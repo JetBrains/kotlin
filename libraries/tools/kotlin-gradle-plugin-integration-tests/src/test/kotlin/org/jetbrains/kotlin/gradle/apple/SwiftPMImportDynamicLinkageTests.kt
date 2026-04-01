@@ -81,7 +81,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
                 projectPath.resolve("iosApp").toFile(),
             ).assertProcessRunResult { assertTrue(isSuccessful) }
 
-            val packageDependency = projectPath.resolve("packageDependency").also { it.createDirectories() }.toFile()
+            val packageDependency = projectPath.resolve("`PackageDependency`").also { it.createDirectories() }.toFile()
             runProcess(listOf("/usr/bin/swift", "package", "init", "--type", "library"), packageDependency)
             val outgoingXCFramework = packageDependency.resolve("FrameworkTarget.xcframework")
             runProcess(
@@ -100,16 +100,16 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
                     import PackageDescription
 
                     let package = Package(
-                        name: "packageDependency",
+                        name: "PackageDependency",
                         products: [
                             .library(
-                                name: "packageDependency",
-                                targets: ["packageDependency"]
+                                name: "PackageDependency",
+                                targets: ["PackageDependency"]
                             ),
                         ],
                         targets: [
                             .target(
-                                name: "packageDependency",
+                                name: "PackageDependency",
                                 dependencies: [
                                     "FrameworkTarget"
                                 ]
@@ -152,8 +152,8 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
 
                     swiftPMDependencies {
                         localSwiftPackage(
-                            directory = project.layout.projectDirectory.dir("packageDependency"),
-                            products = listOf("packageDependency"),
+                            directory = project.layout.projectDirectory.dir("PackageDependency"),
+                            products = listOf("PackageDependency"),
                         )
                     }
                 }
@@ -223,11 +223,11 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
     @GradleTest
     fun `dynamic linkage with SwiftPM import - exposes sources-based transitive SwiftPM dependencies through Kotlin dynamic library`(version: GradleVersion) {
         project("emptyxcode", version) {
-            val packageDependency = projectPath.resolve("packageDependency").also { it.createDirectories() }.toFile()
+            val packageDependency = projectPath.resolve("PackageDependency").also { it.createDirectories() }.toFile()
             runProcess(listOf("/usr/bin/swift", "package", "init", "--type", "library"), packageDependency)
             val swiftClassName = "LocalHelper"
 
-            packageDependency.resolve("Sources/packageDependency/packageDependency.swift").writeText(
+            packageDependency.resolve("Sources/PackageDependency/PackageDependency.swift").writeText(
                 """
                     import Foundation
                     @objc public class ${swiftClassName}: NSObject {
@@ -239,7 +239,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
             )
             projectPath.resolve("iosApp/iosApp/iOSApp.swift").toFile().writeText(
                 """
-                    import packageDependency
+                    import PackageDependency
                     import Shared
                     
                     @main
@@ -281,8 +281,8 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
 
                     swiftPMDependencies {
                         localSwiftPackage(
-                            directory = project.layout.projectDirectory.dir("packageDependency"),
-                            products = listOf("packageDependency"),
+                            directory = project.layout.projectDirectory.dir("PackageDependency"),
+                            products = listOf("PackageDependency"),
                         )
                     }
                 }
@@ -310,28 +310,28 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
 
             /**
              * Check that:
-             * - packageDependency was exposed through KotlinMultiplatformLinkedPackageDylib
-             * - implementation of packageDependency is only in the KotlinMultiplatformLinkedPackageDylib binary
-             * - everyone using packageDependency is bound to the KotlinMultiplatformLinkedPackageDylib dynamic library
+             * - PackageDependency was exposed through KotlinMultiplatformLinkedPackageDylib
+             * - implementation of PackageDependency is only in the KotlinMultiplatformLinkedPackageDylib binary
+             * - everyone using PackageDependency is bound to the KotlinMultiplatformLinkedPackageDylib dynamic library
              */
             checkBinariesLinkage(
                 appPath,
                 symbolsFilter = listOf(
-                    "_OBJC_CLASS_\$_packageDependency.LocalHelper",
-                    "packageDependency.LocalHelper.greeting",
+                    "_OBJC_CLASS_\$_PackageDependency.LocalHelper",
+                    "PackageDependency.LocalHelper.greeting",
                 ),
                 expectedLibrarySymbols = mapOf(
                     "Shared" to setOf(
-                        "(undefined) external _OBJC_CLASS_\$_packageDependency.LocalHelper (from KotlinMultiplatformLinkedPackageDylib)",
+                        "(undefined) external _OBJC_CLASS_\$_PackageDependency.LocalHelper (from KotlinMultiplatformLinkedPackageDylib)",
                     ),
                     "KotlinMultiplatformLinkedPackageDylib" to setOf(
-                        "(__TEXT,__text) external static packageDependency.LocalHelper.greeting(Swift.String) -> ()",
-                        "(__TEXT,__text) non-external @objc static packageDependency.LocalHelper.greeting(Swift.String) -> ()",
-                        "(__DATA,__objc_data) external _OBJC_CLASS_\$_packageDependency.LocalHelper",
+                        "(__TEXT,__text) external static PackageDependency.LocalHelper.greeting(Swift.String) -> ()",
+                        "(__TEXT,__text) non-external @objc static PackageDependency.LocalHelper.greeting(Swift.String) -> ()",
+                        "(__DATA,__objc_data) external _OBJC_CLASS_\$_PackageDependency.LocalHelper",
                     ),
                 ),
                 expectedApplicationSymbols = setOf(
-                    "(undefined) external static packageDependency.LocalHelper.greeting(Swift.String) -> () (from KotlinMultiplatformLinkedPackageDylib)"
+                    "(undefined) external static PackageDependency.LocalHelper.greeting(Swift.String) -> () (from KotlinMultiplatformLinkedPackageDylib)"
                 ),
             )
             checkApplicationRun(projectPath, appPath)
