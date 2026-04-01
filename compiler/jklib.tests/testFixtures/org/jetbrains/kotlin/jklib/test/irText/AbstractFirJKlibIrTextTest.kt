@@ -63,10 +63,10 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         }
 
         facadeStep(::Fir2IrCliJKlibFacade)
-        irHandlersStep()
-
         facadeStep(::SerializationCliJKlibFacade)
-        klibArtifactsHandlersStep()
+
+        facadeStep(::JKlibIrCompilationCliFacade)
+        irHandlersStep()
 
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {

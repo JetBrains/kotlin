@@ -26,8 +26,8 @@ import java.io.File
 import org.jetbrains.kotlin.test.model.ArtifactKinds.KLib as KLibKind
 
 class SerializationCliJKlibFacade(testServices: TestServices) :
-    BackendFacade<IrBackendInput, KLib>(testServices, IrBackend, KLibKind) {
-    override fun transform(module: TestModule, inputArtifact: IrBackendInput): KLib {
+    BackendFacade<IrBackendInput, JKlibKLibWithArtifact>(testServices, IrBackend, JKlibArtifactKinds.JKlibKLib) {
+    override fun transform(module: TestModule, inputArtifact: IrBackendInput): JKlibKLibWithArtifact {
         if (inputArtifact !is Fir2IrCliBasedOutputArtifact<*>) {
             error("input artifact is not a Fir2IrCliBasedOutputArtifact")
         }
@@ -44,10 +44,11 @@ class SerializationCliJKlibFacade(testServices: TestServices) :
             kaptMode = false
         )
 
-        JKlibKlibSerializationPhase.invokeToplevel(phaseConfig, context, cliArtifact)
+        val serializationArtifact = JKlibKlibSerializationPhase.invokeToplevel(phaseConfig, context, cliArtifact)
 
         val diagnosticsReporter = cliArtifact.configuration.diagnosticsCollector
 
-        return KLib(outputFile, diagnosticsReporter)
+        return JKlibKLibWithArtifact(outputFile, diagnosticsReporter, serializationArtifact)
     }
 }
+
