@@ -31,24 +31,27 @@ internal class NativeInlineFunctionResolver(
         context = generationState.context,
         inlineMode = inlineMode,
 ) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val function = super.getFunctionDeclaration(symbol) ?: return null
+    override fun findSuitableFunctionToInline(symbol: IrFunctionSymbol): IrFunction? {
+        val function = super.findSuitableFunctionToInline(symbol) ?: return null
 
         if (function.isExternal && function.body == null) return null
+
+        return function
+    }
+
+    override fun preProcessFunctionToInline(function: IrFunction) {
         if (function.body != null) {
             // TODO this `if` check can be dropped after KT-72441
             if (function.wasLowered != true) {
                 lower(function)
                 function.wasLowered = true
             }
-            return function
+            return
         }
 
         context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
         lower(function)
         function.wasLowered = true
-
-        return function
     }
 
     private fun lower(function: IrFunction) {

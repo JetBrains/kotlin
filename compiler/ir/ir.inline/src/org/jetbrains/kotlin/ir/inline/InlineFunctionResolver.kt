@@ -36,11 +36,22 @@ enum class InlineMode {
     ALL_INLINE_FUNCTIONS,
 }
 
-abstract class InlineFunctionResolver() {
-    protected abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
+abstract class InlineFunctionResolver {
+    /**
+     * Find (resolve) the suitable [IrFunction] for inlining given [symbol] from the [IrMemberAccessExpression] node.
+     * Return the resolved function or null if it cannot be inlined.
+     */
+    protected abstract fun findSuitableFunctionToInline(symbol: IrFunctionSymbol): IrFunction?
+
+    /**
+     * Pre-process the [function] found in [findSuitableFunctionToInline] before returning it in [getFunctionDeclarationToInline].
+     */
+    protected open fun preProcessFunctionToInline(function: IrFunction) {}
 
     fun getFunctionDeclarationToInline(expression: IrMemberAccessExpression<IrFunctionSymbol>): IrFunction? {
-        return getFunctionDeclaration(expression.symbol)
+        val function = findSuitableFunctionToInline(expression.symbol) ?: return null
+        preProcessFunctionToInline(function)
+        return function
     }
 }
 
@@ -48,7 +59,7 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
     protected val context: Ctx,
     protected val inlineMode: InlineMode,
 ) : InlineFunctionResolver() {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+    override fun findSuitableFunctionToInline(symbol: IrFunctionSymbol): IrFunction? {
         if (!symbol.isBound) return null
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
         if (!realOwner.isInline) return null
@@ -68,10 +79,8 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
 internal class PreSerializationPrivateInlineFunctionResolver(
     context: LoweringContext,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        return super.getFunctionDeclaration(symbol)?.also { function ->
-            check(function.body != null) { "Unexpected inline function without body: ${function.render()}" }
-        }
+    override fun preProcessFunctionToInline(function: IrFunction) {
+        check(function.body != null) { "Unexpected inline function without body: ${function.render()}" }
     }
 }
 
@@ -88,14 +97,15 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
         signatureComputer = PublicIdSignatureComputer(context.irMangler)
     )
 
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val declarationMaybeFromOtherModule = super.getFunctionDeclaration(symbol) ?: return null
+    override fun findSuitableFunctionToInline(symbol: IrFunctionSymbol): IrFunction? {
+        val declarationMaybeFromOtherModule = super.findSuitableFunctionToInline(symbol) ?: return null
         if (declarationMaybeFromOtherModule.hasAnnotation(EXCLUDED_FROM_FIRST_STAGE_INLINING_ANNOTATION_FQNAME))
             return null
 
         if (declarationMaybeFromOtherModule.body != null || declarationMaybeFromOtherModule !is IrSimpleFunction) {
             return declarationMaybeFromOtherModule
         }
+
         if (inlineMode != InlineMode.ALL_INLINE_FUNCTIONS) return null
         return deserializer.deserializeInlineFunction(declarationMaybeFromOtherModule)
     }
