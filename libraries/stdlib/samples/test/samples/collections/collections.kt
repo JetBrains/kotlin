@@ -318,10 +318,10 @@ class Collections {
         @Sample
         fun binarySearchRepeatingElements() {
             // If multiple equal elements are present, binarySearch could return any one of them.
-            val list2b = mutableListOf('a', 'b', 'b', 'c', 'd', 'e')
-            assertPrints(list2b.binarySearch('b'), "2") // could be either 1 or 2
-            val list5b = mutableListOf('a', 'b', 'b', 'b', 'b', 'b', 'c', 'd', 'e')
-            assertPrints(list5b.binarySearch('b'), "4") // could be either 1, 2, 3, 4 or 5
+            val list1 = mutableListOf('a', 'b', 'b')
+            assertPrints(list1.binarySearch('b'), "1") // could be either 1 or 2
+            val list2 = mutableListOf('a', 'b', 'b', 'c', 'd')
+            assertPrints(list2.binarySearch('b'), "2") // could be either 1 or 2
         }
 
         @Sample
