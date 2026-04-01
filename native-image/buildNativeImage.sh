@@ -41,7 +41,7 @@ echo "Class path: $CLASSPATH"
 if [ "$UPDATE_REACHABILITY_METADATA" = true ]; then
   echo '--- Running kotlin compiler embeddable to collect reachability metadata ---'
 
-  mkdir -p resources/META-INF/org/jetbrains/kotlin/kotlin-compiler-embeddable
+  mkdir -p resources/META-INF/native-image/org/jetbrains/kotlin/kotlin-compiler-embeddable
   echo 'fun main() { println("Hello world!") }' > /tmp/A.kt
 
   $GRAAL_HOME/bin/java \
