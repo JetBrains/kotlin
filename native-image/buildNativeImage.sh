@@ -53,7 +53,7 @@ if [ "$UPDATE_REACHABILITY_METADATA" = true ]; then
     -cp $CLASSPATH \
     -Dkotlin.home=dist/kotlinc \
     -Djava.home=$JAVA_HOME \
-    -agentlib:native-image-agent=config-output-dir=resources/META-INF/native-image/org/jetbrains/kotlin/kotlin-compiler-embeddable \
+    -agentlib:native-image-agent=config-merge-dir=resources/META-INF/native-image/org/jetbrains/kotlin/kotlin-compiler-embeddable \
     org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
     -kotlin-home=dist/kotlinc \
     /tmp/A.kt
