@@ -6178,6 +6178,11 @@ internal class NonDataClassJvmRecordImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonDataClassJvmRecord
 
+internal class NonDataValueClassJvmRecordImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonDataValueClassJvmRecord
+
 internal class JvmRecordNotValParameterImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

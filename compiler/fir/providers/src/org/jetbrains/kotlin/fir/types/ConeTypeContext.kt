@@ -530,11 +530,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean {
+        if (toFirRegularClass()?.isExtendedValueClass == true) return false
         val fields = getValueClassProperties() ?: return false
         return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.Inline
     }
 
     override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
+        if (toFirRegularClass()?.isExtendedValueClass == true) return false
         val fields = getValueClassProperties() ?: return false
         return isMultiFieldValueClassRecursionAware(fields, visited = hashSetOf())
     }

@@ -127,6 +127,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val ENUM_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("ENUM_JVM_RECORD", ERROR, SourceElementPositioningStrategies.ENUM_MODIFIER, PsiElement::class, getRendererFactory())
     val JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NON_DATA_CLASS_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_DATA_CLASS_JVM_RECORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val NON_DATA_VALUE_CLASS_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_DATA_VALUE_CLASS_JVM_RECORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JVM_RECORD_NOT_VAL_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_RECORD_NOT_VAL_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JVM_RECORD_NOT_LAST_VARARG_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_RECORD_NOT_LAST_VARARG_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INNER_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("INNER_JVM_RECORD", ERROR, SourceElementPositioningStrategies.INNER_MODIFIER, PsiElement::class, getRendererFactory())

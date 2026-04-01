@@ -8004,6 +8004,12 @@ private fun KaDiagnosticConverterBuilder.addConversions180() {
             token,
         )
     }
+    add(FirJvmErrors.NON_DATA_VALUE_CLASS_JVM_RECORD) { firDiagnostic ->
+        NonDataValueClassJvmRecordImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions182() {
