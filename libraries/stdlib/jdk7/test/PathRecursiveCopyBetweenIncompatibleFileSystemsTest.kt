@@ -15,8 +15,11 @@ import java.nio.file.attribute.FileAttributeView
 import java.nio.file.attribute.UserPrincipalLookupService
 import java.nio.file.spi.FileSystemProvider
 import kotlin.io.path.*
+import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class PathRecursiveCopyBetweenIncompatibleFileSystemsTest : AbstractPathTest() {
     @Test // Regression test for KT-85020
@@ -46,6 +49,30 @@ class PathRecursiveCopyBetweenIncompatibleFileSystemsTest : AbstractPathTest() {
             .map { it.relativeTo(dst).toString() }
             .toSet()
         assertEquals(expectedPaths, actualPaths)
+    }
+
+    @Ignore // Names containing path separators are handled incorrectly now.
+    @Test
+    fun copyFileWithNameCorrespondingToMultipleSegments() {
+        val root = createTempDirectory().cleanupRecursively()
+
+        val src = root.resolve("src").also {
+            it.resolve("a")
+                .resolve("b#test.txt")
+                .createParentDirectories()
+                .writeText("hello")
+        }
+
+        val dst = root.resolve("dst").createDirectory()
+
+        val mockFs = SharpFileSystemProvider().newTestFileSystem(dst.fileSystem)
+        val mockedDst = mockFs.wrap(dst)
+
+        assertFailsWith<FileSystemException> {
+            src.copyToRecursively(mockedDst, followLinks = false, overwrite = false)
+        }.also {
+            assertContains(it.message!!, "b#test.txt")
+        }
     }
 }
 
