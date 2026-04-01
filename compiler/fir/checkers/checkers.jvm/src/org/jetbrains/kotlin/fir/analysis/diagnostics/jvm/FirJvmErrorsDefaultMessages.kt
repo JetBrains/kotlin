@@ -84,6 +84,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_SYNTHE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.LOCAL_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.MISSING_BUILT_IN_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_DATA_CLASS_JVM_RECORD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_DATA_VALUE_CLASS_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_FINAL_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_SOURCE_REPEATED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION
@@ -284,6 +285,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(FIELD_IN_JVM_RECORD, "Non-constructor properties with backing field in '@JvmRecord' class are prohibited.")
         map.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is prohibited for '@JvmRecord' classes.")
         map.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as '@JvmRecord'.")
+        map.put(
+            NON_DATA_VALUE_CLASS_JVM_RECORD,
+            "Only data classes and non-@JvmInline value classes are allowed to be marked as '@JvmRecord'."
+        )
         map.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype.")
         map.put(
             JVM_RECORDS_ILLEGAL_BYTECODE_TARGET,

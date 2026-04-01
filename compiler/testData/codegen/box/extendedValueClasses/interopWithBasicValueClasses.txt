@@ -1,0 +1,56 @@
+@kotlin.Metadata
+public final class ExtendedVC {
+    // source: 'interopWithBasicValueClasses.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX-rTLzBkc(): int
+    public final method getY-rTLzBkc(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class InnerInline {
+    // source: 'interopWithBasicValueClasses.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): InnerInline
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class InteropWithBasicValueClassesKt {
+    // source: 'interopWithBasicValueClasses.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class OuterInline {
+    // source: 'interopWithBasicValueClasses.kt'
+    private final @org.jetbrains.annotations.NotNull field x: ExtendedVC
+    private synthetic method <init>(p0: ExtendedVC): void
+    public synthetic final static method box-impl(p0: ExtendedVC): OuterInline
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: ExtendedVC): ExtendedVC
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: ExtendedVC, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: ExtendedVC, p1: ExtendedVC): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): ExtendedVC
+    public method hashCode(): int
+    public static method hashCode-impl(p0: ExtendedVC): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: ExtendedVC): java.lang.String
+    public synthetic final method unbox-impl(): ExtendedVC
+}

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -136,9 +137,10 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
     }
 }
 
+@OptIn(SymbolInternals::class)
 fun FirTypeRef.isInlineClassThatRequiresMangling(session: FirSession): Boolean {
     val symbol = this.coneType.toRegularClassSymbol(session) ?: return false
-    return symbol.isInlineOrValue && !symbol.isDontMangleClass()
+    return symbol.isInlineOrValue && !symbol.isDontMangleClass() && !symbol.fir.isExtendedValueClass
 }
 
 private fun FirRegularClassSymbol.isDontMangleClass(): Boolean {

@@ -48,6 +48,15 @@ value class BasicSingleFieldValueClass(val x: Int)
 @JvmInline
 value class BasicMultiFieldValueClass<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: Int)<!>
 
+value class Delegation(val x: Int) : Comparable<Int> by x
+value class Delegation1(val x: Int) : <!VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION!>Comparable<Int><!> by (x.let { 2 + 2 })
+
+fun main() {
+    A(2).<!UNRESOLVED_REFERENCE!>copy<!>()
+    val (x) = <!COMPONENT_FUNCTION_MISSING!>A(2)<!>
+}
+
+
 /* GENERATED_FIR_TAGS: classDeclaration, getter, inheritanceDelegation, init, inner, integerLiteral, lambdaLiteral,
 localClass, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate, secondaryConstructor,
 starProjection, stringLiteral, typeParameter, value */

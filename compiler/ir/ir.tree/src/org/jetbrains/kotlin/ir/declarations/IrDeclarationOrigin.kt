@@ -53,6 +53,7 @@ interface IrDeclarationOrigin {
         val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
+        val GENERATED_EXTENDED_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val LOCAL_FUNCTION by IrDeclarationOriginImpl.Regular
         val LOCAL_FUNCTION_FOR_LAMBDA by IrDeclarationOriginImpl.Regular
         val CATCH_PARAMETER by IrDeclarationOriginImpl.Regular

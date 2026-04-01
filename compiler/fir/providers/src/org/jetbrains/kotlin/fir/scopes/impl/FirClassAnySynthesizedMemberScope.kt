@@ -56,7 +56,8 @@ class FirClassAnySynthesizedMemberScope(
 ) : FirContainingNamesAwareScope() {
     private val originForFunctions = when {
         klass.isData -> FirDeclarationOrigin.Synthetic.DataClassMember
-        klass.isInlineOrValue -> FirDeclarationOrigin.Synthetic.ValueClassMember
+        klass.isExtendedValueClass -> FirDeclarationOrigin.Synthetic.ExtendedValueClassMember
+        klass.isInlineOrValue -> FirDeclarationOrigin.Synthetic.BasicValueClassMember
         else -> error("This scope should not be created for non-data and non-value class. ${klass.render()}")
     }
     private val lookupTag = klass.symbol.toLookupTag()

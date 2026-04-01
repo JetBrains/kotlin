@@ -1,0 +1,73 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'basicSyntax.kt'
+    private final field x: int
+    public method <init>(p0: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class A1 {
+    // source: 'basicSyntax.kt'
+    private final field x: int
+    public method <init>(p0: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class A1_ {
+    // source: 'basicSyntax.kt'
+    private final field x: int
+    public method <init>(p0: int): void
+    public final method component1(): int
+    public synthetic static method copy$default(p0: A1_, p1: int, p2: int, p3: java.lang.Object): A1_
+    public final @org.jetbrains.annotations.NotNull method copy(p0: int): A1_
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class A2 {
+    // source: 'basicSyntax.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public final method getY(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class A2_ {
+    // source: 'basicSyntax.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public final method component1(): int
+    public final method component2(): int
+    public synthetic static method copy$default(p0: A2_, p1: int, p2: int, p3: int, p4: java.lang.Object): A2_
+    public final @org.jetbrains.annotations.NotNull method copy(p0: int, p1: int): A2_
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public final method getY(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class BasicSyntaxKt {
+    // source: 'basicSyntax.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method multipleField(): void
+    private final static method singleField(): void
+}

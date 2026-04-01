@@ -5137,6 +5137,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonDataClassJvmRecord::class
     }
 
+    interface NonDataValueClassJvmRecord : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NonDataValueClassJvmRecord::class
+    }
+
     interface JvmRecordNotValParameter : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = JvmRecordNotValParameter::class
     }

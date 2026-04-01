@@ -110,7 +110,7 @@ internal abstract class KotlinKFunction(
     }
 
     private fun KDeclarationContainerImpl.isInlineClass(): Boolean =
-        this is KClassImpl<*> && isValue
+        this is KClassImpl<*> && isJvmInlineValue
 
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,
