@@ -32,12 +32,15 @@ STEP=$1
 START=$2
 END=$3
 
-if ! [[ "$STEP" =~ ^[0-9]+$ ]] || ! [[ "$START" =~ ^[0-9]+$ ]] || ! [[ "$END" =~ ^[0-9]+$ ]]; then
-    echo "ERROR: all arguments must be positive integers" >&2
+if ! [[ "$STEP" =~ ^[0-9]+[a-z]?$ ]] || ! [[ "$START" =~ ^[0-9]+$ ]] || ! [[ "$END" =~ ^[0-9]+$ ]]; then
+    echo "ERROR: step must be a number with optional letter suffix (e.g., 3, 3a); from/to must be positive integers" >&2
     exit 1
 fi
 
-if [[ $STEP -lt 1 ]]; then
+STEP_NUM="${STEP%%[a-z]}"
+STEP_SUFFIX="${STEP#${STEP_NUM}}"
+
+if [[ $STEP_NUM -lt 1 ]]; then
     echo "ERROR: step must be >= 1, got: $STEP" >&2
     exit 1
 fi
@@ -47,7 +50,7 @@ if [[ $START -gt $END ]]; then
     exit 1
 fi
 
-STEP_PADDED=$(printf '%02d' "$STEP")
+STEP_PADDED="$(printf '%02d' "$STEP_NUM")${STEP_SUFFIX}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR/.."
