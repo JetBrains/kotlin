@@ -1,0 +1,25 @@
+{
+  "reflection": [
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments",
+      "fields": [
+        {
+          "name": "fragments"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getFragments"
+        },
+        {
+          "name": "setFragments",
+          "parameterTypes": [
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    }
+  ],
+  "resources": [
+  ]
+}
