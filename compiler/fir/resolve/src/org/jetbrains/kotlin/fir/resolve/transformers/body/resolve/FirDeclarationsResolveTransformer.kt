@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtension
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -880,9 +879,7 @@ open class FirDeclarationsResolveTransformer(
         context.withReplSnippet(replSnippet, components) {
             replSnippet.transformSnippetClass(this, data)
             if (!implicitTypeOnly) {
-                for (resolveExt in session.extensionService.replSnippetResolveExtensions) {
-                    resolveExt.updateResolved(replSnippet)
-                }
+                session.replSnippetResolveExtension?.updateResolved(replSnippet)
             }
         }
         return replSnippet

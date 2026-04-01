@@ -103,6 +103,189 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             }
         }
     }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Check that wasm-js optimizer is executed if a dependent .wasm file is changed")
+    @GradleTest
+    fun dependencyChangeTriggersOptimizerWasmJsPerModuleClosedWorld(gradleVersion: GradleVersion) {
+        project("wasm-js-per-module-closed-world", gradleVersion) {
+            build(":app:wasmJsD8ProductionRun") {
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":app:wasmJsD8ProductionRun")
+                assertOutputContains("Hello from Lib, App!")
+            }
+
+            subProject("mid").projectPath.resolve("src/wasmJsMain/kotlin/Mid.kt").modify {
+                it.replace(
+                    "fun greet(name: String): String = \"Hello from Lib, \$name!\"",
+                    "fun greet(title: String): String = \"Hi from Lib, \$title!\""
+                )
+            }
+
+            build(":app:wasmJsD8ProductionRun") {
+                assertTasksExecuted(":mid:compileKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":app:wasmJsD8ProductionRun")
+                assertOutputContains("Hi from Lib, App!")
+
+                val kotlinDir = subProject("app").projectPath
+                    .resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin")
+                assertTrue("mid.wasm should be present in multimodule output") {
+                    kotlinDir.listDirectoryEntries("*mid*.wasm").isNotEmpty()
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @GradleTest
+    @DisplayName("Changing lib triggers transitive recompilation through mid to app in per-module closed-world mode")
+    fun libChangeTriggersTransitiveRecompileWasmJsPerModuleClosedWorld(gradleVersion: GradleVersion) {
+        project("wasm-js-per-module-closed-world", gradleVersion) {
+            subProject("mid").let {
+                it.buildScriptInjection {
+                    kotlinMultiplatform.sourceSets.getByName("wasmJsMain").dependencies {
+                        api(project(":lib"))
+                    }
+                }
+            }
+
+            subProject("app").projectPath
+                .resolve("src/wasmJsMain/kotlin/App.kt").modify {
+                    """
+                        fun main() {
+                            val mid = Mid()
+                            println(mid.greet("App"))
+                            val lib = Lib()
+                            val result = lib {
+                                +"cube"
+                                +"sphere"
+                                +"light"
+                            }
+                            println(result)
+                        }
+                    """.trimIndent()
+                }
+
+            build(":app:wasmJsD8ProductionRun") {
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":app:wasmJsD8ProductionRun")
+                assertOutputContains("Hello from Lib, App!")
+                assertOutputContains("Scene: [cube, sphere, light]")
+
+                val kotlinDir = subProject("app").projectPath
+                    .resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin")
+                assertTrue("lib.wasm should be present in chain dependency output") {
+                    kotlinDir.listDirectoryEntries("*lib*.wasm").isNotEmpty()
+                }
+                assertTrue("mid.wasm should be present in chain dependency output") {
+                    kotlinDir.listDirectoryEntries("*mid*.wasm").isNotEmpty()
+                }
+            }
+
+            subProject("lib").projectPath.resolve("src/wasmJsMain/kotlin/Lib.kt").modify {
+                it.replace("\"Scene: [", "\"v2: [")
+            }
+
+            build(":app:wasmJsD8ProductionRun") {
+                assertTasksExecuted(":lib:compileKotlinWasmJs")
+                assertTasksExecuted(":mid:compileKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":app:wasmJsD8ProductionRun")
+                assertOutputContains("Hello from Lib, App!")
+                assertOutputContains("v2: [cube, sphere, light]")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @GradleTest
+    @DisplayName("Diamond dependency: lib.wasm appears exactly once despite two dependency paths")
+    fun diamondDependencyWasmJsPerModuleClosedWorld(gradleVersion: GradleVersion) {
+        project("wasm-js-per-module-closed-world", gradleVersion) {
+            subProject("mid").buildScriptInjection {
+                kotlinMultiplatform.sourceSets.getByName("wasmJsMain").dependencies {
+                    api(project(":lib"))
+                }
+            }
+            subProject("app").buildScriptInjection {
+                kotlinMultiplatform.sourceSets.getByName("wasmJsMain").dependencies {
+                    implementation(project(":lib"))
+                }
+            }
+            subProject("app").projectPath
+                .resolve("src/wasmJsMain/kotlin/App.kt").modify {
+                    """
+                    fun main() {
+                        val lib = Lib()
+                        val result = lib { +"cube"; +"sphere" }
+                        println(result)
+                    }
+                    """.trimIndent()
+                }
+
+            build(":app:wasmJsD8ProductionRun") {
+                assertTasksExecuted(":lib:compileKotlinWasmJs")
+                assertTasksExecuted(":mid:compileKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":app:wasmJsD8ProductionRun")
+                assertOutputContains("Scene: [cube, sphere]")
+
+                val kotlinDir = subProject("app").projectPath
+                    .resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin")
+                assertEquals(
+                    1,
+                    kotlinDir.listDirectoryEntries("*.wasm").filter {
+                        it.name.contains("lib") && !it.name.contains("stdlib")
+                    }.size,
+                    "lib.wasm should appear exactly once in diamond dependency output"
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @GradleTest
+    @DisplayName("Third-party lib of a dependent module produces a separate .wasm in per-module closed world")
+    fun thirdPartyDependencyWasmJsPerModuleClosedWorld(gradleVersion: GradleVersion) {
+        project("wasm-js-per-module-closed-world", gradleVersion) {
+            build(":app:wasmJsD8ProductionRun") {
+                assertTasksExecuted(":app:wasmJsD8ProductionRun")
+                assertOutputContains("Hello from Lib, App!")
+            }
+
+            subProject("mid").buildScriptInjection {
+                kotlinMultiplatform.sourceSets.getByName("wasmJsMain").dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
+                }
+            }
+            subProject("mid").projectPath
+                .resolve("src/wasmJsMain/kotlin/Mid.kt").modify {
+                    "import kotlinx.collections.immutable.persistentListOf\n\n" + it.replace(
+                        "fun greet(name: String): String = \"Hello from Lib, \$name!\"",
+                        "fun greet(name: String): String = persistentListOf(\"Hello from Lib\", name).toString()"
+                    )
+                }
+
+            build(":app:wasmJsD8ProductionRun") {
+                assertTasksExecuted(":mid:compileKotlinWasmJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":app:wasmJsD8ProductionRun")
+                assertOutputContains("[Hello from Lib, App]")
+
+                val kotlinDir = subProject("app").projectPath
+                    .resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin")
+                assertTrue("kotlinx-collections-immutable .wasm should be present in per-module output") {
+                    kotlinDir.listDirectoryEntries("*.wasm").any { it.name.contains("collections-immutable") }
+                }
+            }
+        }
+    }
 }
 
 class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {

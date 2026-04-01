@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -225,14 +223,6 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
     }
 
     fun exitCodeFragment(anonymousInitializer: FirCodeFragment) {
-        exitNewTopLevelScopeIfNeeded(anonymousInitializer)
-    }
-
-    fun enterReplSnippet(anonymousInitializer: FirReplSnippet) {
-        enterNewTopLevelScopeIfNeeded(anonymousInitializer)
-    }
-
-    fun exitReplSnippet(anonymousInitializer: FirReplSnippet) {
         exitNewTopLevelScopeIfNeeded(anonymousInitializer)
     }
 

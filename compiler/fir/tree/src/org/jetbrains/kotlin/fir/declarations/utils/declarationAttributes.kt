@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
@@ -28,6 +29,7 @@ private object SourceElementKey : FirDeclarationDataKey()
 private object ModuleNameKey : FirDeclarationDataKey()
 private object DanglingTypeConstraintsKey : FirDeclarationDataKey()
 private object KlibSourceFile : FirDeclarationDataKey()
+private object KlibFileAnnotationsKey : FirDeclarationDataKey()
 private object EvaluatedValue : FirDeclarationDataKey()
 private object CompilerPluginMetadata : FirDeclarationDataKey()
 private object OriginalReplSnippet : FirDeclarationDataKey()
@@ -114,6 +116,13 @@ var FirProperty.isDeserializedPropertyFromAnnotation: Boolean? by FirDeclaration
  */
 var FirDeclaration.klibSourceFile: SourceFile? by FirDeclarationDataRegistry.data(KlibSourceFile)
 
+/**
+ * File-level annotations (`@file:SomeAnnotation`) from KLib metadata.
+ * Attached to top-level callables deserialized from KLib dependencies.
+ * @see [FirBasedSymbol.klibFileAnnotations]
+ */
+var FirDeclaration.klibFileAnnotations: List<FirAnnotation>? by FirDeclarationDataRegistry.data(KlibFileAnnotationsKey)
+
 val FirClassLikeSymbol<*>.sourceElement: SourceElement?
     get() = fir.sourceElement
 
@@ -129,6 +138,12 @@ val FirPropertySymbol.fromPrimaryConstructor: Boolean
  */
 val FirBasedSymbol<FirDeclaration>.klibSourceFile: SourceFile?
     get() = fir.klibSourceFile
+
+/**
+ * @see FirDeclaration.klibFileAnnotations
+ */
+val FirBasedSymbol<FirDeclaration>.klibFileAnnotations: List<FirAnnotation>
+    get() = fir.klibFileAnnotations.orEmpty()
 
 var FirVariable.evaluatedInitializer: FirEvaluatorResult? by FirDeclarationDataRegistry.data(EvaluatedValue)
 

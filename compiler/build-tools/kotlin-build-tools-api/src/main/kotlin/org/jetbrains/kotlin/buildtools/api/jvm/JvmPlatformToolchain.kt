@@ -119,7 +119,7 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
 public inline fun JvmPlatformToolchain.jvmCompilationOperation(
     sources: List<Path>,
     destinationDirectory: Path,
-    builderAction: JvmCompilationOperation.Builder.() -> Unit,
+    builderAction: JvmCompilationOperation.Builder.() -> Unit = {},
 ): JvmCompilationOperation {
     contract {
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
@@ -137,7 +137,7 @@ public inline fun JvmPlatformToolchain.jvmCompilationOperation(
 @ExperimentalBuildToolsApi
 public inline fun JvmPlatformToolchain.classpathSnapshottingOperation(
     classpathEntry: Path,
-    builderAction: JvmClasspathSnapshottingOperation.Builder.() -> Unit,
+    builderAction: JvmClasspathSnapshottingOperation.Builder.() -> Unit = {},
 ): JvmClasspathSnapshottingOperation {
     contract {
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)

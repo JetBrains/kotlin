@@ -44,7 +44,10 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      *
      * Generally used for tooling.
      */
-    @Deprecated("The user facing property is deprecated. Intended for tooling use only. Will be removed in future releases.")
+    @Deprecated(
+        message = "The user facing property is deprecated. Intended for tooling use only. Will be removed in Kotlin 2.5.0.",
+        level = DeprecationLevel.ERROR,
+    )
     val generateFunctionKeyMetaClasses: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**
@@ -113,7 +116,10 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      * }
      * ```
      */
-    @Deprecated("Use the featureFlags option instead")
+    @Deprecated(
+        message = "Use the featureFlags option instead. Will be removed in Kotlin 2.5.0",
+        level = DeprecationLevel.ERROR
+    )
     val enableIntrinsicRemember: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
@@ -126,7 +132,10 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      *
      * This feature is still considered experimental and is thus disabled by default.
      */
-    @Deprecated("Use the featureFlags option instead")
+    @Deprecated(
+        message = "Use the featureFlags option instead. Will be removed in Kotlin 2.5.0",
+        level = DeprecationLevel.ERROR
+    )
     val enableNonSkippingGroupOptimization: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**
@@ -139,7 +148,10 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      * For more information, see this link:
      *  - [AndroidX strong skipping](https://github.com/JetBrains/kotlin/blob/master/plugins/compose/design/strong-skipping.md)
      */
-    @Deprecated("Use the featureFlags option instead")
+    @Deprecated(
+        message = "Use the featureFlags option instead. Will be removed in Kotlin 2.5.0",
+        level = DeprecationLevel.ERROR
+    )
     val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
@@ -148,7 +160,10 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      * For more information, see this link:
      *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
      */
-    @Deprecated("Use the stabilityConfigurationFiles option instead")
+    @Deprecated(
+        message = "Use the stabilityConfigurationFiles option instead. Will be removed in Kotlin 2.5.0",
+        level = DeprecationLevel.ERROR
+    )
     abstract val stabilityConfigurationFile: RegularFileProperty
 
     /**
@@ -216,7 +231,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      *
      * @see ComposeFeatureFlag
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR", "DEPRECATION")
     val featureFlags: SetProperty<ComposeFeatureFlag> = objectFactory
         .setProperty(ComposeFeatureFlag::class.java)
         .convention(

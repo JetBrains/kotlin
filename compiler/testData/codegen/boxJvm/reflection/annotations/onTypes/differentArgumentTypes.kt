@@ -27,6 +27,10 @@ annotation class Anno(
     val ja: LongArray,
     val sa: ShortArray,
     val za: BooleanArray,
+    val ub: UByte,
+    val us: UShort,
+    val ui: UInt,
+    val ul: ULong,
     val str: String,
     val k: KClass<*>,
     val k2: KClass<*>,
@@ -55,6 +59,10 @@ fun f(): @Anno(
     [239239239239L],
     [(-43).toShort()],
     [false, true],
+    UByte.MAX_VALUE,
+    UShort.MAX_VALUE,
+    UInt.MAX_VALUE,
+    ULong.MAX_VALUE,
     "lol",
     Number::class,
     IntArray::class,
@@ -71,6 +79,7 @@ fun box(): String {
     assertEquals(
         "@test.Anno(b=1, c=x, d=3.14, f=-2.72, i=42424242, j=239239239239239, s=42, z=true, " +
                 "ba=[-1], ca=[y], da=[-3.14159], fa=[2.7218], ia=[424242], ja=[239239239239], sa=[-43], za=[false, true], " +
+                "ub=-1, us=-1, ui=-1, ul=-1, " +
                 "str=lol, k=class java.lang.Number, k2=class [I, e=EXPRESSION, a=@test.Nested(value=1), stra=[lmao], " +
                 "ka=[class java.lang.Double, class kotlin.Unit, class [J, class [Ljava.lang.String;, interface kotlin.jvm.functions.Function0, interface kotlin.jvm.functions.Function1], " +
                 "ea=[TYPEALIAS, FIELD], aa=[@test.Nested(value=2), @test.Nested(value=3)])",
@@ -94,6 +103,11 @@ fun box(): String {
     assertTrue(ea is Array<*> && ea.isArrayOf<AnnotationTarget>())
     val aa = anno.aa
     assertTrue(aa is Array<*> && aa.isArrayOf<Nested>())
+
+    assertEquals(UByte.MAX_VALUE, anno.ub)
+    assertEquals(UShort.MAX_VALUE, anno.us)
+    assertEquals(UInt.MAX_VALUE, anno.ui)
+    assertEquals(ULong.MAX_VALUE, anno.ul)
 
     return "OK"
 }

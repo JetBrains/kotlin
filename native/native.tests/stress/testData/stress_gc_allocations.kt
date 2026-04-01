@@ -2,6 +2,9 @@
 // DISABLE_NATIVE: gcType=NOOP
 // DISABLE_NATIVE: gcScheduler=AGGRESSIVE
 // DISABLE_NATIVE: gcScheduler=MANUAL
+// Unpaged allocator creates high memory fragmentation in this test. This results in high memory usage,
+// which fails this test.
+// DISABLE_NATIVE: alloc=NOT_PAGED
 // The test checks GC, we need to allocate everything on the heap.
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative -Xdisable-phases=EscapeAnalysis
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class, kotlin.native.concurrent.ObsoleteWorkersApi::class)

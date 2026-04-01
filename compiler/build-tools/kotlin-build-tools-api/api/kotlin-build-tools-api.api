@@ -166,6 +166,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 	public abstract fun getCompilerVersion ()Ljava/lang/String;
 	public abstract fun getToolchain (Ljava/lang/Class;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain;
 	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;
+	public static fun loadImplementation (Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchains$BuildSession : java/lang/AutoCloseable {
@@ -179,6 +180,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 
 public final class org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Companion {
 	public final fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;
+	public final fun loadImplementation (Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
@@ -186,6 +188,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 
 public final class org/jetbrains/kotlin/buildtools/api/KotlinToolchainsKt {
 	public static final fun daemonExecutionPolicy (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
+	public static synthetic fun daemonExecutionPolicy$default (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/OperationCancelledException : java/lang/RuntimeException {
@@ -233,6 +236,160 @@ public final class org/jetbrains/kotlin/buildtools/api/SourcesChanges$ToBeCalcul
 
 public final class org/jetbrains/kotlin/buildtools/api/SourcesChanges$Unknown : org/jetbrains/kotlin/buildtools/api/SourcesChanges {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges$Unknown;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/AbiFilters {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Companion;
+	public static final field EXCLUDE_ANNOTATED_WITH Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Option;
+	public static final field EXCLUDE_NAMED Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Option;
+	public static final field INCLUDE_ANNOTATED_WITH Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Option;
+	public static final field INCLUDE_NAMED Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Option;)Ljava/lang/Object;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain$Companion;
+	public abstract fun compareAbiTextFilesOperationBuilder (Ljava/lang/Appendable;Ljava/nio/file/Path;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/abi/operations/CompareAbiTextFilesOperation$Builder;
+	public abstract fun dumpJvmAbiToStringOperationBuilder (Ljava/lang/Appendable;Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Builder;
+	public abstract fun dumpKlibAbiToStringOperationBuilder (Ljava/lang/Appendable;Ljava/util/Map;)Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Builder;
+	public static fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain$Companion {
+	public final fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchainKt {
+	public static final fun compareAbiTextFilesOperation (Lorg/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain;Ljava/lang/Appendable;Ljava/nio/file/Path;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/abi/operations/CompareAbiTextFilesOperation;
+	public static synthetic fun compareAbiTextFilesOperation$default (Lorg/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain;Ljava/lang/Appendable;Ljava/nio/file/Path;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/abi/operations/CompareAbiTextFilesOperation;
+	public static final fun dumpJvmAbiToStringOperation (Lorg/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain;Ljava/lang/Appendable;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation;
+	public static synthetic fun dumpJvmAbiToStringOperation$default (Lorg/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain;Ljava/lang/Appendable;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation;
+	public static final fun dumpKlibAbiToStringOperation (Lorg/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain;Ljava/lang/Appendable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation;
+	public static synthetic fun dumpKlibAbiToStringOperation$default (Lorg/jetbrains/kotlin/buildtools/api/abi/AbiValidationToolchain;Ljava/lang/Appendable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/KlibTargetId : java/io/Serializable {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCustomizedName ()Ljava/lang/String;
+	public final fun getTargetType ()Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public fun hashCode ()I
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/KlibTargetType : java/lang/Enum {
+	public static final field ANDROID_NATIVE_ARM32 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field ANDROID_NATIVE_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field ANDROID_NATIVE_X64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field ANDROID_NATIVE_X86 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType$Companion;
+	public static final field IOS_ARM32 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field IOS_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field IOS_SIMULATOR_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field IOS_X64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field JS Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field LINUX_ARM32_HFP Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field LINUX_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field LINUX_X64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field MACOS_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field MACOS_X64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field MINGW_X64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field MINGW_X86 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field TVOS_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field TVOS_SIMULATOR_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field TVOS_X64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field WASM_JS Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field WASM_WASI Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field WATCHOS_ARM32 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field WATCHOS_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field WATCHOS_DEVICE_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field WATCHOS_SIMULATOR_ARM64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field WATCHOS_X64 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static final field WATCHOS_X86 Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public final fun getCanonicalName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/KlibTargetType$Companion {
+	public final fun fromCanonicalName (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+	public final fun fromKonanTargetName (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/abi/KlibTargetType;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/operations/CompareAbiTextFilesOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+	public abstract fun getActualDumpFile ()Ljava/nio/file/Path;
+	public abstract fun getExpectedDumpFile ()Ljava/nio/file/Path;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/operations/CompareAbiTextFilesOperation$Builder : org/jetbrains/kotlin/buildtools/api/BuildOperation$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/abi/operations/CompareAbiTextFilesOperation;
+	public abstract fun getActualDumpFile ()Ljava/nio/file/Path;
+	public abstract fun getExpectedDumpFile ()Ljava/nio/file/Path;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Companion;
+	public static final field PATTERN_FILTERS Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Option;)Ljava/lang/Object;
+	public abstract fun getInputFiles ()Ljava/lang/Iterable;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Builder : org/jetbrains/kotlin/buildtools/api/BuildOperation$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation;
+	public abstract fun filtersBuilder ()Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Builder;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Option;)Ljava/lang/Object;
+	public abstract fun getInputFiles ()Ljava/lang/Iterable;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperationKt {
+	public static final fun filters (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Builder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters;
+	public static synthetic fun filters$default (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpJvmAbiToStringOperation$Builder;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Companion;
+	public static final field PATTERN_FILTERS Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Option;
+	public static final field REFERENCE_DUMP_FILE Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Option;
+	public static final field TARGETS_TO_INFER Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Option;)Ljava/lang/Object;
+	public abstract fun getKlibs ()Ljava/util/Map;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Builder : org/jetbrains/kotlin/buildtools/api/BuildOperation$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation;
+	public abstract fun filtersBuilder ()Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters$Builder;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Option;)Ljava/lang/Object;
+	public abstract fun getKlibs ()Ljava/util/Map;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperationKt {
+	public static final fun filters (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Builder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters;
+	public static synthetic fun filters$default (Lorg/jetbrains/kotlin/buildtools/api/abi/operations/DumpKlibAbiToStringOperation$Builder;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/abi/AbiFilters;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments {
@@ -923,9 +1080,11 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain$
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchainKt {
 	public static final fun classpathSnapshottingOperation (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation;
+	public static synthetic fun classpathSnapshottingOperation$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation;
 	public static final fun discoverScriptExtensionsOperation (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;Ljava/util/List;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation;
 	public static synthetic fun discoverScriptExtensionsOperation$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation;
 	public static final fun jvmCompilationOperation (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation;
+	public static synthetic fun jvmCompilationOperation$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation;
 }
 
 public class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {
@@ -1083,6 +1242,8 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompila
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperationKt {
 	public static final fun snapshotBasedIcConfiguration (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
 	public static final fun snapshotBasedIcConfiguration (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
+	public static synthetic fun snapshotBasedIcConfiguration$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
+	public static synthetic fun snapshotBasedIcConfiguration$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/trackers/BuildMetricsCollector {

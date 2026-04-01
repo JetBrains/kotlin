@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
@@ -1960,10 +1961,10 @@ internal object KotlinToolingDiagnostics {
     }
 
     object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
-        operator fun invoke(targetName: String): ToolingDiagnostic = build {
+        operator fun invoke(targetType: KlibTargetType): ToolingDiagnostic = build {
             title("ABI Validation: unsupported target")
                 .description {
-                    "Target $targetName is not supported by the host compiler and a KLib ABI dump could not be directly generated for it."
+                    "Target ${targetType.canonicalName} is not supported by the host compiler and a KLib ABI dump could not be directly generated for it."
                 }
                 .solution {
                     "Build project on suitable machine"

@@ -17,8 +17,10 @@ import kotlin.reflect.*
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
+import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
+import kotlin.reflect.jvm.internal.types.allTypeParameters
 import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
 import kotlin.reflect.jvm.javaConstructor
 import kotlin.reflect.jvm.javaMethod
@@ -131,17 +133,28 @@ private fun createRawJavaType(
     val kClass = jClass.convertJavaClass(isForAnnotationParameter)
     val lowerBound = createJavaSimpleType(
         jClass, kClass,
-        jClass.allTypeParameters().map { typeParameter ->
+        jClass.allTypeParameters().mapIndexed { index, typeParameter ->
             // When creating a lower bound for a raw type, we must take the corresponding bound of each type parameter, but erase their
             // type arguments to star projections. E.g. `T : Comparable<String>` becomes `Comparable<*>`. We have to be very careful not
             // to translate the bound's own type parameters because it will lead to stack overflow in cases like `class A<T extends A>`.
             // Since a type parameter's upper bound may be another type parameter, we need to unwrap it until we end up with anything
             // but the type parameter (`Class` or `ParameterizedType`).
+            // For mapped built-in classes (e.g. Kotlin collections), we also need to take into account the nullability of the corresponding
+            // Kotlin type parameter. For normal classes, this type is always flexible.
             // Note that this is still not exactly how the compiler translates raw types
             // (see `JavaClassifierType.toConeKotlinTypeForFlexibleBound` in K2, or `JavaTypeResolver.computeRawTypeArguments` in K1),
             // but it's a good enough approximation.
             val upperBound = generateSequence(typeParameter) { it.bounds.first() as? TypeVariable<*> }.last().bounds.first()
-            KTypeProjection.invariant(upperBound.toKType(knownTypeParameters, replaceNonArrayArgumentsWithStarProjections = true))
+            val nullability = when {
+                isForAnnotationParameter -> TypeNullability.NOT_NULL
+                kClass.isMappedBuiltin ->
+                    if (kClass.allTypeParameters()[index].createType().isSubtypeOf(StandardKTypes.ANY)) TypeNullability.NOT_NULL
+                    else TypeNullability.NULLABLE
+                else -> TypeNullability.FLEXIBLE
+            }
+            KTypeProjection.invariant(
+                upperBound.toKType(knownTypeParameters, nullability, replaceNonArrayArgumentsWithStarProjections = true),
+            )
         },
         isMarkedNullable = false,
     ).let {
@@ -152,6 +165,9 @@ private fun createRawJavaType(
     )
     return FlexibleKType.create(lowerBound, upperBound, isRawType = true) { jClass }
 }
+
+internal val KClass<*>.isMappedBuiltin: Boolean
+    get() = java.canonicalName != qualifiedName
 
 private fun SimpleKType.createMutableCollectionType(javaType: Type): SimpleKType? {
     val klass = classifier as? KClass<*> ?: return null

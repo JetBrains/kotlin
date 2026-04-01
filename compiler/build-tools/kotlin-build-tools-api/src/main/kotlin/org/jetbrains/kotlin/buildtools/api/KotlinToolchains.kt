@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_3_20
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4_0
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import java.net.URLClassLoader
+import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -180,6 +182,23 @@ public interface KotlinToolchains {
                 throw NoImplementationFoundException(KotlinToolchains::class).initCause(e)
             }
         }
+
+        /**
+         * Create an instance of [KotlinToolchains] loaded in an isolated classloader with the given [classpath].
+         *
+         * The returned [KotlinToolchains] instance will be loaded by a classloader with the following properties:
+         * * BTA API classes will be loaded from the classloader that loaded the [KotlinToolchains] interface
+         * * BTA implementation classes will be loaded from a classloader with the given [classpath], which should contain all the
+         * dependencies of the BTA implementation, such as the Kotlin compiler.
+         *
+         * The obtained `KotlinToolchains` instance should be cached for future use to avoid re-loading the BTA implementation.
+         *
+         * @param classpath a list of Paths pointing to JARs containing the BTA implementation, the Kotlin compiler, and all their dependencies
+         */
+        @JvmStatic
+        public fun loadImplementation(classpath: List<Path>): KotlinToolchains =
+            loadImplementation(URLClassLoader(classpath.map { it.toUri().toURL() }.toTypedArray(), SharedApiClassesClassLoader()))
+
     }
 }
 
@@ -203,7 +222,7 @@ public inline fun <reified T : Toolchain> KotlinToolchains.getToolchain(): T {
  */
 @OptIn(ExperimentalContracts::class)
 @ExperimentalBuildToolsApi
-public inline fun KotlinToolchains.daemonExecutionPolicy(builderAction: ExecutionPolicy.WithDaemon.Builder.() -> Unit): ExecutionPolicy.WithDaemon {
+public inline fun KotlinToolchains.daemonExecutionPolicy(builderAction: ExecutionPolicy.WithDaemon.Builder.() -> Unit = {}): ExecutionPolicy.WithDaemon {
     contract {
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
     }

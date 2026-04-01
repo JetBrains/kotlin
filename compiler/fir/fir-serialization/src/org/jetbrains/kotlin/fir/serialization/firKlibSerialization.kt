@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -64,6 +61,10 @@ fun serializeSingleFirFile(
         (declaration as? FirClass)?.makeClassProtoWithNested()
     }
 
+    val fileAnnotationProtos = file.nonSourceAnnotations(session).mapNotNull { annotation ->
+        serializerExtension.annotationSerializer.serializeAnnotation(annotation)
+    }
+
     return buildKlibPackageFragment(
         packageProto,
         classesProto,
@@ -72,7 +73,8 @@ fun serializeSingleFirFile(
                 packageProto.propertyList.isEmpty() &&
                 packageProto.typeAliasList.isEmpty() &&
                 classesProto.isEmpty(),
-        serializerExtension.stringTable as SerializableStringTable
+        serializerExtension.stringTable as SerializableStringTable,
+        fileAnnotations = fileAnnotationProtos,
     )
 }
 

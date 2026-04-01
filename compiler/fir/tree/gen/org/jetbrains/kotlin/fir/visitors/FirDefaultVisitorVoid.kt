@@ -159,6 +159,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitDeclaration(codeFragment)
     }
 
+    override fun visitReplSnippet(replSnippet: FirReplSnippet) {
+        visitDeclaration(replSnippet)
+    }
+
     override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference) {
         visitStatement(replDeclarationReference)
     }

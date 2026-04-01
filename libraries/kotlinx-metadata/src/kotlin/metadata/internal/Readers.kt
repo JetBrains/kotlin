@@ -154,6 +154,7 @@ public fun ProtoBuf.PackageFragment.toKmModuleFragment(
 
     v.pkg = `package`.toKmPackage(strings, false, contextExtensions)
     class_List.mapTo(v.classes) { it.toKmClass(strings, false, contextExtensions) }
+    fileAnnotationList.mapTo(v.fileAnnotations) { it.readAnnotation(c.strings) }
 
     c.extensions.forEach { it.readModuleFragmentExtensions(v, this, c) }
 

@@ -12,27 +12,35 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.abi.tools.AbiFilters
-import org.jetbrains.kotlin.abi.tools.AbiTools
-import org.jetbrains.kotlin.abi.tools.KlibTarget
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
+import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
+import org.jetbrains.kotlin.buildtools.api.abi.dumpJvmAbiToStringOperation
+import org.jetbrains.kotlin.buildtools.api.abi.dumpKlibAbiToStringOperation
+import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpJvmAbiToStringOperation
+import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation
+import org.jetbrains.kotlin.buildtools.api.abi.operations.filters
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
+import java.nio.file.Path
 
 @CacheableTask
 internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolingDiagnostics {
     @get:OutputDirectory
     abstract val dumpDir: DirectoryProperty
 
-    @get:InputFiles // don't fail the task if file does not exist https://github.com/gradle/gradle/issues/2016
+    @get:InputFiles // don't fail the task if the file does not exist https://github.com/gradle/gradle/issues/2016
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val referenceKlibDump: RegularFileProperty
 
     @get:Input
-    abstract val unsupportedTargets: SetProperty<KlibTarget>
+    abstract val unsupportedTargets: SetProperty<KlibTargetId>
 
     @get:Input
     abstract val keepLocallyUnsupportedTargets: Property<Boolean>
@@ -66,7 +74,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
     val projectName: String = project.name
 
 
-    override fun runTools(tools: AbiTools) {
+    override fun runTools(abiValidationToolchain: AbiValidationToolchain, buildSession: KotlinToolchains.BuildSession) {
         val abiDir = dumpDir.get().asFile
 
         val jvmTargets = jvm.get()
@@ -80,16 +88,9 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
         if (!keepUnsupported && unsupported.isNotEmpty()) {
             throw IllegalStateException(
                 "Validation could not be performed as targets $unsupportedTargets " +
-                        "are not supported by host compiler and the 'keepUnsupported' mode was disabled."
+                        "are not supported by host compiler and the 'keepLocallyUnsupportedTargets' mode was disabled."
             )
         }
-
-        val filters = AbiFilters(
-            includedClasses.getOrElse(emptySet()),
-            excludedClasses.getOrElse(emptySet()),
-            includedAnnotatedWith.getOrElse(emptySet()),
-            excludedAnnotatedWith.getOrElse(emptySet())
-        )
 
         abiDir.mkdirs()
         abiDir.deleteDirectoryContents()
@@ -99,7 +100,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
                 .asSequence()
                 .filter {
                     !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
-                }.asIterable()
+                }.map { it.toPath() }.asIterable()
 
 
             val dirForDump = if (jvmTarget.subdirectoryName == "") {
@@ -111,39 +112,52 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
             val dumpFile = dirForDump.resolve(jvmDumpName)
 
             dumpFile.bufferedWriter().use { writer ->
-                tools.printJvmDump(writer, classfiles, filters)
+                val operation = abiValidationToolchain.dumpJvmAbiToStringOperation(writer, classfiles) {
+                    this[DumpJvmAbiToStringOperation.PATTERN_FILTERS] = filters {
+                        this[AbiFilters.INCLUDE_NAMED] = includedClasses.getOrElse(emptySet())
+                        this[AbiFilters.EXCLUDE_NAMED] = excludedClasses.getOrElse(emptySet())
+                        this[AbiFilters.INCLUDE_ANNOTATED_WITH] = includedAnnotatedWith.getOrElse(emptySet())
+                        this[AbiFilters.EXCLUDE_ANNOTATED_WITH] = excludedAnnotatedWith.getOrElse(emptySet())
+                    }
+                }
+                buildSession.executeOperation(operation)
             }
         }
 
         if (klibTargets.isNotEmpty() || unsupported.isNotEmpty()) {
-            val mergedDump = tools.createKlibDump()
+            val klibs: MutableMap<KlibTargetId, Path> = mutableMapOf()
             klibTargets.forEach { suite ->
                 val klibDir = suite.klibFiles.files.first()
                 if (klibDir.exists()) {
-                    val dump = tools.extractKlibAbi(klibDir, KlibTarget(suite.canonicalTargetName, suite.targetName), filters)
-                    mergedDump.merge(dump)
+                    klibs[KlibTargetId(KlibTargetType.fromCanonicalName(suite.canonicalName), suite.targetName)] = klibDir.toPath()
                 }
             }
-
-            val referenceFile = referenceKlibDump.get().asFile
             if (unsupported.isNotEmpty()) {
-                val referenceDump = if (referenceFile.exists() && referenceFile.isFile) {
-                    tools.loadKlibDump(referenceFile)
-                } else {
-                    tools.createKlibDump()
-                }
-
-                unsupported.map { unsupportedTarget ->
+                unsupported.forEach { unsupportedTarget ->
                     reportDiagnostic(
-                        KotlinToolingDiagnostics.AbiValidationUnsupportedTarget.invoke(unsupportedTarget.targetName)
+                        KotlinToolingDiagnostics.AbiValidationUnsupportedTarget.invoke(unsupportedTarget.targetType)
                     )
-                    mergedDump.inferAbiForUnsupportedTarget(referenceDump, unsupportedTarget)
-                }.forEach { inferredDump ->
-                    mergedDump.merge(inferredDump)
                 }
             }
+            val referenceFile = referenceKlibDump.get().asFile
 
-            mergedDump.print(abiDir.resolve(klibDumpName))
+            abiDir.resolve(klibDumpName).bufferedWriter().use { writer ->
+                val operation = abiValidationToolchain.dumpKlibAbiToStringOperation(writer, klibs) {
+                    this[DumpKlibAbiToStringOperation.PATTERN_FILTERS] = filters {
+                        this[AbiFilters.INCLUDE_NAMED] = includedClasses.getOrElse(emptySet())
+                        this[AbiFilters.EXCLUDE_NAMED] = excludedClasses.getOrElse(emptySet())
+                        this[AbiFilters.INCLUDE_ANNOTATED_WITH] = includedAnnotatedWith.getOrElse(emptySet())
+                        this[AbiFilters.EXCLUDE_ANNOTATED_WITH] = excludedAnnotatedWith.getOrElse(emptySet())
+                    }
+
+                    val targetsToInfer = unsupported.toSet()
+                    if (targetsToInfer.isNotEmpty()) {
+                        this[DumpKlibAbiToStringOperation.TARGETS_TO_INFER] = targetsToInfer
+                        this[DumpKlibAbiToStringOperation.REFERENCE_DUMP_FILE] = referenceFile.toPath()
+                    }
+                }
+                buildSession.executeOperation(operation)
+            }
         }
     }
 
@@ -161,7 +175,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
         val targetName: String,
 
         @get:Input
-        val canonicalTargetName: String,
+        val canonicalName: String,
 
         @get:InputFiles
         @get:Optional

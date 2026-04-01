@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import kotlin.metadata.Modality
@@ -19,7 +20,7 @@ internal abstract class JavaKCallable<out R>(
     override val visibility: KVisibility?
         get() = member.modifiers.computeVisibilityForJavaModifiers()
 
-    final override val modality: Modality
+    override val modality: Modality
         get() = overriddenStorage.modality ?: when {
             Modifier.isFinal(member.modifiers) || member.isEnumValuesValueOfMethod() -> Modality.FINAL
             Modifier.isAbstract(member.modifiers) -> Modality.ABSTRACT
@@ -31,4 +32,10 @@ internal abstract class JavaKCallable<out R>(
 
     final override val isPackagePrivate: Boolean
         get() = member.modifiers.isPackagePrivate
+
+    override val annotations: List<Annotation>
+        get() {
+            val member = caller.member as? AnnotatedElement ?: return emptyList()
+            return member.annotations.toList().unwrapKotlinRepeatableAnnotations()
+        }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,17 +18,12 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
-import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtension
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.TypeResolutionConfiguration
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
@@ -141,13 +136,11 @@ open class FirTypeResolveTransformer(
 
     inline fun <R> withReplSnippetScope(replSnippet: FirReplSnippet, crossinline action: () -> R): R {
         return withScopeCleanup {
-            addScopes(buildList {
-                // TODO: robuster matching and error reporting on no extension (KT-72969)
-                for (resolveExt in session.extensionService.replSnippetResolveExtensions) {
-                    val scope = resolveExt.getSnippetScope(replSnippet, session)
-                    if (scope != null) add(scope)
-                }
-            })
+            // TODO: robuster matching and error reporting on no extension (KT-72969)
+            session.replSnippetResolveExtension?.getSnippetScope(replSnippet, session)?.let {
+                addScopes(listOf(it))
+            }
+
             action()
         }
     }

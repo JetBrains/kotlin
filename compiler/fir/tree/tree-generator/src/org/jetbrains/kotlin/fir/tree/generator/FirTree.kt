@@ -988,7 +988,6 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val replSnippet: Element by element(Declaration) {
         parent(declaration)
-        parent(controlFlowGraphOwner)
         +FieldSets.name {
             kDoc = """
                 The name of the REPL snippet, used to derive the name of the generated [snippetClass].

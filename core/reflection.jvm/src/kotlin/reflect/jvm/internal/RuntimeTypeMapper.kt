@@ -18,7 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.jvm.CloneableClassScope
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.runtime.structure.*
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.isInlineClass
@@ -139,8 +137,7 @@ internal sealed class JvmPropertySignature {
     }
 
     class JavaField(val field: Field) : JvmPropertySignature() {
-        override fun asString(): String =
-            JvmAbi.getterName(field.name) + "()" + field.type.desc
+        override fun asString(): String = field.jvmSignature
     }
 
     class MappedKotlinProperty(
@@ -158,6 +155,9 @@ internal val Method.jvmSignature: String
     get() = name +
             parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")") { it.desc } +
             returnType.desc
+
+internal val Field.jvmSignature: String
+    get() = JvmAbi.getterName(name) + "()" + type.desc
 
 internal object RuntimeTypeMapper {
     private val JAVA_LANG_VOID = ClassId.topLevel(FqName("java.lang.Void"))

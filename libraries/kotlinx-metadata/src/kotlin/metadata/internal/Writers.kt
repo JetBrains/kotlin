@@ -440,6 +440,8 @@ public open class ModuleFragmentWriter(stringTable: StringTable, contextExtensio
             t.addClass_(classWriter.t)
         }
 
+        t.addAllFileAnnotation(kmPackageFragment.fileAnnotations.map { it.writeAnnotation(c.strings).build() })
+
         c.extensions.forEach { it.writeModuleFragmentExtensions(kmPackageFragment, t, c) }
     }
 }

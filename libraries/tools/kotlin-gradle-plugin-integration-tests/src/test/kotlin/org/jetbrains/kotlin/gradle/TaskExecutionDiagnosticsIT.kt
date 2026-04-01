@@ -113,6 +113,8 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             expectedSeverity = ToolingDiagnostic.Severity.ERROR, // it's rendered as ERROR because of warning-mode=fail
         )
 
+    // Gradle 9.4.0 brings it Kotlin runtime 2.3.0 which metadata is not compatible with Kotlin compiler 2.1.20
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_9_3)
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA without deprecation")
     @JvmGradlePluginTests
     @GradleTest

@@ -48,7 +48,7 @@ import java.io.Serializable
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
+import kotlin.jvm.internal.CallableReference.NO_RECEIVER
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.metadata.*
@@ -214,7 +214,7 @@ internal class KClassImpl<T : Any>(
                 }
             } else if (!jClass.isAnnotation) {
                 jClass.declaredConstructors.mapNotNull { javaConstructor ->
-                    JavaKConstructor(this@KClassImpl, javaConstructor, CallableReference.NO_RECEIVER) as KFunction<T>
+                    JavaKConstructor(this@KClassImpl, javaConstructor, NO_RECEIVER) as KFunction<T>
                 }
             } else {
                 // Annotation classes do not have a constructor, and Java classes have do not have Kotlin metadata, so we need to create
@@ -416,12 +416,25 @@ internal class KClassImpl<T : Any>(
             } else buildList {
                 for (method in jClass.declaredMethods) {
                     if (Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
-                        add(JavaKNamedFunction(this@KClassImpl, method, CallableReference.NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+                        add(JavaKNamedFunction(this@KClassImpl, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
                     }
                 }
 
-                // Static properties are still descriptor-based for now.
-                getMembers(staticScope, DECLARED).filterTo(this) { it is KProperty<*> }
+                for (field in jClass.declaredFields) {
+                    if (field.isEnumConstant) continue
+                    if (Modifier.isStatic(field.modifiers) && !field.isSynthetic) {
+                        if (Modifier.isFinal(field.modifiers)) {
+                            add(JavaKProperty0<Any>(this@KClassImpl, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+                        } else {
+                            add(JavaKMutableProperty0<Any>(this@KClassImpl, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+                        }
+                    }
+                }
+
+                if (jClass.isEnum) {
+                    @Suppress("UNCHECKED_CAST")
+                    add(JavaEnumEntriesKProperty(this@KClassImpl as KClassImpl<out Enum<*>>))
+                }
             }
         }
         private val inheritedNonStaticMembers_k1Impl: Collection<ReflectKCallable<*>>

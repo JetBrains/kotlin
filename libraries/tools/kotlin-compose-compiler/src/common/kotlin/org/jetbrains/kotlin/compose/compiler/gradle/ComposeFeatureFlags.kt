@@ -90,7 +90,10 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * }
          * ```
          */
-        @Deprecated("This flag should be enabled by default and will be removed in the future versions.")
+        @Deprecated(
+            message = "This flag should be enabled by default and will be removed with Kotlin 2.5.0.",
+            level = DeprecationLevel.ERROR
+        )
         @JvmField
         val StrongSkipping: ComposeFeatureFlag = Enabled(Feature.StrongSkipping)
 
@@ -108,7 +111,10 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * }
          * ```
          */
-        @Deprecated("This flag should be enabled by default and will be removed in the future versions.")
+        @Deprecated(
+            message = "This flag should be enabled by default and will be removed with Kotlin 2.5.0.",
+            level = DeprecationLevel.ERROR
+        )
         @JvmField
         val IntrinsicRemember: ComposeFeatureFlag = Enabled(Feature.IntrinsicRemember)
 
@@ -128,6 +134,10 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * }
          * ```
          */
+        @Deprecated(
+            message = "This flag should be enabled by default and will be removed in the future versions.",
+            level = DeprecationLevel.WARNING
+        )
         @JvmField
         val OptimizeNonSkippingGroups: ComposeFeatureFlag = Enabled(Feature.OptimizeNonSkippingGroups)
 
@@ -145,6 +155,10 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * }
          * ```
          */
+        @Deprecated(
+            message = "This flag should be enabled by default and will be removed in the future versions.",
+            level = DeprecationLevel.WARNING
+        )
         @JvmField
         val PausableComposition: ComposeFeatureFlag = Enabled(Feature.PausableComposition)
     }

@@ -299,6 +299,7 @@ class StabilityInferencer(
         if (currentlyAnalyzing.contains(symbol)) return Stability.Unstable
         if (declaration.hasStableMarkedDescendant()) return Stability.Stable
         if (declaration.isEnumClass || declaration.isEnumEntry) return Stability.Stable
+        if (declaration.isObject) return Stability.Stable
         if (declaration.defaultType.isPrimitiveType()) return Stability.Stable
         if (declaration.isProtobufType()) return Stability.Stable
 

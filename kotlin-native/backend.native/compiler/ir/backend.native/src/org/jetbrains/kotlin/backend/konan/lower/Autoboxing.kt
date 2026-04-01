@@ -181,6 +181,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     private fun IrClass.canBeAssignedTo(expectedClass: IrClass) =
             this.isNothing() || expectedClass == anyClass /* A workaround for plugins emitting classes with empty superTypes */
                     || (expectedClass.isCompanion && expectedClass.parentAsClass.isObjCClass()) // TODO: a workaround for CMP-9000.
+                    // TODO: roll back once MapLibre is fixed (KT-85358).
+                    || (expectedClass.isObjCClass() && expectedClass.name.asString() == "MLNScaleBar")
                     || this.symbol.isSubtypeOfClass(expectedClass.symbol)
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType, skipTypeCheck: Boolean = false): IrExpression {

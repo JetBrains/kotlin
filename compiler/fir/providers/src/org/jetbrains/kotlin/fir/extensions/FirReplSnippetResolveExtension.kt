@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,17 +16,9 @@ import kotlin.reflect.KClass
 
 abstract class FirReplSnippetResolveExtension(
     session: FirSession,
-) : FirExtension(session) {
-    companion object {
-        val NAME: FirExtensionPointName = FirExtensionPointName("ReplSnippetResolveExtension")
-    }
-
-    final override val name: FirExtensionPointName
-        get() = NAME
-
-    final override val extensionType: KClass<out FirExtension> = FirReplSnippetResolveExtension::class
-
-    fun interface Factory : FirExtension.Factory<FirReplSnippetResolveExtension>
+) : FirExtensionSessionComponent(session) {
+    override val componentClass: KClass<out FirExtensionSessionComponent>
+        get() = FirReplSnippetResolveExtension::class
 
     abstract fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>?
 
@@ -35,7 +27,7 @@ abstract class FirReplSnippetResolveExtension(
     abstract fun updateResolved(snippet: FirReplSnippet)
 }
 
-val FirExtensionService.replSnippetResolveExtensions: List<FirReplSnippetResolveExtension> by FirExtensionService.registeredExtensions()
+val FirSession.replSnippetResolveExtension: FirReplSnippetResolveExtension? by FirSession.nullableSessionComponentAccessor()
 
 abstract class FirReplHistoryProvider : FirSessionComponent {
     abstract fun getSnippets(): Iterable<FirReplSnippetSymbol>

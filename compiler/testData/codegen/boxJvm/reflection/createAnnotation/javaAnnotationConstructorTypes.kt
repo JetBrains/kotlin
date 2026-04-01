@@ -113,11 +113,11 @@ fun box(): String {
             k1: kotlin.reflect.KClass<*>
             k2: kotlin.reflect.KClass<out kotlin.Number>
             k3: kotlin.reflect.KClass<in kotlin.Number>
-            k4: kotlin.reflect.KClass<(raw) kotlin.Any!>
+            k4: kotlin.reflect.KClass<(raw) kotlin.Any>
             ka1: kotlin.Array<kotlin.reflect.KClass<*>>
             ka2: kotlin.Array<kotlin.reflect.KClass<out kotlin.Number>>
             ka3: kotlin.Array<kotlin.reflect.KClass<in kotlin.Number>>
-            ka4: kotlin.Array<kotlin.reflect.KClass<(raw) kotlin.Any!>>
+            ka4: kotlin.Array<kotlin.reflect.KClass<(raw) kotlin.Any>>
             """.trimIndent(),
             J.Classes::class.parametersToString(),
         )

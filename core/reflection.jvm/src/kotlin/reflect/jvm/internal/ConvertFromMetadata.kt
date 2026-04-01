@@ -267,6 +267,10 @@ private fun KmAnnotationArgument.toAnnotationArgument(
     is KmAnnotationArgument.KClassValue ->
         classLoader.loadClass(className.toClassId())
             ?: throw KotlinReflectionInternalError("Unresolved class: $className")
+    is KmAnnotationArgument.UByteValue -> value.toByte()
+    is KmAnnotationArgument.UShortValue -> value.toShort()
+    is KmAnnotationArgument.UIntValue -> value.toInt()
+    is KmAnnotationArgument.ULongValue -> value.toLong()
     is KmAnnotationArgument.LiteralValue<*> -> value
 }
 

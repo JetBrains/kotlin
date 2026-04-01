@@ -1,0 +1,35 @@
+public final val bar: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+
+public final fun foo(x: R|kotlin/Int|): R|kotlin/Int|
+
+public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
+}
+
+public final typealias B = R|test/A|
+
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) public final annotation class MyFileAnnotationBinary : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String|): R|test/MyFileAnnotationBinary|
+
+}
+
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) public final annotation class MyFileAnnotationRuntime : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String|): R|test/MyFileAnnotationRuntime|
+
+}
+
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) public final annotation class MyFileAnnotationSource : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String|): R|test/MyFileAnnotationSource|
+
+}

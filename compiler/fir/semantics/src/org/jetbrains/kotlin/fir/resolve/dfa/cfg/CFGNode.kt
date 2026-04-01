@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
 
 @RequiresOptIn
@@ -457,20 +456,6 @@ class CodeFragmentEnterNode(owner: ControlFlowGraph, override val fir: FirCodeFr
 class CodeFragmentExitNode(owner: ControlFlowGraph, override val fir: FirCodeFragment, level: Int) : CFGNode<FirCodeFragment>(owner, level), GraphExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitCodeFragmentExitNode(this, data)
-    }
-}
-
-// ----------------------------------- REPL Snippets ------------------------------------------
-
-class ReplSnippetEnterNode(owner: ControlFlowGraph, override val fir: FirReplSnippet, level: Int) : CFGNode<FirReplSnippet>(owner, level), GraphEnterNodeMarker {
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitReplSnippetEnterNode(this, data)
-    }
-}
-
-class ReplSnippetExitNode(owner: ControlFlowGraph, override val fir: FirReplSnippet, level: Int) : CFGNode<FirReplSnippet>(owner, level), GraphExitNodeMarker {
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitReplSnippetExitNode(this, data)
     }
 }
 

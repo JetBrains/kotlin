@@ -97,10 +97,12 @@ internal fun ClassLoader.loadClass(kotlinClassId: ClassId, arrayDimensions: Int 
     val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinFqName) ?: kotlinClassId
     // Pseudo-classes like `kotlin/String.Companion` can be accessible from different class loaders. To ensure that we always use the
     // same class, we always load it from the stdlib's class loader.
-    val correctClassLoader =
-        if (javaClassId != kotlinClassId) Unit::class.java.safeClassLoader else this
+    val correctClassLoader = if (javaClassId != kotlinClassId) stdlibClassLoader else this
     return loadClass(correctClassLoader, javaClassId.packageFqName.asString(), javaClassId.relativeClassName.asString(), arrayDimensions)
 }
+
+internal val stdlibClassLoader: ClassLoader
+    get() = Unit::class.java.safeClassLoader
 
 private fun loadClass(classLoader: ClassLoader, packageName: String, className: String, arrayDimensions: Int): Class<*>? {
     if (packageName == "kotlin") {

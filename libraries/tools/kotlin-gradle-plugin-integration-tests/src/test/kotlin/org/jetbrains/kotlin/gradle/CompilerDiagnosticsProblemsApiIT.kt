@@ -41,7 +41,11 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
             build("compileKotlin") {
                 assertOutputContains(Regex("""file:///.*deprecatedUsage\.kt"""))
                 assertOutputContainsAny("is deprecated", "Use newFunction instead")
-                assertProblemsReportContainsDiagnostic("compiler-warning", "Use newFunction instead")
+                assertProblemsReportContainsDiagnostic(
+                    "compiler-warning",
+                    "Use newFunction instead",
+                    gradleVersion,
+                )
             }
         }
     }
@@ -63,7 +67,11 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
             buildAndFail("compileKotlin") {
                 assertOutputContains(Regex("""file:///.*errorFile\.kt"""))
                 assertOutputContains(Regex("""[Uu]nresolved reference"""))
-                assertProblemsReportContainsDiagnostic("compiler-error", "nresolved reference")
+                assertProblemsReportContainsDiagnostic(
+                    "compiler-error",
+                    "nresolved reference",
+                    gradleVersion,
+                )
             }
         }
     }

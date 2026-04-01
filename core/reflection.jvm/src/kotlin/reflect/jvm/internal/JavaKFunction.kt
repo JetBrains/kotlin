@@ -38,12 +38,6 @@ internal abstract class JavaKFunction(
         javaTypeParameters.toKTypeParameters(this)
     }
 
-    override val annotations: List<Annotation>
-        get() {
-            val member = caller.member as? AnnotatedElement ?: return emptyList()
-            return member.annotations.toList().unwrapKotlinRepeatableAnnotations()
-        }
-
     override val arity: Int get() = caller.arity
 
     override val isInline: Boolean get() = false

@@ -407,6 +407,35 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         }
     }
 
+    // This is a regression test against a bug that was causing us to add a `$stable` property to
+    // companion objects. This made the JVM bytecode of affected classes contain duplicate `%stable`
+    // fields. For more details, see https://issuetracker.google.com/issues/497751457.
+    @Test
+    fun testNoStablePropertyOnCompanionObjects() {
+        runCompose(
+            testFunBody = """
+                C.bar()
+            """.trimIndent(),
+            commonFiles = mapOf(
+                "C.kt" to """
+                    import androidx.compose.runtime.Composable
+
+                    class C {
+                        @Composable fun foo() {}
+
+                        companion object {
+                            @Composable fun bar() {}
+                        }
+                    }
+                    """,
+            ),
+            platformFiles = mapOf()
+        ) {
+            // This test passes as long as loading `C` succeeds without hitting a "Duplicate field
+            // name "$stable" with signature "I" in class file C" error.
+        }
+    }
+
     // This method was partially borrowed/copy-pasted from RobolectricComposeTester
     // where some of the code was commented out. Those commented out parts are needed here.
     private fun runCompose(

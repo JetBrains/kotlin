@@ -5,6 +5,8 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.internal.impldep.com.google.common.hash.HashFunction
+import org.gradle.internal.impldep.com.google.common.hash.Hashing
 import org.gradle.testkit.runner.TaskOutcome.*
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Disabled
+import java.util.*
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
@@ -41,8 +44,8 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                 // JVM:
                 checkBytecodeContains(
                     projectPath.resolve("build/classes/kotlin/jvm/integrationTest/com/example/HelloIntegrationTest.class").toFile(),
-                    "Hello.internalFun\$new_mpp_associate_compilations",
-                    "HelloTest.internalTestFun\$new_mpp_associate_compilations"
+                    $$"Hello.internalFun$new_mpp_associate_compilations",
+                    $$"HelloTest.internalTestFun$new_mpp_associate_compilations"
                 )
                 assertFileInProjectExists("build/classes/kotlin/jvm/integrationTest/META-INF/new-mpp-associate-compilations_integrationTest.kotlin_module")
 
@@ -120,13 +123,13 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                 enableBuildCacheDebug = false,
                 buildOptions = buildOptions.copy(
                     logLevel = LogLevel.LIFECYCLE,
-                    buildCacheEnabled = true,
+                    buildCacheEnabled = false,
                 )
             ) {
                 assertTasksExecuted(testTasks)
 
-                expectedExecutedTasks?.forEach { expecetedTask ->
-                    val executedTask = task(expecetedTask)
+                expectedExecutedTasks?.forEach { expectedTask ->
+                    val executedTask = task(expectedTask)
                     assertTrue(
                         executedTask?.outcome in listOf(SUCCESS, UP_TO_DATE, FROM_CACHE),
                         "Expected task outcome $executedTask was successful, but was ${executedTask?.outcome}"
@@ -137,7 +140,12 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                     "build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html"
                 } else {
                     val prefix = if (targetName == "jvm") "" else "${targetName}Test."
-                    "build/reports/tests/${targetName}Test/${prefix}com.example.HelloTest/index.html"
+                    val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4)) {
+                        "${prefix}com.example.HelloTest"
+                    } else {
+                        "${prefix}com.example.HelloTest".hashTestPathSegment()
+                    }
+                    "build/reports/tests/${targetName}Test/${dirName}/index.html"
                 }
 
                 assertFileInProjectDoesNotContain(testReportFile, "secondTest")
@@ -146,7 +154,12 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                     "build/reports/tests/${targetName}IntegrationTest/classes/com.example.HelloIntegrationTest.html"
                 } else {
                     val prefix = if (targetName == "jvm") "" else "${targetName}IntegrationTest."
-                    "build/reports/tests/${targetName}IntegrationTest/${prefix}com.example.HelloIntegrationTest/index.html"
+                    val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4)) {
+                        "${prefix}com.example.HelloIntegrationTest"
+                    } else {
+                        "${prefix}com.example.HelloIntegrationTest".hashTestPathSegment()
+                    }
+                    "build/reports/tests/${targetName}IntegrationTest/${dirName}/index.html"
                 }
 
                 assertFileInProjectContains(integrationTestReportFile, "test[$targetName]")
@@ -154,5 +167,18 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                 assertFileInProjectDoesNotContain(integrationTestReportFile, "thirdTest")
             }
         }
+    }
+
+
+    // Adopted from Gradle
+    // platforms/software/testing-base/src/main/java/org/gradle/api/internal/tasks/testing/report/generic/GenericHtmlTestReportGenerator.java
+    // Caused by https://github.com/gradle/gradle/pull/37052
+    private fun String.hashTestPathSegment(): String {
+        val hashBytes = HASHER.hashUnencodedChars(this).asBytes()
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(hashBytes)
+    }
+
+    private companion object {
+        private val HASHER: HashFunction = Hashing.farmHashFingerprint64()
     }
 }

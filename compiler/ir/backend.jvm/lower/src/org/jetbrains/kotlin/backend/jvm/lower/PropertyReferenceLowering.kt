@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.calculateOwnerKClass
 import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.usesLocalExceptParameterNullCheck
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrAttribute
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrDeclarationWithAccessorsSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.util.concurrent.ConcurrentHashMap
@@ -346,12 +349,20 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     }
 
     private val IrRichPropertyReference.isJavaSyntheticPropertyReference: Boolean
-        get() =
-            symbol.owner.let {
-                it is IrProperty && it.backingField == null &&
-                        (it.origin == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE
-                                || it.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
-            }
+        get() {
+            val property = symbol.owner as? IrProperty ?: return false
+            return property.backingField == null && (
+                    property.origin == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE ||
+                            (property.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && !property.isEnumEntries)
+                    )
+        }
+
+    private val IrProperty.isEnumEntries: Boolean
+        get() {
+            val getter = getter ?: return false
+            return parentAsClass.kind == ClassKind.ENUM_CLASS && getter.name == SpecialNames.ENUM_GET_ENTRIES && getter.hasShape() &&
+                    getter.returnType.classOrNull?.owner?.hasEqualFqName(StandardClassIds.EnumEntries.asSingleFqName()) == true
+        }
 
     // Create an instance of KProperty that overrides the get() and set() methods to directly call getX() and setX() on the object.
     // This is (relatively) fast, but space-inefficient. Also, the instances can store bound receivers in their fields. Example:

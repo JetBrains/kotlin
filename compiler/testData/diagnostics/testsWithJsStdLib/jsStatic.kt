@@ -67,3 +67,6 @@ interface B {
 
     }
 }
+
+<!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic
+fun A.Companion.bar()<!> {}

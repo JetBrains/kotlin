@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -111,16 +111,6 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     open fun visitCodeFragmentExitNode(node: CodeFragmentExitNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    // ----------------------------------- REPL Snippets -------------------------------------------
-
-    open fun visitReplSnippetEnterNode(node: ReplSnippetEnterNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitReplSnippetExitNode(node: ReplSnippetExitNode, data: D): R {
         return visitNode(node, data)
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -855,26 +854,6 @@ class ControlFlowGraphBuilder private constructor(
     fun exitCodeFragment(): Pair<CodeFragmentExitNode, ControlFlowGraph> {
         return exitGraph()
     }
-
-    fun enterReplSnippet(snippet: FirReplSnippet, buildGraph: Boolean): ReplSnippetEnterNode? {
-        if (!buildGraph) {
-            graphs.push(ControlFlowGraph(declaration = null, "<discarded snippet graph>", ControlFlowGraph.Kind.Script))
-            return null
-        }
-        return enterGraph(snippet, "REPL_SNIPPET_GRAPH", ControlFlowGraph.Kind.Script) {
-            createReplSnippetEnterNode(it) to createReplSnippetExitNode(it)
-        }
-    }
-
-    fun exitReplSnippet(): Pair<ReplSnippetExitNode?, ControlFlowGraph?> {
-        require(currentGraph.kind == ControlFlowGraph.Kind.Script)
-        if (currentGraph.declaration == null) {
-            graphs.pop() // Discard empty graph
-            return null to null
-        }
-        return exitGraph()
-    }
-
 
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
 

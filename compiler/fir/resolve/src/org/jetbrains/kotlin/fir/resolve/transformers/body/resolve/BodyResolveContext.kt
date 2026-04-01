@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,19 +10,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtension
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -40,7 +32,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -777,12 +772,8 @@ class BodyResolveContext(
                 }
 
                 // TODO: robuster matching and error reporting on no extension (KT-72969)
-                for (resolveExt in holder.session.extensionService.replSnippetResolveExtensions) {
-                    val scope = resolveExt.getSnippetScope(replSnippet, holder.session)
-                    if (scope != null) {
-                        addNonLocalTowerDataElement(scope.asTowerDataElement(isLocal = false))
-                        break
-                    }
+                holder.session.replSnippetResolveExtension?.getSnippetScope(replSnippet, holder.session)?.let {
+                    addNonLocalTowerDataElement(it.asTowerDataElement(isLocal = false))
                 }
 
                 f()

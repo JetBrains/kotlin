@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -39,7 +38,6 @@ internal class FirReplSnippetImpl(
     override var snippetClass: FirRegularClass,
     override val evalFunctionSymbol: FirNamedFunctionSymbol,
 ) : FirReplSnippet() {
-    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
         symbol.bind(this)
@@ -48,14 +46,12 @@ internal class FirReplSnippetImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference?.accept(visitor, data)
         receivers.forEach { it.accept(visitor, data) }
         snippetClass.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirReplSnippetImpl {
         transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformReceivers(transformer, data)
         transformSnippetClass(transformer, data)
         return this
@@ -78,9 +74,5 @@ internal class FirReplSnippetImpl(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
-    }
-
-    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
-        controlFlowGraphReference = newControlFlowGraphReference
     }
 }

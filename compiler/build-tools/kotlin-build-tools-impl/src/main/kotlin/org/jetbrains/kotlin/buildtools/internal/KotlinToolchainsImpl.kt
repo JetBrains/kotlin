@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
+import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -26,6 +28,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             when (type) {
                 JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
                 CriToolchain::class.java -> CriToolchainImpl()
+                AbiValidationToolchain::class.java -> AbiValidationToolchainImpl()
                 else -> error("Unsupported platform toolchain type: $type. Only JVM compilation is supported for now.")
             }
         } as T

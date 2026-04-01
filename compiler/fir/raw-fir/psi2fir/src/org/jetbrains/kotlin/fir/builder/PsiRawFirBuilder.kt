@@ -1467,7 +1467,7 @@ open class PsiRawFirBuilder(
         ): FirReplSnippet {
             val snippetName = firSnippetName(fileName)
             val snippetClassName = NameUtils.getSnippetTargetClassName(snippetName)
-            val classSymbol = FirRegularClassSymbol(ClassId(FqName.ROOT, snippetClassName))
+            val classSymbol = FirRegularClassSymbol(ClassId(context.packageFqName, snippetClassName))
 
             val snippetSymbol = FirReplSnippetSymbol(classSymbol)
 

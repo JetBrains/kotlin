@@ -466,6 +466,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSmartcastImplDelegate.repl.kts");
     }
 
+    @TestMetadata("replWithPackage.repl.kts")
+    public void testReplWithPackage_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replWithPackage.repl.kts");
+    }
+
     @TestMetadata("script.kts")
     public void testScript() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/script.kts");

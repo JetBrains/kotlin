@@ -21,13 +21,13 @@ package org.jetbrains.kotlin.abi.tools
  */
 public class AbiFilters(
     /**
-     * Include a class in a dump by its name.
-     * Classes that do not match the specified names, that do not have an annotation from [includedAnnotatedWith]
+     * Include a class, file-level property, or file-level function in a dump by its name.
+     * Declarations that do not match the specified names, that do not have an annotation from [includedAnnotatedWith]
      * and do not have members marked with an annotation from [includedAnnotatedWith] are excluded from the dump.
      *
      * The name filter compares the qualified class name with the value in the filter:
      *
-     * For Kotlin classes, fully qualified names are used.
+     * For Kotlin declarations, fully qualified names are used.
      * It is important to keep in mind that dots are used everywhere as separators, even in the case of a nested class.
      * E.g. for qualified name `foo.bar.Container.Value`, here `Value` is a class nested in `Container`.
      *
@@ -42,11 +42,11 @@ public class AbiFilters(
     public val includedClasses: Set<String>,
 
     /**
-     * Excludes a class from a dump by its name.
+     * Excludes a class, file-level property, or file-level function from a dump by its name.
      *
      * The name filter compares the qualified class name with the value in the filter:
      *
-     * For Kotlin classes, fully qualified names are used.
+     * For Kotlin declarations, fully qualified names are used.
      * It is important to keep in mind that dots are used everywhere as separators, even in the case of a nested class.
      * E.g. for qualified name `foo.bar.Container.Value`, here `Value` is a class nested in `Container`.
      *

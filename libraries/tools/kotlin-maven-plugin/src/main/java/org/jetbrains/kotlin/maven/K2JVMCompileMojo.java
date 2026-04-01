@@ -20,6 +20,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.ToolchainManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.build.SourcesUtilsKt;
@@ -87,6 +89,12 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Parameter(property = "kotlin.compiler.jdkHome")
     protected String jdkHome;
+
+    @Component
+    protected ToolchainManager toolchainManager;
+
+    @Parameter
+    protected Map<String, String> jdkToolchain;
 
     @Parameter(property = "kotlin.compiler.scriptTemplates")
     protected List<String> scriptTemplates;
@@ -231,9 +239,17 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             arguments.setJvmTarget(JvmTarget.DEFAULT.getDescription());
         }
 
+        String toolchainJdkHome = getToolchainJdkHome();
         if (jdkHome != null) {
+            if (toolchainJdkHome != null) {
+                getLog().warn("Toolchains are ignored, overwritten by 'jdkHome' parameter");
+            }
+
             getLog().info("Overriding JDK home path with: " + jdkHome);
             arguments.setJdkHome(jdkHome);
+        } else if (toolchainJdkHome != null) {
+            getLog().info("Overriding JDK home path with toolchain JDK: " + toolchainJdkHome);
+            arguments.setJdkHome(toolchainJdkHome);
         }
 
         if (scriptTemplates != null && !scriptTemplates.isEmpty()) {
@@ -249,6 +265,34 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                         child.getName().equals(PsiJavaModule.MODULE_INFO_FILE)
                 )
         );
+    }
+
+    private @Nullable String getToolchainJdkHome() {
+        Toolchain toolchain = getToolchain();
+        if (toolchain == null) {
+            return null;
+        }
+
+        // Toolchain doesn't offer a way to extract the JDK home
+        // directly except for casting to JavaToolchainImpl, which
+        // is an internal class.
+        String javacPath = toolchain.findTool("javac");
+        if (javacPath == null) {
+            return null;
+        }
+        File javac = new File(javacPath);
+        File bin = javac.getParentFile();
+        return bin != null ? bin.getParent() : null;
+    }
+
+    private @Nullable Toolchain getToolchain() {
+        if (jdkToolchain != null) {
+            List<Toolchain> toolchains = toolchainManager.getToolchains(session, "jdk", jdkToolchain);
+            if (toolchains != null && !toolchains.isEmpty()) {
+                return toolchains.get(0);
+            }
+        }
+        return toolchainManager.getToolchainFromBuildContext("jdk", session);
     }
 
     @Inject

@@ -266,7 +266,7 @@ class ComposeIT : KGPBaseTest() {
                 |composeCompiler {
                 |    metricsDestination.set(project.layout.buildDirectory.dir("metrics"))
                 |    reportsDestination.set(project.layout.buildDirectory.dir("reports"))
-                |    stabilityConfigurationFile.set(project.layout.projectDirectory.file("stability-configuration.conf"))
+                |    stabilityConfigurationFiles.set(listOf(project.layout.projectDirectory.file("stability-configuration.conf")))
                 |}
                 """.trimMargin()
             )

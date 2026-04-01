@@ -180,20 +180,6 @@ internal abstract class KotlinKProperty<out V>(
         override fun equals(other: Any?): Boolean = other is Setter<*> && property == other.property
         override fun hashCode(): Int = property.hashCode()
         override fun toString(): String = "setter of $property"
-
-        class DefaultSetterValueParameter(override val callable: KotlinKProperty<*>) : ReflectKParameter() {
-            override val index: Int get() = 0
-            override val name: String? get() = null
-            override val type: KType get() = callable.returnType
-            override val kind: KParameter.Kind get() = KParameter.Kind.VALUE
-            override val isOptional: Boolean get() = false
-            override val isVararg: Boolean get() = false
-            override val declaresDefaultValue: Boolean get() = false
-
-            override val annotations: List<Annotation>
-                // As long as there's at least one annotation, the setter would no longer be default.
-                get() = emptyList()
-        }
     }
 
     override fun equals(other: Any?): Boolean {

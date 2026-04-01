@@ -282,7 +282,7 @@ public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
     workingDirectory: Path,
     sourcesChanges: SourcesChanges,
     dependenciesSnapshotFiles: List<Path>,
-    builderAction: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.() -> Unit,
+    builderAction: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.() -> Unit = {},
 ): JvmSnapshotBasedIncrementalCompilationConfiguration {
     contract {
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
@@ -313,7 +313,7 @@ public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
     sourcesChanges: SourcesChanges,
     dependenciesSnapshotFiles: List<Path>,
     shrunkClasspathSnapshot: Path,
-    builderAction: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.() -> Unit,
+    builderAction: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.() -> Unit = {},
 ): JvmSnapshotBasedIncrementalCompilationConfiguration {
     contract {
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.firScriptResolutionConfigurators
-import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtension
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
@@ -124,9 +124,10 @@ private fun getDefaultImportsForScripting(session: FirSession, file: FirFile): P
                 it.getScriptDefaultImports(scriptOrSnippet).orEmpty()
             }.transformImports()
         is FirReplSnippet ->
-            session.extensionService.replSnippetResolveExtensions.flatMap {
-                it.getSnippetDefaultImports(file.sourceFile!!, scriptOrSnippet).orEmpty()
-            }.transformImports()
+            session.replSnippetResolveExtension
+                ?.getSnippetDefaultImports(file.sourceFile!!, scriptOrSnippet)
+                .orEmpty()
+                .transformImports()
         else -> null
     }
 }

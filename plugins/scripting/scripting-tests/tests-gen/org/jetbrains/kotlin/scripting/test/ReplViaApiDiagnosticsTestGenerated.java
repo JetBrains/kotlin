@@ -70,6 +70,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("package_declaration.kts")
+  public void testPackage_declaration() {
+    run("package_declaration.kts");
+  }
+
+  @Test
   @TestMetadata("property_constant_initializer.kts")
   public void testProperty_constant_initializer() {
     run("property_constant_initializer.kts");

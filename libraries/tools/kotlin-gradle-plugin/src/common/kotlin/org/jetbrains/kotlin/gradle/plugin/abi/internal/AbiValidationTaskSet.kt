@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
-import org.jetbrains.kotlin.abi.tools.KlibTarget
 import org.jetbrains.kotlin.gradle.utils.named
 
 /**
@@ -53,9 +52,15 @@ internal class AbiValidationTaskSet(project: Project) {
      * @param [klibTarget] The target to add
      * @param [klibFiles] files of the unpacked klib containing Kotlin compiled code
      */
-    fun addKlibTarget(klibTarget: KlibTarget, klibFiles: FileCollection) {
+    fun addKlibTarget(klibTarget: KlibTargetId, klibFiles: FileCollection) {
         legacyDumpTaskProvider.configure {
-            it.klib.add(KotlinAbiDumpTaskImpl.KlibTargetInfo(klibTarget.configurableName, klibTarget.targetName, klibFiles))
+            it.klib.add(
+                KotlinAbiDumpTaskImpl.KlibTargetInfo(
+                    klibTarget.customizedName,
+                    klibTarget.targetType.canonicalName,
+                    klibFiles
+                )
+            )
         }
     }
 
@@ -71,21 +76,9 @@ internal class AbiValidationTaskSet(project: Project) {
     /**
      * Marks the specified target as unsupported by the Kotlin compiler on the current host.
      */
-    fun unsupportedTarget(klibTarget: KlibTarget) {
+    fun unsupportedTarget(klibTarget: KlibTargetId) {
         legacyDumpTaskProvider.configure {
             it.unsupportedTargets.add(klibTarget)
-        }
-    }
-
-    /**
-     * Sets the classpath of the ABI tools dependency for all ABI validation tasks.
-     */
-    fun setClasspath(toolClasspath: Configuration) {
-        legacyDumpTaskProvider.configure {
-            it.toolsClasspath.from(toolClasspath)
-        }
-        legacyCheckDumpTaskProvider.configure {
-            it.toolsClasspath.from(toolClasspath)
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -458,21 +458,6 @@ abstract class FirDataFlowAnalyzer(
         val (node, graph) = graphBuilder.exitCodeFragment()
         node.mergeIncomingFlow()
         graph.completePostponedNodes()
-        return graph
-    }
-
-    // ----------------------------------- REPL Snippet ------------------------------------------
-
-    fun enterReplSnippet(snippet: FirReplSnippet, buildGraph: Boolean) {
-        context.variableAssignmentAnalyzer.enterReplSnippet(snippet)
-        graphBuilder.enterReplSnippet(snippet, buildGraph)?.mergeIncomingFlow()
-    }
-
-    fun exitReplSnippet(snippet: FirReplSnippet): ControlFlowGraph? {
-        context.variableAssignmentAnalyzer.exitReplSnippet(snippet)
-        val (node, graph) = graphBuilder.exitReplSnippet()
-        node?.mergeIncomingFlow()
-        graph?.completePostponedNodes()
         return graph
     }
 
