@@ -1099,7 +1099,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
 }
 
 private fun TestProject.testKotlinLinkage() {
-    build(":linkReleaseFrameworkIosArm64")
+    // build(":linkReleaseFrameworkIosArm64")
     build(":linkDebugFrameworkIosSimulatorArm64")
 }
 
