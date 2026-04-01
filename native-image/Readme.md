@@ -1,6 +1,8 @@
 From repo root:
 ```
 ./native-image/buildNativeImage.sh
+
+Usage: ./native-image/buildNativeImage.sh [--graalHome=PATH] [--updateReachabilityMetadata]
 ```
 
 1. Builds dist
@@ -8,9 +10,6 @@ From repo root:
 3. Runs kotlin-compiler-embeddable on hello world to collect reachability-metadata
 4. Re-builds kotlin-compiler-embeddable with new reachability-medatata
 5. Builds native image
-
-Options:
-
 
 
 Collect reachability for command-line compiler
