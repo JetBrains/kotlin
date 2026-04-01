@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -64,6 +66,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
     }
 
+    @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkVarargParameters(function: FirFunction) {
         val varargParameters = function.valueParameters.filter { it.isVararg }
@@ -84,7 +87,8 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
             // in case it is a complex type that quantifies
             // over many other types.
             if (varargParameterType.leastUpperBound(context.session).fullyExpandedType().isNothingOrNullableNothing ||
-                (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
+                (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType &&
+                        varargParameterType.toRegularClassSymbol()?.fir?.isExtendedValueClass != true)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
             ) {

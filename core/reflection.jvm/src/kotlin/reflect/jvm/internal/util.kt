@@ -356,7 +356,7 @@ internal class LocalDelegatedPropertyFakeContainerSource(val container: KDeclara
 }
 
 internal val KType.isInlineClassType: Boolean
-    get() = (classifier as? KClassImpl<*>)?.isValue == true
+    get() = (classifier as? KClassImpl<*>)?.isJvmInlineValue == true
 
 internal fun defaultPrimitiveValue(type: Type): Any? =
     if (type is Class<*> && type.isPrimitive) {

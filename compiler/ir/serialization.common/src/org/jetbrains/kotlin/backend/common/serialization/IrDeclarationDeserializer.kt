@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -402,7 +399,8 @@ class IrDeclarationDeserializer(
                     proto.hasInlineClassRepresentation() -> deserializeInlineClassRepresentation(proto.inlineClassRepresentation)
                     proto.hasMultiFieldValueClassRepresentation() ->
                         deserializeMultiFieldValueClassRepresentation(proto.multiFieldValueClassRepresentation)
-                    else -> computeMissingInlineClassRepresentationForCompatibility(this)
+                    // Inline classes with KLib version <= 1.5.20 are no longer supported
+                    else -> ExtendedValueClassRepresentation()
                 }
 
                 // It has been decided not to deserialize the list of sealed subclasses because of KT-54028
@@ -422,16 +420,6 @@ class IrDeclarationDeserializer(
         val names = proto.underlyingPropertyNameList.memoryOptimizedMap { deserializeName(it) }
         val types = proto.underlyingPropertyTypeList.memoryOptimizedMap { deserializeIrType(it) as IrSimpleType }
         return MultiFieldValueClassRepresentation(names memoryOptimizedZip types)
-    }
-
-    private fun computeMissingInlineClassRepresentationForCompatibility(irClass: IrClass): InlineClassRepresentation<IrSimpleType> {
-        // For inline classes compiled with 1.5.20 or earlier, try to reconstruct inline class representation from the single parameter of
-        // the primary constructor. Something similar is happening in `DeserializedClassDescriptor.computeInlineClassRepresentation`.
-        // This code will be unnecessary as soon as klibs compiled with Kotlin 1.5.20 are no longer supported.
-        val ctor = irClass.primaryConstructor ?: error("Inline class has no primary constructor: ${irClass.render()}")
-        val parameter =
-            ctor.parameters.singleOrNull() ?: error("Failed to get single parameter of inline class constructor: ${ctor.render()}")
-        return InlineClassRepresentation(parameter.name, parameter.type as IrSimpleType)
     }
 
     private fun deserializeIrTypeAlias(proto: ProtoTypeAlias, parentStart: Int?, setParent: Boolean = true): IrTypeAlias =

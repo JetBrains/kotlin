@@ -249,6 +249,7 @@ fun deserializeClassToSymbol(
         valueClassRepresentation =
             classProto.loadValueClassRepresentation(
                 session.deserializationExtension?.isMaybeMultiFieldValueClass(containerSource) == true,
+                session.deserializationExtension?.isMaybeExtendedValueClass(containerSource) == true,
                 context.nameResolver,
                 context.typeTable,
                 context.typeDeserializer::rigidType,

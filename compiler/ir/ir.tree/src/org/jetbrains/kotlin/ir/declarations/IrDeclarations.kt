@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
+import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -40,6 +41,9 @@ val IrClass.isSingleFieldValueClass: Boolean
 
 val IrClass.isMultiFieldValueClass: Boolean
     get() = valueClassRepresentation is MultiFieldValueClassRepresentation
+
+val IrClass.isExtendedValueClass: Boolean
+    get() = valueClassRepresentation is ExtendedValueClassRepresentation<*>
 
 fun IrClass.addMember(member: IrDeclaration) {
     declarations.add(member)

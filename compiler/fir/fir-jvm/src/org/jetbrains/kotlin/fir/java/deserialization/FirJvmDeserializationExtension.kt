@@ -66,6 +66,13 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
         return binaryClass.classHeader.metadataVersion.isAtLeast(1, 5, 1)
     }
 
+    override fun isMaybeExtendedValueClass(containerSource: DeserializedContainerSource?): Boolean {
+        val binaryClass = (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass ?: return true
+        // Since metadata version 2.4.0 annotations are stored in metadata,
+        // so it is possible to distinguish extended value classes from @JvmInline-based by the annotation
+        return binaryClass.classHeader.metadataVersion.isAtLeast(2, 4, 0)
+    }
+
     override val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean
         get() = session.languageVersionSettings.supportsFeature(LanguageFeature.JvmLoadAnnotationsOnAnnotationProperties)
 
