@@ -314,8 +314,8 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
 
 /**
  * Searches this list or its range for the provided [element] using the binary search algorithm.
- * The list is expected to be sorted in a non-descending order according to the Comparable natural ordering of its elements,
- * otherwise the result is unspecified.
+ * The list is expected to be sorted in ascending order according to the Comparable natural ordering of its elements;
+ * otherwise, the result is undefined.
  *
  * If the list contains multiple elements equal to [element], there is no guarantee which one will be found.
  *
@@ -328,8 +328,8 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
  * otherwise, the inverted insertion index `(-insertion index - 1)`.
  * The insertion index is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of the list) still remains sorted.
- * Thus, if the returned index is `>= 0`, then the value is present;
- * otherwise the value could be inserted at `index.inv()`
+ * Thus, if the returned index is `>= 0`, then the value is present at this index;
+ * otherwise, the value could be inserted at `index.inv()` to maintain the sorted order.
  * @sample samples.collections.Collections.Lists.binarySearchFoundNotFound
  * @sample samples.collections.Collections.Lists.binarySearchFindOrInsert
  * @sample samples.collections.Collections.Lists.binarySearchOnComparable
