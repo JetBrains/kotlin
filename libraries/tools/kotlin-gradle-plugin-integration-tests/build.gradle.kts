@@ -3,7 +3,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import java.io.File
 import java.nio.file.Paths
 
 plugins {
@@ -19,12 +18,18 @@ testsJar()
 val jacocoAgent: Configuration by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
 }
 
 // Configuration to resolve JaCoCo CLI for instrumenting kgp jar
 val jacocoCli: Configuration by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
 }
 
 dependencies {
@@ -586,48 +591,18 @@ tasks.withType<Test>().configureEach {
 
 excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
 
-// Offline-instrument KGP JARs in Maven Local with JaCoCo probes.
-// This embeds probes into the bytecode before Gradle TestKit applies its own transforms,
-// avoiding conflicts between Gradle's instrumentation in TestKit and JaCoCo's on-the-fly agent.
-val instrumentKgpJarsForCoverage by tasks.registering(JavaExec::class) {
+val instrumentKgpJarsForCoverage by tasks.registering(InstrumentKgpJarsForCoverage::class) {
     description = "Instrument KGP JARs in Maven Local with JaCoCo offline probes for coverage collection"
     val testCoverageEnabled = project.providers.gradleProperty("kgp.jacoco.enabled").orNull?.toBoolean() ?: false
     onlyIf { testCoverageEnabled }
 
     dependsOnKotlinGradlePluginInstall()
 
-    val kotlinVersion = rootProject.extra["kotlinVersion"] as String
-    val mavenLocalDir = providers.systemProperty("maven.repo.local")
-        .orElse(provider { "${System.getProperty("user.home")}/.m2/repository" })
-    val artifactIds = listOf("kotlin-gradle-plugin", "kotlin-gradle-plugin-api")
-
+    kotlinVersion.set(rootProject.extra["kotlinVersion"] as String)
+    mavenLocalDir.set(
+        providers.systemProperty("maven.repo.local")
+            .orElse(provider { "${System.getProperty("user.home")}/.m2/repository" })
+    )
+    artifactIds.set(listOf("kotlin-gradle-plugin", "kotlin-gradle-plugin-api"))
     classpath(jacocoCli)
-    mainClass.set("org.jacoco.cli.internal.Main")
-
-    argumentProviders.add(CommandLineArgumentProvider {
-        val mavenLocal = File(mavenLocalDir.get())
-        buildList {
-            add("instrument")
-            for (artifactId in artifactIds) {
-                val jarFile = mavenLocal.resolve("org/jetbrains/kotlin/$artifactId/$kotlinVersion/$artifactId-$kotlinVersion.jar")
-                if (jarFile.exists()) add(jarFile.absolutePath)
-            }
-            add("--dest")
-            add(temporaryDir.absolutePath)
-        }
-    })
-
-    doLast {
-        val mavenLocal = File(mavenLocalDir.get())
-        for (artifactId in artifactIds) {
-            val jarFile = mavenLocal.resolve("org/jetbrains/kotlin/$artifactId/$kotlinVersion/$artifactId-$kotlinVersion.jar")
-            val instrumentedJar = temporaryDir.resolve(jarFile.name)
-            if (instrumentedJar.exists()) {
-                instrumentedJar.copyTo(jarFile, overwrite = true)
-                logger.lifecycle("Instrumented $artifactId JAR for JaCoCo offline coverage: ${jarFile.absolutePath}")
-            } else {
-                logger.warn("KGP JAR not found for instrumentation: $jarFile")
-            }
-        }
-    }
 }
