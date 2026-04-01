@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.*
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.context.ContextUpdater
 import org.jetbrains.kotlin.ir.validation.checkers.context.ParentChainUpdater
+import org.jetbrains.kotlin.ir.validation.checkers.context.TypeParameterScopeUpdater
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -74,6 +75,9 @@ private class IrFileValidator(
     private val typeCheckers: List<IrTypeChecker> = config.checkers.filterIsInstance<IrTypeChecker>()
     private val typeContextUpdaters: List<ContextUpdater> = typeCheckers.flatMap { it.requiredContextUpdaters }
 
+    // Cache for `visitTypeRecursively`
+    private val typeParameterScopeUpdater = contextUpdaters.filterIsInstance<TypeParameterScopeUpdater>().firstOrNull()
+
     private val checkersPerElementCache = hashMapOf<Class<out IrElement>, List<IrElementChecker<*>>>()
 
     private fun List<ContextUpdater>.runWithContextUpdaters(element: IrElement, block: () -> Unit) {
@@ -93,6 +97,14 @@ private class IrFileValidator(
             @Suppress("UNCHECKED_CAST")
             (checker as IrElementChecker<IrElement>).check(element, context)
         }
+    }
+
+    override fun visitTypeRecursively(container: IrElement, type: IrType) {
+        typeParameterScopeUpdater?.let { updater ->
+            updater.runInNewContext(context, container) {
+                super.visitTypeRecursively(container, type)
+            }
+        } ?: super.visitTypeRecursively(container, type)
     }
 
     override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
