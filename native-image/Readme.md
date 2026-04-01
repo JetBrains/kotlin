@@ -12,6 +12,6 @@ From repo root:
 
 
 Collect reachability for command-line compiler
-`JAVA_OPTS=-agentlib:native-image-agent=caller-filter-file=/path-to-repo/native-image/caller-filter.json,config-output-dir=./cfg path-to-repo/dist/kotlinc/bin/kotlinc A.kt -kotlin-home path-to-repo/dist/kotlinc/`
+`JAVA_OPTS=-agentlib:native-image-agent=caller-filter-file=${KOTLIN_REPO:-.}/native-image/caller-filter.json,config-output-dir=./cfg ${KOTLIN_REPO:-.}/dist/kotlinc/bin/kotlinc A.kt -kotlin-home ${KOTLIN_REPO:-.}/dist/kotlinc/`
 Collect trace for command-line compiler:
-`JAVA_OPTS=-agentlib:native-image-agent=trace-output=./cfg/trace.json path-to-repo/dist/kotlinc/bin/kotlinc A.kt -kotlin-home path-to-repo/dist/kotlinc/`
+`JAVA_OPTS=-agentlib:native-image-agent=trace-output=./cfg/trace.json ${KOTLIN_REPO:-.}/dist/kotlinc/bin/kotlinc A.kt -kotlin-home ${KOTLIN_REPO:-.}/dist/kotlinc/`
