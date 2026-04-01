@@ -29,6 +29,7 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirComposa
     open fun loadHasBackingFieldFlag(propertyProto: ProtoBuf.Property): Boolean? = null
 
     open fun isMaybeMultiFieldValueClass(containerSource: DeserializedContainerSource?): Boolean = false
+    open fun isMaybeExtendedValueClass(containerSource: DeserializedContainerSource?): Boolean = false
 
     open val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean get() = true
 

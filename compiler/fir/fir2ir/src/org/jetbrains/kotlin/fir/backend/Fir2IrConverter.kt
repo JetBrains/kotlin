@@ -248,6 +248,9 @@ class Fir2IrConverter(
             if (irClass.isMultiFieldValueClass) {
                 allDeclarations += dataClassMembersGenerator.generateMultiFieldValueClassMembers(klass, irClass)
             }
+            if (irClass.isExtendedValueClass) {
+                allDeclarations += dataClassMembersGenerator.generateExtendedValueClassMembers(klass, irClass)
+            }
             if (irClass.isData) {
                 allDeclarations += dataClassMembersGenerator.generateDataClassMembers(klass, irClass)
             }

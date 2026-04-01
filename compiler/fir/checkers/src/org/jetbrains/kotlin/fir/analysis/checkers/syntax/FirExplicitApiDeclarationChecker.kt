@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -94,11 +95,12 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         reporter.reportOn(source, factory)
     }
 
+    @OptIn(SymbolInternals::class)
     context(context: CheckerContext)
     /**
      * Exclusion list:
      * 1. Primary constructors of public API classes
-     * 2. Properties of data classes in public API
+     * 2. Properties of data or extended value classes in public API
      * 3. Overrides of public API. Effectively, this means 'no report on overrides at all'
      * 4. Getters and setters (because getters can't change visibility and setter-only explicit visibility looks ugly)
      * 5. Properties of annotations in public API
@@ -117,7 +119,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
                 val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
                 // 2, 5
                 if (declaration is FirProperty) {
-                    if (containingClass != null && (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
+                    if (containingClass != null && (containingClass.isData || containingClass.fir.isExtendedValueClass || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
                         return true
                     }
                 }

@@ -649,6 +649,9 @@ internal class KClassImpl<T : Any>(
     override val isValue: Boolean
         get() = kmClass?.isValue == true
 
+    internal val isJvmInlineValue: Boolean
+        get() = isValue && inlineClassUnderlyingPropertyName != null
+
     internal val inlineClassUnderlyingPropertyName: String?
         get() = kmClass?.inlineClassUnderlyingPropertyName
 
